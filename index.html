@@ -2,799 +2,736 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MinhducKale OS 13 - Production</title>
-    
-    <!-- Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['"Plus Jakarta Sans"', '-apple-system', 'sans-serif'] },
-                    animation: {
-                        'blob': 'blob 20s infinite',
-                        'dock-bounce': 'dockBounce 0.3s cubic-bezier(0.25, 1.5, 0.5, 1)',
-                    },
-                    colors: {
-                        'ios-blue': '#007AFF',
-                        'ios-red': '#FF3B30',
-                    }
-                }
-            }
-        }
-    </script>
-    
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MinhducKale - Nền tảng Y Khoa Tổng Hợp</title>
+    <meta name="description" content="Nền tảng học tập, tra cứu thuốc và công cụ y khoa dành cho sinh viên Y.">
+    <meta name="author" content="Đào Minh Đức">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- ================= STYLE.CSS ================= -->
+
     <style>
-        /* --- CORE BASE --- */
-        body { 
-            background-color: #f2f2f7; color: #1c1c1e; 
-            font-family: 'Plus Jakarta Sans', sans-serif; 
-            overflow: hidden; user-select: none; -webkit-tap-highlight-color: transparent;
-        }
-        .dark body { background-color: #000000; color: #f2f2f7; }
-
-        /* --- BACKGROUND & BLOBS --- */
-        .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.8; z-index: -1; animation: blob 25s infinite alternate; will-change: transform; }
-        .blob-1 { top: -20%; left: -20%; width: 80vh; height: 80vh; background: #FF2D55; } 
-        .blob-2 { bottom: -20%; right: -20%; width: 80vh; height: 80vh; background: #007AFF; animation-delay: -5s; }
-        .dark .blob-1, .dark .blob-2 { opacity: 0.3; }
-
-        @keyframes blob {
-            0% { transform: translate(0, 0) scale(1); }
-            50% { transform: translate(30px, -50px) scale(1.1); }
-            100% { transform: translate(-20px, 20px) scale(0.95); }
+        :root {
+            --primary-color: #007bb5; /* Medical Blue */
+            --secondary-color: #00a896; /* Teal */
+            --bg-color: #f4f7f6;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+            --text-muted: #666666;
+            --border-color: #dddddd;
+            --danger-color: #d9534f;
+            --success-color: #5cb85c;
+            --header-height: 60px;
         }
 
-        /* --- GLASSMORPHISM --- */
-        .glass-panel { 
-            background: rgba(255, 255, 255, 0.65); 
-            backdrop-filter: blur(25px) saturate(180%); -webkit-backdrop-filter: blur(25px) saturate(180%);
-            border: 1px solid rgba(255, 255, 255, 0.4); 
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.05);
-        }
-        .dark .glass-panel { 
-            background: rgba(30, 30, 30, 0.6); 
-            border: 1px solid rgba(255, 255, 255, 0.1); 
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.3);
+        [data-theme="dark"] {
+            --primary-color: #4db6ac;
+            --secondary-color: #26a69a;
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --text-color: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --border-color: #333333;
         }
 
-        .glass-card { 
-            background: rgba(255, 255, 255, 0.5); 
-            backdrop-filter: blur(15px); -webkit-backdrop-filter: blur(15px);
-            border: 1px solid rgba(255, 255, 255, 0.4); 
-            transition: transform 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        .dark .glass-card { 
-            background: rgba(44, 44, 46, 0.5); 
-            border: 1px solid rgba(255, 255, 255, 0.08); 
-        }
-        .glass-card:active { transform: scale(0.96); }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; transition: background 0.3s; }
 
-        /* --- PERFORMANCE MODE (Low End Device) --- */
-        body.reduce-motion .bg-blob { display: none; }
-        body.reduce-motion .glass-panel, 
-        body.reduce-motion .glass-card { 
-            backdrop-filter: none !important; -webkit-backdrop-filter: none !important;
-            background: rgba(255, 255, 255, 0.95);
-        }
-        body.reduce-motion.dark .glass-panel, 
-        body.reduce-motion.dark .glass-card { background: rgba(30, 30, 30, 0.95); }
-        body.reduce-motion * { animation-duration: 0s !important; transition-duration: 0s !important; }
-        body.reduce-motion #snow-container { display: none; }
+        /* Helpers */
+        .hidden { display: none !important; }
+        .btn-primary, .btn-secondary { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; transition: opacity 0.2s; }
+        .btn-primary { background-color: var(--primary-color); color: white; }
+        .btn-secondary { background-color: #6c757d; color: white; }
+        .btn-primary:hover, .btn-secondary:hover { opacity: 0.9; }
+        .full-width { width: 100%; margin-top: 10px; }
 
-        /* --- UTILS --- */
-        .custom-scroll::-webkit-scrollbar { display: none; }
-        .custom-scroll { -ms-overflow-style: none; scrollbar-width: none; }
-        .snowflake { position: fixed; top: -10px; color: #fff; pointer-events: none; z-index: 0; animation: fall linear infinite; }
-        @keyframes fall { to { transform: translateY(110vh); } }
-        
-        .ios-input { background: rgba(118, 118, 128, 0.12); border: none; outline: none; transition: 0.2s; color: inherit; }
-        .dark .ios-input { background: rgba(118, 118, 128, 0.24); }
-        
-        .dock-icon:hover { transform: translateY(-10px) scale(1.1); margin: 0 5px; }
-        .dock-icon { transition: all 0.3s cubic-bezier(0.25, 1.5, 0.5, 1); }
-        .dock-icon.active .icon-bg { background-color: rgba(255,255,255,0.3); box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5); }
-        .dark .dock-icon.active .icon-bg { background-color: rgba(255,255,255,0.15); }
+        /* Header */
+        .app-header { height: var(--header-height); background-color: var(--card-bg); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
+        .logo-area h1 { font-size: 1.2rem; color: var(--primary-color); display: flex; align-items: center; gap: 8px; }
+        .main-nav { display: flex; gap: 5px; }
+        .main-nav .nav-btn { background: none; border: none; padding: 10px 15px; color: var(--text-muted); cursor: pointer; font-size: 0.95rem; border-radius: 4px; }
+        .main-nav .nav-btn.active, .main-nav .nav-btn:hover { color: var(--primary-color); background: rgba(0,0,0,0.05); font-weight: bold; }
+        .user-area { display: flex; align-items: center; gap: 10px; }
+        #user-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-color); }
+        #theme-toggle { background: none; border: none; color: var(--text-color); cursor: pointer; font-size: 1.1rem; padding: 5px; }
+
+        /* Main */
+        .app-content { flex: 1; padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
+        .view { display: none; animation: fadeIn 0.3s ease; }
+        .view.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* Hero */
+        .hero { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .cta-group { margin-top: 20px; display: flex; gap: 10px; justify-content: center; }
+        .info-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .card { background: var(--card-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); }
+        .text-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
+
+        /* Grids & Lists */
+        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+        .controls { display: flex; gap: 10px; flex-wrap: wrap; }
+        .controls input, .controls select { padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--card-bg); color: var(--text-color); }
+        .grid-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
+        .doc-item, .drug-item { background: var(--card-bg); padding: 15px; border-radius: 6px; border-left: 4px solid var(--primary-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: transform 0.2s; }
+        .doc-item:hover, .drug-item:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .doc-meta { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; display: block; }
+        .drug-detail { font-size: 0.9rem; margin-top: 8px; border-top: 1px solid var(--border-color); padding-top: 8px; }
+
+        /* Notes */
+        .note-editor-container { height: 60vh; position: relative; }
+        #personal-note { width: 100%; height: 100%; padding: 20px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--card-bg); color: var(--text-color); resize: none; font-size: 1rem; line-height: 1.6; outline: none; }
+        .status-text { font-size: 0.8rem; color: var(--text-muted); font-style: italic; margin-right: 10px; }
+
+        /* Chat */
+        .chat-container { height: 70vh; display: flex; flex-direction: column; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; }
+        .chat-header { padding: 15px; background: rgba(0,0,0,0.03); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
+        .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
+        .message { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 0.95rem; position: relative; }
+        .message.mine { align-self: flex-end; background-color: var(--primary-color); color: white; border-bottom-right-radius: 2px; }
+        .message.theirs { align-self: flex-start; background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); border-bottom-left-radius: 2px; }
+        .msg-meta { font-size: 0.7rem; opacity: 0.8; margin-bottom: 4px; display: block; font-weight: bold; }
+        .chat-input-area { padding: 15px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; background: var(--card-bg); }
+        #chat-input { flex: 1; padding: 12px; border: 1px solid var(--border-color); border-radius: 25px; background: var(--bg-color); color: var(--text-color); outline: none; }
+
+        /* Tools */
+        .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
+        .tool-card { background: var(--card-bg); padding: 25px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; }
+        .tool-card h3 { margin-bottom: 15px; color: var(--primary-color); }
+        .input-group { margin-bottom: 15px; text-align: left; }
+        .input-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; }
+        .input-group input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color); }
+        .result-box { margin-top: 20px; padding: 10px; background: rgba(0,0,0,0.05); border-radius: 4px; font-weight: bold; color: var(--primary-color); min-height: 40px; display: flex; align-items: center; justify-content: center; }
+        .timer-display { font-size: 3.5rem; margin: 20px 0; font-family: monospace; color: var(--text-color); }
+        .timer-controls { display: flex; justify-content: center; gap: 10px; }
+
+        /* Footer */
+        .app-footer { background-color: #2c3e50; color: #ecf0f1; padding: 40px 20px 20px; margin-top: 40px; }
+        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 30px; max-width: 1200px; margin: 0 auto; }
+        .footer-info h4 { margin-bottom: 10px; color: #3498db; }
+        .footer-info a, .footer-links a { color: #bdc3c7; text-decoration: none; transition: color 0.2s; }
+        .footer-info a:hover, .footer-links a:hover { color: white; }
+        .copyright { text-align: center; margin-top: 30px; font-size: 0.8rem; border-top: 1px solid #34495e; padding-top: 15px; color: #7f8c8d; }
+
+        /* Modal & Toast */
+        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(2px); }
+        .modal { background: var(--card-bg); width: 90%; max-width: 500px; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: fadeIn 0.2s; }
+        .modal-header { padding: 15px 20px; background: var(--primary-color); color: white; display: flex; justify-content: space-between; align-items: center; }
+        .modal-header button { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
+        .modal-body { padding: 20px; }
+        .modal-footer { padding: 15px 20px; border-top: 1px solid var(--border-color); text-align: right; }
+        .form-group { margin-bottom: 15px; }
+        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px; background: var(--bg-color); color: var(--text-color); }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .main-nav span { display: none; }
+            .app-header { padding: 0 10px; }
+            .chat-container { height: 85vh; }
+            .tools-grid { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
-<body class="h-screen w-screen flex flex-col relative">
+<body>
 
-    <!-- Background Layers -->
-    <div class="bg-blob blob-1"></div>
-    <div class="bg-blob blob-2"></div>
-    <div id="snow-container"></div>
-
-    <!-- AUTHENTICATION OVERLAY -->
-    <div id="loginOverlay" class="fixed inset-0 z-[100] bg-slate-100/80 dark:bg-black/80 backdrop-blur-2xl flex items-center justify-center transition-opacity duration-500">
-        <div class="text-center p-8 max-w-sm w-full">
-            <div class="w-24 h-24 bg-white rounded-[22px] mx-auto flex items-center justify-center shadow-2xl mb-6">
-                <i class="fa-solid fa-tree text-4xl text-transparent bg-clip-text bg-gradient-to-br from-red-500 to-green-500"></i>
+    <header class="app-header">
+        <div class="logo-area">
+            <h1><i class="fa-solid fa-staff-snake"></i> MinhducKale</h1>
+        </div>
+        <nav class="main-nav">
+            <button class="nav-btn active" data-target="home"><i class="fa-solid fa-home"></i> <span>Trang chủ</span></button>
+            <button class="nav-btn" data-target="docs"><i class="fa-solid fa-book-medical"></i> <span>Tài liệu</span></button>
+            <button class="nav-btn" data-target="drugs"><i class="fa-solid fa-pills"></i> <span>Thuốc</span></button>
+            <button class="nav-btn" data-target="notes"><i class="fa-solid fa-notes-medical"></i> <span>Ghi chú</span></button>
+            <button class="nav-btn" data-target="chat"><i class="fa-solid fa-comments"></i> <span>Thảo luận</span></button>
+            <button class="nav-btn" data-target="tools"><i class="fa-solid fa-calculator"></i> <span>Công cụ</span></button>
+        </nav>
+        <div class="user-area">
+            <button id="theme-toggle" title="Chế độ Sáng/Tối"><i class="fa-solid fa-moon"></i></button>
+            <div id="auth-container">
+                <button id="login-btn" class="btn-primary">Đăng nhập</button>
+                <div id="user-info" class="hidden">
+                    <img id="user-avatar" src="" alt="Avatar">
+                    <span id="user-name" style="font-size: 0.9rem; font-weight: 500;">Guest</span>
+                    <button id="logout-btn" style="background:none; border:none; color: var(--danger-color); cursor: pointer; margin-left: 5px;"><i class="fa-solid fa-sign-out-alt"></i></button>
+                </div>
             </div>
-            <h2 class="text-3xl font-bold mb-2 tracking-tight">Chào mừng trở lại</h2>
-            <p class="text-gray-500 dark:text-gray-400 mb-10 text-sm">MinhducKale OS 13</p>
-            
-            <button id="btnLogin" class="w-full py-4 rounded-xl bg-blue-500 hover:bg-blue-600 text-white font-bold text-lg shadow-lg mb-4 transition transform active:scale-95">
-                Đăng nhập Google
-            </button>
-            <button id="btnGuest" class="w-full py-4 rounded-xl bg-gray-200 dark:bg-gray-800 text-gray-800 dark:text-gray-200 font-bold text-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition transform active:scale-95">
-                Chế độ Khách (Xem)
-            </button>
         </div>
-    </div>
+    </header>
 
-    <!-- IPAD STATUS BAR -->
-    <div class="fixed top-0 left-0 w-full h-8 px-6 flex justify-between items-center z-50 text-xs font-bold text-black dark:text-white mix-blend-overlay opacity-80 pointer-events-none">
-        <div id="statusBarTime">--:--</div>
-        <div class="flex gap-2 items-center">
-            <i class="fa-solid fa-signal"></i>
-            <i class="fa-solid fa-wifi"></i>
-            <i class="fa-solid fa-battery-full text-lg"></i>
-        </div>
-    </div>
-
-    <!-- MAIN WORKSPACE -->
-    <div id="mainApp" class="flex-1 p-4 pt-10 pb-28 md:p-6 md:pt-10 md:pb-28 w-full max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-12 gap-6 transition duration-500 filter blur-xl scale-95 opacity-0">
+    <main class="app-content">
         
-        <!-- MAIN CONTENT (WIDGETS) -->
-        <div class="lg:col-span-8 h-full flex flex-col relative overflow-hidden">
-             <div class="flex-1 glass-panel rounded-[32px] p-1 relative overflow-hidden shadow-2xl">
-                 
-                <!-- HOME VIEW -->
-                <div id="view-home" class="view-section w-full h-full p-6 overflow-y-auto custom-scroll fade-in">
-                    <div class="flex justify-between items-end mb-6">
-                        <div>
-                            <h2 class="text-sm font-bold text-ios-red uppercase tracking-wider mb-1" id="dateDisplay">Thứ Hai, 22 Tháng 12</h2>
-                            <h1 class="text-4xl font-bold tracking-tight">Hôm nay</h1>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6 auto-rows-fr">
-                        <!-- Big Widget -->
-                        <div onclick="window.openLink(window.baseDriveLink)" class="glass-card col-span-2 row-span-2 rounded-[28px] p-6 flex flex-col justify-between cursor-pointer group hover:bg-white/60 dark:hover:bg-white/10">
-                            <div class="flex justify-between items-start">
-                                <div class="w-12 h-12 rounded-full bg-red-500 flex items-center justify-center text-white text-xl shadow-lg shadow-red-500/40">
-                                    <i class="fa-solid fa-heart-pulse"></i>
-                                </div>
-                                <i class="fa-solid fa-arrow-up-right-from-square text-gray-400"></i>
-                            </div>
-                            <div>
-                                <h3 class="text-2xl font-bold mb-1">Nội Khoa</h3>
-                                <p class="text-sm opacity-60 font-medium">Tài liệu lâm sàng & phác đồ.</p>
-                            </div>
-                        </div>
-
-                        <!-- Small Widgets -->
-                        <div onclick="window.openLink(window.baseDriveLink)" class="glass-card aspect-square rounded-[24px] p-5 flex flex-col justify-between cursor-pointer hover:bg-blue-500 hover:text-white transition group">
-                            <i class="fa-solid fa-user-injured text-3xl text-blue-500 group-hover:text-white"></i><span class="font-bold text-lg">Ngoại</span>
-                        </div>
-                        <div onclick="window.openLink(window.baseDriveLink)" class="glass-card aspect-square rounded-[24px] p-5 flex flex-col justify-between cursor-pointer hover:bg-pink-500 hover:text-white transition group">
-                            <i class="fa-solid fa-person-pregnant text-3xl text-pink-500 group-hover:text-white"></i><span class="font-bold text-lg">Sản</span>
-                        </div>
-                        <div onclick="window.openLink(window.baseDriveLink)" class="glass-card aspect-square rounded-[24px] p-5 flex flex-col justify-between cursor-pointer hover:bg-orange-500 hover:text-white transition group">
-                            <i class="fa-solid fa-baby text-3xl text-orange-500 group-hover:text-white"></i><span class="font-bold text-lg">Nhi</span>
-                        </div>
-                         <div class="glass-card aspect-square rounded-[24px] p-5 flex flex-col justify-center items-center text-center">
-                            <span class="text-3xl font-bold">28°</span><span class="text-xs font-bold opacity-60">Cần Thơ</span>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- FILES VIEW -->
-                <div id="view-docs" class="view-section hidden w-full h-full flex-col p-4 fade-in">
-                    <div class="flex items-center gap-3 mb-4 px-2">
-                        <h2 class="text-2xl font-bold">Files</h2>
-                        <div class="flex-1"></div>
-                        <button id="btnFilterStar" class="w-9 h-9 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center text-gray-500"><i class="fa-solid fa-star"></i></button>
-                        <button id="btnAddDoc" class="hidden w-9 h-9 rounded-full bg-blue-500 text-white flex items-center justify-center shadow-lg"><i class="fa-solid fa-plus"></i></button>
-                    </div>
-                    <div class="bg-gray-100/50 dark:bg-gray-800/50 rounded-xl p-2 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-magnifying-glass text-gray-400 ml-2"></i>
-                        <input type="text" id="docSearch" class="bg-transparent border-none outline-none text-sm w-full h-8" placeholder="Tìm tài liệu...">
-                    </div>
-                    <div id="folderBreadcrumb" class="hidden flex items-center gap-2 text-lg font-bold mb-4 px-2 text-blue-500 cursor-pointer">
-                        <span onclick="window.renderFolders()"><i class="fa-solid fa-chevron-left"></i> Folders</span> <span class="text-gray-400 text-sm">/</span> <span id="currentFolderName" class="text-black dark:text-white">...</span>
-                    </div>
-                    <div id="docListContent" class="flex-1 overflow-y-auto custom-scroll grid grid-cols-1 md:grid-cols-2 gap-3 content-start pb-10"></div>
-                </div>
-
-                 <!-- DRUGS VIEW -->
-                 <div id="view-drugs" class="view-section hidden w-full h-full flex-col p-4 fade-in">
-                    <div class="flex items-center justify-between mb-4 px-2">
-                         <h2 class="text-2xl font-bold">Dược thư</h2>
-                         <button id="btnAddDrug" class="hidden w-9 h-9 rounded-full bg-green-500 text-white flex items-center justify-center shadow-lg"><i class="fa-solid fa-plus"></i></button>
-                    </div>
-                    <div class="bg-gray-100/50 dark:bg-gray-800/50 rounded-xl p-2 mb-4 flex items-center gap-2">
-                        <i class="fa-solid fa-capsules text-gray-400 ml-2"></i>
-                        <input type="text" id="drugSearchInput" class="bg-transparent border-none outline-none text-sm w-full h-8" placeholder="Tên thuốc / Hoạt chất...">
-                    </div>
-                    <div id="drugList" class="flex-1 overflow-y-auto custom-scroll space-y-3 pb-10"></div>
-                </div>
-
-                <!-- NOTES VIEW -->
-                <div id="view-notes" class="view-section hidden w-full h-full flex-col p-6 fade-in bg-yellow-50/50 dark:bg-yellow-900/10">
-                    <div class="flex justify-between items-center mb-4">
-                        <h2 class="text-2xl font-bold text-yellow-600 dark:text-yellow-400">Ghi chú</h2>
-                        <div class="flex gap-2">
-                            <span id="noteStatus" class="text-xs text-gray-400 font-medium self-center mr-2">Đã lưu</span>
-                            <button onclick="window.downloadNote()" class="w-8 h-8 rounded-full bg-yellow-400 text-white flex items-center justify-center hover:scale-110 transition"><i class="fa-solid fa-share-from-square"></i></button>
-                        </div>
-                    </div>
-                    <textarea id="personalNote" class="flex-1 w-full bg-transparent border-none outline-none resize-none text-lg leading-relaxed font-medium text-gray-700 dark:text-gray-200 custom-scroll placeholder-yellow-500/30" placeholder="Nhập ghi chú cá nhân..."></textarea>
-                </div>
-
-                <!-- CHAT VIEW -->
-                <div id="view-chat" class="view-section hidden w-full h-full flex-col p-0 fade-in relative">
-                    <div class="p-4 border-b border-white/20 flex justify-between items-center glass-panel rounded-t-[32px] rounded-b-none border-0">
-                        <span class="font-bold text-lg">Thảo luận chung</span>
-                        <div class="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                    </div>
-                    <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-2 custom-scroll"></div>
-                    <form id="chatForm" class="p-3 bg-white/60 dark:bg-black/60 backdrop-blur-md m-4 rounded-[24px] flex gap-2 border border-white/20 shadow-lg">
-                        <input id="chatInput" type="text" class="flex-1 bg-transparent outline-none px-2" placeholder="Nhập tin nhắn..." autocomplete="off">
-                        <button type="submit" class="w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center hover:bg-blue-600 transition"><i class="fa-solid fa-arrow-up"></i></button>
-                    </form>
-                </div>
-
-                <!-- TOOLS VIEW -->
-                <div id="view-tools" class="view-section hidden w-full h-full flex-col p-6 fade-in overflow-y-auto custom-scroll">
-                    <h2 class="text-2xl font-bold mb-6">Công cụ</h2>
-                    <div class="grid grid-cols-2 gap-4">
-                        <button onclick="window.openModal('bmiModal')" class="glass-card aspect-square rounded-[24px] flex flex-col items-center justify-center gap-3 hover:scale-105 transition">
-                            <div class="w-14 h-14 rounded-full bg-indigo-500 flex items-center justify-center text-white text-2xl shadow-lg"><i class="fa-solid fa-weight-scale"></i></div>
-                            <span class="font-bold">BMI</span>
-                        </button>
-                        <button onclick="window.openModal('calcModal')" class="glass-card aspect-square rounded-[24px] flex flex-col items-center justify-center gap-3 hover:scale-105 transition">
-                            <div class="w-14 h-14 rounded-full bg-orange-500 flex items-center justify-center text-white text-2xl shadow-lg"><i class="fa-solid fa-calculator"></i></div>
-                            <span class="font-bold">Calc</span>
-                        </button>
-                        <button onclick="window.openModal('timerModal')" class="glass-card aspect-square rounded-[24px] flex flex-col items-center justify-center gap-3 hover:scale-105 transition">
-                            <div class="w-14 h-14 rounded-full bg-blue-500 flex items-center justify-center text-white text-2xl shadow-lg"><i class="fa-solid fa-stopwatch"></i></div>
-                            <span class="font-bold">Timer</span>
-                        </button>
-                        <button id="btnAdmin" class="glass-card aspect-square rounded-[24px] flex flex-col items-center justify-center gap-3 hover:scale-105 transition">
-                            <div class="w-14 h-14 rounded-full bg-gray-500 flex items-center justify-center text-white text-2xl shadow-lg"><i class="fa-solid fa-lock"></i></div>
-                            <span class="font-bold">Admin</span>
-                        </button>
-                    </div>
-                </div>
-             </div>
-        </div>
-
-        <!-- SIDEBAR (PROFILE & MUSIC) -->
-        <div class="hidden lg:flex lg:col-span-4 h-full flex-col gap-6">
-            <!-- Profile Card -->
-            <div class="glass-panel rounded-[32px] p-6 flex flex-col gap-4 shadow-xl">
-                <div class="flex items-center gap-4">
-                    <img id="sidebarAvatar" src="" class="w-16 h-16 rounded-full bg-gray-300 object-cover shadow-md cursor-pointer hover:opacity-80 transition" title="Đăng xuất">
-                    <div class="flex-1 min-w-0">
-                        <h3 id="sidebarName" class="font-bold text-xl truncate">Guest</h3>
-                        <p id="sidebarRole" class="text-sm text-gray-500 font-medium">Truy cập khách</p>
-                    </div>
-                </div>
-                <div class="flex gap-2 mt-2">
-                    <button id="btnTheme" class="flex-1 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition gap-2 text-xs font-bold">
-                        <i class="fa-solid fa-moon"></i> Dark
-                    </button>
-                    <button id="btnMotion" class="flex-1 h-10 rounded-xl bg-gray-100 dark:bg-gray-700 flex items-center justify-center hover:bg-gray-200 dark:hover:bg-gray-600 transition gap-2 text-xs font-bold" title="Tắt hiệu ứng cho máy yếu">
-                        <i class="fa-solid fa-gauge-high"></i> Lite
-                    </button>
+        <section id="home" class="view active">
+            <div class="hero">
+                <h2>Chào mừng đến với MinhducKale</h2>
+                <p>Nền tảng hỗ trợ học tập và thực hành lâm sàng cho sinh viên Y khoa.</p>
+                <div class="cta-group">
+                    <button class="btn-primary" onclick="switchView('docs')">Tìm tài liệu</button>
+                    <button class="btn-secondary" onclick="switchView('tools')">Công cụ Y khoa</button>
                 </div>
             </div>
+            <div class="info-cards">
+                <div class="card">
+                    <h3><i class="fa-solid fa-link"></i> Nguồn Tài Liệu</h3>
+                    <p>Truy cập kho tài liệu tổng hợp từ Google Drive.</p>
+                    <a href="https://drive.google.com/drive/u/2/folders/1GnW2tjMYi-FcmEstNQQu8WD25AK06W9-" target="_blank" class="text-link">Mở Drive Tổng &rarr;</a>
+                </div>
+                <div class="card">
+                    <h3><i class="fa-solid fa-user-md"></i> Thông tin liên hệ</h3>
+                    <p>Chủ sở hữu: <strong>Đào Minh Đức</strong></p>
+                    <p>SĐT: 0976969072</p>
+                </div>
+            </div>
+        </section>
 
-            <!-- Music Player -->
-            <div class="flex-1 glass-panel rounded-[32px] p-8 flex flex-col items-center text-center shadow-xl relative overflow-hidden group">
-                <img src="https://img.icons8.com/color/96/vinyl-music.png" class="absolute inset-0 w-full h-full object-cover opacity-20 blur-xl scale-150 transition group-hover:scale-125 duration-1000 pointer-events-none">
-                <div class="relative z-10 w-full flex flex-col items-center h-full justify-center">
-                    <div id="albumArt" class="w-48 h-48 rounded-lg shadow-2xl mb-8 overflow-hidden transform transition hover:scale-105 duration-500">
-                        <img src="https://img.icons8.com/color/96/vinyl-music.png" class="w-full h-full object-cover">
+        <section id="docs" class="view">
+            <div class="section-header">
+                <h2>Kho Tài Liệu</h2>
+                <div class="controls">
+                    <input type="text" id="docs-search" placeholder="Tìm kiếm tài liệu...">
+                    <select id="docs-filter">
+                        <option value="all">Tất cả chuyên khoa</option>
+                        <option value="Nội">Nội khoa</option>
+                        <option value="Ngoại">Ngoại khoa</option>
+                        <option value="Sản">Sản phụ khoa</option>
+                        <option value="Nhi">Nhi khoa</option>
+                    </select>
+                    <button id="add-doc-btn" class="btn-primary admin-only hidden"><i class="fa-solid fa-plus"></i> Thêm</button>
+                </div>
+            </div>
+            <div id="docs-list" class="grid-list">
+                </div>
+        </section>
+
+        <section id="drugs" class="view">
+            <div class="section-header">
+                <h2>Tra Cứu Thuốc</h2>
+                <div class="controls">
+                    <input type="text" id="drugs-search" placeholder="Nhập tên thuốc/hoạt chất...">
+                    <button id="add-drug-btn" class="btn-primary admin-only hidden"><i class="fa-solid fa-plus"></i> Thêm</button>
+                </div>
+            </div>
+            <div id="drugs-result" class="list-view">
+                <div style="text-align: center; padding: 20px; color: var(--text-muted);">
+                    <i class="fa-solid fa-magnifying-glass" style="font-size: 2rem; margin-bottom: 10px;"></i>
+                    <p>Nhập từ khóa để bắt đầu tra cứu...</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="notes" class="view">
+            <div class="section-header">
+                <h2>Ghi Chú Cá Nhân</h2>
+                <div class="controls">
+                    <span id="save-status" class="status-text">Đã đồng bộ</span>
+                    <button id="export-note-btn" class="btn-secondary"><i class="fa-solid fa-file-export"></i> Xuất .txt</button>
+                </div>
+            </div>
+            <div class="note-editor-container">
+                <textarea id="personal-note" placeholder="Viết ghi chú lâm sàng của bạn tại đây... (Yêu cầu đăng nhập để lưu)"></textarea>
+            </div>
+        </section>
+
+        <section id="chat" class="view">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <div><i class="fa-solid fa-comments"></i> Thảo luận Lâm sàng</div>
+                    <span style="font-size: 0.8rem; font-weight: normal; background: #27ae60; color: white; padding: 2px 6px; border-radius: 4px;">Live</span>
+                </div>
+                <div id="chat-messages" class="chat-messages">
                     </div>
-                    <h3 id="songTitle" class="font-bold text-2xl mb-1 truncate w-full">Lofi Chill</h3>
-                    <p id="songArtist" class="text-md text-gray-500 font-medium mb-8">Relaxing Beats</p>
-                    <div class="flex items-center gap-10">
-                        <button id="btnPrev" class="text-3xl hover:text-gray-500 transition"><i class="fa-solid fa-backward-step"></i></button>
-                        <button id="btnPlay" class="w-16 h-16 rounded-full bg-black dark:bg-white text-white dark:text-black flex items-center justify-center text-2xl hover:scale-110 transition shadow-xl"><i class="fa-solid fa-play ml-1"></i></button>
-                        <button id="btnNext" class="text-3xl hover:text-gray-500 transition"><i class="fa-solid fa-forward-step"></i></button>
+                <form id="chat-form" class="chat-input-area">
+                    <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." autocomplete="off" maxlength="500">
+                    <button type="submit" class="btn-primary"><i class="fa-solid fa-paper-plane"></i></button>
+                </form>
+            </div>
+        </section>
+
+        <section id="tools" class="view">
+            <div class="tools-grid">
+                <div class="tool-card">
+                    <h3>BMI Calculator</h3>
+                    <div class="input-group">
+                        <label>Cân nặng (kg)</label>
+                        <input type="number" id="bmi-weight" placeholder="VD: 60">
+                    </div>
+                    <div class="input-group">
+                        <label>Chiều cao (cm)</label>
+                        <input type="number" id="bmi-height" placeholder="VD: 170">
+                    </div>
+                    <button id="calc-bmi-btn" class="btn-primary full-width">Tính toán</button>
+                    <div id="bmi-result" class="result-box">Kết quả</div>
+                </div>
+
+                <div class="tool-card">
+                    <h3>Máy tính Y khoa</h3>
+                    <p style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">Hỗ trợ +, -, *, /, ( ).</p>
+                    <div class="input-group">
+                        <input type="text" id="calc-input" placeholder="Ví dụ: (50 * 10) / 2">
+                    </div>
+                    <button id="calc-exec-btn" class="btn-primary full-width">Tính</button>
+                    <div id="calc-result" class="result-box">0</div>
+                </div>
+
+                <div class="tool-card">
+                    <h3>Timer Học tập</h3>
+                    <div class="timer-display" id="timer-display">25:00</div>
+                    <div class="timer-controls">
+                        <button id="timer-start" class="btn-primary">Start/Stop</button>
+                        <button id="timer-reset" class="btn-secondary">Reset</button>
                     </div>
                 </div>
+            </div>
+        </section>
+
+    </main>
+
+    <div id="modal-overlay" class="modal-overlay hidden">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 id="modal-title">Tiêu đề</h3>
+                <button id="modal-close">&times;</button>
+            </div>
+            <div class="modal-body" id="modal-body"></div>
+            <div class="modal-footer">
+                <button id="modal-action-btn" class="btn-primary">Lưu</button>
             </div>
         </div>
     </div>
 
-    <!-- DOCK NAVIGATION -->
-    <div class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
-        <div class="glass-panel px-4 py-3 rounded-[32px] flex items-end gap-3 shadow-2xl border border-white/20 bg-white/40 dark:bg-black/40 backdrop-blur-2xl transition-all duration-300 hover:px-6 hover:scale-105">
-            <button class="dock-icon active group relative w-12 h-12 md:w-14 md:h-14" data-tab="home">
-                <div class="icon-bg w-full h-full rounded-2xl flex items-center justify-center text-2xl text-blue-500 transition-all"><i class="fa-solid fa-house"></i></div>
-                <span class="absolute -bottom-8 left-1/2 transform -translate-x-1/2 text-[10px] font-bold opacity-0 group-hover:opacity-100 transition text-gray-700 dark:text-gray-300 bg-white/80 dark:bg-black/80 px-2 py-0.5 rounded-full backdrop-blur-sm pointer-events-none">Home</span>
-            </button>
-            <button class="dock-icon group relative w-12 h-12 md:w-14 md:h-14" data-tab="docs">
-                <div class="icon-bg w-full h-full rounded-2xl flex items-center justify-center text-2xl text-blue-400 transition-all"><i class="fa-solid fa-folder"></i></div>
-            </button>
-            <button class="dock-icon group relative w-12 h-12 md:w-14 md:h-14" data-tab="drugs">
-                <div class="icon-bg w-full h-full rounded-2xl flex items-center justify-center text-2xl text-red-500 transition-all"><i class="fa-solid fa-capsules"></i></div>
-            </button>
-            <button class="dock-icon group relative w-12 h-12 md:w-14 md:h-14" data-tab="notes">
-                <div class="icon-bg w-full h-full rounded-2xl flex items-center justify-center text-2xl text-yellow-500 transition-all"><i class="fa-solid fa-note-sticky"></i></div>
-            </button>
-            <button class="dock-icon group relative w-12 h-12 md:w-14 md:h-14" data-tab="chat">
-                <div class="icon-bg w-full h-full rounded-2xl flex items-center justify-center text-2xl text-green-500 transition-all"><i class="fa-solid fa-comment"></i></div>
-            </button>
-            <div class="w-[1px] h-10 bg-gray-400/30 mx-1"></div>
-            <button class="dock-icon group relative w-12 h-12 md:w-14 md:h-14" data-tab="tools">
-                <div class="icon-bg w-full h-full rounded-2xl flex items-center justify-center text-2xl text-gray-500 transition-all"><i class="fa-solid fa-layer-group"></i></div>
-            </button>
+    <footer class="app-footer">
+        <div class="footer-content">
+            <div class="footer-info">
+                <h4>MinhducKale</h4>
+                <p>Chủ sở hữu: <strong>Đào Minh Đức</strong></p>
+                <p>SĐT: <a href="tel:0976969072">0976969072</a></p>
+                <p>
+                    <a href="https://duckale0976.github.io/web/" target="_blank">Website chính</a> | 
+                    <a href="#" onclick="alert('Xem README để biết danh sách nguồn')">Nguồn tham khảo y khoa</a>
+                </p>
+            </div>
+            <div class="footer-links">
+                <a href="https://drive.google.com/drive/u/2/folders/1GnW2tjMYi-FcmEstNQQu8WD25AK06W9-" target="_blank">
+                    <i class="fa-brands fa-google-drive"></i> Kho Tài Liệu Tổng
+                </a>
+            </div>
         </div>
-    </div>
+        <div class="copyright">
+            &copy; 2025 MinhducKale. Medical Education Platform.
+        </div>
+    </footer>
 
-    <!-- MODALS SECTION -->
-    <!-- BMI Modal -->
-    <div id="bmiModal" class="fixed inset-0 z-[60] bg-black/20 backdrop-blur-sm hidden items-center justify-center">
-        <div class="glass-panel bg-white/95 dark:bg-gray-900/95 p-6 rounded-[28px] w-[90%] max-w-sm shadow-2xl transform transition-all scale-95 opacity-0 modal-content">
-            <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-xl">BMI</h3>
-                <button onclick="window.closeModal('bmiModal')" class="w-8 h-8 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="space-y-3">
-                <input type="number" id="bmiHeight" placeholder="Chiều cao (cm)" class="w-full p-4 rounded-xl ios-input font-bold">
-                <input type="number" id="bmiWeight" placeholder="Cân nặng (kg)" class="w-full p-4 rounded-xl ios-input font-bold">
-                <button onclick="window.calcBMI()" class="w-full py-3 bg-blue-500 text-white rounded-xl font-bold hover:bg-blue-600 transition">Tính Ngay</button>
-            </div>
-            <div id="bmiResult" class="mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl text-center hidden">
-                <span class="text-3xl font-bold block" id="bmiValue">0.0</span>
-                <span class="text-sm font-bold" id="bmiText">Bình thường</span>
-            </div>
-        </div>
-    </div>
-
-    <!-- Calculator Modal -->
-    <div id="calcModal" class="fixed inset-0 z-[60] bg-black/20 backdrop-blur-sm hidden items-center justify-center">
-        <div class="glass-panel bg-white/95 dark:bg-gray-900/95 p-5 rounded-[28px] w-[90%] max-w-xs shadow-2xl modal-content">
-             <div class="flex justify-between items-center mb-4">
-                <h3 class="font-bold text-lg">Calculator</h3>
-                <button onclick="window.closeModal('calcModal')" class="text-gray-500"><i class="fa-solid fa-xmark"></i></button>
-            </div>
-            <div class="bg-gray-100 dark:bg-gray-800 p-4 rounded-2xl mb-3 text-right text-3xl font-mono truncate" id="calcDisplay">0</div>
-            <div class="grid grid-cols-4 gap-2">
-                <button onclick="window.calcInput('C')" class="p-3 rounded-full bg-gray-300 dark:bg-gray-600 font-bold">C</button>
-                <button onclick="window.calcInput('/')" class="p-3 rounded-full bg-gray-300 dark:bg-gray-600 font-bold">/</button>
-                <button onclick="window.calcInput('*')" class="p-3 rounded-full bg-gray-300 dark:bg-gray-600 font-bold">×</button>
-                <button onclick="window.calcInput('DEL')" class="p-3 rounded-full bg-orange-500 text-white font-bold"><i class="fa-solid fa-delete-left"></i></button>
-                <button onclick="window.calcInput('7')" class="p-3 rounded-full bg-gray-200 dark:bg-gray-700 font-bold">7</button>
-                <button onclick="window.calcInput('8')" class="p-3 rounded-full bg-gray-200 dark:bg-gray-700 font-bold">8</button>
-                <button onclick="window.calcInput('9')" class="p-3 rounded-full bg-gray-200 dark:bg-gray-700 font-bold">9</button>
-                <button onclick="window.calcInput('-')" class="p-3 rounded-full bg-orange-500 text-white font-bold">-</button>
-                <button onclick="window.calcInput('4')" class="p-3 rounded-full bg-gray-200 dark:bg-gray-700 font-bold">4</button>
-                <button onclick="window.calcInput('5')" class="p-3 rounded-full bg-gray-200 dark:bg-gray-700 font-bold">5</button>
-                <button onclick="window.calcInput('6')" class="p-3 rounded-full bg-gray-200 dark:bg-gray-700 font-bold">6</button>
-                <button onclick="window.calcInput('+')" class="p-3 rounded-full bg-orange-500 text-white font-bold">+</button>
-                <button onclick="window.calcInput('1')" class="p-3 rounded-full bg-gray-200 dark:bg-gray-700 font-bold">1</button>
-                <button onclick="window.calcInput('2')" class="p-3 rounded-full bg-gray-200 dark:bg-gray-700 font-bold">2</button>
-                <button onclick="window.calcInput('3')" class="p-3 rounded-full bg-gray-200 dark:bg-gray-700 font-bold">3</button>
-                <button onclick="window.calcInput('=')" class="row-span-2 p-3 rounded-full bg-orange-500 text-white font-bold">=</button>
-                <button onclick="window.calcInput('0')" class="col-span-2 p-3 rounded-full bg-gray-200 dark:bg-gray-700 font-bold">0</button>
-                <button onclick="window.calcInput('.')" class="p-3 rounded-full bg-gray-200 dark:bg-gray-700 font-bold">.</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Timer Modal -->
-    <div id="timerModal" class="fixed inset-0 z-[60] bg-black/20 backdrop-blur-sm hidden items-center justify-center">
-        <div class="glass-panel bg-white/95 dark:bg-gray-900/95 p-8 rounded-[32px] w-[90%] max-w-sm shadow-2xl text-center modal-content">
-            <h3 class="font-bold text-xl mb-6">Timer</h3>
-            <div class="w-48 h-48 rounded-full border-4 border-orange-500 flex items-center justify-center mx-auto mb-6 relative">
-                 <div class="text-5xl font-mono font-bold text-black dark:text-white" id="timerDisplay">00:00</div>
-            </div>
-            <div class="grid grid-cols-3 gap-3 mb-6">
-                <button onclick="window.setTimer(1)" class="p-3 rounded-full bg-gray-200 dark:bg-gray-800 text-xs font-bold hover:bg-gray-300">+1m</button>
-                <button onclick="window.setTimer(5)" class="p-3 rounded-full bg-gray-200 dark:bg-gray-800 text-xs font-bold hover:bg-gray-300">+5m</button>
-                <button onclick="window.setTimer(10)" class="p-3 rounded-full bg-gray-200 dark:bg-gray-800 text-xs font-bold hover:bg-gray-300">+10m</button>
-            </div>
-            <div class="flex gap-3 justify-center">
-                <button onclick="window.startTimer()" class="w-16 h-16 rounded-full bg-green-500/20 text-green-600 font-bold hover:bg-green-500/30">Start</button>
-                <button onclick="window.resetTimer()" class="w-16 h-16 rounded-full bg-gray-200 text-gray-600 font-bold hover:bg-gray-300">Stop</button>
-                <button onclick="window.closeModal('timerModal')" class="w-16 h-16 rounded-full bg-red-500/20 text-red-600 font-bold hover:bg-red-500/30">Exit</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Doc Modal -->
-    <div id="docModal" class="fixed inset-0 z-[70] bg-black/30 backdrop-blur-md hidden items-center justify-center">
-        <div class="glass-panel bg-white/95 dark:bg-gray-900/95 p-6 rounded-[28px] w-[90%] max-w-md shadow-2xl modal-content">
-            <h3 class="font-bold text-xl mb-6 text-center" id="docModalTitle">Tài liệu mới</h3>
-            <div class="space-y-4">
-                <input type="hidden" id="docId">
-                <input type="text" id="docTitle" class="w-full p-4 rounded-xl ios-input" placeholder="Tên tài liệu">
-                <input type="text" id="docUrl" class="w-full p-4 rounded-xl ios-input" placeholder="URL (Drive/Web)">
-                <select id="docFolder" class="w-full p-4 rounded-xl ios-input appearance-none bg-transparent">
-                    <option value="noi">Nội khoa</option>
-                    <option value="ngoai">Ngoại khoa</option>
-                    <option value="nhi">Nhi khoa</option>
-                    <option value="duoc">Dược lý</option>
-                    <option value="khac">Khác</option>
-                </select>
-                <div class="flex gap-3 pt-2">
-                    <button onclick="window.closeModal('docModal')" class="flex-1 py-3 bg-gray-200 text-gray-800 rounded-xl font-bold">Hủy</button>
-                    <button onclick="window.saveDoc()" class="flex-1 py-3 bg-blue-500 text-white rounded-xl font-bold">Lưu</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Admin Drug Modal -->
-    <div id="drugModal" class="fixed inset-0 z-[70] bg-black/30 backdrop-blur-md hidden items-center justify-center">
-        <div class="glass-panel bg-white/95 dark:bg-gray-900/95 p-6 rounded-[28px] w-[90%] max-w-md shadow-2xl modal-content max-h-[80vh] overflow-y-auto custom-scroll">
-             <h3 class="font-bold text-xl mb-6 text-center" id="drugModalTitle">Thuốc mới</h3>
-             <div class="space-y-4">
-                 <input type="hidden" id="drugId">
-                 <input type="text" id="drugName" class="w-full p-4 rounded-xl ios-input" placeholder="Tên thuốc">
-                 <input type="text" id="drugClass" class="w-full p-4 rounded-xl ios-input" placeholder="Nhóm thuốc">
-                 <textarea id="drugDesc" class="w-full p-4 rounded-xl ios-input h-24 resize-none" placeholder="Công dụng..."></textarea>
-                 <input type="text" id="drugDosageAdult" class="w-full p-4 rounded-xl ios-input" placeholder="Liều NL">
-                 <input type="text" id="drugDosageChild" class="w-full p-4 rounded-xl ios-input" placeholder="Liều TE">
-                 <div class="flex gap-3 pt-2">
-                    <button onclick="window.closeModal('drugModal')" class="flex-1 py-3 bg-gray-200 text-gray-800 rounded-xl font-bold">Hủy</button>
-                    <button onclick="window.saveDrug()" class="flex-1 py-3 bg-green-500 text-white rounded-xl font-bold">Lưu</button>
-                 </div>
-             </div>
-        </div>
-    </div>
-
-    <!-- ================= JAVASCRIPT BUNDLE ================= -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        // Import Firebase SDKs from CDN
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
+        import { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, doc, query, where, orderBy, limit, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
 
-        // ===== CONFIG.JS =====
+        // ==========================================
+        // CONFIGURATION (THAY API KEY CỦA BẠN VÀO ĐÂY)
+        // ==========================================
         const firebaseConfig = {
-            apiKey: "AIzaSyAcfs8LFgPeAkGyaSkmJeECoRBEwtfRv8E",
-            authDomain: "minhduckale1.firebaseapp.com",
-            projectId: "minhduckale1",
-            storageBucket: "minhduckale1.firebasestorage.app",
-            messagingSenderId: "479002042854",
-            appId: "1:479002042854:web:c9e4b614ad48fefd10f627",
-            measurementId: "G-GWWCJ6BNLF"
+            apiKey: "YOUR_API_KEY_HERE",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "SENDER_ID",
+            appId: "APP_ID"
         };
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        window.baseDriveLink = "https://drive.google.com/drive/folders/1GnW2tjMYi-FcmEstNQQu8WD25AK06W9-?usp=drive_link";
 
-        // ===== STATE.JS =====
+        // Initialize Firebase
+        // Lưu ý: Nếu chưa thay config, app sẽ lỗi khi gọi DB.
+        let app, auth, db, googleProvider;
+        try {
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+            googleProvider = new GoogleAuthProvider();
+            console.log("Firebase Initialized");
+        } catch (e) {
+            console.error("Firebase Init Error (Kiểm tra Config):", e);
+        }
+
+        // Global State
         let currentUser = null;
         let isAdmin = false;
-        let currentFolder = 'root';
-        const folders = { "noi": "Nội khoa", "ngoai": "Ngoại khoa", "nhi": "Nhi khoa", "duoc": "Dược lý", "khac": "Khác" };
-        let allDocs = [];
-        let allDrugs = [];
-        let bookmarks = JSON.parse(localStorage.getItem('mdk_fav') || '[]');
 
-        // ===== AUTH.JS =====
-        const updateUIForUser = (user) => {
-            currentUser = user;
-            const loginOverlay = document.getElementById('loginOverlay');
-            const mainApp = document.getElementById('mainApp');
-            
-            loginOverlay.classList.add('opacity-0', 'pointer-events-none');
-            mainApp.classList.remove('filter', 'blur-xl', 'scale-95', 'opacity-0');
-            mainApp.classList.add('scale-100', 'blur-0', 'opacity-100');
-            
-            document.getElementById('sidebarName').textContent = user.isAnonymous ? 'Guest' : user.displayName;
-            document.getElementById('sidebarRole').textContent = user.isAnonymous ? 'Khách thăm' : 'Bác sĩ';
-            document.getElementById('sidebarAvatar').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || 'G'}&background=random`;
-            
-            // Reset button state
-            document.getElementById('btnGuest').innerHTML = 'Chế độ Khách (Xem)';
-            
-            // Initialize App Data
-            loadDocs();
-            loadDrugs();
-            loadChat();
-            loadNote();
-        };
-
-        onAuthStateChanged(auth, (user) => {
-            if (user) updateUIForUser(user);
-            else if (!currentUser) {
-                document.getElementById('loginOverlay').classList.remove('opacity-0', 'pointer-events-none');
-                document.getElementById('mainApp').classList.add('filter', 'blur-xl', 'scale-95', 'opacity-0');
-            }
-        });
-
-        document.getElementById('btnLogin').onclick = () => {
-            signInWithPopup(auth, new GoogleAuthProvider()).catch(e => alert(e.message));
-        };
-
-        document.getElementById('btnGuest').onclick = () => {
-            document.getElementById('btnGuest').innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Loading...';
-            signInAnonymously(auth).catch(err => {
-                console.warn("Auth failed, using fallback");
-                updateUIForUser({ uid: 'guest_fallback', isAnonymous: true, displayName: 'Khách', photoURL: null });
-            });
-        };
-
-        document.getElementById('sidebarAvatar').onclick = () => {
-            if(confirm("Đăng xuất?")) {
-                if(currentUser && currentUser.uid === 'guest_fallback') location.reload();
-                else signOut(auth).then(() => location.reload());
-            }
-        };
-
-        // ===== UI.JS (Logic Giao diện) =====
-        // Tab Switching
-        document.querySelectorAll('.dock-icon').forEach(icon => {
-            icon.onclick = () => {
-                document.querySelectorAll('.dock-icon').forEach(i => i.classList.remove('active', 'animate-dock-bounce'));
-                icon.classList.add('active', 'animate-dock-bounce');
-                document.querySelectorAll('.view-section').forEach(v => {
-                    v.classList.add('hidden');
-                    v.classList.remove('flex');
-                });
-                const view = document.getElementById(`view-${icon.dataset.tab}`);
-                view.classList.remove('hidden');
-                view.classList.add('flex');
-            };
-        });
-
-        // Theme & Motion
-        document.getElementById('btnTheme').onclick = () => document.documentElement.classList.toggle('dark');
-        document.getElementById('btnMotion').onclick = () => {
-            document.body.classList.toggle('reduce-motion');
-            const isReduced = document.body.classList.contains('reduce-motion');
-            document.getElementById('btnMotion').innerHTML = isReduced ? 
-                '<i class="fa-solid fa-gauge"></i> Full' : '<i class="fa-solid fa-gauge-high"></i> Lite';
-        };
-
-        // Modals & Utils (Attached to Window for HTML access)
-        window.openModal = (id) => {
-            const m = document.getElementById(id);
-            m.classList.remove('hidden'); m.classList.add('flex');
-            setTimeout(() => { m.querySelector('.modal-content').classList.remove('scale-95', 'opacity-0'); m.querySelector('.modal-content').classList.add('scale-100', 'opacity-100'); }, 10);
-        };
-        window.closeModal = (id) => {
-            const m = document.getElementById(id);
-            m.querySelector('.modal-content').classList.remove('scale-100', 'opacity-100'); m.querySelector('.modal-content').classList.add('scale-95', 'opacity-0');
-            setTimeout(() => { m.classList.add('hidden'); m.classList.remove('flex'); }, 200);
-        };
-        window.openLink = (url) => window.open(url, '_blank');
-
-        // Clock & Date
-        setInterval(() => {
-            const now = new Date();
-            document.getElementById('statusBarTime').innerText = now.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
-        }, 1000);
-        document.getElementById('dateDisplay').innerText = new Date().toLocaleDateString('vi-VN', {weekday: 'long', day: 'numeric', month: 'long'});
-
-        // Snow Effect
-        const createSnow = () => {
-            const c = document.getElementById('snow-container');
-            for(let i=0; i<20; i++) {
-                const f = document.createElement('div');
-                f.className = 'snowflake'; f.innerHTML = '❄';
-                f.style.left = Math.random()*100+'vw';
-                f.style.opacity = Math.random()*0.5;
-                f.style.fontSize = (Math.random()*10+10)+'px';
-                f.style.animationDuration = (Math.random()*5+5)+'s';
-                c.appendChild(f);
-            }
-        };
-        createSnow();
-
-        // ===== ADMIN.JS =====
-        document.getElementById('btnAdmin').onclick = () => {
-            if (!currentUser || currentUser.isAnonymous) return alert("Vui lòng đăng nhập Google để dùng tính năng Admin.");
-            const pwd = prompt("Nhập mật khẩu quản trị:");
-            if (pwd === "0000") {
-                isAdmin = !isAdmin;
-                const btn = document.getElementById('btnAdmin');
-                btn.querySelector('div').classList.toggle('bg-red-500');
-                btn.querySelector('div').classList.toggle('bg-gray-500');
-                alert(isAdmin ? "Đã bật chế độ Admin (Edit/Delete)" : "Đã tắt chế độ Admin");
-                renderFolders(); renderDrugs();
-            } else if (pwd) alert("Sai mật khẩu");
-        };
-
-        // ===== DOCS.JS =====
-        function loadDocs() {
-            onSnapshot(query(collection(db, "documents"), orderBy("createdAt", "desc")), (snap) => {
-                allDocs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                renderFolders();
-            }, (err) => console.log("Offline mode or permission denied"));
-        }
-
-        window.renderFolders = () => {
-            const container = document.getElementById('docListContent');
-            const breadcrumb = document.getElementById('folderBreadcrumb');
-            const btnAdd = document.getElementById('btnAddDoc');
-            
-            container.innerHTML = '';
-            breadcrumb.classList.add('hidden');
-            btnAdd.classList.toggle('hidden', !isAdmin);
-
-            Object.keys(folders).forEach(key => {
-                const count = allDocs.filter(d => d.folder === key).length;
-                const el = document.createElement('div');
-                el.className = 'glass-card p-4 rounded-[20px] flex items-center gap-4 cursor-pointer hover:bg-blue-500/10 transition';
-                el.innerHTML = `<div class="w-12 h-12 bg-blue-500 text-white rounded-2xl flex items-center justify-center text-xl shadow-lg"><i class="fa-solid fa-folder"></i></div><div><h4 class="font-bold text-sm dark:text-white">${folders[key]}</h4><p class="text-xs opacity-60">${count} file</p></div>`;
-                el.onclick = () => openFolder(key);
-                container.appendChild(el);
-            });
-        };
-
-        function openFolder(key) {
-            currentFolder = key;
-            const container = document.getElementById('docListContent');
-            document.getElementById('folderBreadcrumb').classList.remove('hidden');
-            document.getElementById('currentFolderName').textContent = folders[key];
-            container.innerHTML = '';
-
-            const docs = allDocs.filter(d => d.folder === key);
-            if (docs.length === 0) container.innerHTML = `<div class="col-span-2 text-center py-10 opacity-50">Trống</div>`;
-
-            docs.forEach(doc => {
-                const el = document.createElement('div');
-                el.className = 'glass-card p-4 rounded-[20px] flex items-center gap-3 relative group transition hover:bg-white/40';
-                const adminBtns = isAdmin ? `<div class="absolute top-2 right-2 flex gap-2"><button onclick="window.editDoc('${doc.id}')" class="w-7 h-7 rounded-full bg-gray-200 hover:bg-blue-500 hover:text-white flex items-center justify-center text-xs"><i class="fa-solid fa-pen"></i></button><button onclick="window.delDoc('${doc.id}')" class="w-7 h-7 rounded-full bg-gray-200 hover:bg-red-500 hover:text-white flex items-center justify-center text-xs"><i class="fa-solid fa-trash"></i></button></div>` : '';
-                el.innerHTML = `<div class="w-10 h-10 bg-red-500 rounded-xl flex items-center justify-center text-white text-lg shadow-lg"><i class="fa-solid fa-file-pdf"></i></div><div class="flex-1 min-w-0"><h4 class="font-bold text-sm truncate pr-14 dark:text-white">${doc.title}</h4><a href="${doc.url}" target="_blank" class="text-[10px] font-bold text-blue-500 uppercase">Mở</a></div>${adminBtns}`;
-                container.appendChild(el);
-            });
-        }
-
-        // Admin Doc Funcs attached to Window
-        document.getElementById('btnAddDoc').onclick = () => {
-            document.getElementById('docId').value = ''; document.getElementById('docTitle').value = ''; document.getElementById('docUrl').value = '';
-            document.getElementById('docModalTitle').innerText = 'Thêm Tài Liệu'; window.openModal('docModal');
-        };
-        window.editDoc = (id) => {
-            const d = allDocs.find(x => x.id === id);
-            document.getElementById('docId').value = d.id; document.getElementById('docTitle').value = d.title; document.getElementById('docUrl').value = d.url; document.getElementById('docFolder').value = d.folder;
-            document.getElementById('docModalTitle').innerText = 'Sửa Tài Liệu'; window.openModal('docModal');
-        };
-        window.saveDoc = async () => {
-            const id = document.getElementById('docId').value, title = document.getElementById('docTitle').value, url = document.getElementById('docUrl').value, folder = document.getElementById('docFolder').value;
-            if(!title) return;
-            try {
-                if(id) await updateDoc(doc(db, "documents", id), {title, url, folder});
-                else await addDoc(collection(db, "documents"), {title, url, folder, createdAt: serverTimestamp()});
-                window.closeModal('docModal');
-            } catch(e) { alert("Lỗi (Bạn có quyền Admin không?): " + e.message); }
-        };
-        window.delDoc = async (id) => { if(confirm("Xóa?")) try { await deleteDoc(doc(db, "documents", id)); } catch(e) { alert(e.message); } };
-
-        // ===== DRUGS.JS =====
-        function loadDrugs() {
-            onSnapshot(query(collection(db, "drugs"), orderBy("name", "asc")), (snap) => {
-                allDrugs = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-                renderDrugs();
-            }, () => {});
-        }
-        function renderDrugs() {
-            const container = document.getElementById('drugList');
-            const search = document.getElementById('drugSearchInput').value.toLowerCase();
-            document.getElementById('btnAddDrug').classList.toggle('hidden', !isAdmin);
-            container.innerHTML = '';
-            
-            allDrugs.filter(d => d.name.toLowerCase().includes(search)).forEach(drug => {
-                const el = document.createElement('div');
-                el.className = 'glass-card p-4 rounded-[20px] relative group hover:bg-green-500/5 transition';
-                const adminBtns = isAdmin ? `<div class="absolute top-3 right-3 flex gap-2"><button onclick="window.editDrug('${drug.id}')" class="w-6 h-6 rounded-full bg-gray-200 hover:bg-blue-500 hover:text-white flex items-center justify-center text-xs"><i class="fa-solid fa-pen"></i></button><button onclick="window.delDrug('${drug.id}')" class="w-6 h-6 rounded-full bg-gray-200 hover:bg-red-500 hover:text-white flex items-center justify-center text-xs"><i class="fa-solid fa-trash"></i></button></div>` : '';
-                el.innerHTML = `<div class="flex items-center gap-3 mb-2"><div class="w-8 h-8 rounded-full bg-green-100 text-green-600 flex items-center justify-center font-bold text-xs">${drug.name.charAt(0)}</div><h4 class="font-bold text-lg dark:text-white">${drug.name}</h4><span class="text-[10px] bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded-md font-bold text-gray-500">${drug.group}</span></div><p class="text-sm text-gray-500 mb-2 line-clamp-2">${drug.desc}</p><div class="flex gap-2"><span class="text-xs font-bold bg-blue-100 text-blue-600 px-2 py-1 rounded-lg">NL: ${drug.dosageAdult}</span><span class="text-xs font-bold bg-orange-100 text-orange-600 px-2 py-1 rounded-lg">TE: ${drug.dosageChild}</span></div>${adminBtns}`;
-                container.appendChild(el);
-            });
-        }
-        document.getElementById('drugSearchInput').oninput = renderDrugs;
+        // ==========================================
+        // UI HELPERS
+        // ==========================================
         
-        // Drug Admin Funcs
-        document.getElementById('btnAddDrug').onclick = () => {
-            document.getElementById('drugId').value = ''; document.getElementById('drugName').value = ''; document.getElementById('drugClass').value = ''; document.getElementById('drugDesc').value = ''; document.getElementById('drugDosageAdult').value = ''; document.getElementById('drugDosageChild').value = '';
-            document.getElementById('drugModalTitle').innerText = 'Thuốc Mới'; window.openModal('drugModal');
+        // Navigation Logic
+        const navBtns = document.querySelectorAll('.nav-btn');
+        const views = document.querySelectorAll('.view');
+        
+        window.switchView = (targetId) => {
+            navBtns.forEach(b => {
+                b.classList.remove('active');
+                if(b.getAttribute('data-target') === targetId) b.classList.add('active');
+            });
+            views.forEach(v => {
+                v.classList.remove('active');
+                if(v.id === targetId) v.classList.add('active');
+            });
         };
-        window.editDrug = (id) => {
-            const d = allDrugs.find(x => x.id === id);
-            document.getElementById('drugId').value = d.id; document.getElementById('drugName').value = d.name; document.getElementById('drugClass').value = d.group; document.getElementById('drugDesc').value = d.desc; document.getElementById('drugDosageAdult').value = d.dosageAdult; document.getElementById('drugDosageChild').value = d.dosageChild;
-            document.getElementById('drugModalTitle').innerText = 'Sửa Thuốc'; window.openModal('drugModal');
-        };
-        window.saveDrug = async () => {
-            const id = document.getElementById('drugId').value;
-            const data = { name: document.getElementById('drugName').value, group: document.getElementById('drugClass').value, desc: document.getElementById('drugDesc').value, dosageAdult: document.getElementById('drugDosageAdult').value, dosageChild: document.getElementById('drugDosageChild').value };
-            if(!data.name) return;
-            try {
-                if(id) await updateDoc(doc(db, "drugs", id), data); else await addDoc(collection(db, "drugs"), data);
-                window.closeModal('drugModal');
-            } catch(e) { alert(e.message); }
-        };
-        window.delDrug = async (id) => { if(confirm("Xóa?")) try { await deleteDoc(doc(db, "drugs", id)); } catch(e) { alert(e.message); } };
 
-        // ===== CHAT.JS =====
-        function loadChat() {
-            onSnapshot(query(collection(db, "chat"), orderBy("timestamp", "asc")), (snap) => {
-                const box = document.getElementById('chatMessages');
-                box.innerHTML = '';
+        navBtns.forEach(btn => {
+            btn.addEventListener('click', () => switchView(btn.getAttribute('data-target')));
+        });
+
+        // Theme Toggle
+        const themeBtn = document.getElementById('theme-toggle');
+        if (localStorage.getItem('theme') === 'dark') {
+            document.body.setAttribute('data-theme', 'dark');
+            themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+        }
+        themeBtn.addEventListener('click', () => {
+            if (document.body.getAttribute('data-theme') === 'dark') {
+                document.body.removeAttribute('data-theme');
+                localStorage.setItem('theme', 'light');
+                themeBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+            } else {
+                document.body.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+                themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+            }
+        });
+
+        // Toast Notification
+        function showToast(message, type = 'info') {
+            const toast = document.createElement('div');
+            toast.innerText = message;
+            toast.style.position = 'fixed';
+            toast.style.bottom = '20px';
+            toast.style.right = '20px';
+            toast.style.padding = '10px 20px';
+            toast.style.borderRadius = '4px';
+            toast.style.color = '#fff';
+            toast.style.zIndex = '9999';
+            toast.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
+            
+            if (type === 'success') toast.style.background = '#5cb85c';
+            else if (type === 'error') toast.style.background = '#d9534f';
+            else toast.style.background = '#007bb5';
+
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => document.body.removeChild(toast), 300);
+            }, 3000);
+        }
+
+        // Modal Helper
+        function openModal(title, bodyHtml, onSave) {
+            const overlay = document.getElementById('modal-overlay');
+            document.getElementById('modal-title').innerText = title;
+            document.getElementById('modal-body').innerHTML = bodyHtml;
+            
+            const saveBtn = document.getElementById('modal-action-btn');
+            const newBtn = saveBtn.cloneNode(true); // Remove old listeners
+            saveBtn.parentNode.replaceChild(newBtn, saveBtn);
+            
+            newBtn.addEventListener('click', () => {
+                if(onSave) onSave();
+                overlay.classList.add('hidden');
+            });
+            
+            overlay.classList.remove('hidden');
+            document.getElementById('modal-close').onclick = () => overlay.classList.add('hidden');
+        }
+
+        // Debounce
+        function debounce(func, timeout = 300){
+            let timer;
+            return (...args) => {
+                clearTimeout(timer);
+                timer = setTimeout(() => { func.apply(this, args); }, timeout);
+            };
+        }
+
+        // ==========================================
+        // AUTHENTICATION
+        // ==========================================
+        const loginBtn = document.getElementById('login-btn');
+        const logoutBtn = document.getElementById('logout-btn');
+        const userInfo = document.getElementById('user-info');
+
+        loginBtn.addEventListener('click', async () => {
+            try {
+                await signInWithPopup(auth, googleProvider);
+                showToast('Đăng nhập thành công', 'success');
+            } catch (error) {
+                console.error(error);
+                showToast('Lỗi đăng nhập: ' + error.message, 'error');
+            }
+        });
+
+        logoutBtn.addEventListener('click', async () => {
+            await signOut(auth);
+            showToast('Đã đăng xuất');
+        });
+
+        if(auth) {
+            onAuthStateChanged(auth, async (user) => {
+                currentUser = user;
+                if (user) {
+                    loginBtn.classList.add('hidden');
+                    userInfo.classList.remove('hidden');
+                    document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/32';
+                    document.getElementById('user-name').innerText = user.displayName;
+                    
+                    // Check Admin (Simulated check, real check is in Rules)
+                    // Ở đây bạn có thể check role từ Firestore nếu muốn
+                    const idToken = await user.getIdTokenResult();
+                    if(idToken.claims.admin) isAdmin = true;
+                } else {
+                    loginBtn.classList.remove('hidden');
+                    userInfo.classList.add('hidden');
+                    isAdmin = false;
+                }
+                
+                // Toggle Admin Buttons
+                document.querySelectorAll('.admin-only').forEach(el => {
+                    el.classList.toggle('hidden', !isAdmin);
+                });
+
+                // Reload notes if user changes
+                loadNote();
+            });
+        }
+
+        // ==========================================
+        // FEATURES
+        // ==========================================
+
+        /* --- DOCS SYSTEM --- */
+        async function loadDocs(search = '', cat = 'all') {
+            const listEl = document.getElementById('docs-list');
+            listEl.innerHTML = '<p>Đang tải...</p>';
+            try {
+                // In prod: use compound queries. Here: fetch all & filter (small scale)
+                const snapshot = await getDocs(collection(db, 'docs'));
+                let docs = [];
+                snapshot.forEach(d => docs.push({id: d.id, ...d.data()}));
+
+                if (cat !== 'all') docs = docs.filter(d => d.category === cat);
+                if (search) docs = docs.filter(d => d.title.toLowerCase().includes(search.toLowerCase()));
+
+                listEl.innerHTML = '';
+                if(docs.length === 0) {
+                    listEl.innerHTML = '<p>Không tìm thấy tài liệu.</p>';
+                    return;
+                }
+
+                docs.forEach(doc => {
+                    const div = document.createElement('div');
+                    div.className = 'doc-item';
+                    div.innerHTML = `
+                        <h4>${doc.title}</h4>
+                        <span class="doc-meta"><i class="fa-solid fa-tag"></i> ${doc.category}</span>
+                        <p>${doc.desc || ''}</p>
+                        <a href="${doc.link}" target="_blank" class="text-link">Xem tài liệu <i class="fa-solid fa-external-link-alt"></i></a>
+                    `;
+                    listEl.appendChild(div);
+                });
+            } catch (e) {
+                console.warn(e);
+                listEl.innerHTML = '<p>Chưa kết nối Database hoặc lỗi.</p>';
+            }
+        }
+
+        document.getElementById('add-doc-btn').addEventListener('click', () => {
+            const formHtml = `
+                <div class="form-group"><label>Tiêu đề</label><input id="d-title"></div>
+                <div class="form-group"><label>Chuyên khoa</label>
+                    <select id="d-cat"><option value="Nội">Nội</option><option value="Ngoại">Ngoại</option><option value="Sản">Sản</option><option value="Nhi">Nhi</option></select>
+                </div>
+                <div class="form-group"><label>Link</label><input id="d-link"></div>
+                <div class="form-group"><label>Mô tả</label><textarea id="d-desc"></textarea></div>
+            `;
+            openModal('Thêm tài liệu', formHtml, async () => {
+                const title = document.getElementById('d-title').value;
+                const category = document.getElementById('d-cat').value;
+                const link = document.getElementById('d-link').value;
+                const desc = document.getElementById('d-desc').value;
+                if(!title) return;
+                try {
+                    await addDoc(collection(db, 'docs'), { title, category, link, desc, createdAt: new Date() });
+                    showToast('Đã thêm');
+                    loadDocs();
+                } catch(e) { showToast('Lỗi (Quyền Admin?)', 'error'); }
+            });
+        });
+
+        // Search Listeners
+        document.getElementById('docs-search').addEventListener('input', debounce((e) => loadDocs(e.target.value, document.getElementById('docs-filter').value)));
+        document.getElementById('docs-filter').addEventListener('change', (e) => loadDocs(document.getElementById('docs-search').value, e.target.value));
+
+        /* --- DRUGS SYSTEM --- */
+        async function searchDrugs(term) {
+            const resEl = document.getElementById('drugs-result');
+            if(!term) return;
+            resEl.innerHTML = 'Đang tìm...';
+            
+            try {
+                // Simplified client-side filter
+                const snapshot = await getDocs(query(collection(db, 'drugs'), limit(50)));
+                const res = [];
+                snapshot.forEach(d => {
+                    const data = d.data();
+                    if(data.name.toLowerCase().includes(term.toLowerCase()) || data.activeIngredient?.toLowerCase().includes(term.toLowerCase()))
+                        res.push(data);
+                });
+                
+                resEl.innerHTML = '';
+                if(res.length === 0) resEl.innerHTML = 'Không tìm thấy thuốc.';
+                
+                res.forEach(d => {
+                    const div = document.createElement('div');
+                    div.className = 'drug-item';
+                    div.innerHTML = `<h4>${d.name} <small>(${d.activeIngredient})</small></h4>
+                        <div class="drug-detail"><strong>Liều:</strong> ${d.dosage}</div>
+                        <div class="drug-detail"><strong>Chống chỉ định:</strong> ${d.contra}</div>`;
+                    resEl.appendChild(div);
+                });
+            } catch(e) { resEl.innerHTML = 'Lỗi kết nối.'; }
+        }
+
+        document.getElementById('drugs-search').addEventListener('input', debounce(e => searchDrugs(e.target.value)));
+        document.getElementById('add-drug-btn').addEventListener('click', () => {
+            const html = `<div class="form-group"><label>Tên</label><input id="dr-name"></div>
+                          <div class="form-group"><label>Hoạt chất</label><input id="dr-active"></div>
+                          <div class="form-group"><label>Liều</label><input id="dr-dose"></div>
+                          <div class="form-group"><label>CCĐ</label><input id="dr-contra"></div>`;
+            openModal('Thêm thuốc', html, async () => {
+                try {
+                    await addDoc(collection(db, 'drugs'), {
+                        name: document.getElementById('dr-name').value,
+                        activeIngredient: document.getElementById('dr-active').value,
+                        dosage: document.getElementById('dr-dose').value,
+                        contra: document.getElementById('dr-contra').value
+                    });
+                    showToast('Đã thêm');
+                } catch(e) { showToast('Lỗi', 'error'); }
+            });
+        });
+
+        /* --- NOTES SYSTEM --- */
+        const noteArea = document.getElementById('personal-note');
+        const saveStatus = document.getElementById('save-status');
+        
+        async function loadNote() {
+            if(!currentUser) {
+                noteArea.value = '';
+                noteArea.disabled = true;
+                noteArea.placeholder = "Đăng nhập để sử dụng ghi chú.";
+                return;
+            }
+            noteArea.disabled = false;
+            noteArea.placeholder = "Ghi chú của bạn...";
+            try {
+                const snap = await getDoc(doc(db, 'users', currentUser.uid, 'notes', 'personal'));
+                if(snap.exists()) noteArea.value = snap.data().content || '';
+            } catch(e) {}
+        }
+
+        const saveNote = debounce(async (val) => {
+            if(!currentUser) return;
+            saveStatus.innerText = 'Đang lưu...';
+            try {
+                await setDoc(doc(db, 'users', currentUser.uid, 'notes', 'personal'), { content: val }, { merge: true });
+                saveStatus.innerText = 'Đã lưu';
+            } catch(e) { saveStatus.innerText = 'Lỗi lưu'; }
+        }, 1000);
+
+        noteArea.addEventListener('input', e => {
+            saveStatus.innerText = 'Chưa lưu...';
+            saveNote(e.target.value);
+        });
+
+        document.getElementById('export-note-btn').addEventListener('click', () => {
+            const blob = new Blob([noteArea.value], {type: "text/plain"});
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = "MinhducKale_Note.txt";
+            a.click();
+        });
+
+        /* --- CHAT SYSTEM --- */
+        const chatMsg = document.getElementById('chat-messages');
+        function initChat() {
+            const q = query(collection(db, 'chat'), orderBy('timestamp', 'asc'), limit(50));
+            onSnapshot(q, (snap) => {
+                chatMsg.innerHTML = '';
                 snap.forEach(d => {
                     const data = d.data();
-                    const isMe = currentUser && data.uid === currentUser.uid;
+                    const isMine = currentUser && data.uid === currentUser.uid;
                     const div = document.createElement('div');
-                    div.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'}`;
-                    div.innerHTML = `<div class="max-w-[80%] px-4 py-2 rounded-2xl text-sm mb-1 shadow-sm ${isMe ? 'bg-blue-500 text-white rounded-br-none' : 'bg-gray-200 dark:bg-gray-700 dark:text-white rounded-bl-none'}">${data.text}</div><span class="text-[10px] opacity-40 mx-1">${data.name}</span>`;
-                    box.appendChild(div);
+                    div.className = `message ${isMine ? 'mine' : 'theirs'}`;
+                    div.innerHTML = `<span class="msg-meta">${data.displayName}</span>${data.text.replace(/</g, "&lt;")}`;
+                    chatMsg.appendChild(div);
                 });
-                box.scrollTop = box.scrollHeight;
-            }, () => {});
+                chatMsg.scrollTop = chatMsg.scrollHeight;
+            });
         }
-        document.getElementById('chatForm').onsubmit = async (e) => {
-            e.preventDefault();
-            const input = document.getElementById('chatInput');
-            const txt = input.value.trim();
-            if(!txt || !currentUser || currentUser.isAnonymous) return;
-            input.value = '';
-            await addDoc(collection(db, "chat"), { text: txt, uid: currentUser.uid, name: currentUser.displayName, timestamp: serverTimestamp() });
-        };
-
-        // ===== NOTES.JS =====
-        const noteArea = document.getElementById('personalNote');
-        let noteTimer;
-        function loadNote() {
-            if(!currentUser) return;
-            getDoc(doc(db, "users", currentUser.uid, "notes", "personal")).then(s => { if(s.exists()) noteArea.value = s.data().content || ''; }).catch(()=>{});
-        }
-        noteArea.oninput = () => {
-            document.getElementById('noteStatus').innerText = "Đang lưu...";
-            clearTimeout(noteTimer);
-            noteTimer = setTimeout(async () => {
-                if(currentUser) {
-                    await setDoc(doc(db, "users", currentUser.uid, "notes", "personal"), {content: noteArea.value}, {merge:true}).catch(()=>{});
-                    document.getElementById('noteStatus').innerText = "Đã lưu";
-                }
-            }, 1000);
-        };
-        window.downloadNote = () => {
-            const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([noteArea.value], {type:'text/plain'}));
-            a.download = 'Ghi_chu_Y_Khoa.txt'; a.click();
-        }
-
-        // ===== TOOLS.JS (Safe Eval & Timer) =====
-        let calcStr = "";
-        window.calcInput = (v) => {
-            if(v==='C') calcStr=""; else if(v==='DEL') calcStr=calcStr.slice(0,-1);
-            else if(v==='=') {
-                try {
-                    // SAFE EVAL: Only allow numbers and operators
-                    if(/[^0-9+\-*/.]/.test(calcStr)) throw new Error("Invalid Input");
-                    calcStr = new Function('return ' + calcStr)().toString();
-                } catch { calcStr="Error"; }
-            } else calcStr+=v;
-            document.getElementById('calcDisplay').innerText = calcStr || "0";
-        };
         
-        window.calcBMI = () => {
-            const h = parseFloat(document.getElementById('bmiHeight').value)/100;
-            const w = parseFloat(document.getElementById('bmiWeight').value);
-            if(!h||!w) return;
-            const bmi = (w/(h*h)).toFixed(1);
-            document.getElementById('bmiResult').classList.remove('hidden');
-            document.getElementById('bmiValue').innerText = bmi;
-            document.getElementById('bmiText').innerText = bmi<18.5?"Thiếu cân":bmi<23?"Bình thường":"Thừa cân";
-        };
+        document.getElementById('chat-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('chat-input');
+            const txt = input.value.trim();
+            if(!txt || !currentUser) return;
+            try {
+                await addDoc(collection(db, 'chat'), {
+                    text: txt, uid: currentUser.uid, displayName: currentUser.displayName, timestamp: serverTimestamp()
+                });
+                input.value = '';
+            } catch(e) { showToast('Lỗi gửi', 'error'); }
+        });
 
-        let timerInt; let timeSec=0;
-        window.setTimer = (m) => { timeSec+=m*60; updateTimer(); };
-        window.startTimer = () => {
-            clearInterval(timerInt);
-            timerInt = setInterval(() => { if(timeSec>0) { timeSec--; updateTimer(); } else { clearInterval(timerInt); alert("Hết giờ!"); } }, 1000);
-        };
-        window.resetTimer = () => { clearInterval(timerInt); timeSec=0; updateTimer(); };
-        function updateTimer() {
-            const m = Math.floor(timeSec/60).toString().padStart(2,'0');
-            const s = (timeSec%60).toString().padStart(2,'0');
-            document.getElementById('timerDisplay').innerText = `${m}:${s}`;
-        }
+        /* --- TOOLS --- */
+        // BMI
+        document.getElementById('calc-bmi-btn').addEventListener('click', () => {
+            const w = parseFloat(document.getElementById('bmi-weight').value);
+            const h = parseFloat(document.getElementById('bmi-height').value) / 100;
+            if(w && h) {
+                const bmi = (w/(h*h)).toFixed(1);
+                document.getElementById('bmi-result').innerText = `BMI: ${bmi}`;
+            }
+        });
+
+        // Calc
+        document.getElementById('calc-exec-btn').addEventListener('click', () => {
+            try {
+                const val = document.getElementById('calc-input').value;
+                if(/[^0-9+\-*/().\s]/.test(val)) throw new Error();
+                const res = new Function('return ' + val)();
+                document.getElementById('calc-result').innerText = res;
+            } catch(e) { document.getElementById('calc-result').innerText = 'Lỗi'; }
+        });
+
+        // Timer
+        let timerInt;
+        let timeLeft = 1500;
+        let running = false;
+        document.getElementById('timer-start').addEventListener('click', () => {
+            if(running) { clearInterval(timerInt); running = false; return; }
+            running = true;
+            timerInt = setInterval(() => {
+                timeLeft--;
+                const m = Math.floor(timeLeft/60);
+                const s = timeLeft%60;
+                document.getElementById('timer-display').innerText = `${m}:${s<10?'0'+s:s}`;
+                if(timeLeft<=0) clearInterval(timerInt);
+            }, 1000);
+        });
+        document.getElementById('timer-reset').addEventListener('click', () => {
+            clearInterval(timerInt); running = false; timeLeft = 1500;
+            document.getElementById('timer-display').innerText = "25:00";
+        });
+
+        // Init
+        loadDocs();
+        initChat();
+
     </script>
 </body>
 </html>
