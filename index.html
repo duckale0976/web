@@ -3,386 +3,976 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinhducKale v10 - Christmas Edition</title>
+    <title>MinhducKale v11 - Christmas Edition</title>
     
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    animation: {
+                        'blob': 'blob 10s infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    }
+                }
+            }
+        }
+    </script>
     
+    <!-- Fonts & Icons -->
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-    
     <style>
-        /* CORE STYLES (Retained v9/v8) */
-        body { transition: background-color 0.5s, color 0.5s; background-color: #f7f7f7; color: #1e293b; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
-        .dark body { background-color: #0f172a; color: #f1f5f9; }
-        .bg-blob { position: fixed; border-radius: 50%; filter: blur(100px); opacity: 0.8; z-index: -1; animation: blob 20s infinite alternate; pointer-events: none; }
-        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #ef4444; } 
-        .blob-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #10b981; animation-delay: 5s; } 
-        .blob-3 { top: 40%; left: 40%; width: 400px; height: 400px; background: #60a5fa; animation-delay: 10s; } 
-        .glass-panel { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(30px); border: 1px solid rgba(255, 255, 255, 0.7); position: relative; }
-        .dark .glass-panel { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); transition: all 0.3s ease; }
-        .dark .glass-card { background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .admin-glow { box-shadow: 0 0 10px rgba(239, 68, 68, 0.7); animation: pulse-red 1.5s infinite; }
-        @keyframes pulse-red { 0%, 100% {box-shadow: 0 0 0 0px rgba(239, 68, 68, 0.7);} 50% {box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.0);} }
-        #snow-container { pointer-events: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; }
-        .snowflake { position: absolute; top: -10px; color: #ffffff; opacity: 0.8; font-size: 12px; }
-        .msg-bubble-me { background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%); color: white; border-radius: 18px 18px 0 18px; }
-        .msg-bubble-other { background: #e2e8f0; color: #1e293b; border-radius: 18px 18px 18px 0; }
-        .dark .msg-bubble-other { background: #334155; color: white; }
-        .draggable-window { position: fixed; z-index: 100; box-shadow: 0 20px 50px rgba(0,0,0,0.3); }
-        .window-header { cursor: move; user-select: none; }
-        .ios-input { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(203, 213, 225, 0.8); color: #0f172a; font-weight: 600; }
-        .dark .ios-input { background: rgba(0, 0, 0, 0.5); color: white; }
+        /* --- CORE AESTHETICS --- */
+        body { 
+            transition: background-color 0.5s, color 0.5s; 
+            background-color: #f1f5f9; 
+            color: #1e293b; 
+            font-family: 'Plus Jakarta Sans', sans-serif; 
+            overflow: hidden; /* App-like feel */
+        }
+        .dark body { background-color: #0f172a; color: #f8fafc; }
+
+        /* Background Blobs */
+        .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.6; z-index: -1; animation: blob 20s infinite alternate; }
+        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #ef4444; } /* Red */
+        .blob-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #10b981; animation-delay: 5s; } /* Green */
+        .dark .blob-1 { opacity: 0.3; }
+        .dark .blob-2 { opacity: 0.3; }
+
+        @keyframes blob {
+            0% { transform: translate(0px, 0px) scale(1); }
+            33% { transform: translate(30px, -50px) scale(1.1); }
+            66% { transform: translate(-20px, 20px) scale(0.9); }
+            100% { transform: translate(0px, 0px) scale(1); }
+        }
+
+        /* Glassmorphism */
+        .glass-panel { 
+            background: rgba(255, 255, 255, 0.65); 
+            backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5); 
+        }
+        .dark .glass-panel { 
+            background: rgba(15, 23, 42, 0.6); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+        }
+
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.4); 
+            backdrop-filter: blur(12px); 
+            border: 1px solid rgba(255, 255, 255, 0.3); 
+            transition: all 0.2s ease;
+        }
+        .dark .glass-card { 
+            background: rgba(30, 41, 59, 0.4); 
+            border: 1px solid rgba(255, 255, 255, 0.05); 
+        }
+        .glass-card:hover { transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(156, 163, 175, 0.5); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(156, 163, 175, 0.8); }
+
+        /* Snow */
+        .snowflake { position: fixed; top: -10px; color: #fff; user-select: none; z-index: 9999; pointer-events: none; animation-name: fall; animation-timing-function: linear; animation-iteration-count: infinite; }
+        @keyframes fall { to { transform: translateY(100vh); } }
+
+        /* Inputs */
+        .ios-input { background: rgba(255,255,255,0.5); border: none; outline: none; transition: 0.2s; }
+        .dark .ios-input { background: rgba(0,0,0,0.2); color: white; }
+        .ios-input:focus { background: rgba(255,255,255,0.8); box-shadow: 0 0 0 2px #3b82f6; }
+        .dark .ios-input:focus { background: rgba(0,0,0,0.4); }
+
+        /* Animations */
+        .fade-in { animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .segment-btn.active { @apply bg-white text-slate-900 shadow-sm dark:bg-slate-700 dark:text-white; }
+        .admin-glow { animation: pulse-red 2s infinite; }
+        @keyframes pulse-red { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+
+        /* Music Disc Animation */
+        .spinning { animation: spin 4s linear infinite; }
+        @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body onload="startSnow()">
+<body class="h-screen w-screen flex flex-col">
 
+    <!-- Background Elements -->
     <div class="bg-blob blob-1"></div>
     <div class="bg-blob blob-2"></div>
-    <div class="bg-blob blob-3"></div>
-    
     <div id="snow-container"></div>
 
-    <div id="loginOverlay" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center">
-        <div class="glass-card p-8 rounded-3xl w-[90%] max-w-sm text-center">
-            <div class="w-16 h-16 bg-red-600 rounded-2xl mx-auto flex items-center justify-center text-white text-3xl mb-4 shadow-lg shadow-red-500/50">
+    <!-- Login Overlay -->
+    <div id="loginOverlay" class="fixed inset-0 z-[60] bg-slate-900/90 backdrop-blur-xl flex items-center justify-center transition-opacity duration-500">
+        <div class="glass-card p-8 rounded-3xl w-[90%] max-w-sm text-center border-t border-white/20 shadow-2xl">
+            <div class="w-20 h-20 bg-gradient-to-br from-red-500 to-pink-600 rounded-2xl mx-auto flex items-center justify-center text-white text-4xl mb-6 shadow-lg shadow-red-500/30">
                 <i class="fa-solid fa-tree"></i>
             </div>
-            <h2 class="text-2xl font-extrabold mb-4 dark:text-white" id="loginStatusText">Đang kiểm tra trạng thái...</h2>
-            <button onclick="login()" id="loginButton" class="hidden w-full py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold flex items-center justify-center gap-2 shadow-lg transition">
-                <i class="fa-solid fa-cloud-arrow-up"></i> Đăng nhập bằng Google
+            <h2 class="text-3xl font-extrabold mb-2 text-white">Minhduc<span class="text-red-500">Kale</span></h2>
+            <p class="text-slate-400 mb-8 text-sm">Christmas Edition v11.0</p>
+            
+            <button id="btnLogin" class="w-full py-3.5 rounded-xl bg-white text-slate-900 font-bold flex items-center justify-center gap-2 shadow-lg hover:scale-[1.02] active:scale-95 transition mb-3">
+                <i class="fa-brands fa-google text-red-500 text-lg"></i> Đăng nhập Google
             </button>
-            <button onclick="enterGuestMode()" id="guestButton" class="hidden w-full py-3 mt-3 rounded-xl bg-slate-300 dark:bg-slate-700 text-slate-800 dark:text-slate-300 font-bold hover:bg-slate-400 transition">
-                Duyệt với chế độ Khách (Chỉ xem)
+            <button id="btnGuest" class="w-full py-3.5 rounded-xl bg-slate-800/50 text-slate-300 font-bold hover:bg-slate-800 transition border border-white/5">
+                Chế độ Khách (Xem)
             </button>
         </div>
     </div>
 
-    <div class="container mx-auto px-4 py-4 max-w-7xl h-screen flex flex-col transition duration-500" id="mainApp" style="filter: blur(3px);">
+    <!-- Main App Container -->
+    <div id="mainApp" class="flex-1 flex flex-col p-2 md:p-4 md:max-w-7xl md:mx-auto w-full h-full overflow-hidden transition duration-500 filter blur-sm">
         
-        <header class="glass-panel rounded-3xl px-4 py-3 mb-4 flex flex-col lg:flex-row justify-between items-center z-20 gap-3">
-            <div class="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-start">
+        <!-- Header -->
+        <header class="glass-panel rounded-2xl p-2 md:p-3 mb-3 flex flex-col md:flex-row justify-between items-center z-20 gap-3 shrink-0">
+            <div class="flex items-center justify-between w-full md:w-auto gap-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-red-600 to-green-600 flex items-center justify-center text-white shadow-lg">
-                        <i class="fa-solid fa-tree text-xl"></i>
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-green-500 to-emerald-700 flex items-center justify-center text-white shadow-lg shadow-green-500/30">
+                        <i class="fa-solid fa-snowflake fa-spin" style="animation-duration: 5s;"></i>
                     </div>
                     <div>
-                        <h1 class="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">Minhduc<span class="text-red-600">Kale</span></h1>
-                        <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase">v10.0 Christmas Edition</p>
+                        <h1 class="text-lg font-bold leading-tight">Minhduc<span class="text-red-500">Kale</span></h1>
+                        <p class="text-[10px] opacity-60 font-mono tracking-wide">DECEMBER 2025</p>
                     </div>
                 </div>
-                <div class="flex items-center gap-2">
-                    <button onclick="toggleAdminMode()" id="adminToggleBtn" class="w-9 h-9 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white transition flex items-center justify-center text-slate-700 dark:text-slate-200" title="Admin Mode"><i class="fa-solid fa-lock"></i></button>
-                    <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white transition text-yellow-600 dark:text-yellow-400"><i id="darkIcon" class="fa-solid fa-moon"></i></button>
-                    <div class="relative">
-                        <button onclick="toggleNotif()" class="w-9 h-9 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white transition flex items-center justify-center"><i class="fa-solid fa-bell text-slate-700 dark:text-slate-200"></i><span id="notifDot" class="absolute top-1 right-1 w-2 h-2 bg-red-500 rounded-full"></span></button>
-                        <div id="notifPanel" class="hidden absolute right-0 top-12 w-80 glass-card p-4 rounded-2xl z-50 shadow-2xl">
-                            <h4 class="font-bold mb-2 dark:text-white">Lịch sử hoạt động (Admin)</h4>
-                            <div id="notifList" class="space-y-2 max-h-60 overflow-y-auto text-sm"></div>
-                        </div>
-                    </div>
+
+                <div class="flex md:hidden gap-2">
+                    <button id="btnMobileMenu" class="w-9 h-9 rounded-lg bg-black/5 dark:bg-white/10 flex items-center justify-center"><i class="fa-solid fa-bars"></i></button>
                 </div>
-            </div>
-            
-            <div class="segmented-control w-full lg:w-auto justify-start lg:justify-center overflow-x-auto scrollbar-hide">
-                <div class="segment-btn active" onclick="switchTab(event, 'home')"><i class="fa-solid fa-house mr-1"></i>Home</div>
-                <div class="segment-btn" onclick="switchTab(event, 'docs')"><i class="fa-solid fa-folder-open mr-1"></i>Tài liệu</div>
-                <div class="segment-btn" onclick="switchTab(event, 'drugs')"><i class="fa-solid fa-pills mr-1"></i>Thuốc</div>
-                <div class="segment-btn" onclick="switchTab(event, 'notes')"><i class="fa-solid fa-note-sticky mr-1"></i>Note</div>
-                <div class="segment-btn" onclick="switchTab(event, 'chat')"><i class="fa-solid fa-comments mr-1"></i>Chat</div>
-                <div class="segment-btn" onclick="switchTab(event, 'tools')"><i class="fa-solid fa-screwdriver-wrench mr-1"></i>Tools</div>
             </div>
 
-            <div class="hidden lg:flex items-center gap-3">
-                <div class="w-9 h-9 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white transition flex items-center justify-center text-slate-700 dark:text-slate-200" title="User"><i class="fa-solid fa-user"></i></div>
-                <div class="flex items-center gap-2 cursor-pointer hover:bg-white/40 p-1 rounded-lg transition" onclick="logout()" id="userControlsDesktop" style="display: none;">
-                    <img id="userAvatar" src="" class="w-8 h-8 rounded-full border border-red-500">
-                    <span id="userName" class="text-xs font-bold text-slate-800 dark:text-white">...</span>
-                    <i class="fa-solid fa-right-from-bracket text-xs text-red-500 ml-1" title="Đăng xuất"></i>
+            <!-- Navigation Tabs -->
+            <div class="flex overflow-x-auto gap-1 p-1 bg-black/5 dark:bg-white/5 rounded-xl w-full md:w-auto scrollbar-hide" id="navTabs">
+                <button class="segment-btn active px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition" data-tab="home"><i class="fa-solid fa-house mr-1.5"></i>Home</button>
+                <button class="segment-btn px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition" data-tab="docs"><i class="fa-solid fa-folder-open mr-1.5"></i>Tài liệu</button>
+                <button class="segment-btn px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition" data-tab="drugs"><i class="fa-solid fa-pills mr-1.5"></i>Thuốc</button>
+                <button class="segment-btn px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition" data-tab="notes"><i class="fa-solid fa-note-sticky mr-1.5"></i>Ghi chú</button>
+                <button class="segment-btn px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition" data-tab="chat"><i class="fa-solid fa-comments mr-1.5"></i>Chat</button>
+                <button class="segment-btn px-4 py-2 rounded-lg text-xs font-bold whitespace-nowrap transition" data-tab="tools"><i class="fa-solid fa-screwdriver-wrench mr-1.5"></i>Tools</button>
+            </div>
+
+            <!-- User Controls -->
+            <div class="hidden md:flex items-center gap-2">
+                <button id="btnAdmin" class="w-9 h-9 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center transition" title="Admin Mode"><i class="fa-solid fa-lock text-xs"></i></button>
+                <button id="btnTheme" class="w-9 h-9 rounded-lg hover:bg-black/5 dark:hover:bg-white/10 flex items-center justify-center transition text-yellow-500"><i class="fa-solid fa-moon text-xs"></i></button>
+                <div class="h-6 w-[1px] bg-black/10 dark:bg-white/10 mx-1"></div>
+                <div class="flex items-center gap-2 px-2 py-1 rounded-lg hover:bg-black/5 dark:hover:bg-white/5 cursor-pointer" id="userProfile">
+                    <img id="userAvatar" src="" class="w-7 h-7 rounded-full bg-slate-200">
+                    <div class="text-xs">
+                        <div id="userName" class="font-bold truncate max-w-[80px]">Guest</div>
+                    </div>
                 </div>
             </div>
         </header>
 
-        <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-hidden pb-2">
+        <!-- Main Content Area -->
+        <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-4 overflow-hidden relative">
             
-            <div class="lg:col-span-8 flex flex-col h-full overflow-hidden relative glass-panel rounded-3xl p-1 border-0 bg-transparent shadow-none">
+            <!-- Left Panel (Content) -->
+            <div class="lg:col-span-8 h-full flex flex-col overflow-hidden glass-panel rounded-2xl relative">
                 
-                <div id="view-home" class="flex flex-col gap-4 h-full p-4 transition-opacity duration-300">
-                    <h2 class="text-xl font-bold dark:text-white mb-2">Mục Lớn</h2>
-                    <div class="grid grid-cols-2 gap-4">
-                        <div onclick="window.open(baseDriveLink, '_blank')" class="glass-card p-5 rounded-xl text-center cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/50 transition border-l-4 border-red-600"><i class="fa-solid fa-heart-pulse text-4xl text-red-600 mb-2"></i><h3 class="font-bold">Nội Khoa</h3><p class="text-xs text-slate-500">Xem trực tiếp Drive</p></div>
-                        <div onclick="window.open(baseDriveLink, '_blank')" class="glass-card p-5 rounded-xl text-center cursor-pointer hover:bg-green-50 dark:hover:bg-green-900/50 transition border-l-4 border-green-600"><i class="fa-solid fa-user-injured text-4xl text-green-600 mb-2"></i><h3 class="font-bold">Ngoại Khoa</h3><p class="text-xs text-slate-500">Xem trực tiếp Drive</p></div>
-                         <div onclick="window.open(baseDriveLink, '_blank')" class="glass-card p-5 rounded-xl text-center cursor-pointer hover:bg-pink-50 dark:hover:bg-pink-900/50 transition border-l-4 border-pink-600"><i class="fa-solid fa-person-pregnant text-4xl text-pink-600 mb-2"></i><h3 class="font-bold">Sản Khoa</h3><p class="text-xs text-slate-500">Xem trực tiếp Drive</p></div>
-                        <div onclick="window.open(baseDriveLink, '_blank')" class="glass-card p-5 rounded-xl text-center cursor-pointer hover:bg-orange-50 dark:hover:bg-orange-900/50 transition border-l-4 border-orange-600"><i class="fa-solid fa-baby text-4xl text-orange-600 mb-2"></i><h3 class="font-bold">Nhi Khoa</h3><p class="text-xs text-slate-500">Xem trực tiếp Drive</p></div>
-                    </div>
-                </div>
-
-                <div id="view-docs" class="hidden flex-col gap-4 h-full p-2 transition-opacity duration-300">
-                    <div class="flex gap-2 relative z-10">
-                        <div class="relative flex-1">
-                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-500"></i>
-                            <input id="searchInput" type="text" onkeyup="renderFolders()" class="w-full pl-10 pr-4 py-3 rounded-xl ios-input text-base placeholder-slate-500 shadow-sm" placeholder="Tìm trên mây...">
+                <!-- VIEW: HOME -->
+                <div id="view-home" class="view-section flex-1 overflow-y-auto p-5 fade-in">
+                    <h2 class="text-2xl font-bold mb-4">Mục lục chính</h2>
+                    <div class="grid grid-cols-2 gap-4 mb-6">
+                        <div onclick="window.open(baseDriveLink, '_blank')" class="glass-card p-6 rounded-2xl cursor-pointer hover:bg-red-500/10 transition group border-l-4 border-red-500">
+                            <i class="fa-solid fa-heart-pulse text-4xl text-red-500 mb-3 group-hover:scale-110 transition duration-300"></i>
+                            <h3 class="font-bold text-lg">Nội Khoa</h3>
+                            <p class="text-xs opacity-60">Tài liệu lâm sàng</p>
                         </div>
-                        <button onclick="toggleStarFilter()" id="btnStar" class="w-12 rounded-xl bg-white/60 dark:bg-slate-700 hover:text-yellow-500 text-slate-400 transition"><i class="fa-solid fa-star text-lg"></i></button>
-                        <button onclick="openAddDocModal('add')" class="w-12 rounded-xl bg-slate-900 dark:bg-blue-600 text-white shadow-lg transition"><i class="fa-solid fa-plus text-lg"></i></button>
+                        <div onclick="window.open(baseDriveLink, '_blank')" class="glass-card p-6 rounded-2xl cursor-pointer hover:bg-blue-500/10 transition group border-l-4 border-blue-500">
+                            <i class="fa-solid fa-user-injured text-4xl text-blue-500 mb-3 group-hover:scale-110 transition duration-300"></i>
+                            <h3 class="font-bold text-lg">Ngoại Khoa</h3>
+                            <p class="text-xs opacity-60">Phẫu thuật & Thủ thuật</p>
+                        </div>
+                        <div onclick="window.open(baseDriveLink, '_blank')" class="glass-card p-6 rounded-2xl cursor-pointer hover:bg-pink-500/10 transition group border-l-4 border-pink-500">
+                            <i class="fa-solid fa-person-pregnant text-4xl text-pink-500 mb-3 group-hover:scale-110 transition duration-300"></i>
+                            <h3 class="font-bold text-lg">Sản Khoa</h3>
+                            <p class="text-xs opacity-60">Thai sản & Phụ khoa</p>
+                        </div>
+                        <div onclick="window.open(baseDriveLink, '_blank')" class="glass-card p-6 rounded-2xl cursor-pointer hover:bg-orange-500/10 transition group border-l-4 border-orange-500">
+                            <i class="fa-solid fa-baby text-4xl text-orange-500 mb-3 group-hover:scale-110 transition duration-300"></i>
+                            <h3 class="font-bold text-lg">Nhi Khoa</h3>
+                            <p class="text-xs opacity-60">Bệnh lý trẻ em</p>
+                        </div>
                     </div>
-                    <div id="breadcrumb" class="hidden flex items-center gap-2 text-xs font-bold text-slate-600 dark:text-slate-300 px-2"><button onclick="renderFolders()">Home</button> / <span id="curFolder" class="text-blue-600">Folder</span></div>
                     
-                    <div id="loadingDocs" class="flex justify-center py-10"><i class="fa-solid fa-circle-notch fa-spin text-3xl text-blue-500"></i></div>
-                    <div id="docsList" class="flex-1 overflow-y-auto pr-2 grid grid-cols-1 md:grid-cols-2 gap-3 content-start pb-20"></div>
-                </div>
-
-                <div id="view-drugs" class="hidden flex-col gap-4 h-full p-2 fade-in">
-                    <div class="relative">
-                        <i class="fa-solid fa-capsules absolute left-4 top-3.5 text-slate-500"></i>
-                        <input id="drugSearch" type="text" onkeyup="filterDrugs()" class="w-full pl-10 pr-4 py-3 rounded-xl ios-input" placeholder="Tra cứu thuốc...">
-                    </div>
-                    <div id="drugList" class="flex-1 overflow-y-auto pr-2 space-y-3 pb-20">
-                        <div class="glass-card p-4 rounded-2xl"><h4 class="font-bold text-blue-700">Paracetamol</h4><p class="text-sm italic text-slate-600 mt-1">Ức chế Prostaglandin ở TKTW.</p><div class="mt-2 grid grid-cols-2 gap-2 text-xs"><div class="bg-blue-50 p-2 rounded"><strong>NL:</strong> 500-1000mg / 4-6h.</div><div class="bg-green-50 p-2 rounded"><strong>TE:</strong> 10-15 mg/kg.</div></div></div>
-                        <div class="glass-card p-4 rounded-2xl"><h4 class="font-bold text-blue-700">Amoxicillin</h4><p class="text-sm italic text-slate-600 mt-1">Ức chế tổng hợp vách tế bào.</p><div class="mt-2 grid grid-cols-2 gap-2 text-xs"><div class="bg-blue-50 p-2 rounded"><strong>NL:</strong> 500mg / 8h.</div><div class="bg-green-50 p-2 rounded"><strong>TE:</strong> 20-50 mg/kg/ngày.</div></div></div>
+                    <div class="glass-card p-4 rounded-xl flex items-center justify-between">
+                        <div>
+                            <h4 class="font-bold">Hệ thống Drive</h4>
+                            <p class="text-xs opacity-60">Truy cập toàn bộ kho tài liệu gốc</p>
+                        </div>
+                        <button onclick="window.open(baseDriveLink, '_blank')" class="bg-slate-900 dark:bg-white text-white dark:text-slate-900 px-4 py-2 rounded-lg text-sm font-bold">Truy cập</button>
                     </div>
                 </div>
 
-                <div id="view-notes" class="hidden flex-col h-full p-2 fade-in gap-3">
-                    <div class="flex justify-between items-center px-1">
-                        <h3 class="font-bold text-slate-800 dark:text-white flex items-center"><i class="fa-solid fa-cloud-arrow-up mr-2 text-green-500"></i>Cloud Notes</h3>
-                        <div class="flex gap-2 items-center">
-                            <span id="saveStatus" class="text-[10px] text-slate-400 italic">...</span>
-                            <button onclick="downloadNote()" class="text-xs font-bold bg-green-100 text-green-700 px-3 py-1 rounded-lg">Xuất file</button>
+                <!-- VIEW: DOCS -->
+                <div id="view-docs" class="view-section hidden flex-col h-full p-4 fade-in">
+                    <div class="flex gap-2 mb-4">
+                        <div class="relative flex-1">
+                            <i class="fa-solid fa-search absolute left-3 top-3 text-slate-400"></i>
+                            <input type="text" id="docSearch" class="w-full pl-9 pr-4 py-2.5 rounded-xl ios-input text-sm" placeholder="Tìm kiếm tài liệu...">
+                        </div>
+                        <button id="btnFilterStar" class="w-10 h-10 rounded-xl bg-white/50 hover:bg-white flex items-center justify-center transition text-slate-400"><i class="fa-solid fa-star"></i></button>
+                        <button id="btnAddDoc" class="hidden w-10 h-10 rounded-xl bg-blue-600 text-white hover:bg-blue-700 flex items-center justify-center transition shadow-lg shadow-blue-500/30"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+
+                    <div id="folderBreadcrumb" class="hidden flex items-center gap-2 text-sm font-bold mb-2 text-slate-500">
+                        <span class="cursor-pointer hover:text-blue-500" onclick="renderFolders()">Folders</span> 
+                        <i class="fa-solid fa-chevron-right text-xs"></i> 
+                        <span id="currentFolderName" class="text-blue-600">...</span>
+                    </div>
+
+                    <div id="docListContent" class="flex-1 overflow-y-auto grid grid-cols-1 sm:grid-cols-2 gap-3 content-start pb-10 pr-1 custom-scroll">
+                        <!-- Dynamic Content -->
+                    </div>
+                </div>
+
+                <!-- VIEW: DRUGS -->
+                <div id="view-drugs" class="view-section hidden flex-col h-full p-4 fade-in">
+                    <div class="relative mb-4">
+                        <i class="fa-solid fa-pills absolute left-3 top-3 text-slate-400"></i>
+                        <input type="text" id="drugSearchInput" class="w-full pl-9 pr-4 py-2.5 rounded-xl ios-input text-sm" placeholder="Tra cứu thuốc (Tên, hoạt chất)...">
+                    </div>
+                    <div id="drugList" class="flex-1 overflow-y-auto space-y-3 pr-1 pb-10">
+                        <!-- Static Data for Demo -->
+                        <div class="glass-card p-4 rounded-xl border-l-4 border-blue-500">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-lg text-blue-600">Paracetamol</h4>
+                                <span class="text-[10px] bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full font-bold">Giảm đau</span>
+                            </div>
+                            <p class="text-sm italic opacity-70 mt-1">Hạ sốt, giảm đau nhẹ đến vừa.</p>
+                            <div class="mt-2 grid grid-cols-2 gap-2 text-xs">
+                                <div class="bg-black/5 dark:bg-white/5 p-2 rounded"><strong>Người lớn:</strong> 500-1000mg / 4-6h</div>
+                                <div class="bg-black/5 dark:bg-white/5 p-2 rounded"><strong>Trẻ em:</strong> 10-15 mg/kg / 4-6h</div>
+                            </div>
+                        </div>
+                         <div class="glass-card p-4 rounded-xl border-l-4 border-green-500">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-lg text-green-600">Amoxicillin</h4>
+                                <span class="text-[10px] bg-green-100 text-green-700 px-2 py-0.5 rounded-full font-bold">Kháng sinh</span>
+                            </div>
+                            <p class="text-sm italic opacity-70 mt-1">Nhiễm khuẩn hô hấp, tai mũi họng.</p>
+                            <div class="mt-2 grid grid-cols-2 gap-2 text-xs">
+                                <div class="bg-black/5 dark:bg-white/5 p-2 rounded"><strong>Liều dùng:</strong> 500mg / 8h (NL)</div>
+                                <div class="bg-black/5 dark:bg-white/5 p-2 rounded"><strong>Lưu ý:</strong> Uống sau ăn</div>
+                            </div>
                         </div>
                     </div>
-                    <textarea id="noteArea" class="flex-1 w-full p-4 rounded-2xl ios-input resize-none text-sm leading-relaxed" placeholder="Viết gì đó... (Tự động lưu lên tài khoản của bạn)"></textarea>
                 </div>
 
-                <div id="view-chat" class="hidden flex-col h-full fade-in p-2">
-                    <div class="flex-1 flex flex-col rounded-2xl overflow-hidden border border-white/40 dark:border-white/10 bg-white/30 dark:bg-black/20">
-                        <div class="p-3 border-b border-white/20 flex justify-between items-center"><span class="font-bold text-sm dark:text-white"><i class="fa-solid fa-comments text-blue-500 mr-2"></i>Phòng Chat</span><span class="text-[10px] bg-green-100 text-green-600 px-2 py-0.5 rounded-full">Live</span></div>
-                        <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-3"></div>
-                        <div class="p-3 bg-white/50 dark:bg-slate-800/80 flex gap-2"><input id="msgInput" type="text" class="flex-1 ios-input rounded-full px-4 py-2 text-sm" placeholder="Nhắn tin..." onkeypress="if(event.key==='Enter') sendMsg()"><button onclick="sendMsg()" class="w-9 h-9 bg-blue-600 rounded-full text-white flex items-center justify-center"><i class="fa-solid fa-paper-plane text-xs"></i></button></div>
+                <!-- VIEW: NOTES -->
+                <div id="view-notes" class="view-section hidden flex-col h-full p-4 fade-in">
+                    <div class="flex justify-between items-center mb-2">
+                        <div class="flex items-center gap-2">
+                            <h3 class="font-bold text-lg">Ghi chú cá nhân</h3>
+                            <span id="noteStatus" class="text-[10px] text-slate-400 italic">Đã đồng bộ</span>
+                        </div>
+                        <button onclick="downloadNote()" class="text-xs bg-green-500/10 text-green-600 px-3 py-1.5 rounded-lg font-bold hover:bg-green-500/20"><i class="fa-solid fa-download mr-1"></i>Lưu máy</button>
+                    </div>
+                    <textarea id="personalNote" class="flex-1 w-full p-4 rounded-2xl ios-input resize-none text-sm leading-relaxed custom-scroll font-mono" placeholder="Viết ghi chú của bạn vào đây... (Tự động lưu)"></textarea>
+                </div>
+
+                <!-- VIEW: CHAT -->
+                <div id="view-chat" class="view-section hidden flex-col h-full p-4 fade-in">
+                    <div class="flex-1 flex flex-col rounded-2xl bg-white/40 dark:bg-black/20 border border-white/20 overflow-hidden">
+                        <div class="p-3 border-b border-white/10 flex justify-between items-center bg-white/20 dark:bg-black/20">
+                            <span class="font-bold text-sm"><i class="fa-solid fa-comments text-blue-500 mr-2"></i>Thảo luận chung</span>
+                            <span class="text-[10px] bg-green-500 text-white px-2 py-0.5 rounded-full animate-pulse">Live</span>
+                        </div>
+                        <div id="chatMessages" class="flex-1 overflow-y-auto p-4 space-y-3 custom-scroll">
+                            <!-- Chat items -->
+                        </div>
+                        <form id="chatForm" class="p-2 bg-white/30 dark:bg-black/30 flex gap-2">
+                            <input id="chatInput" type="text" class="flex-1 ios-input rounded-full px-4 py-2 text-sm" placeholder="Nhập tin nhắn..." autocomplete="off">
+                            <button type="submit" class="w-9 h-9 rounded-full bg-blue-600 text-white flex items-center justify-center hover:scale-105 transition shadow-lg"><i class="fa-solid fa-paper-plane text-xs"></i></button>
+                        </form>
                     </div>
                 </div>
-                
-                <div id="view-tools" class="hidden flex-col gap-3 h-full overflow-y-auto pb-20 fade-in p-2">
-                    <div class="grid grid-cols-2 md:grid-cols-3 gap-3">
-                         <button onclick="openCalculator()" class="p-3 rounded-xl glass-card flex flex-col items-center gap-2 transition"><i class="fa-solid fa-calculator text-2xl text-orange-500"></i><span class="text-xs font-bold">Máy tính</span></button>
-                         <button onclick="openTimer()" class="p-3 rounded-xl glass-card flex flex-col items-center gap-2 transition"><i class="fa-solid fa-stopwatch text-2xl text-blue-500"></i><span class="text-xs font-bold">Đếm ngược</span></button>
+
+                <!-- VIEW: TOOLS -->
+                <div id="view-tools" class="view-section hidden flex-col h-full p-4 fade-in overflow-y-auto">
+                    <h3 class="font-bold mb-4">Tiện ích y khoa</h3>
+                    <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                        <button onclick="openModal('bmiModal')" class="glass-card p-4 rounded-xl flex flex-col items-center gap-3 hover:bg-indigo-50 dark:hover:bg-indigo-900/20">
+                            <div class="w-12 h-12 rounded-full bg-indigo-100 dark:bg-indigo-900 text-indigo-600 flex items-center justify-center text-xl"><i class="fa-solid fa-weight-scale"></i></div>
+                            <span class="font-bold text-sm">Tính BMI</span>
+                        </button>
+                        <button onclick="openModal('calcModal')" class="glass-card p-4 rounded-xl flex flex-col items-center gap-3 hover:bg-orange-50 dark:hover:bg-orange-900/20">
+                            <div class="w-12 h-12 rounded-full bg-orange-100 dark:bg-orange-900 text-orange-600 flex items-center justify-center text-xl"><i class="fa-solid fa-calculator"></i></div>
+                            <span class="font-bold text-sm">Máy tính</span>
+                        </button>
+                        <button onclick="openModal('timerModal')" class="glass-card p-4 rounded-xl flex flex-col items-center gap-3 hover:bg-blue-50 dark:hover:bg-blue-900/20">
+                            <div class="w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900 text-blue-600 flex items-center justify-center text-xl"><i class="fa-solid fa-stopwatch"></i></div>
+                            <span class="font-bold text-sm">Đếm giờ</span>
+                        </button>
                     </div>
                 </div>
+
             </div>
 
-            <div class="lg:col-span-4 flex flex-col gap-4 h-full overflow-hidden">
-                 <div class="glass-card p-5 rounded-3xl relative overflow-hidden group">...</div>
-                <div class="glass-panel p-5 rounded-3xl shadow-lg relative overflow-hidden flex-1 flex flex-col justify-end">...</div>
+            <!-- Right Panel (Profile & Music) -->
+            <div class="lg:col-span-4 h-full flex flex-col gap-4 overflow-hidden">
+                <!-- User Card -->
+                <div class="glass-card p-5 rounded-2xl relative overflow-hidden shrink-0">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-green-500"></div>
+                    <div class="flex items-center gap-4 mb-3">
+                        <div class="w-14 h-14 rounded-full p-0.5 bg-gradient-to-br from-red-500 to-green-500 shadow-md">
+                            <img id="sidebarAvatar" src="https://ui-avatars.com/api/?name=User" class="w-full h-full rounded-full object-cover bg-white">
+                        </div>
+                        <div>
+                            <h3 id="sidebarName" class="font-extrabold text-lg leading-tight">Guest</h3>
+                            <span id="sidebarRole" class="text-[10px] font-bold bg-slate-200 dark:bg-slate-700 px-2 py-0.5 rounded-full">Visitor</span>
+                        </div>
+                    </div>
+                    <div class="space-y-2 text-sm opacity-80">
+                        <div class="flex items-center gap-3"><i class="fa-solid fa-phone text-green-600 w-5"></i><span>0976 969 072</span></div>
+                        <div class="flex items-center gap-3"><i class="fa-solid fa-envelope text-red-600 w-5"></i><span class="truncate">duckale0976@gmail.com</span></div>
+                        <a href="https://facebook.com/minhducdao02" target="_blank" class="flex items-center gap-3 hover:text-blue-500 transition"><i class="fa-brands fa-facebook text-blue-600 w-5"></i><span>minhducdao02</span></a>
+                    </div>
+                </div>
+
+                <!-- Music Player -->
+                <div class="glass-panel flex-1 rounded-2xl p-5 flex flex-col justify-end items-center text-center relative overflow-hidden shadow-xl">
+                    <div class="absolute inset-0 bg-gradient-to-b from-transparent to-black/5 dark:to-black/30 pointer-events-none"></div>
+                    
+                    <div class="relative z-10 w-full flex flex-col items-center">
+                        <div id="albumArt" class="w-32 h-32 rounded-full bg-slate-900 border-4 border-slate-800 shadow-2xl flex items-center justify-center mb-6 relative overflow-hidden">
+                            <img src="https://img.icons8.com/color/96/vinyl-music.png" class="w-full h-full object-cover opacity-80">
+                            <div class="absolute w-8 h-8 bg-slate-200 rounded-full border-2 border-slate-400"></div>
+                        </div>
+                        
+                        <h3 id="songTitle" class="font-bold text-lg mb-1 truncate w-full">Christmas Lo-Fi</h3>
+                        <p id="songArtist" class="text-xs font-bold uppercase opacity-50 mb-6 tracking-widest">Chill Vibes</p>
+                        
+                        <div class="flex items-center gap-8 mb-6">
+                            <button id="btnPrev" class="text-2xl opacity-60 hover:opacity-100 hover:scale-110 transition"><i class="fa-solid fa-backward-step"></i></button>
+                            <button id="btnPlay" class="w-14 h-14 rounded-full bg-red-600 text-white flex items-center justify-center shadow-lg shadow-red-500/40 hover:scale-105 transition"><i class="fa-solid fa-play ml-1"></i></button>
+                            <button id="btnNext" class="text-2xl opacity-60 hover:opacity-100 hover:scale-110 transition"><i class="fa-solid fa-forward-step"></i></button>
+                        </div>
+                        
+                        <div class="w-full flex items-center gap-3 px-2">
+                            <i class="fa-solid fa-volume-low text-xs opacity-50"></i>
+                            <input type="range" id="volSlider" min="0" max="1" step="0.05" value="0.5" class="w-full h-1 bg-slate-300 rounded-lg appearance-none cursor-pointer">
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 
-    <div id="calcWindow" class="draggable-window hidden top-20 left-20 w-64 bg-slate-900 rounded-2xl overflow-hidden shadow-2xl border border-slate-700">...</div>
-    <div id="timerWindow" class="draggable-window hidden top-40 left-60 w-56 bg-white dark:bg-slate-800 rounded-2xl overflow-hidden shadow-2xl border border-slate-200 dark:border-slate-700">...</div>
-    <div id="addDocModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-md">...</div>
+    <!-- MODALS -->
+    <!-- BMI Modal -->
+    <div id="bmiModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center">
+        <div class="glass-card bg-white dark:bg-slate-800 p-6 rounded-2xl w-[90%] max-w-sm shadow-2xl transform transition-all scale-95 opacity-0 modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-xl"><i class="fa-solid fa-weight-scale text-indigo-500 mr-2"></i>Tính BMI</h3>
+                <button onclick="closeModal('bmiModal')" class="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-700 flex items-center justify-center"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="space-y-3">
+                <input type="number" id="bmiHeight" placeholder="Chiều cao (cm)" class="w-full p-3 rounded-xl ios-input">
+                <input type="number" id="bmiWeight" placeholder="Cân nặng (kg)" class="w-full p-3 rounded-xl ios-input">
+                <button onclick="calcBMI()" class="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold shadow-lg hover:bg-indigo-700 transition">Tính Ngay</button>
+            </div>
+            <div id="bmiResult" class="mt-4 p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-xl text-center hidden">
+                <span class="text-2xl font-bold block" id="bmiValue">0.0</span>
+                <span class="text-sm font-medium" id="bmiText">Bình thường</span>
+            </div>
+        </div>
+    </div>
 
-    <script>
-        // --- FIREBASE CONFIGURATION ---
+    <!-- Calculator Modal -->
+    <div id="calcModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center">
+        <div class="glass-card bg-white dark:bg-slate-800 p-5 rounded-2xl w-[90%] max-w-xs shadow-2xl modal-content">
+            <div class="flex justify-between items-center mb-4">
+                <h3 class="font-bold text-lg">Máy tính</h3>
+                <button onclick="closeModal('calcModal')" class="text-slate-500"><i class="fa-solid fa-xmark"></i></button>
+            </div>
+            <div class="bg-slate-100 dark:bg-slate-900 p-4 rounded-xl mb-3 text-right text-2xl font-mono truncate" id="calcDisplay">0</div>
+            <div class="grid grid-cols-4 gap-2">
+                <button onclick="calcInput('C')" class="p-3 rounded-lg bg-red-100 text-red-600 font-bold">C</button>
+                <button onclick="calcInput('/')" class="p-3 rounded-lg bg-slate-200 dark:bg-slate-700 font-bold">/</button>
+                <button onclick="calcInput('*')" class="p-3 rounded-lg bg-slate-200 dark:bg-slate-700 font-bold">×</button>
+                <button onclick="calcInput('DEL')" class="p-3 rounded-lg bg-slate-200 dark:bg-slate-700 font-bold"><i class="fa-solid fa-delete-left"></i></button>
+                <button onclick="calcInput('7')" class="p-3 rounded-lg bg-white dark:bg-slate-600 font-bold shadow-sm">7</button>
+                <button onclick="calcInput('8')" class="p-3 rounded-lg bg-white dark:bg-slate-600 font-bold shadow-sm">8</button>
+                <button onclick="calcInput('9')" class="p-3 rounded-lg bg-white dark:bg-slate-600 font-bold shadow-sm">9</button>
+                <button onclick="calcInput('-')" class="p-3 rounded-lg bg-slate-200 dark:bg-slate-700 font-bold">-</button>
+                <button onclick="calcInput('4')" class="p-3 rounded-lg bg-white dark:bg-slate-600 font-bold shadow-sm">4</button>
+                <button onclick="calcInput('5')" class="p-3 rounded-lg bg-white dark:bg-slate-600 font-bold shadow-sm">5</button>
+                <button onclick="calcInput('6')" class="p-3 rounded-lg bg-white dark:bg-slate-600 font-bold shadow-sm">6</button>
+                <button onclick="calcInput('+')" class="p-3 rounded-lg bg-slate-200 dark:bg-slate-700 font-bold">+</button>
+                <button onclick="calcInput('1')" class="p-3 rounded-lg bg-white dark:bg-slate-600 font-bold shadow-sm">1</button>
+                <button onclick="calcInput('2')" class="p-3 rounded-lg bg-white dark:bg-slate-600 font-bold shadow-sm">2</button>
+                <button onclick="calcInput('3')" class="p-3 rounded-lg bg-white dark:bg-slate-600 font-bold shadow-sm">3</button>
+                <button onclick="calcInput('=')" class="row-span-2 p-3 rounded-lg bg-blue-600 text-white font-bold shadow-lg">=</button>
+                <button onclick="calcInput('0')" class="col-span-2 p-3 rounded-lg bg-white dark:bg-slate-600 font-bold shadow-sm">0</button>
+                <button onclick="calcInput('.')" class="p-3 rounded-lg bg-white dark:bg-slate-600 font-bold shadow-sm">.</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Timer Modal -->
+    <div id="timerModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center">
+        <div class="glass-card bg-white dark:bg-slate-800 p-6 rounded-2xl w-[90%] max-w-sm shadow-2xl text-center modal-content">
+            <h3 class="font-bold text-xl mb-4">Đếm ngược</h3>
+            <div class="text-5xl font-mono font-bold mb-6 text-slate-800 dark:text-white" id="timerDisplay">00:00</div>
+            <div class="grid grid-cols-3 gap-2 mb-4">
+                <button onclick="setTimer(1)" class="p-2 rounded bg-slate-100 dark:bg-slate-700 text-xs font-bold">+1m</button>
+                <button onclick="setTimer(5)" class="p-2 rounded bg-slate-100 dark:bg-slate-700 text-xs font-bold">+5m</button>
+                <button onclick="setTimer(10)" class="p-2 rounded bg-slate-100 dark:bg-slate-700 text-xs font-bold">+10m</button>
+            </div>
+            <div class="flex gap-3 justify-center">
+                <button onclick="startTimer()" class="px-6 py-2 rounded-xl bg-green-500 text-white font-bold hover:bg-green-600">Start</button>
+                <button onclick="resetTimer()" class="px-6 py-2 rounded-xl bg-red-500 text-white font-bold hover:bg-red-600">Stop</button>
+                <button onclick="closeModal('timerModal')" class="px-6 py-2 rounded-xl bg-slate-200 text-slate-700 font-bold">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add/Edit Doc Modal -->
+    <div id="docModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden items-center justify-center">
+        <div class="glass-card bg-white dark:bg-slate-800 p-6 rounded-2xl w-[90%] max-w-md shadow-2xl modal-content">
+            <h3 class="font-bold text-xl mb-4" id="docModalTitle">Thêm tài liệu</h3>
+            <div class="space-y-3">
+                <input type="hidden" id="docId">
+                <div>
+                    <label class="text-xs font-bold ml-1">Tiêu đề</label>
+                    <input type="text" id="docTitle" class="w-full p-3 rounded-xl ios-input" placeholder="Nhập tên tài liệu...">
+                </div>
+                <div>
+                    <label class="text-xs font-bold ml-1">Link Drive/Web</label>
+                    <input type="text" id="docUrl" class="w-full p-3 rounded-xl ios-input" placeholder="https://...">
+                </div>
+                <div>
+                    <label class="text-xs font-bold ml-1">Thư mục</label>
+                    <select id="docFolder" class="w-full p-3 rounded-xl ios-input appearance-none bg-white">
+                        <option value="noi">Nội khoa</option>
+                        <option value="ngoai">Ngoại khoa</option>
+                        <option value="nhi">Nhi khoa</option>
+                        <option value="duoc">Dược lý</option>
+                        <option value="khac">Khác</option>
+                    </select>
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button onclick="saveDoc()" class="flex-1 py-3 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700">Lưu</button>
+                    <button onclick="closeModal('docModal')" class="flex-1 py-3 bg-slate-200 text-slate-800 rounded-xl font-bold hover:bg-slate-300">Hủy</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN SCRIPT (MODULE) -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, doc, updateDoc, deleteDoc, query, orderBy, serverTimestamp, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- CONFIG ---
         const firebaseConfig = {
             apiKey: "AIzaSyAcfs8LFgPeAkGyaSkmJeECoRBEwtfRv8E",
             authDomain: "minhduckale1.firebaseapp.com",
-            databaseURL: "https://minhduckale1-default-rtdb.asia-southeast1.firebasedatabase.app",
             projectId: "minhduckale1",
             storageBucket: "minhduckale1.firebasestorage.app",
             messagingSenderId: "479002042854",
             appId: "1:479002042854:web:c9e4b614ad48fefd10f627",
             measurementId: "G-GWWCJ6BNLF"
         };
-        firebase.initializeApp(firebaseConfig);
-        const auth = firebase.auth();
-        const db = firebase.firestore();
-        const rtdb = firebase.database();
-        
-        let currentUser = null;
-        let isAdminMode = false;
-        let isGuestMode = false;
         const baseDriveLink = "https://drive.google.com/drive/folders/1GnW2tjMYi-FcmEstNQQu8WD25AK06W9-?usp=drive_link";
-        
-        // GLOBAL DATA STRUCTURES
-        const folders = { "capcuu": "1. Cấp cứu", "noi": "2. Nội khoa", "ngoai": "3. Ngoại khoa", "nhi": "4. Nhi khoa", "duoc": "5. Dược lý", "khac": "6. Khác" };
+        window.baseDriveLink = baseDriveLink; // Expose for HTML inline clicks
+
+        // Init Firebase
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+
+        // State
+        let currentUser = null;
+        let isAdmin = false;
+        let currentFolder = 'root';
+        const folders = { "noi": "Nội khoa", "ngoai": "Ngoại khoa", "nhi": "Nhi khoa", "duoc": "Dược lý", "khac": "Khác" };
         let allDocs = [];
         let bookmarks = JSON.parse(localStorage.getItem('mdk_fav') || '[]');
-        let filterStar = false;
 
-        // --- 1. AUTHENTICATION LOGIC ---
-        function login() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            auth.signInWithPopup(provider).catch(e => { alert("Lỗi đăng nhập: " + e.message); });
-        }
-        function logout() { auth.signOut(); isAdminMode = false; isGuestMode = false; location.reload(); }
-        
-        function enterGuestMode() {
-            isGuestMode = true;
-            document.getElementById('loginOverlay').classList.add('hidden');
-            document.getElementById('mainApp').style.filter = 'none';
-            document.getElementById('adminToggleBtn').style.display = 'none'; 
-            document.getElementById('userControlsDesktop').style.display = 'none';
-            loadDocs();
-            switchTab(null, 'home');
-        }
+        // --- AUTH & INIT ---
+        const loginOverlay = document.getElementById('loginOverlay');
+        const mainApp = document.getElementById('mainApp');
 
-        auth.onAuthStateChanged(user => {
-            document.getElementById('loginStatusText').innerText = "Đang kiểm tra trạng thái...";
+        onAuthStateChanged(auth, (user) => {
             if (user) {
                 currentUser = user;
-                isGuestMode = false;
-                document.getElementById('loginOverlay').classList.add('hidden');
-                document.getElementById('mainApp').style.filter = 'none';
-                document.getElementById('userName').innerText = user.displayName.split(' ')[0];
-                document.getElementById('userAvatar').src = user.photoURL || 'https://ui-avatars.com/api/?name='+user.displayName;
-                document.getElementById('userControlsDesktop').style.display = 'flex';
-                document.getElementById('adminToggleBtn').style.display = 'flex'; 
+                // UI Updates
+                loginOverlay.classList.add('opacity-0', 'pointer-events-none');
+                mainApp.classList.remove('filter', 'blur-sm');
                 
+                document.getElementById('userName').textContent = user.isAnonymous ? 'Guest' : user.displayName;
+                document.getElementById('sidebarName').textContent = user.isAnonymous ? 'Khách ghé thăm' : user.displayName;
+                document.getElementById('userAvatar').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || 'Guest'}`;
+                document.getElementById('sidebarAvatar').src = user.photoURL || `https://ui-avatars.com/api/?name=${user.displayName || 'Guest'}`;
+                document.getElementById('sidebarRole').textContent = user.isAnonymous ? 'Visitor' : 'Member';
+
+                // Load Data
                 loadDocs();
-                // loadCloudNote(); // Not fully implemented in this base code
-                switchTab(null, 'home');
-            } else if (!isGuestMode) {
-                currentUser = null;
-                document.getElementById('loginStatusText').innerText = "Vui lòng đăng nhập hoặc duyệt với chế độ Khách.";
-                document.getElementById('loginButton').classList.remove('hidden');
-                document.getElementById('guestButton').classList.remove('hidden');
-                document.getElementById('mainApp').style.filter = 'blur(3px)';
+                loadChat();
+                loadNote();
+            } else {
+                loginOverlay.classList.remove('opacity-0', 'pointer-events-none');
+                mainApp.classList.add('filter', 'blur-sm');
             }
         });
 
-        // --- 2. ADMIN MODE & HISTORY ---
-        function toggleAdminMode() {
-            if (!currentUser) return alert("Bạn cần đăng nhập bằng tài khoản Google để vào chế độ Admin.");
-            const password = prompt("Nhập mật khẩu quản trị (0000):");
-            if (password === "0000") {
-                isAdminMode = !isAdminMode;
-                const btn = document.getElementById('adminToggleBtn');
-                btn.classList.toggle('admin-glow', isAdminMode);
-                btn.classList.toggle('bg-red-500', isAdminMode);
-                btn.innerHTML = isAdminMode ? '<i class="fa-solid fa-lock-open"></i>' : '<i class="fa-solid fa-lock"></i>';
-                alert(isAdminMode ? "Đã bật chế độ quản trị!" : "Đã tắt chế độ quản trị.");
-                renderFolders(); 
-                logAdminAction(isAdminMode ? "Bật chế độ ADMIN" : "Tắt chế độ ADMIN");
-            } else if (password !== null) {
-                alert("Mật khẩu không đúng.");
+        document.getElementById('btnLogin').addEventListener('click', () => {
+            signInWithPopup(auth, new GoogleAuthProvider()).catch(err => alert(err.message));
+        });
+
+        document.getElementById('btnGuest').addEventListener('click', () => {
+            signInAnonymously(auth).catch(err => alert(err.message));
+        });
+
+        document.getElementById('userProfile').addEventListener('click', () => {
+            if(confirm("Đăng xuất?")) {
+                signOut(auth).then(() => {
+                    isAdmin = false;
+                    document.getElementById('btnAdmin').classList.remove('admin-glow', 'text-red-500');
+                    location.reload();
+                });
             }
-        }
-        function logAdminAction(action) {
-            if (!currentUser) return;
-            rtdb.ref('admin_history').push({
-                user: currentUser.displayName,
-                action: action,
-                time: firebase.database.ServerValue.TIMESTAMP
+        });
+
+        // --- TABS LOGIC ---
+        const tabs = document.querySelectorAll('.segment-btn');
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                
+                document.querySelectorAll('.view-section').forEach(v => v.classList.add('hidden'));
+                document.querySelectorAll('.view-section').forEach(v => v.classList.remove('flex'));
+                
+                const viewId = `view-${tab.dataset.tab}`;
+                const view = document.getElementById(viewId);
+                view.classList.remove('hidden');
+                view.classList.add('flex');
+            });
+        });
+
+        // --- DOCS LOGIC ---
+        function loadDocs() {
+            const q = query(collection(db, "documents"), orderBy("createdAt", "desc"));
+            onSnapshot(q, (snapshot) => {
+                allDocs = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+                renderFolders();
             });
         }
-        rtdb.ref('admin_history').limitToLast(5).on('child_added', snapshot => { /* ... Notification logic here ... */ });
-        
-        // --- 3. DYNAMIC DATA (FIRESTORE) & EDIT LOGIC ---
-        function loadDocs() {
-            document.getElementById('loadingDocs').classList.remove('hidden');
-            db.collection('documents').orderBy('createdAt', 'desc').onSnapshot(snapshot => {
-                allDocs = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
-                const staticDocs = [{id:'s1', title:'Link Drive Tổng', folder:'khac', url:baseDriveLink}];
-                allDocs = [...allDocs, ...staticDocs];
-                
-                document.getElementById('loadingDocs').classList.add('hidden');
-                renderFolders();
-            }, e => { console.error("Firestore Error:", e); document.getElementById('loadingDocs').innerHTML = 'Lỗi tải CSDL.'; });
-        }
 
-        function saveDocumentChanges() {
-            if(!currentUser || !isAdminMode) return alert("Bạn không có quyền chỉnh sửa!");
-            const id = document.getElementById('docIdToEdit').value;
-            const title = document.getElementById('newDocTitle').value;
-            const folder = document.getElementById('newDocFolder').value;
-            const link = document.getElementById('newDocLink').value;
-
-            if(!title || !link) return alert("Thiếu thông tin");
-            const docData = { title, folder, url: link };
-
-            if (id && id !== 's1') {
-                db.collection('documents').doc(id).update(docData).then(() => {
-                    logAdminAction(`Cập nhật tài liệu: ${title}`);
-                    document.getElementById('addDocModal').classList.add('hidden');
-                }).catch(e => alert("Lỗi cập nhật: " + e.message));
-            } else {
-                db.collection('documents').add({...docData, author: currentUser.displayName, createdAt: firebase.firestore.FieldValue.serverTimestamp()}).then(() => {
-                    logAdminAction(`Thêm tài liệu mới: ${title}`);
-                    document.getElementById('addDocModal').classList.add('hidden');
-                }).catch(e => alert("Lỗi thêm: " + e.message));
-            }
-        }
-        
-        // --- 4. UI LOGIC (Folders, Tools, Draggable) ---
-        const listEl = document.getElementById('docsList');
-        function renderFolders() {
-            listEl.innerHTML=''; document.getElementById('breadcrumb').classList.add('hidden');
-            const q = document.getElementById('searchInput').value.toLowerCase();
+        window.renderFolders = () => {
+            currentFolder = 'root';
+            const container = document.getElementById('docListContent');
+            const breadcrumb = document.getElementById('folderBreadcrumb');
+            const btnAdd = document.getElementById('btnAddDoc');
             
-            if(q) {
-                const res = allDocs.filter(d => d.title.toLowerCase().includes(q));
-                res.forEach(d => renderDocItem(d));
+            container.innerHTML = '';
+            breadcrumb.classList.add('hidden');
+            if(isAdmin) btnAdd.classList.remove('hidden');
+
+            Object.keys(folders).forEach(key => {
+                const count = allDocs.filter(d => d.folder === key).length;
+                const el = document.createElement('div');
+                el.className = 'glass-card p-4 rounded-xl flex items-center gap-4 cursor-pointer hover:bg-white/50 transition';
+                el.innerHTML = `
+                    <div class="w-12 h-12 bg-blue-100 dark:bg-blue-900 rounded-xl flex items-center justify-center text-blue-600 text-xl"><i class="fa-solid fa-folder"></i></div>
+                    <div>
+                        <h4 class="font-bold text-sm">${folders[key]}</h4>
+                        <p class="text-xs opacity-60">${count} files</p>
+                    </div>
+                `;
+                el.onclick = () => openFolder(key);
+                container.appendChild(el);
+            });
+        };
+
+        function openFolder(key) {
+            currentFolder = key;
+            const container = document.getElementById('docListContent');
+            const breadcrumb = document.getElementById('folderBreadcrumb');
+            const breadName = document.getElementById('currentFolderName');
+            
+            container.innerHTML = '';
+            breadcrumb.classList.remove('hidden');
+            breadName.textContent = folders[key];
+
+            const docs = allDocs.filter(d => d.folder === key);
+            
+            if (docs.length === 0) {
+                container.innerHTML = `<div class="col-span-2 text-center py-10 opacity-50 italic">Thư mục trống</div>`;
                 return;
             }
 
-            Object.keys(folders).forEach(k => {
-                const count = allDocs.filter(d=>d.folder===k).length;
-                listEl.innerHTML += `<div onclick="openFolder('${k}')" class="glass-card p-4 rounded-2xl flex items-center gap-4 cursor-pointer hover:border-blue-400 border border-transparent"><div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center text-2xl text-blue-500 shadow"><i class="fa-solid fa-folder"></i></div><div><h3 class="font-bold dark:text-white">${folders[k]}</h3><p class="text-xs text-slate-500">${count} file</p></div></div>`;
+            docs.forEach(doc => {
+                const el = document.createElement('div');
+                el.className = 'glass-card p-3 rounded-xl flex items-center gap-3 group relative';
+                const isFav = bookmarks.includes(doc.id);
+                
+                // Edit button for admin
+                const editBtn = isAdmin ? `<button class="admin-edit-btn w-6 h-6 rounded-full bg-slate-200 hover:bg-blue-500 hover:text-white flex items-center justify-center transition absolute top-2 right-8 text-[10px]" data-id="${doc.id}"><i class="fa-solid fa-pen"></i></button>` : '';
+
+                el.innerHTML = `
+                    <div class="w-10 h-10 bg-red-100 dark:bg-red-900 rounded-lg flex items-center justify-center text-red-500"><i class="fa-solid fa-file-pdf"></i></div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-sm truncate pr-14">${doc.title}</h4>
+                        <a href="${doc.url}" target="_blank" class="text-[10px] font-bold text-blue-500 uppercase hover:underline">Mở tài liệu</a>
+                    </div>
+                    ${editBtn}
+                    <button class="fav-btn text-lg ${isFav ? 'text-yellow-400' : 'text-slate-300 hover:text-yellow-400'} transition" data-id="${doc.id}"><i class="fa-solid fa-star"></i></button>
+                `;
+                
+                // Event delegation manually
+                el.querySelector('.fav-btn').onclick = (e) => toggleFav(e, doc.id);
+                if(isAdmin) el.querySelector('.admin-edit-btn').onclick = (e) => openEditDoc(e, doc);
+
+                container.appendChild(el);
             });
         }
-        function openFolder(k) {
-            document.getElementById('breadcrumb').classList.remove('hidden'); document.getElementById('curFolder').innerText = folders[k];
-            listEl.innerHTML='';
-            const items = allDocs.filter(d => d.folder === k && (!filterStar || bookmarks.includes(d.id)));
-            if(items.length===0) listEl.innerHTML='<div class="col-span-2 text-center opacity-50 font-bold mt-10">Thư mục trống</div>';
-            items.forEach(d => renderDocItem(d));
-        }
-        function renderDocItem(d) {
-            const isFav = bookmarks.includes(d.id);
-            const canEdit = isAdminMode && d.id !== 's1'; // Can edit if Admin and not a static link
-            const editBtn = canEdit ? `<button onclick="openAddDocModal('edit', '${d.id}')" class="w-8 h-8 rounded-full hover:bg-slate-200 flex items-center justify-center text-blue-500 transition"><i class="fa-solid fa-pencil-alt text-sm"></i></button>` : '';
 
-            listEl.innerHTML += `
-            <div class="glass-card p-3 rounded-2xl flex items-center gap-3 relative">
-                <div class="w-10 h-10 bg-blue-50 rounded-lg flex items-center justify-center text-blue-600"><i class="fa-solid fa-file"></i></div>
-                <div class="flex-1 min-w-0"><h4 class="font-bold truncate dark:text-white text-sm">${d.title}</h4><a href="${d.url}" target="_blank" class="text-xs text-blue-500 font-bold uppercase">Mở</a></div>
-                ${editBtn}
-                <button onclick="toggleFav('${d.id}')" class="text-lg ${isFav?'text-yellow-400':'text-slate-300'}"><i class="fa-solid fa-star"></i></button>
-            </div>`;
-        }
-        
-        // --- FINAL INIT & UTILS ---
-        function switchTab(event, t) {
-            if(event) { document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); event.currentTarget.classList.add('active'); }
-            ['home', 'docs', 'drugs', 'notes', 'chat', 'tools'].forEach(v => document.getElementById('view-' + v).classList.add('hidden', 'flex'));
-            document.getElementById('view-' + t).classList.remove('hidden'); document.getElementById('view-' + t).classList.add('flex');
-        }
-        function toggleDarkMode() { document.documentElement.classList.toggle('dark'); }
-        function updateClock() { document.getElementById('date-display').innerText = new Date().toLocaleDateString('vi-VN'); }
-        function toggleFav(id) { /* ... bookmark logic ... */ }
-        function toggleStarFilter() { filterStar=!filterStar; document.getElementById('btnStar').classList.toggle('text-yellow-500'); renderFolders(); }
-        function openAddDocModal(mode, docId) { /* ... Modal logic ... */ }
+        window.toggleFav = (e, id) => {
+            e.stopPropagation(); // prevent card click if any
+            if (bookmarks.includes(id)) {
+                bookmarks = bookmarks.filter(b => b !== id);
+            } else {
+                bookmarks.push(id);
+            }
+            localStorage.setItem('mdk_fav', JSON.stringify(bookmarks));
+            if(currentFolder !== 'root') openFolder(currentFolder); // refresh
+        };
 
-        // Snow (Removed interval call from init for cleaner startup, added function body)
-        function createSnowflake() { /* ... */ }
-        function startSnow() { /* ... */ }
+        // --- ADMIN & DOC EDITING ---
+        document.getElementById('btnAdmin').addEventListener('click', () => {
+            if (!currentUser || currentUser.isAnonymous) return alert("Cần đăng nhập Google để dùng tính năng Admin.");
+            const pwd = prompt("Nhập mật khẩu Admin:");
+            if (pwd === "0000") {
+                isAdmin = !isAdmin;
+                const btn = document.getElementById('btnAdmin');
+                if (isAdmin) {
+                    btn.classList.add('text-red-500', 'admin-glow');
+                    alert("Admin Mode: ON");
+                } else {
+                    btn.classList.remove('text-red-500', 'admin-glow');
+                    alert("Admin Mode: OFF");
+                }
+                if(currentFolder !== 'root') openFolder(currentFolder);
+                else renderFolders();
+            } else if (pwd !== null) {
+                alert("Sai mật khẩu");
+            }
+        });
 
-        // Final Init
-        (function() {
-            // Placeholder for missing functions (to prevent errors)
-            window.openCalculator=()=>{}; window.openTimer=()=>{}; window.loadCloudNote=()=>{}; window.sendMsg=()=>{};
-            window.toggleFav=()=>{}; window.toggleStarFilter=()=>{}; window.filterDrugs=()=>{}; window.downloadNote=()=>{};
+        document.getElementById('btnAddDoc').addEventListener('click', () => {
+            document.getElementById('docId').value = '';
+            document.getElementById('docTitle').value = '';
+            document.getElementById('docUrl').value = '';
+            document.getElementById('docModalTitle').innerText = 'Thêm tài liệu mới';
+            window.openModal('docModal');
+        });
+
+        window.openEditDoc = (e, doc) => {
+            document.getElementById('docId').value = doc.id;
+            document.getElementById('docTitle').value = doc.title;
+            document.getElementById('docUrl').value = doc.url;
+            document.getElementById('docFolder').value = doc.folder;
+            document.getElementById('docModalTitle').innerText = 'Sửa tài liệu';
+            window.openModal('docModal');
+        };
+
+        window.saveDoc = async () => {
+            const id = document.getElementById('docId').value;
+            const title = document.getElementById('docTitle').value;
+            const url = document.getElementById('docUrl').value;
+            const folder = document.getElementById('docFolder').value;
             
-            // Execute
-            if(localStorage.getItem('mdk_dark') === 'true') document.documentElement.classList.add('dark');
-            setInterval(updateClock, 1000);
-            startSnow(); // Start snow theme
-        })();
+            if (!title || !url) return alert("Thiếu thông tin!");
+
+            try {
+                if (id) {
+                    await updateDoc(doc(db, "documents", id), { title, url, folder });
+                } else {
+                    await addDoc(collection(db, "documents"), {
+                        title, url, folder, 
+                        createdAt: serverTimestamp(),
+                        author: currentUser.displayName
+                    });
+                }
+                window.closeModal('docModal');
+            } catch (e) {
+                alert("Lỗi: " + e.message);
+            }
+        };
+
+        // --- CHAT LOGIC ---
+        function loadChat() {
+            const q = query(collection(db, "chat"), orderBy("timestamp", "asc")); // Limit logic handled by UI scroll
+            const chatBox = document.getElementById('chatMessages');
+            
+            onSnapshot(q, (snapshot) => {
+                chatBox.innerHTML = '';
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    const isMe = currentUser && data.uid === currentUser.uid;
+                    const el = document.createElement('div');
+                    el.className = `flex flex-col ${isMe ? 'items-end' : 'items-start'}`;
+                    el.innerHTML = `
+                        <div class="flex items-center gap-1 mb-1">
+                            <span class="text-[10px] font-bold opacity-60">${data.name}</span>
+                        </div>
+                        <div class="px-3 py-2 rounded-2xl max-w-[80%] text-sm ${isMe ? 'bg-blue-600 text-white rounded-br-sm' : 'bg-white dark:bg-slate-700 rounded-bl-sm shadow-sm'}">
+                            ${data.text}
+                        </div>
+                    `;
+                    chatBox.appendChild(el);
+                });
+                chatBox.scrollTop = chatBox.scrollHeight;
+            });
+        }
+
+        document.getElementById('chatForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const input = document.getElementById('chatInput');
+            const text = input.value.trim();
+            if (!text || !currentUser) return;
+            
+            input.value = '';
+            await addDoc(collection(db, "chat"), {
+                text,
+                uid: currentUser.uid,
+                name: currentUser.displayName || 'Guest',
+                timestamp: serverTimestamp()
+            });
+        });
+
+        // --- NOTES LOGIC ---
+        let noteTimeout;
+        const noteArea = document.getElementById('personalNote');
+        const noteStatus = document.getElementById('noteStatus');
+
+        function loadNote() {
+            if (!currentUser) return;
+            const docRef = doc(db, "users", currentUser.uid, "notes", "personal");
+            getDoc(docRef).then(snap => {
+                if (snap.exists()) {
+                    noteArea.value = snap.data().content || '';
+                }
+            });
+        }
+
+        noteArea.addEventListener('input', () => {
+            noteStatus.textContent = "Đang gõ...";
+            clearTimeout(noteTimeout);
+            noteTimeout = setTimeout(async () => {
+                if (!currentUser) return;
+                noteStatus.textContent = "Đang lưu...";
+                await setDoc(doc(db, "users", currentUser.uid, "notes", "personal"), {
+                    content: noteArea.value,
+                    updatedAt: serverTimestamp()
+                }, { merge: true });
+                noteStatus.textContent = "Đã đồng bộ";
+            }, 1000);
+        });
+
+        window.downloadNote = () => {
+            const blob = new Blob([noteArea.value], { type: "text/plain" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = "Ghi_chu_MinhducKale.txt";
+            a.click();
+        };
+
+        // --- UTILS: MODALS & TOOLS ---
+        window.openModal = (id) => {
+            const m = document.getElementById(id);
+            m.classList.remove('hidden');
+            m.classList.add('flex');
+            setTimeout(() => {
+                m.querySelector('.modal-content').classList.remove('scale-95', 'opacity-0');
+                m.querySelector('.modal-content').classList.add('scale-100', 'opacity-100');
+            }, 10);
+        };
+        window.closeModal = (id) => {
+            const m = document.getElementById(id);
+            m.querySelector('.modal-content').classList.remove('scale-100', 'opacity-100');
+            m.querySelector('.modal-content').classList.add('scale-95', 'opacity-0');
+            setTimeout(() => {
+                m.classList.add('hidden');
+                m.classList.remove('flex');
+            }, 200);
+        };
+
+        // BMI
+        window.calcBMI = () => {
+            const h = parseFloat(document.getElementById('bmiHeight').value) / 100;
+            const w = parseFloat(document.getElementById('bmiWeight').value);
+            if (!h || !w) return;
+            const bmi = (w / (h * h)).toFixed(1);
+            const resBox = document.getElementById('bmiResult');
+            const val = document.getElementById('bmiValue');
+            const txt = document.getElementById('bmiText');
+            
+            resBox.classList.remove('hidden');
+            val.innerText = bmi;
+            if (bmi < 18.5) { txt.innerText = "Thiếu cân"; txt.className="text-blue-500 font-bold"; }
+            else if (bmi < 22.9) { txt.innerText = "Bình thường"; txt.className="text-green-500 font-bold"; }
+            else { txt.innerText = "Thừa cân"; txt.className="text-red-500 font-bold"; }
+        };
+
+        // Calc
+        let calcStr = "";
+        window.calcInput = (v) => {
+            if (v === 'C') calcStr = "";
+            else if (v === 'DEL') calcStr = calcStr.slice(0, -1);
+            else if (v === '=') {
+                try { calcStr = eval(calcStr).toString(); } catch { calcStr = "Error"; }
+            } else calcStr += v;
+            document.getElementById('calcDisplay').innerText = calcStr || "0";
+        };
+
+        // Timer
+        let timerInterval;
+        let timeSeconds = 0;
+        window.setTimer = (min) => {
+            timeSeconds += min * 60;
+            updateTimerDisplay();
+        };
+        window.startTimer = () => {
+            if (timerInterval) clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if (timeSeconds > 0) {
+                    timeSeconds--;
+                    updateTimerDisplay();
+                } else {
+                    clearInterval(timerInterval);
+                    alert("Hết giờ!");
+                    const audio = new Audio('https://assets.mixkit.co/active_storage/sfx/995/995-preview.mp3');
+                    audio.play();
+                }
+            }, 1000);
+        };
+        window.resetTimer = () => {
+            clearInterval(timerInterval);
+            timeSeconds = 0;
+            updateTimerDisplay();
+        };
+        function updateTimerDisplay() {
+            const m = Math.floor(timeSeconds / 60).toString().padStart(2, '0');
+            const s = (timeSeconds % 60).toString().padStart(2, '0');
+            document.getElementById('timerDisplay').innerText = `${m}:${s}`;
+        }
+
+        // --- MUSIC PLAYER ---
+        const songs = [
+            { t: "Christmas Lo-Fi", a: "Chill Vibes", s: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" },
+            { t: "Study Beat", a: "Lofi Girl", s: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-8.mp3" },
+            { t: "Relaxing Piano", a: "Mozart", s: "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3" }
+        ];
+        let curSongIdx = 0;
+        let isPlaying = false;
+        const audio = new Audio(songs[0].s);
+        const btnPlay = document.getElementById('btnPlay');
+        const albumArt = document.getElementById('albumArt');
+
+        audio.addEventListener('ended', () => window.nextSong());
+
+        window.toggleMusic = () => {
+            if (isPlaying) {
+                audio.pause();
+                albumArt.classList.remove('spinning');
+                btnPlay.innerHTML = '<i class="fa-solid fa-play ml-1"></i>';
+            } else {
+                audio.play();
+                albumArt.classList.add('spinning');
+                btnPlay.innerHTML = '<i class="fa-solid fa-pause"></i>';
+            }
+            isPlaying = !isPlaying;
+        };
+
+        btnPlay.onclick = window.toggleMusic;
+
+        window.nextSong = () => {
+            curSongIdx = (curSongIdx + 1) % songs.length;
+            loadSong();
+        };
+
+        window.prevSong = () => {
+            curSongIdx = (curSongIdx - 1 + songs.length) % songs.length;
+            loadSong();
+        };
+
+        document.getElementById('btnNext').onclick = window.nextSong;
+        document.getElementById('btnPrev').onclick = window.prevSong;
+        document.getElementById('volSlider').oninput = (e) => audio.volume = e.target.value;
+
+        function loadSong() {
+            audio.src = songs[curSongIdx].s;
+            document.getElementById('songTitle').innerText = songs[curSongIdx].t;
+            document.getElementById('songArtist').innerText = songs[curSongIdx].a;
+            if (isPlaying) audio.play();
+        }
+
+        // --- THEME & SNOW ---
+        // Snow Logic
+        function createSnow() {
+            const container = document.getElementById('snow-container');
+            const count = 30;
+            for (let i = 0; i < count; i++) {
+                const flake = document.createElement('div');
+                flake.className = 'snowflake';
+                flake.innerHTML = '❄';
+                flake.style.left = Math.random() * 100 + 'vw';
+                flake.style.fontSize = Math.random() * 10 + 10 + 'px';
+                flake.style.animationDuration = Math.random() * 3 + 2 + 's';
+                flake.style.opacity = Math.random();
+                container.appendChild(flake);
+                // Remove when done to prevent overflow, re-add
+                flake.addEventListener('animationiteration', () => {
+                    flake.style.left = Math.random() * 100 + 'vw';
+                });
+            }
+        }
+        createSnow();
+
+        // Dark Mode
+        document.getElementById('btnTheme').addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('mdk_dark', isDark);
+        });
+        if(localStorage.getItem('mdk_dark') === 'true') document.documentElement.classList.add('dark');
+
+        // Mobile Menu
+        document.getElementById('btnMobileMenu').addEventListener('click', () => {
+            const nav = document.getElementById('navTabs');
+            nav.classList.toggle('hidden');
+            nav.classList.toggle('flex');
+        });
+
+        // Search Filter for Docs (Local)
+        document.getElementById('docSearch').addEventListener('input', (e) => {
+            const val = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('#docListContent .glass-card');
+            cards.forEach(card => {
+                const txt = card.textContent.toLowerCase();
+                card.style.display = txt.includes(val) ? 'flex' : 'none';
+            });
+        });
+
     </script>
 </body>
 </html>
