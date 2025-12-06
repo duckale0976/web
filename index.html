@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MinhducKale v10 - Christmas Edition</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    
+    <style>
+        /* CORE STYLES & CHRISTMAS AESTHETICS */
+        body { transition: background-color 0.5s, color 0.5s; background-color: #f7f7f7; color: #1e293b; font-family: 'Plus Jakarta Sans', sans-serif; overflow-x: hidden; }
+        .dark body { background-color: #0f172a; color: #f1f5f9; }
+
+        /* Christmas Gradient Blobs (Red & Green) */
+        .bg-blob { position: fixed; border-radius: 50%; filter: blur(100px); opacity: 0.8; z-index: -1; animation: blob 20s infinite alternate; pointer-events: none; }
+        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #ef4444; } /* Red */
+        .blob-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #10b981; animation-delay: 5s; } /* Green */
+        .blob-3 { top: 40%; left: 40%; width: 400px; height: 400px; background: #60a5fa; animation-delay: 10s; } /* Blue (Accent) */
+
+        /* Dark Mode Blobs */
+        .dark .blob-1 { background: #991b1b; opacity: 0.3; } 
+        .dark .blob-2 { background: #065f46; opacity: 0.3; } 
+        
+        /* Liquid Glass (Deep Blur + Reflection) */
+        .glass-panel { 
+            background: rgba(255, 255, 255, 0.65); 
+            backdrop-filter: blur(30px); /* Deeper Blur */
+            -webkit-backdrop-filter: blur(30px); 
+            border: 1px solid rgba(255, 255, 255, 0.7); 
+            position: relative; /* Context for reflection */
+        }
+        .dark .glass-panel { background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); transition: all 0.3s ease; }
+        .dark .glass-card { background: rgba(30, 41, 59, 0.85); border: 1px solid rgba(255, 255, 255, 0.05); }
+
+        /* Reflection Effect (Subtle top gradient) */
+        .glass-panel::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 2px;
+            background: linear-gradient(90deg, rgba(255,255,255,0.0) 0%, rgba(255,255,255,0.8) 50%, rgba(255,255,255,0.0) 100%);
+            border-radius: 30px 30px 0 0; /* Match header radius */
+        }
+
+        /* Snow Effect */
+        #snow-container { pointer-events: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: 50; }
+        .snowflake { position: absolute; top: -10px; color: #ffffff; opacity: 0.8; font-size: 12px; }
+
+        /* Login */
+        .admin-glow { box-shadow: 0 0 10px rgba(239, 68, 68, 0.7); animation: pulse-red 1.5s infinite; }
+        @keyframes pulse-red { 0%, 100% {box-shadow: 0 0 0 0px rgba(239, 68, 68, 0.7);} 50% {box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.0);} }
+    </style>
+</head>
+<body>
+
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+    
+    <div id="snow-container"></div>
+
+    <div id="loginOverlay" class="fixed inset-0 z-50 bg-slate-900/80 backdrop-blur-md flex items-center justify-center">
+        <div class="glass-card p-8 rounded-3xl w-[90%] max-w-sm text-center">
+            <h2 class="text-2xl font-extrabold mb-4 dark:text-white" id="loginStatusText">Đang tải dữ liệu...</h2>
+            <button onclick="login()" id="loginButton" class="hidden w-full py-3 rounded-xl bg-red-600 hover:bg-red-700 text-white font-bold flex items-center justify-center gap-2 shadow-lg transition">
+                <i class="fa-solid fa-cloud-arrow-up"></i> Đăng nhập bằng Google
+            </button>
+            <button onclick="enterGuestMode()" id="guestButton" class="hidden w-full py-3 mt-3 rounded-xl bg-slate-300 dark:bg-slate-700 text-slate-800 dark:text-slate-300 font-bold hover:bg-slate-400 transition">
+                Duyệt với chế độ Khách (Chỉ xem)
+            </button>
+        </div>
+    </div>
+
+    <div class="container mx-auto px-4 py-4 max-w-7xl h-screen flex flex-col transition duration-500" id="mainApp">
+        
+        <header class="glass-panel rounded-3xl px-4 py-3 mb-4 flex flex-col lg:flex-row justify-between items-center z-20 gap-3">
+            <div class="flex items-center gap-3 w-full lg:w-auto justify-between lg:justify-start">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-red-600 to-green-600 flex items-center justify-center text-white shadow-lg">
+                        <i class="fa-solid fa-tree text-xl"></i>
+                    </div>
+                    <div>
+                        <h1 class="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">Minhduc<span class="text-red-600">Kale</span></h1>
+                        <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase">v10.0 Christmas Edition</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <button onclick="toggleAdminMode()" id="adminToggleBtn" class="w-9 h-9 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white transition flex items-center justify-center text-slate-700 dark:text-slate-200" title="Admin Mode"><i class="fa-solid fa-lock"></i></button>
+                    <div class="flex items-center gap-2 cursor-pointer hover:bg-white/40 p-1 rounded-lg transition" onclick="logout()" id="userControls" style="display: none;">
+                        <img id="userAvatar" src="" class="w-8 h-8 rounded-full border border-red-500">
+                        <span id="userName" class="text-xs font-bold text-slate-800 dark:text-white">...</span>
+                        <i class="fa-solid fa-right-from-bracket text-xs text-red-500 ml-1" title="Đăng xuất"></i>
+                    </div>
+                    <button onclick="toggleDarkMode()" class="w-9 h-9 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white transition text-yellow-600 dark:text-yellow-400"><i id="darkIcon" class="fa-solid fa-moon"></i></button>
+                </div>
+            </div>
+            
+            <div class="segmented-control w-full lg:w-auto justify-start lg:justify-center overflow-x-auto scrollbar-hide">
+                <div class="segment-btn active" onclick="switchTab(event, 'home')"><i class="fa-solid fa-house mr-1"></i>Home</div>
+                <div class="segment-btn" onclick="switchTab(event, 'docs')"><i class="fa-solid fa-folder-open mr-1"></i>Tài liệu</div>
+                <div class="segment-btn" onclick="switchTab(event, 'drugs')"><i class="fa-solid fa-pills mr-1"></i>Thuốc</div>
+                <div class="segment-btn" onclick="switchTab(event, 'notes')"><i class="fa-solid fa-note-sticky mr-1"></i>Note</div>
+                <div class="segment-btn" onclick="switchTab(event, 'chat')"><i class="fa-solid fa-comments mr-1"></i>Chat</div>
+                <div class="segment-btn" onclick="switchTab(event, 'tools')"><i class="fa-solid fa-screwdriver-wrench mr-1"></i>Tools</div>
+            </div>
+
+            <div class="hidden lg:flex items-center gap-3">
+                <button onclick="openCalculator()" class="w-9 h-9 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white transition flex items-center justify-center text-slate-700 dark:text-slate-200" title="Máy tính"><i class="fa-solid fa-calculator"></i></button>
+                <button onclick="openTimer()" class="w-9 h-9 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white transition flex items-center justify-center text-slate-700 dark:text-slate-200" title="Đếm ngược"><i class="fa-solid fa-stopwatch"></i></button>
+            </div>
+        </header>
+
+        <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-6 overflow-hidden pb-2">
+            
+            <div class="lg:col-span-8 flex flex-col h-full overflow-hidden relative glass-panel rounded-3xl p-1 border-0 bg-transparent shadow-none">
+                
+                <div id="view-home" class="flex flex-col gap-4 h-full p-2 transition-opacity duration-300">
+                    <h2 class="text-xl font-bold dark:text-white mb-2">Mục Lớn</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div onclick="window.open(baseDriveLink, '_blank')" class="glass-card p-5 rounded-xl text-center cursor-pointer hover:bg-red-50 dark:hover:bg-red-900/50 transition border-l-4 border-red-600">
+                            <i class="fa-solid fa-heart-pulse text-4xl text-red-600 mb-2"></i>
+                            <h3 class="font-bold">Nội Khoa</h3>
+                            <p class="text-xs text-slate-500">Xem trực tiếp Drive</p>
+                        </div>
+                        <div onclick="window.open(baseDriveLink, '_blank')" class="glass-card p-5 rounded-xl text-center cursor-pointer hover:bg-green-50 dark:hover:bg-green-900/50 transition border-l-4 border-green-600">
+                            <i class="fa-solid fa-user-injured text-4xl text-green-600 mb-2"></i>
+                            <h3 class="font-bold">Ngoại Khoa</h3>
+                            <p class="text-xs text-slate-500">Xem trực tiếp Drive</p>
+                        </div>
+                         <div onclick="window.open(baseDriveLink, '_blank')" class="glass-card p-5 rounded-xl text-center cursor-pointer hover:bg-pink-50 dark:hover:bg-pink-900/50 transition border-l-4 border-pink-600">
+                            <i class="fa-solid fa-person-pregnant text-4xl text-pink-600 mb-2"></i>
+                            <h3 class="font-bold">Sản Khoa</h3>
+                            <p class="text-xs text-slate-500">Xem trực tiếp Drive</p>
+                        </div>
+                        <div onclick="window.open(baseDriveLink, '_blank')" class="glass-card p-5 rounded-xl text-center cursor-pointer hover:bg-orange-50 dark:hover:bg-orange-900/50 transition border-l-4 border-orange-600">
+                            <i class="fa-solid fa-baby text-4xl text-orange-600 mb-2"></i>
+                            <h3 class="font-bold">Nhi Khoa</h3>
+                            <p class="text-xs text-slate-500">Xem trực tiếp Drive</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="view-docs" class="hidden flex-col gap-4 h-full p-2 transition-opacity duration-300">...</div>
+                <div id="view-drugs" class="hidden flex-col gap-4 h-full p-2 fade-in">...</div>
+                <div id="view-notes" class="hidden flex-col h-full p-2 fade-in gap-3">...</div>
+                <div id="view-chat" class="hidden flex-col h-full fade-in p-2">...</div>
+                <div id="view-tools" class="hidden flex-col gap-3 h-full overflow-y-auto pb-20 fade-in p-2">...</div>
+            </div>
+
+            <div class="lg:col-span-4 flex flex-col gap-4 h-full overflow-hidden">
+                 <div class="glass-card p-5 rounded-3xl relative overflow-hidden group">
+                    <div class="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-red-500 to-green-500"></div>
+                    <div class="flex items-center gap-4 mb-4">
+                        <div class="w-14 h-14 rounded-full p-1 bg-gradient-to-br from-red-500 to-green-400">
+                            <i class="fa-solid fa-tree text-xl text-white"></i>
+                        </div>
+                        <div><h3 class="font-extrabold text-slate-900 dark:text-white">Đào Minh Đức</h3><p class="text-xs font-bold text-red-600 bg-red-50 px-2 py-0.5 rounded-full w-fit">Admin</p></div>
+                    </div>
+                    <div class="space-y-3 text-sm text-slate-700 dark:text-slate-300">
+                        <div class="flex items-center gap-3"><i class="fa-solid fa-phone text-green-600"></i><span class="font-medium">0976 969 072</span></div>
+                        <div class="flex items-center gap-3"><i class="fa-solid fa-envelope text-red-600"></i><span class="font-medium truncate">duckale0976@gmail.com</span></div>
+                        <a href="https://facebook.com/minhducdao02" target="_blank" class="flex items-center gap-3 hover:text-blue-600 transition"><i class="fa-brands fa-facebook-f text-blue-600"></i><span class="font-medium">minhducdao02</span></a>
+                    </div>
+                </div>
+
+                <div class="glass-panel p-5 rounded-3xl shadow-lg relative overflow-hidden flex-1 flex flex-col justify-end">...</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="calcWindow" class="draggable-window hidden top-20 left-20 w-64 bg-slate-900 rounded-2xl">...</div>
+    <div id="timerWindow" class="draggable-window hidden top-40 left-60 w-56 bg-white dark:bg-slate-800 rounded-2xl">...</div>
+    <div id="addDocModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-md">...</div>
+
+    <script>
+        // --- FIREBASE CONFIGURATION (Reused from v9) ---
+        const firebaseConfig = { /* ... */ };
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const rtdb = firebase.database();
+        
+        let currentUser = null;
+        let isAdminMode = false;
+        let isGuestMode = false;
+        const baseDriveLink = "https://drive.google.com/drive/folders/1GnW2tjMYi-FcmEstNQQu8WD25AK06W9-?usp=drive_link";
+
+        // --- AUTH & INITIALIZATION ---
+        function login() { /* ... login logic ... */ }
+        function logout() { auth.signOut(); isGuestMode = false; location.reload(); }
+
+        function enterGuestMode() {
+            isGuestMode = true;
+            document.getElementById('loginOverlay').classList.add('hidden');
+            document.getElementById('mainApp').classList.remove('blur-sm');
+            document.getElementById('adminToggleBtn').style.display = 'none'; // Hide admin toggle
+            loadDocs();
+        }
+
+        auth.onAuthStateChanged(user => {
+            if (user) {
+                currentUser = user;
+                isGuestMode = false;
+                document.getElementById('loginOverlay').classList.add('hidden');
+                document.getElementById('mainApp').classList.remove('blur-sm');
+                document.getElementById('userName').innerText = user.displayName.split(' ')[0];
+                document.getElementById('userAvatar').src = user.photoURL || 'https://ui-avatars.com/api/?name='+user.displayName;
+                document.getElementById('userControls').style.display = 'flex';
+                document.getElementById('adminToggleBtn').style.display = 'flex'; 
+                loadDocs();
+            } else if (!isGuestMode) {
+                document.getElementById('loginStatusText').innerText = "Vui lòng đăng nhập hoặc duyệt với chế độ Khách.";
+                document.getElementById('loginButton').classList.remove('hidden');
+                document.getElementById('guestButton').classList.remove('hidden');
+                document.getElementById('mainApp').classList.add('blur-sm');
+            }
+        });
+
+        // --- ADMIN MODE & HISTORY ---
+        function toggleAdminMode() {
+            if (!currentUser) return alert("Bạn cần đăng nhập bằng tài khoản Google để vào chế độ Admin.");
+            const password = prompt("Nhập mật khẩu quản trị (0000):");
+            if (password === "0000") {
+                isAdminMode = !isAdminMode;
+                const btn = document.getElementById('adminToggleBtn');
+                btn.classList.toggle('admin-glow', isAdminMode);
+                btn.classList.toggle('bg-red-500', isAdminMode);
+                btn.innerHTML = isAdminMode ? '<i class="fa-solid fa-lock-open"></i>' : '<i class="fa-solid fa-lock"></i>';
+                alert(isAdminMode ? "Đã bật chế độ quản trị!" : "Đã tắt chế độ quản trị.");
+                renderFolders(); 
+                logAdminAction(isAdminMode ? "Bật chế độ ADMIN" : "Tắt chế độ ADMIN");
+            } else if (password !== null) {
+                alert("Mật khẩu không đúng.");
+            }
+        }
+        
+        function logAdminAction(action) {
+            if (!currentUser) return;
+            rtdb.ref('admin_history').push({
+                user: currentUser.displayName,
+                action: action,
+                time: firebase.database.ServerValue.TIMESTAMP
+            });
+        }
+
+        // --- DOCS & FOLDERS ---
+        // (Simplified loadDocs, renderFolders, renderDocItem to handle AdminMode)
+        function renderDocItem(d) {
+            // ... (implement conditional edit button using isAdminMode) ...
+            // Simplified for demonstration:
+            const editBtn = isAdminMode ? `<button onclick="openAddDocModal('edit', '${d.id}')" class="w-8 h-8 rounded-full text-blue-500"><i class="fa-solid fa-pencil-alt text-sm"></i></button>` : '';
+            // ... render item ...
+        }
+
+        // --- UI UTILS (Fixed event is not defined bug) ---
+        function switchTab(event, t) {
+            document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); 
+            event.currentTarget.classList.add('active');
+            // ... (rest of switchTab logic) ...
+            ['home', 'docs', 'drugs', 'notes', 'chat', 'tools'].forEach(v => document.getElementById('view-' + v).classList.add('hidden', 'flex'));
+            document.getElementById('view-' + t).classList.remove('hidden');
+            document.getElementById('view-' + t).classList.add('flex');
+        }
+        
+        // Final Init
+        // init();
+    </script>
+</body>
+</html>
