@@ -233,17 +233,24 @@
                             <div class="py-4 flex flex-col items-center gap-4">
                                 <div id="flashCardItem" class="flip-card w-full h-48 cursor-pointer" onclick="this.classList.toggle('flipped')">
                                     <div class="flip-card-inner shadow-inner rounded-2xl border border-slate-200 dark:border-slate-700">
-                                        <div class="flip-card-front"><h4 class="font-bold text-lg mb-2 text-slate-500 uppercase">Câu hỏi</h4><p id="fc-q" class="text-xl font-extrabold px-4">Bấm 'Tải' để bắt đầu</p><p class="text-xs text-slate-400 absolute bottom-2">(Nhấn để lật)</p></div>
-                                        <div class="flip-card-back"><h4 class="font-bold text-white/80 uppercase text-xs mb-2">Đáp án</h4><p id="fc-a" class="text-lg font-bold px-4">...</p></div>
+                                        <div class="flip-card-front bg-slate-50 dark:bg-slate-800">
+                                            <h4 class="font-bold text-lg mb-2 text-slate-500 uppercase">Câu hỏi</h4>
+                                            <p id="fc-q" class="text-xl font-extrabold px-4 text-slate-800 dark:text-white">Bấm 'Tải' để bắt đầu</p>
+                                            <p class="text-xs text-slate-400 absolute bottom-2">(Nhấn để lật)</p>
+                                        </div>
+                                        <div class="flip-card-back bg-emerald-600 text-white">
+                                            <h4 class="font-bold text-white/80 uppercase text-xs mb-2">Đáp án</h4>
+                                            <p id="fc-a" class="text-lg font-bold px-4">...</p>
+                                        </div>
                                     </div>
                                 </div>
                                 <div class="flex gap-2 w-full">
-                                    <button onclick="window.loadFlashcards()" class="flex-1 py-2 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700"><i class="fa-solid fa-rotate mr-1"></i> Tải bộ đề</button>
-                                    <button onclick="window.nextCard()" class="flex-1 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-white rounded-xl font-bold hover:bg-slate-300">Tiếp theo <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                                    <button onclick="document.getElementById('addFlashcardModal').classList.remove('hidden')" class="w-14 py-2 bg-slate-200 dark:bg-slate-700 text-emerald-600 font-bold rounded-xl hover:bg-slate-300 hover:scale-105 transition"><i class="fa-solid fa-plus"></i></button>
+                                    <button onclick="window.loadFlashcards()" class="flex-1 py-2 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 shadow-lg"><i class="fa-solid fa-rotate mr-1"></i> Tải bộ đề</button>
+                                    <button onclick="window.nextCard()" class="flex-1 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-white rounded-xl font-bold hover:bg-slate-300">Tiếp <i class="fa-solid fa-arrow-right ml-1"></i></button>
                                 </div>
                             </div>
                         </div>
-                    </div>
 
                     <div class="glass-card rounded-2xl overflow-hidden border-l-4 border-cyan-500">
                         <button onclick="window.toggleTool('ivdrip')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition"><span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-droplet text-cyan-500 mr-2"></i>Tốc độ truyền dịch</span><i class="fa-solid fa-chevron-down text-slate-500"></i></button>
@@ -410,7 +417,19 @@
             </div>
         </div>
     </div>
-
+<div id="addFlashcardModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-md">
+        <div class="bg-white/95 dark:bg-slate-800/95 w-[90%] md:w-[400px] p-6 rounded-3xl shadow-2xl animate-float border-2 border-emerald-500">
+            <h3 class="text-lg font-extrabold text-emerald-600 dark:text-emerald-400 mb-4">Thêm Flashcard Mới</h3>
+            <div class="space-y-4">
+                <div><label class="text-xs font-bold text-slate-500 uppercase">Câu hỏi (Mặt trước)</label><textarea id="newFcQ" class="w-full ios-input p-3 rounded-xl mt-1 h-20 bg-slate-50 dark:bg-slate-900 dark:text-white" placeholder="Nhập câu hỏi..."></textarea></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase">Đáp án (Mặt sau)</label><textarea id="newFcA" class="w-full ios-input p-3 rounded-xl mt-1 h-20 bg-slate-50 dark:bg-slate-900 dark:text-white" placeholder="Nhập đáp án..."></textarea></div>
+                <div class="flex gap-3 pt-2">
+                    <button onclick="document.getElementById('addFlashcardModal').classList.add('hidden')" class="flex-1 py-3 rounded-xl bg-slate-200 text-slate-600 font-bold hover:bg-slate-300">Hủy</button>
+                    <button onclick="window.saveNewFlashcard()" class="flex-1 py-3 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 shadow-lg">Lưu ngay</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <div id="aiModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/70 backdrop-blur-md">
         <div class="bg-white/95 dark:bg-slate-800/95 w-[90%] md:w-[500px] p-6 rounded-3xl shadow-2xl animate-slideIn border-2 border-indigo-500">
             <div class="flex justify-between items-center mb-4">
@@ -459,6 +478,119 @@
         const provider = new GoogleAuthProvider();
 
         let currentUser = null;
+        // --- 1. LOGIC FLASHCARD (REALTIME DATABASE) ---
+        let realFlashcards = [];
+        let currentCardIdx = 0;
+
+        window.saveNewFlashcard = () => {
+            if(!currentUser) return window.showToast("Vui lòng đăng nhập!", "error");
+            const q = document.getElementById('newFcQ').value;
+            const a = document.getElementById('newFcA').value;
+            if(!q || !a) return window.showToast("Nhập đủ thông tin!", "error");
+
+            push(ref(db, `users/${currentUser.uid}/flashcards`), { q, a, createdAt: Date.now() })
+            .then(() => {
+                document.getElementById('addFlashcardModal').classList.add('hidden');
+                document.getElementById('newFcQ').value = ''; 
+                document.getElementById('newFcA').value = '';
+                window.showToast("✅ Đã lưu Flashcard!", "success");
+            });
+        };
+
+        window.loadFlashcards = () => {
+            if(!currentUser) return window.showToast("Cần đăng nhập để tải!", "error");
+            window.showToast("⏳ Đang tải bộ đề...", "info");
+            
+            get(ref(db, `users/${currentUser.uid}/flashcards`)).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const data = snapshot.val();
+                    realFlashcards = Object.values(data).reverse(); 
+                    currentCardIdx = 0;
+                    window.renderCard();
+                    window.showToast(`✅ Đã tải ${realFlashcards.length} câu hỏi!`, "success");
+                } else {
+                    window.showToast("Bạn chưa tạo Flashcard nào!", "info");
+                    realFlashcards = [{q: "Bấm nút dấu + để tạo câu hỏi mới", a: "Đáp án sẽ hiện ở đây"}];
+                    window.renderCard();
+                }
+            });
+        };
+
+        window.renderCard = () => {
+            if(realFlashcards.length === 0) return;
+            const item = realFlashcards[currentCardIdx];
+            document.getElementById('fc-q').innerText = item.q;
+            document.getElementById('fc-a').innerText = item.a;
+            document.getElementById('flashCardItem').classList.remove('flipped');
+        };
+
+        window.nextCard = () => {
+            if(realFlashcards.length === 0) return;
+            currentCardIdx = (currentCardIdx + 1) % realFlashcards.length;
+            window.renderCard();
+        };
+
+        // --- 2. LOGIC AI PHÂN TÍCH (SMART KEYWORDS) ---
+        const medicalKeywords = {
+            "Tim mạch": ["tim", "mạch", "huyết áp", "ecg", "nhồi máu", "suy tim", "rung nhĩ"],
+            "Hô hấp": ["phổi", "hen", "copd", "hô hấp", "phế quản", "lao"],
+            "Tiêu hóa": ["dạ dày", "ruột", "gan", "mật", "tụy", "tiêu hóa", "xuất huyết"],
+            "Thần kinh": ["não", "đột quỵ", "thần kinh", "động kinh", "parkinson"],
+            "Nhi khoa": ["nhi", "trẻ", "sốt xuất huyết", "tay chân miệng", "sởi"],
+            "Sản khoa": ["thai", "sản", "đẻ", "chuyển dạ", "tử cung"]
+        };
+
+        window.openAISuggestions = () => { // Ghi đè hàm cũ
+            if(!currentUser) return window.showToast("Cần đăng nhập để AI phân tích!", "error");
+            document.getElementById('aiModal').classList.remove('hidden');
+            const content = document.getElementById('aiContent');
+            content.innerHTML = '<div class="text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-sm text-slate-500">AI đang quét kho dữ liệu của bạn...</p></div>';
+
+            setTimeout(() => {
+                const userDocs = privateDocs; 
+                const docTitles = userDocs.map(d => d.title.toLowerCase());
+                let analysisHTML = '';
+                let missingTopics = [];
+                let totalScore = 0;
+                let domainScores = {};
+
+                Object.keys(medicalKeywords).forEach(domain => {
+                    const keywords = medicalKeywords[domain];
+                    const count = docTitles.filter(t => keywords.some(k => t.includes(k))).length;
+                    domainScores[domain] = count;
+                    totalScore += count;
+                    if(count === 0) missingTopics.push(domain);
+                });
+
+                if(userDocs.length === 0) {
+                    analysisHTML += `<div class="bg-red-50 p-3 rounded-xl border border-red-200 mb-3"><p class="text-red-700 text-sm font-bold">Kho tài liệu trống!</p></div>`;
+                } else {
+                    analysisHTML += `<h4 class="font-bold text-slate-700 dark:text-white mb-2 text-sm uppercase">Phân bố kiến thức:</h4><div class="space-y-2 mb-4">`;
+                    Object.keys(domainScores).forEach(domain => {
+                        const percent = totalScore > 0 ? Math.round((domainScores[domain] / totalScore) * 100) : 0;
+                        const colorClass = percent > 0 ? 'bg-indigo-500' : 'bg-slate-200 dark:bg-slate-600';
+                        analysisHTML += `<div class="flex items-center gap-2 text-xs"><span class="w-16 font-bold text-slate-500 dark:text-slate-300">${domain}</span><div class="flex-1 h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden"><div class="${colorClass} h-full" style="width: ${percent}%"></div></div><span class="w-8 text-right font-bold text-slate-700 dark:text-white">${domainScores[domain]}</span></div>`;
+                    });
+                    analysisHTML += `</div>`;
+
+                    if(missingTopics.length > 0) {
+                        analysisHTML += `<div class="bg-orange-50 dark:bg-slate-700/50 p-3 rounded-xl border border-orange-200 dark:border-orange-900/50 mb-3"><p class="text-orange-800 dark:text-orange-300 text-sm font-bold">💡 Gợi ý bổ sung:</p><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Bạn đang thiếu tài liệu về: <b>${missingTopics.join(", ")}</b>.</p></div>`;
+                    } else {
+                        analysisHTML += `<div class="bg-green-50 dark:bg-green-900/20 p-3 rounded-xl border border-green-200 mb-3"><p class="text-green-700 dark:text-green-400 text-sm font-bold">✅ Tuyệt vời!</p><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Kiến thức của bạn phân bố khá đồng đều.</p></div>`;
+                    }
+                }
+                content.innerHTML = analysisHTML;
+            }, 1000); 
+        };
+
+        // --- 3. LOGIC NHẠC CUSTOM ---
+        window.addCustomSong = () => {
+            const url = document.getElementById('customMusicUrl').value;
+            if(!url) return window.showToast("Chưa nhập link!", "error");
+            playlist.push({t: "Bài hát của tôi", a: "Custom", u: url});
+            window.showToast("🎵 Đã thêm bài hát!", "success");
+            document.getElementById('customMusicUrl').value = '';
+        }
         window.isAdmin = false;
         let allDocs = [];
         let publicDocs = [];
@@ -865,3 +997,4 @@
     </script>
 </body>
 </html>
+
