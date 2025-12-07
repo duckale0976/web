@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinhducKale - Private Study Hub v5.3</title>
+    <title>MinhducKale - Ultimate Study Hub v6.3</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
-    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -16,22 +16,10 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
-                    animation: {
-                        'blob': 'blob 10s infinite',
-                        'spin-slow': 'spin 10s linear infinite',
-                        'float': 'float 6s ease-in-out infinite',
-                    },
+                    animation: { 'blob': 'blob 10s infinite', 'spin-slow': 'spin 10s linear infinite', 'float': 'float 6s ease-in-out infinite' },
                     keyframes: {
-                        blob: {
-                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
-                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
-                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
-                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
-                        },
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        }
+                        blob: { '0%': { transform: 'translate(0,0) scale(1)' }, '33%': { transform: 'translate(30px,-50px) scale(1.1)' }, '66%': { transform: 'translate(-20px,20px) scale(0.9)' }, '100%': { transform: 'translate(0,0) scale(1)' } },
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } }
                     }
                 }
             }
@@ -39,74 +27,47 @@
     </script>
 
     <style>
-        /* Base Transition */
+        /* CSS CUSTOM */
         body { transition: background-color 0.5s, color 0.5s; background-color: #e0f2fe; color: #1e293b; }
         .dark body { background-color: #0f172a; color: #f1f5f9; }
-
-        /* Animated Blobs - Giữ nguyên fixed để nền đẹp khi lướt */
         .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.8; z-index: -1; animation: blob 15s infinite alternate; pointer-events: none; }
         .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #93c5fd; }
         .blob-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #6ee7b7; }
         .blob-3 { top: 40%; left: 40%; width: 400px; height: 400px; background: #c4b5fd; }
-        
         .dark .blob-1 { background: #1e40af; opacity: 0.4; }
         .dark .blob-2 { background: #065f46; opacity: 0.4; }
         .dark .blob-3 { background: #5b21b6; opacity: 0.4; }
-
-        /* Glassmorphism */
-        .glass-panel { 
-            background: rgba(255, 255, 255, 0.65); 
-            backdrop-filter: blur(25px); 
-            -webkit-backdrop-filter: blur(25px); 
-            border: 1px solid rgba(255, 255, 255, 0.7); 
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
-        }
-        .dark .glass-panel {
-            background: rgba(15, 23, 42, 0.75);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .glass-card { 
-            background: rgba(255, 255, 255, 0.75); 
-            backdrop-filter: blur(15px); 
-            border: 1px solid rgba(255, 255, 255, 0.6); 
-            transition: all 0.3s ease; 
-        }
-        .dark .glass-card {
-            background: rgba(30, 41, 59, 0.8);
-            border: 1px solid rgba(255, 255, 255, 0.05);
-        }
+        
+        .glass-panel { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); }
+        .dark .glass-panel { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); }
+        .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); transition: all 0.3s ease; }
+        .dark .glass-card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); }
         .glass-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-
-        /* Inputs */
-        .ios-input { 
-            background: rgba(255, 255, 255, 0.8); 
-            border: 1px solid rgba(203, 213, 225, 0.8); 
-            color: #0f172a; font-weight: 600;
-        }
+        
+        .ios-input { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(203, 213, 225, 0.8); color: #0f172a; font-weight: 600; }
         .dark .ios-input { background: rgba(0, 0, 0, 0.5); border-color: rgba(255,255,255,0.2); color: white; }
         .ios-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3); border-color: #3b82f6; }
-
-        /* Controls */
+        
         .segmented-control { background: rgba(200, 200, 200, 0.4); backdrop-filter: blur(10px); padding: 4px; border-radius: 12px; display: inline-flex; }
         .dark .segmented-control { background: rgba(0,0,0,0.4); }
         .segment-btn { padding: 6px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; color: #475569; }
         .dark .segment-btn { color: #94a3b8; }
         .segment-btn.active { background: white; color: #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .dark .segment-btn.active { background: #334155; color: white; }
-
+        
         .notification-dot { position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; border: 1px solid white; }
         .tool-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
         .tool-content.open { max-height: 500px; }
         
-        /* Volume Slider */
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%; background: #3b82f6; cursor: pointer; margin-top: -4px; }
-        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #cbd5e1; border-radius: 2px; }
-        .dark input[type=range]::-webkit-slider-runnable-track { background: #475569; }
+        
+        /* Loader */
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 24px; height: 24px; animation: spin 2s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
-<body class="min-h-screen overflow-x-hidden">
+<body class="min-h-screen overflow-x-hidden selection:bg-blue-500 selection:text-white">
 
     <div class="bg-blob blob-1"></div>
     <div class="bg-blob blob-2"></div>
@@ -136,7 +97,7 @@
 
                 <div>
                     <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Private Study Server v5.3</p>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Ultimate Study Hub v6.3</p>
                 </div>
             </div>
             
@@ -150,18 +111,6 @@
                     <span id="clock" class="text-lg font-mono font-bold text-slate-800 dark:text-slate-200">00:00</span>
                     <span id="date-display" class="text-[10px] font-bold uppercase text-slate-500">...</span>
                 </div>
-
-                <div class="relative group">
-                    <button id="notifBtn" onclick="window.toggleNotif()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white flex items-center justify-center transition shadow-sm">
-                        <i class="fa-regular fa-bell text-slate-700 dark:text-slate-200 font-bold"></i>
-                        <span class="notification-dot" id="notifDot"></span>
-                    </button>
-                    <div id="notifPanel" class="hidden absolute right-0 top-12 w-80 glass-card p-4 rounded-2xl z-50 shadow-2xl animate-float">
-                        <h4 class="font-bold mb-2 text-slate-900 dark:text-white">Cập nhật hệ thống</h4>
-                        <div id="notifList" class="space-y-2 max-h-60 overflow-y-auto text-sm text-slate-700 dark:text-slate-300"></div>
-                    </div>
-                </div>
-                
                 <button onclick="window.toggleDarkMode()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white flex items-center justify-center transition text-slate-700 dark:text-yellow-400 shadow-sm">
                     <i id="darkIcon" class="fa-solid fa-moon"></i>
                 </button>
@@ -178,7 +127,7 @@
                             <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-600"></i>
                             <input id="searchInput" type="text" onkeyup="window.filterDocs()"
                                 class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" 
-                                placeholder="Tìm kiếm tài liệu, thư mục...">
+                                placeholder="Tìm kiếm tài liệu, bệnh án, sách...">
                         </div>
                         <button onclick="window.openAddDocModal()" class="w-14 rounded-2xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-700 text-white flex items-center justify-center shadow-lg active:scale-95 transition">
                             <i class="fa-solid fa-plus text-xl"></i>
@@ -191,29 +140,36 @@
                         <span id="currentFolderTitle" class="text-blue-700 dark:text-blue-400">Folder Name</span>
                     </div>
 
-                    <div id="docsList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        </div>
+                    <div id="docsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </div>
 
                 <div id="view-tools" class="hidden flex-col gap-6 fade-in">
                     
                     <div class="glass-card rounded-2xl overflow-hidden border-l-4 border-green-500">
                         <button onclick="window.toggleTool('data')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
-                            <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-database text-green-600 mr-2"></i>Quản lý Dữ liệu (Backup)</span>
+                            <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-database text-green-600 mr-2"></i>Quản lý Dữ liệu (Backup & Drive)</span>
                             <i class="fa-solid fa-chevron-down text-slate-500"></i>
                         </button>
                         <div id="tool-data" class="tool-content px-4">
-                            <div class="py-4 space-y-3">
-                                <p class="text-sm text-slate-600 dark:text-slate-400">Xuất file để sao lưu hoặc chuyển sang máy khác.</p>
-                                <div class="flex gap-3">
-                                    <button onclick="window.exportData()" class="flex-1 py-2 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold rounded-xl hover:bg-slate-300 transition">
-                                        <i class="fa-solid fa-download mr-1"></i> Xuất File
+                            <div class="py-4 space-y-4">
+                                <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-xl border border-blue-200 dark:border-blue-700">
+                                    <p class="text-xs font-bold text-blue-600 dark:text-blue-300 uppercase mb-2">1. Nạp từ Google Drive (File JSON)</p>
+                                    <p class="text-xs text-slate-600 dark:text-slate-300 mb-2">Dùng file JSON tạo từ Apps Script để nạp 500GB tài liệu.</p>
+                                    <button onclick="document.getElementById('importJsonInput').click()" class="w-full py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition">
+                                        <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Nạp File JSON
                                     </button>
-                                    <button onclick="document.getElementById('importFile').click()" class="flex-1 py-2 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition">
-                                        <i class="fa-solid fa-upload mr-1"></i> Nạp File
-                                    </button>
+                                    <input type="file" id="importJsonInput" hidden accept=".json" onchange="window.importData(this)">
                                 </div>
-                                <input type="file" id="importFile" hidden accept=".json" onchange="window.importData(this)">
+
+                                <div class="grid grid-cols-2 gap-3">
+                                    <button onclick="window.exportToExcel()" class="py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition shadow-sm text-xs">
+                                        <i class="fa-solid fa-file-excel mr-1"></i> Xuất Excel
+                                    </button>
+                                    <button onclick="document.getElementById('importExcelInput').click()" class="py-2 bg-slate-200 text-slate-800 font-bold rounded-lg hover:bg-slate-300 transition text-xs">
+                                        <i class="fa-solid fa-file-import mr-1"></i> Nạp Excel
+                                    </button>
+                                    <input type="file" id="importExcelInput" hidden accept=".xlsx" onchange="window.importFromExcel(this)">
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -268,7 +224,6 @@
                                     </select>
                                 </div>
                                 <input type="number" id="egfr-cre" placeholder="Creatinine (mg/dL) - Ví dụ: 0.9" step="0.01" class="w-full ios-input p-2 rounded-xl">
-                                <p class="text-[10px] text-slate-500 italic">*Công thức: ((140-tuổi)*CN) / (72*Cre)</p>
                                 <button onclick="window.calcEGFR()" class="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl shadow-md">Tính eGFR</button>
                                 <div id="egfr-res" class="hidden text-center font-bold text-orange-700 dark:text-orange-300 mt-2 text-lg">...</div>
                             </div>
@@ -278,7 +233,6 @@
             </div>
 
             <div class="lg:col-span-4 flex flex-col gap-6">
-                
                 <div class="glass-panel p-5 rounded-3xl shadow-lg relative overflow-hidden group">
                     <div class="flex items-center justify-between mb-4">
                         <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
@@ -286,7 +240,6 @@
                         </h3>
                         <div class="text-[10px] bg-black text-white px-2 py-1 rounded font-bold uppercase">Lofi</div>
                     </div>
-                    
                     <div class="flex justify-center mb-4 relative">
                          <div id="musicDisc" class="w-32 h-32 rounded-full bg-slate-900 border-4 border-slate-800 flex items-center justify-center overflow-hidden shadow-2xl">
                             <img src="https://img.icons8.com/color/96/vinyl-music.png" class="w-full h-full opacity-90">
@@ -295,37 +248,32 @@
                             <div class="w-8 h-8 bg-white rounded-full border-2 border-slate-300 z-10"></div>
                         </div>
                     </div>
-
                     <div class="text-center mb-4">
                         <p id="musicTitle" class="text-sm font-bold text-slate-900 dark:text-white truncate">Ready to study?</p>
-                        <p id="musicArtist" class="text-xs text-slate-500 font-bold uppercase">MinhducKale Playlist</p>
                     </div>
-
                     <div class="flex justify-center items-center gap-6 mb-4">
                         <button onclick="window.prevSong()" class="text-slate-500 hover:text-slate-900 dark:hover:text-white transition"><i class="fa-solid fa-backward-step text-xl"></i></button>
                         <button onclick="window.toggleMusic()" id="playBtnIcon" class="w-14 h-14 rounded-full bg-slate-900 text-white flex items-center justify-center hover:scale-105 transition shadow-xl"><i class="fa-solid fa-play text-xl ml-1"></i></button>
                         <button onclick="window.nextSong()" class="text-slate-500 hover:text-slate-900 dark:hover:text-white transition"><i class="fa-solid fa-forward-step text-xl"></i></button>
                     </div>
-                    
                     <div class="flex items-center gap-2 px-2">
                         <i class="fa-solid fa-volume-low text-xs text-slate-400"></i>
                         <input type="range" id="volSlider" min="0" max="1" step="0.1" value="0.8" oninput="window.changeVolume(this.value)">
                         <i class="fa-solid fa-volume-high text-xs text-slate-400"></i>
                     </div>
-
                     <audio id="bgAudio" class="hidden"></audio>
                 </div>
 
                 <div class="glass-card p-5 rounded-3xl flex flex-col relative group border border-yellow-200 dark:border-yellow-900/30">
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
-                            <i class="fa-solid fa-note-sticky text-yellow-500"></i> Ghi chú nhanh
+                            <i class="fa-solid fa-note-sticky text-yellow-500"></i> Ghi chú Cloud
                         </h3>
-                        <span id="saveStatus" class="text-[10px] font-bold text-green-600 opacity-0 transition">Đã lưu</span>
+                        <span id="saveStatus" class="text-[10px] font-bold text-green-600 opacity-0 transition">Đã đồng bộ</span>
                     </div>
                     <textarea id="quickNote" oninput="window.saveNote()" 
                         class="w-full bg-white/50 dark:bg-slate-900/50 rounded-xl p-3 ios-input text-sm leading-relaxed shadow-inner focus:ring-2 ring-yellow-400/50 h-40" 
-                        placeholder="Viết ý tưởng, nhắc nhở ở đây... (Tự động lưu)"></textarea>
+                        placeholder="Viết ý tưởng... (Lưu trực tiếp lên Cloud nếu đã đăng nhập)"></textarea>
                  </div>
             </div>
         </div>
@@ -358,7 +306,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+        // CONFIG FIREBASE (User's Config)
         const firebaseConfig = {
             apiKey: "AIzaSyAcfs8LFgPeAkGyaSkmJeECoRBEwtfRv8E",
             authDomain: "minhduckale1.firebaseapp.com",
@@ -372,34 +322,32 @@
 
         const app = initializeApp(firebaseConfig);
         const auth = getAuth(app);
+        const db = getDatabase(app);
         const provider = new GoogleAuthProvider();
 
-        window.loginGoogle = () => {
-            signInWithPopup(auth, provider)
-                .then((result) => { console.log("Logged in:", result.user); })
-                .catch((error) => { alert("Lỗi đăng nhập: " + error.message); });
-        };
+        let currentUser = null;
+        let allDocs = JSON.parse(localStorage.getItem('mdk_user_docs_v2') || '[]');
 
-        window.logoutFirebase = () => {
-            signOut(auth).then(() => {
-                document.getElementById('logoutPanel').classList.add('hidden');
-                console.log("Logged out");
-            });
-        };
+        // --- AUTH ---
+        window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert(e.message));
+        window.logoutFirebase = () => signOut(auth);
 
         onAuthStateChanged(auth, (user) => {
+            currentUser = user;
             const loginBtn = document.getElementById('loginBtn');
             const userProfile = document.getElementById('userProfile');
-            const userAvatar = document.getElementById('userAvatar');
-            const userName = document.getElementById('userName');
-
             if (user) {
                 loginBtn.classList.add('hidden');
                 userProfile.classList.remove('hidden');
                 userProfile.classList.add('flex');
-                userAvatar.src = user.photoURL || "https://img.icons8.com/color/96/user-male-circle--v1.png";
-                userName.innerText = user.displayName || "MinhducKale User";
+                document.getElementById('userAvatar').src = user.photoURL || "https://img.icons8.com/color/96/user-male-circle--v1.png";
+                document.getElementById('userName').innerText = user.displayName;
                 userProfile.onclick = () => document.getElementById('logoutPanel').classList.toggle('hidden');
+                
+                // Load Cloud Note
+                onValue(ref(db, 'users/' + user.uid + '/note'), (snap) => {
+                    document.getElementById('quickNote').value = snap.val() || "";
+                });
             } else {
                 loginBtn.classList.remove('hidden');
                 userProfile.classList.add('hidden');
@@ -408,8 +356,7 @@
             }
         });
 
-        const driveBase = "https://drive.google.com/drive/folders/1GnW2tjMYi-FcmEstNQQu8WD25AK06W9-?usp=drive_link";
-
+        // --- DOCS LOGIC ---
         const folders = {
             "capcuu": { name: "1. Hồi sức Cấp cứu", icon: "fa-truck-medical", color: "text-red-500", items: [] },
             "noikhoa": { name: "2. Nội khoa", icon: "fa-user-doctor", color: "text-blue-500", items: [] },
@@ -419,25 +366,6 @@
             "canlamsang": { name: "6. Cận lâm sàng", icon: "fa-microscope", color: "text-purple-500", items: [] },
             "khac": { name: "7. Tài liệu khác", icon: "fa-folder-open", color: "text-slate-500", items: [] }
         };
-
-        const initialDocs = [
-            { id: 'd1', title: 'Truy cập Drive Tổng', folder: 'khac', url: driveBase, type: 'DOC' },
-        ];
-
-        let currentViewFolder = null; 
-        let userDocs = JSON.parse(localStorage.getItem('mdk_user_docs_v2') || '[]');
-        let allDocs = [];
-
-        function init() {
-            allDocs = [...userDocs, ...initialDocs];
-            distributeDocs();
-            renderFolders();
-            populateFolderSelect();
-            checkNotifications();
-            if(localStorage.getItem('mdk_dark') === 'true') document.documentElement.classList.add('dark');
-            loadNote();
-            updateClock();
-        }
 
         function distributeDocs() {
             Object.keys(folders).forEach(k => folders[k].items = []);
@@ -449,27 +377,20 @@
 
         const listEl = document.getElementById('docsList');
         const breadcrumb = document.getElementById('breadcrumb');
+        let currentViewFolder = null;
 
         window.renderFolders = function() {
             currentViewFolder = null;
             breadcrumb.classList.add('hidden');
             listEl.innerHTML = '';
-            
             Object.keys(folders).forEach(key => {
                 const f = folders[key];
-                const count = f.items.length;
                 const html = `
                     <div onclick="window.openFolder('${key}')" class="glass-card p-5 rounded-3xl flex items-center gap-5 cursor-pointer hover:bg-white/90 dark:hover:bg-slate-700/80 transition group border-l-4 border-transparent hover:border-blue-500">
-                        <div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl ${f.color} shadow-md group-hover:scale-110 transition">
-                            <i class="fa-solid ${f.icon}"></i>
-                        </div>
-                        <div class="flex-1">
-                            <h3 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${f.name}</h3>
-                            <p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">${count} file</p>
-                        </div>
+                        <div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl ${f.color} shadow-md group-hover:scale-110 transition"><i class="fa-solid ${f.icon}"></i></div>
+                        <div class="flex-1"><h3 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${f.name}</h3><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">${f.items.length} file</p></div>
                         <i class="fa-solid fa-chevron-right text-slate-300 font-bold"></i>
-                    </div>
-                `;
+                    </div>`;
                 listEl.insertAdjacentHTML('beforeend', html);
             });
         }
@@ -479,27 +400,9 @@
             const f = folders[key];
             breadcrumb.classList.remove('hidden');
             document.getElementById('currentFolderTitle').innerText = f.name;
-            
             listEl.innerHTML = '';
-            if(f.items.length === 0) {
-                listEl.innerHTML = `<div class="col-span-2 text-center py-20 opacity-60 dark:text-white font-bold">Thư mục trống</div>`;
-                return;
-            }
-
-            f.items.forEach(doc => {
-                const icon = 'fa-file-lines text-blue-500';
-                const html = `
-                    <div class="glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm">
-                        <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center"><i class="fa-solid ${icon} text-lg"></i></div>
-                        <div class="flex-1 min-w-0">
-                            <h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${doc.title}</h4>
-                            <a href="${doc.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-blue-600 hover:underline uppercase tracking-wide">Mở tài liệu</a>
-                        </div>
-                        <i class="fa-solid fa-arrow-up-right-from-square text-slate-300 text-xs"></i>
-                    </div>
-                `;
-                listEl.insertAdjacentHTML('beforeend', html);
-            });
+            if(f.items.length === 0) { listEl.innerHTML = `<div class="col-span-2 text-center py-20 opacity-60 dark:text-white font-bold">Thư mục trống</div>`; return; }
+            f.items.forEach(doc => renderDocItem(doc));
         }
 
         window.filterDocs = function() {
@@ -507,47 +410,31 @@
             if(!term) { window.renderFolders(); return; }
             breadcrumb.classList.add('hidden');
             listEl.innerHTML = '';
-            
             const results = allDocs.filter(d => d.title.toLowerCase().includes(term));
-            
-            if(results.length === 0) {
-                 listEl.innerHTML = `<div class="col-span-2 text-center py-10 font-bold text-slate-500">Không tìm thấy kết quả</div>`;
-                 return;
+            if(results.length === 0) listEl.innerHTML = `<div class="col-span-2 text-center py-10 font-bold text-slate-500">Không tìm thấy kết quả</div>`;
+            else results.forEach(doc => renderDocItem(doc));
+        }
+
+        function renderDocItem(doc) {
+            const html = `
+                <div class="glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm">
+                    <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center"><i class="fa-solid fa-file-lines text-blue-500 text-lg"></i></div>
+                    <div class="flex-1 min-w-0">
+                        <h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${doc.title}</h4>
+                        <a href="${doc.url}" target="_blank" class="text-xs font-bold text-blue-600 hover:underline uppercase tracking-wide">Mở tài liệu</a>
+                    </div>
+                    <i class="fa-solid fa-arrow-up-right-from-square text-slate-300 text-xs"></i>
+                </div>`;
+            listEl.insertAdjacentHTML('beforeend', html);
+        }
+
+        // --- IMPORT/EXPORT LOGIC ---
+        function saveToLocalStorage() {
+            try {
+                localStorage.setItem('mdk_user_docs_v2', JSON.stringify(allDocs));
+            } catch (e) {
+                alert("Dữ liệu quá lớn để lưu vào bộ nhớ tạm. Hãy dùng tính năng Backup File!");
             }
-
-            results.forEach(doc => {
-                const html = `<div class="glass-card p-4 rounded-2xl"><h4 class="font-bold text-slate-900 dark:text-white">${doc.title}</h4><p class="text-xs font-bold text-slate-500">Trong: ${folders[doc.folder]?.name}</p><a href="${doc.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-blue-600 mt-2 block">MỞ NGAY</a></div>`;
-                listEl.insertAdjacentHTML('beforeend', html);
-            });
-        }
-
-        window.saveNewDoc = function() {
-            const title = document.getElementById('newDocTitle').value;
-            const folder = document.getElementById('newDocFolder').value;
-            const link = document.getElementById('newDocLink').value;
-            if(!title || !link) return alert("Thiếu thông tin");
-            
-            const newDoc = { id: 'u'+Date.now(), title, folder, url: link, type: 'DOC' };
-            userDocs.push(newDoc);
-            saveToLocalStorage();
-            
-            document.getElementById('addDocModal').classList.add('hidden');
-            allDocs = [...userDocs, ...initialDocs];
-            distributeDocs();
-            if(currentViewFolder === folder) window.openFolder(folder);
-            else window.renderFolders();
-        }
-
-        function saveToLocalStorage() { localStorage.setItem('mdk_user_docs_v2', JSON.stringify(userDocs)); }
-
-        window.exportData = function() {
-            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userDocs));
-            const downloadAnchorNode = document.createElement('a');
-            downloadAnchorNode.setAttribute("href", dataStr);
-            downloadAnchorNode.setAttribute("download", "minhduckale_backup_" + new Date().toISOString().slice(0,10) + ".json");
-            document.body.appendChild(downloadAnchorNode);
-            downloadAnchorNode.click();
-            downloadAnchorNode.remove();
         }
 
         window.importData = function(input) {
@@ -556,76 +443,93 @@
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const importedDocs = JSON.parse(e.target.result);
-                    if(Array.isArray(importedDocs)) {
-                        if(confirm("Hành động này sẽ thay thế dữ liệu hiện tại bằng file backup. Bạn có chắc chắn?")) {
-                            userDocs = importedDocs;
+                    const imported = JSON.parse(e.target.result);
+                    if(Array.isArray(imported)) {
+                        if(confirm(`Tìm thấy ${imported.length} tài liệu. Bạn có muốn nạp vào không?`)) {
+                            allDocs = imported;
                             saveToLocalStorage();
-                            alert("Khôi phục thành công! Đang tải lại...");
-                            location.reload();
+                            distributeDocs();
+                            renderFolders();
+                            alert("Đã nạp dữ liệu thành công!");
                         }
-                    } else { alert("File không đúng định dạng!"); }
-                } catch(err) { alert("Lỗi khi đọc file: " + err); }
+                    } else alert("File không đúng định dạng!");
+                } catch(err) { alert("Lỗi đọc file JSON"); }
             };
             reader.readAsText(file);
         }
 
-        window.saveNote = function() {
-            const content = document.getElementById('quickNote').value;
-            localStorage.setItem('mdk_sticky_note', content);
-            const status = document.getElementById('saveStatus');
-            status.style.opacity = '1';
-            setTimeout(() => { status.style.opacity = '0'; }, 2000);
-        }
-        function loadNote() {
-            const saved = localStorage.getItem('mdk_sticky_note');
-            if(saved) document.getElementById('quickNote').value = saved;
+        window.exportToExcel = () => {
+            if(allDocs.length === 0) return alert("Chưa có dữ liệu!");
+            const dataToExport = allDocs.map(doc => ({ "Tên tài liệu": doc.title, "Link": doc.url, "Thư mục": doc.folder }));
+            const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "TaiLieu");
+            XLSX.writeFile(workbook, "MinhducKale_Data.xlsx");
         }
 
-        const playlist = [
-            {t:"Chill Lofi Beat", a:"Unknown", u:"https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"}, 
-            {t:"Relaxing Piano", a:"Pixabay", u:"https://cdn.pixabay.com/download/audio/2022/03/10/audio_5b8220a28f.mp3?filename=piano-moment-11153.mp3"},
-            {t:"Deep Focus", a:"Ambient", u:"https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=soft-rain-ambient-111154.mp3"}
-        ];
+        window.importFromExcel = function(input) {
+            const file = input.files[0];
+            if(!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, {type: 'array'});
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const json = XLSX.utils.sheet_to_json(worksheet);
+                if(json.length > 0) {
+                    let count = 0;
+                    json.forEach(row => {
+                        const title = row["Tên tài liệu"]; const url = row["Link"]; const folder = row["Thư mục"] || "khac";
+                        if(title && url) { allDocs.push({ id: 'u'+Date.now()+Math.random(), title, folder, url, type: 'DOC' }); count++; }
+                    });
+                    saveToLocalStorage();
+                    distributeDocs();
+                    renderFolders();
+                    alert(`Đã thêm ${count} tài liệu từ Excel!`);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        window.saveNewDoc = function() {
+            const title = document.getElementById('newDocTitle').value;
+            const folder = document.getElementById('newDocFolder').value;
+            const link = document.getElementById('newDocLink').value;
+            if(!title || !link) return alert("Thiếu thông tin");
+            allDocs.push({ id: 'u'+Date.now(), title, folder, url: link, type: 'DOC' });
+            saveToLocalStorage();
+            document.getElementById('addDocModal').classList.add('hidden');
+            distributeDocs();
+            if(currentViewFolder === folder) window.openFolder(folder); else window.renderFolders();
+        }
+
+        // --- UTILS ---
+        window.saveNote = function() {
+            const content = document.getElementById('quickNote').value;
+            if (currentUser) {
+                set(ref(db, 'users/' + currentUser.uid + '/note'), content);
+                document.getElementById('saveStatus').style.opacity = '1';
+                setTimeout(() => { document.getElementById('saveStatus').style.opacity = '0'; }, 2000);
+            }
+        }
+        
+        // Music Player
+        const playlist = [{t:"Chill Lofi Beat", a:"Unknown", u:"https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"}, {t:"Relaxing Piano", a:"Pixabay", u:"https://cdn.pixabay.com/download/audio/2022/03/10/audio_5b8220a28f.mp3?filename=piano-moment-11153.mp3"}];
         let trackIdx = 0;
         const audio = document.getElementById('bgAudio');
         const disc = document.getElementById('musicDisc');
-
-        function loadTrack(i) {
-            audio.src = playlist[i].u;
-            document.getElementById('musicTitle').innerText = playlist[i].t;
-            document.getElementById('musicArtist').innerText = playlist[i].a;
-            audio.volume = document.getElementById('volSlider').value;
-        }
-        window.toggleMusic = function() {
-            if(audio.paused) { 
-                audio.play(); 
-                document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-pause text-xl ml-0"></i>';
-                disc.classList.add('animate-spin-slow');
-            } else { 
-                audio.pause(); 
-                document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-play text-xl ml-1"></i>';
-                disc.classList.remove('animate-spin-slow');
-            }
-        }
-        window.nextSong = function() {
-            trackIdx = (trackIdx + 1) % playlist.length;
-            loadTrack(trackIdx); audio.play();
-            disc.classList.add('animate-spin-slow'); document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-pause text-xl"></i>';
-        }
-        window.prevSong = function() {
-            trackIdx = (trackIdx - 1 + playlist.length) % playlist.length;
-            loadTrack(trackIdx); audio.play();
-        }
+        function loadTrack(i) { audio.src = playlist[i].u; document.getElementById('musicTitle').innerText = playlist[i].t; }
+        window.toggleMusic = function() { if(audio.paused) { audio.play(); disc.classList.add('animate-spin-slow'); } else { audio.pause(); disc.classList.remove('animate-spin-slow'); } }
+        window.nextSong = function() { trackIdx = (trackIdx + 1) % playlist.length; loadTrack(trackIdx); audio.play(); }
+        window.prevSong = function() { trackIdx = (trackIdx - 1 + playlist.length) % playlist.length; loadTrack(trackIdx); audio.play(); }
         window.changeVolume = function(val) { audio.volume = val; }
         loadTrack(0);
 
+        // General UI
         function populateFolderSelect() {
             const sel = document.getElementById('newDocFolder');
             Object.keys(folders).forEach(k => {
-                const opt = document.createElement('option');
-                opt.value = k; opt.text = folders[k].name;
-                sel.appendChild(opt);
+                const opt = document.createElement('option'); opt.value = k; opt.text = folders[k].name; sel.appendChild(opt);
             });
         }
         window.openAddDocModal = function() { document.getElementById('addDocModal').classList.remove('hidden'); }
@@ -645,18 +549,8 @@
             document.getElementById('clock').innerText = now.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
             document.getElementById('date-display').innerText = now.toLocaleDateString('vi-VN');
         }
-        window.toggleNotif = function() {
-            document.getElementById('notifPanel').classList.toggle('hidden');
-            document.getElementById('notifDot').style.display = 'none';
-        }
-        function checkNotifications() {
-            document.getElementById('notifDot').style.display = 'block';
-            document.getElementById('notifList').innerHTML = 
-                `<div class="p-2 border-b dark:border-slate-700 font-bold text-blue-600">v5.3: Fix Scrolling</div>
-                 <div class="p-2 border-b dark:border-slate-700">Đã tích hợp Firebase Auth</div>
-                 <div class="p-2">Hệ thống sẵn sàng</div>`;
-        }
 
+        // Calculators
         window.calcBMI = () => { const w = document.getElementById('bmi-w').value, h = document.getElementById('bmi-h').value/100; if(w&&h) { document.getElementById('bmi-res').innerText = "BMI: " + (w/(h*h)).toFixed(1); document.getElementById('bmi-res').classList.remove('hidden'); } }
         window.calcMAP = () => { const s = Number(document.getElementById('map-sys').value), d = Number(document.getElementById('map-dia').value); if(s&&d) { document.getElementById('map-res').innerText = "MAP: " + ((2*d+s)/3).toFixed(0) + " mmHg"; document.getElementById('map-res').classList.remove('hidden'); } }
         window.calcEGFR = () => {
@@ -665,15 +559,18 @@
             const cre = parseFloat(document.getElementById('egfr-cre').value);
             const sex = parseFloat(document.getElementById('egfr-sex').value);
             if(age && w && cre) {
-                let res = ((140 - age) * w) / (72 * cre);
-                res = res * sex;
+                let res = ((140 - age) * w) / (72 * cre); res = res * sex;
                 document.getElementById('egfr-res').innerText = "eGFR: " + res.toFixed(2) + " ml/min";
                 document.getElementById('egfr-res').classList.remove('hidden');
             } else { alert("Thiếu thông tin"); }
         }
 
+        // Init
         setInterval(updateClock, 1000);
-        init();
+        populateFolderSelect();
+        distributeDocs();
+        renderFolders();
+        if(localStorage.getItem('mdk_dark') === 'true') document.documentElement.classList.add('dark');
     </script>
 </body>
 </html>
