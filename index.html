@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MinhducKale - Cloud Sync v9.6 (PWA App)</title>
+    <title>MinhducKale - Cloud Sync v9.9 (Pharma Database)</title>
     
     <!-- PWA CONFIGURATION -->
     <link rel="manifest" href="manifest.json">
@@ -43,7 +43,8 @@
         /* BASE STYLES */
         body { transition: background-color 0.5s, color 0.5s; background-color: #e0f2fe; color: #1e293b; }
         .dark body { background-color: #0f172a; color: #f1f5f9; }
-        .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.8; z-index: -1; animation: blob 15s infinite alternate; pointer-events: none; }
+        
+        .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.8; z-index: -1; animation: blob 15s infinite alternate; pointer-events: none; will-change: transform; }
         .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #93c5fd; }
         .blob-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #6ee7b7; }
         .blob-3 { top: 40%; left: 40%; width: 400px; height: 400px; background: #c4b5fd; }
@@ -53,7 +54,8 @@
         
         .glass-panel { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); }
         .dark .glass-panel { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); transition: all 0.3s ease; }
+        
+        .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); transition: transform 0.2s ease, box-shadow 0.2s ease; will-change: transform; }
         .dark .glass-card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); }
         .glass-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         
@@ -63,13 +65,13 @@
         
         .segmented-control { background: rgba(200, 200, 200, 0.4); backdrop-filter: blur(10px); padding: 4px; border-radius: 12px; display: inline-flex; }
         .dark .segmented-control { background: rgba(0,0,0,0.4); }
-        .segment-btn { padding: 6px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; color: #475569; }
+        .segment-btn { padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; color: #475569; white-space: nowrap; }
         .dark .segment-btn { color: #94a3b8; }
         .segment-btn.active { background: white; color: #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .dark .segment-btn.active { background: #334155; color: white; }
         
-        .tool-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-        .tool-content.open { max-height: 600px; }
+        .tool-content { max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1); will-change: max-height; }
+        .tool-content.open { max-height: 800px; }
         
         /* Volume Slider */
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
@@ -88,8 +90,8 @@
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 24px; height: 24px; animation: spin 2s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 10px; }
-        .toast { min-width: 280px; padding: 16px; border-radius: 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; animation: slideIn 0.3s ease-out forwards; border-left: 4px solid #3b82f6; }
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { min-width: 280px; padding: 16px; border-radius: 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; animation: slideIn 0.3s ease-out forwards; border-left: 4px solid #3b82f6; pointer-events: auto; }
         .toast.error { border-left-color: #ef4444; }
         .toast.success { border-left-color: #22c55e; }
         .toast-content { font-weight: 600; font-size: 14px; color: #1e293b; }
@@ -97,8 +99,6 @@
         .dark .toast-content { color: white; }
 
         /* Notification & Music Tabs */
-        .glass-card { backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); background: rgba(255, 255, 255, 0.4); }
-        .dark .glass-card { background: rgba(30, 41, 59, 0.6); }
         .music-tab { font-size: 10px; font-weight: bold; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; cursor: pointer; opacity: 0.6; transition: all 0.3s; }
         .music-tab.active { background: rgba(59, 130, 246, 0.2); color: #3b82f6; opacity: 1; }
         .dark .music-tab.active { background: rgba(255, 255, 255, 0.1); color: #fff; }
@@ -115,10 +115,10 @@
         <header class="glass-panel rounded-3xl px-6 py-4 mb-8 flex flex-col md:flex-row justify-between items-center z-20 sticky top-4">
             <div class="flex items-center gap-4 mb-4 md:mb-0">
                 <div id="authContainer" class="relative group">
-                    <button id="loginBtn" onclick="window.loginGoogle()" class="w-12 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 transition">
+                    <button id="loginBtn" onclick="window.loginGoogle()" title="Đăng nhập Google" class="w-12 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 transition">
                         <i class="fa-solid fa-right-to-bracket text-xl"></i>
                     </button>
-                    <div id="userProfile" class="hidden flex items-center gap-3 cursor-pointer">
+                    <div id="userProfile" class="hidden flex items-center gap-3 cursor-pointer" title="Quản lý tài khoản">
                         <img id="userAvatar" src="" class="w-12 h-12 rounded-2xl border-2 border-white shadow-md">
                         <div class="hidden md:block">
                             <p id="userName" class="text-sm font-bold text-slate-900 dark:text-white">User</p>
@@ -143,44 +143,60 @@
 
                 <div>
                     <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v9.6</p>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v9.9</p>
                 </div>
             </div>
             
-            <div class="segmented-control mb-4 md:mb-0">
-                <div class="segment-btn active" onclick="window.switchTab('docs', this)">Kho Tài liệu</div>
-                <div class="segment-btn" onclick="window.switchTab('tools', this)">Công cụ Y khoa</div>
+            <div class="segmented-control mb-4 md:mb-0 overflow-x-auto">
+                <div class="segment-btn active" onclick="window.switchTab('docs', this)" title="Xem kho tài liệu">Kho Tài liệu</div>
+                <div class="segment-btn" onclick="window.switchTab('meds', this)" title="Tra cứu thuốc">Danh mục Thuốc</div>
+                <div class="segment-btn" onclick="window.switchTab('tools', this)" title="Các công cụ hỗ trợ">Công cụ Y khoa</div>
             </div>
 
             <div class="flex items-center gap-4">
-                <button id="adminPanelBtn" onclick="window.showToast('Admin Panel: Sử dụng tab Công cụ để quản lý', 'info')" class="hidden w-10 h-10 rounded-xl bg-red-600 text-white font-bold flex items-center justify-center hover:bg-red-700 hover:scale-105 transition shadow-lg">A</button>
-                <button onclick="window.toggleNotify()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 flex items-center justify-center hover:scale-105 transition text-slate-700 dark:text-white relative"><i class="fa-solid fa-bell"></i></button>
+                <button id="adminPanelBtn" onclick="window.scrollToAdminTools()" title="Truy cập nhanh công cụ Admin" class="hidden w-10 h-10 rounded-xl bg-red-600 text-white font-bold flex items-center justify-center hover:bg-red-700 hover:scale-105 transition shadow-lg">A</button>
+                <button onclick="window.toggleNotify()" title="Nhật ký hoạt động" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 flex items-center justify-center hover:scale-105 transition text-slate-700 dark:text-white relative"><i class="fa-solid fa-bell"></i></button>
                 <div class="hidden lg:flex flex-col items-end mr-2 text-right">
                     <span id="clock" class="text-lg font-mono font-bold text-slate-800 dark:text-slate-200">00:00</span>
                     <span id="date-display" class="text-[10px] font-bold uppercase text-slate-500">...</span>
                 </div>
-                <button onclick="window.toggleDarkMode()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white flex items-center justify-center transition text-slate-700 dark:text-yellow-400 shadow-sm"><i id="darkIcon" class="fa-solid fa-moon"></i></button>
+                <button onclick="window.toggleDarkMode()" title="Chế độ Sáng/Tối" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white flex items-center justify-center transition text-slate-700 dark:text-yellow-400 shadow-sm"><i id="darkIcon" class="fa-solid fa-moon"></i></button>
             </div>
         </header>
 
         <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 pb-10">
             <!-- LEFT COLUMN -->
             <div class="lg:col-span-8 flex flex-col">
+                
+                <!-- VIEW DOCS -->
                 <div id="view-docs" class="flex flex-col gap-6 fade-in">
                     <div class="flex gap-3 relative z-10">
                         <div class="relative flex-1 group">
                             <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-600"></i>
-                            <input id="searchInput" type="text" onkeyup="window.filterDocs()" class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm kiếm tài liệu, sách, phác đồ...">
+                            <input id="searchInput" type="text" onkeyup="window.debouncedFilterDocs()" class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm kiếm tài liệu, sách, phác đồ...">
                         </div>
-                        <button id="addDocBtn" onclick="window.openAddDocModal()" class="hidden w-14 rounded-2xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-700 text-white flex items-center justify-center shadow-lg active:scale-95 transition"><i class="fa-solid fa-plus text-xl"></i></button>
+                        <button id="addDocBtn" onclick="window.openAddDocModal()" title="Thêm tài liệu mới" class="hidden w-14 rounded-2xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-700 text-white flex items-center justify-center shadow-lg active:scale-95 transition"><i class="fa-solid fa-plus text-xl"></i></button>
                     </div>
                     <div id="breadcrumb" class="hidden flex items-center gap-2 text-sm font-extrabold text-slate-700 dark:text-slate-200 bg-white/30 w-fit px-3 py-1 rounded-lg">
                         <button onclick="window.renderFolders()" class="hover:text-blue-600"><i class="fa-solid fa-house"></i> Home</button><span class="text-slate-400">/</span><span id="currentFolderTitle" class="text-blue-700 dark:text-blue-400">Folder Name</span>
                     </div>
-                    <div id="loadingIndicator" class="hidden text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-slate-500 font-bold">Đang đồng bộ dữ liệu...</p></div>
+                    <div id="loadingIndicator" class="hidden text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-slate-500 font-bold">Đang đồng bộ tài liệu...</p></div>
                     <div id="docsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </div>
 
+                <!-- VIEW MEDS (UPDATED) -->
+                <div id="view-meds" class="hidden flex-col gap-6 fade-in">
+                    <div class="flex gap-3 relative z-10">
+                        <div class="relative flex-1 group">
+                            <i class="fa-solid fa-pills absolute left-4 top-4 text-slate-500 group-focus-within:text-pink-600"></i>
+                            <input id="searchMedsInput" type="text" onkeyup="window.filterMeds()" class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm tên thuốc, biệt dược, hoạt chất...">
+                        </div>
+                    </div>
+                    <div id="loadingIndicatorMeds" class="hidden text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-slate-500 font-bold">Đang tải danh mục thuốc...</p></div>
+                    <div id="medsList" class="grid grid-cols-1 gap-4"></div>
+                </div>
+
+                <!-- VIEW TOOLS -->
                 <div id="view-tools" class="hidden flex-col gap-6 fade-in">
                     <!-- ADMIN TOOLS -->
                     <div id="adminToolsCard" class="hidden glass-card rounded-2xl overflow-hidden border-l-4 border-red-500">
@@ -191,7 +207,13 @@
                         <div id="tool-admin" class="tool-content px-4">
                             <div class="py-4 space-y-4">
                                 <p class="text-xs text-slate-600 dark:text-slate-300">Công cụ dành riêng cho Quản trị viên.</p>
-                                <button onclick="window.openJsonImport()" class="w-full p-3 rounded-xl bg-purple-600 text-white font-bold hover:bg-purple-700 transition flex items-center justify-center gap-2 mb-2"><i class="fa-solid fa-file-code"></i> Import tài liệu bằng JSON</button>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <button onclick="window.seedMedsDatabase()" class="p-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold hover:opacity-90 transition flex items-center justify-center gap-2 shadow-lg"><i class="fa-solid fa-bolt"></i> ⚡ Nạp 100 Thuốc Mẫu (Panadol, Kháng sinh...)</button>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <button onclick="window.openJsonImport('docs')" class="p-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2"><i class="fa-solid fa-file-code"></i> Import Docs</button>
+                                        <button onclick="window.openJsonImport('meds')" class="p-3 rounded-xl bg-pink-600 text-white font-bold hover:bg-pink-700 transition flex items-center justify-center gap-2"><i class="fa-solid fa-capsules"></i> Import Meds</button>
+                                    </div>
+                                </div>
                                 <div class="h-px bg-slate-300 dark:bg-slate-600 my-3"></div>
                                 <p class="text-xs text-slate-600 dark:text-slate-300 mb-2 font-bold">🔐 Đổi mã kích hoạt Admin</p>
                                 <div class="flex gap-2">
@@ -205,7 +227,7 @@
                         </div>
                     </div>
 
-                    <!-- MODULE 4: EXPORT MEDICAL FORM -->
+                    <!-- EXPORT MEDICAL FORM -->
                     <div class="glass-card rounded-2xl overflow-hidden border-l-4 border-cyan-500">
                         <button onclick="window.toggleTool('medical')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
                             <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-file-medical text-cyan-600 mr-2"></i>Hồ sơ bệnh án</span>
@@ -348,10 +370,10 @@
 
     <div id="jsonImportModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50 backdrop-blur-sm">
       <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl w-full max-w-xl shadow-2xl animate-slideIn">
-        <h2 class="font-bold text-lg mb-3 text-slate-800 dark:text-white">📥 Import tài liệu JSON</h2>
-        <p class="text-xs text-slate-500 mb-2">Định dạng: [{"title": "Tên", "url": "Link", "folder": "capcuu"}]</p>
-        <textarea id="jsonInput" class="w-full h-48 p-3 rounded-xl border dark:border-gray-700 dark:bg-black/50 dark:text-white ios-input" placeholder='[{"title":"Ví dụ", "url":"...", "folder":"khac"}]'></textarea>
-        <div class="flex gap-3 mt-4"><button onclick="window.importJsonDocs()" class="flex-1 bg-green-600 hover:bg-green-700 text-white p-3 rounded-xl font-bold transition">✅ Import Ngay</button><button onclick="window.closeJsonImport()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white p-3 rounded-xl font-bold transition">❌ Hủy</button></div>
+        <h2 class="font-bold text-lg mb-3 text-slate-800 dark:text-white">📥 Import Dữ Liệu JSON</h2>
+        <p id="jsonImportHint" class="text-xs text-slate-500 mb-2">Định dạng: ...</p>
+        <textarea id="jsonInput" class="w-full h-48 p-3 rounded-xl border dark:border-gray-700 dark:bg-black/50 dark:text-white ios-input" placeholder="Paste JSON here..."></textarea>
+        <div class="flex gap-3 mt-4"><button onclick="window.importJsonData()" class="flex-1 bg-green-600 hover:bg-green-700 text-white p-3 rounded-xl font-bold transition">✅ Import Ngay</button><button onclick="window.closeJsonImport()" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white p-3 rounded-xl font-bold transition">❌ Hủy</button></div>
       </div>
     </div>
 
@@ -385,28 +407,188 @@
         let currentUser = null;
         window.isAdmin = false;
         let allDocs = [];
+        let allMeds = [];
         let publicDocs = [];
         let privateDocs = [];
         let publicListener = null;
         let privateListener = null;
+        let medsListener = null;
+        let currentImportType = '';
+
+        // *** EMBEDDED SAMPLE MEDS (100 ITEMS) ***
+        const SAMPLE_MEDS = [
+  { "name": "Paracetamol", "brand": "Panadol, Efferalgan", "group": "Giảm đau - Hạ sốt", "strength": "500mg, 650mg", "mechanism": "Ức chế tổng hợp prostaglandin trung ương, hạ nhiệt.", "dosage": "500mg - 1g/lần, mỗi 4-6h. Tối đa 4g/ngày.", "route": "Uống, Truyền TM, Trực tràng" },
+  { "name": "Ibuprofen", "brand": "Gofen, Brufen", "group": "NSAIDs", "strength": "200mg, 400mg", "mechanism": "Ức chế COX-1 và COX-2, giảm viêm ngoại vi.", "dosage": "200-400mg mỗi 4-6h. Tối đa 2.4g/ngày. Uống sau ăn.", "route": "Uống" },
+  { "name": "Diclofenac", "brand": "Voltaren", "group": "NSAIDs", "strength": "500mg, 75mg", "mechanism": "Ức chế mạnh sinh tổng hợp prostaglandin.", "dosage": "50-150mg/ngày, chia 2-3 lần.", "route": "Uống, Tiêm bắp, Bôi" },
+  { "name": "Meloxicam", "brand": "Mobic", "group": "NSAIDs", "strength": "7.5mg, 15mg", "mechanism": "Ức chế ưu thế COX-2, ít hại dạ dày hơn.", "dosage": "7.5mg/ngày. Tối đa 15mg/ngày.", "route": "Uống, Tiêm bắp" },
+  { "name": "Amoxicillin", "brand": "Clamoxyl", "group": "Kháng sinh", "strength": "500mg", "mechanism": "Beta-lactam: Ức chế tổng hợp thành tế bào vi khuẩn.", "dosage": "500mg - 1g/lần. Mỗi 8-12 giờ.", "route": "Uống, Tiêm" },
+  { "name": "Amoxicillin + Clavulanic acid", "brand": "Augmentin", "group": "Kháng sinh", "strength": "625mg, 1g", "mechanism": "Phối hợp ức chế beta-lactamase.", "dosage": "1 viên (875/125mg) mỗi 12h hoặc 1 viên (500/125mg) mỗi 8h.", "route": "Uống, Tiêm" },
+  { "name": "Azithromycin", "brand": "Zithromax", "group": "Kháng sinh", "strength": "250mg, 500mg", "mechanism": "Macrolid: Ức chế tổng hợp protein vi khuẩn (50S).", "dosage": "500mg ngày đầu, 250mg x 4 ngày sau.", "route": "Uống" },
+  { "name": "Cephalexin", "brand": "Keflex", "group": "Kháng sinh", "strength": "500mg", "mechanism": "Cephalosporin thế hệ 1.", "dosage": "250mg - 500mg mỗi 6 giờ.", "route": "Uống" },
+  { "name": "Ciprofloxacin", "brand": "Ciprobay", "group": "Kháng sinh", "strength": "500mg", "mechanism": "Quinolon: Ức chế DNA gyrase vi khuẩn.", "dosage": "250-500mg mỗi 12 giờ.", "route": "Uống, Tiêm truyền" },
+  { "name": "Amlodipine", "brand": "Amlor", "group": "Tim mạch", "strength": "5mg, 10mg", "mechanism": "Chẹn kênh Calci: Giãn mạch, hạ áp.", "dosage": "Khởi đầu 5mg/ngày. Tối đa 10mg/ngày.", "route": "Uống" },
+  { "name": "Losartan", "brand": "Cozaar", "group": "Tim mạch", "strength": "25mg, 50mg", "mechanism": "Chẹn thụ thể Angiotensin II.", "dosage": "Khởi đầu 50mg/lần/ngày.", "route": "Uống" },
+  { "name": "Atorvastatin", "brand": "Lipitor", "group": "Tim mạch - Mỡ máu", "strength": "10mg, 20mg", "mechanism": "Ức chế HMG-CoA reductase.", "dosage": "10-20mg/ngày (uống tối).", "route": "Uống" },
+  { "name": "Metformin", "brand": "Glucophage", "group": "Nội tiết - Đái tháo đường", "strength": "500mg, 850mg, 1000mg", "mechanism": "Tăng nhạy cảm Insulin, giảm sinh đường ở gan.", "dosage": "Khởi đầu 500mg sau ăn. Tối đa 2g/ngày.", "route": "Uống" },
+  { "name": "Furosemide", "brand": "Lasix", "group": "Tim mạch - Lợi tiểu", "strength": "40mg", "mechanism": "Lợi tiểu quai Henle.", "dosage": "40mg/lần (sáng). Cấp cứu: Tiêm TM.", "route": "Uống, Tiêm TM" },
+  { "name": "Omeprazole", "brand": "Losec", "group": "Tiêu hóa", "strength": "20mg", "mechanism": "Ức chế bơm Proton (PPI).", "dosage": "20mg/ngày (uống trước ăn sáng 30p).", "route": "Uống, Tiêm" },
+  { "name": "Domperidone", "brand": "Motilium", "group": "Tiêu hóa", "strength": "10mg", "mechanism": "Kháng Dopamin: Chống nôn.", "dosage": "10mg/lần x 3 lần/ngày (trước ăn).", "route": "Uống" },
+  { "name": "Loperamide", "brand": "Imodium", "group": "Tiêu hóa", "strength": "2mg", "mechanism": "Giảm nhu động ruột, cầm tiêu chảy.", "dosage": "Đầu 4mg, sau đó 2mg sau mỗi lần đi lỏng. Max 16mg.", "route": "Uống" },
+  { "name": "Phosphalugel", "brand": "Nhôm phosphat", "group": "Tiêu hóa", "strength": "20g (gói)", "mechanism": "Antacid: Trung hòa acid dịch vị.", "dosage": "1-2 gói/lần x 2-3 lần/ngày.", "route": "Uống" },
+  { "name": "Salbutamol", "brand": "Ventolin", "group": "Hô hấp", "strength": "2.5mg, 5mg", "mechanism": "Cường Beta-2: Giãn phế quản.", "dosage": "Xịt/Khí dung khi khó thở.", "route": "Xịt, Khí dung" },
+  { "name": "Acetylcysteine", "brand": "Exomuc, Acemuc", "group": "Hô hấp", "strength": "200mg", "mechanism": "Tiêu nhầy, long đờm.", "dosage": "200mg/lần x 3 lần/ngày.", "route": "Uống" },
+  { "name": "Adrenalin", "brand": "Epinephrin", "group": "Cấp cứu", "strength": "1mg/1ml", "mechanism": "Kích thích alpha/beta giao cảm. Cấp cứu sốc phản vệ.", "dosage": "Sốc phản vệ: 0.5-1mg Tiêm bắp.", "route": "Tiêm bắp, Tiêm TM" },
+  { "name": "Atropin sulfat", "brand": "Atropin", "group": "Cấp cứu", "strength": "0.25mg, 0.5mg", "mechanism": "Ức chế đối giao cảm.", "dosage": "0.5-1mg tiêm TM trong nhịp chậm/ngộ độc.", "route": "Tiêm bắp, Tiêm TM" },
+  { "name": "Methylprednisolone", "brand": "Medrol, Solu-Medrol", "group": "Corticoid", "strength": "4mg, 16mg, 40mg", "mechanism": "Chống viêm mạnh, ức chế miễn dịch.", "dosage": "4-48mg/ngày. Cấp cứu: 40-80mg.", "route": "Uống, Tiêm TM" },
+  { "name": "Prednisolone", "brand": "Prednison", "group": "Corticoid", "strength": "5mg", "mechanism": "Chống viêm, chống dị ứng.", "dosage": "5-60mg/ngày tùy bệnh.", "route": "Uống" },
+  { "name": "Dexamethasone", "brand": "Dexa", "group": "Corticoid", "strength": "0.5mg, 4mg/1ml", "mechanism": "Chống viêm rất mạnh, tác dụng dài.", "dosage": "0.75-9mg/ngày.", "route": "Uống, Tiêm" },
+  { "name": "Ceftriaxone", "brand": "Rocephin", "group": "Kháng sinh", "strength": "1g", "mechanism": "Cephalosporin thế hệ 3.", "dosage": "1-2g/ngày. Viêm màng não: 4g/ngày.", "route": "Tiêm TM, Tiêm bắp" },
+  { "name": "Metronidazole", "brand": "Flagyl", "group": "Kháng sinh", "strength": "250mg, 500mg", "mechanism": "Diệt vi khuẩn kỵ khí và đơn bào.", "dosage": "500mg x 2-3 lần/ngày.", "route": "Uống, Truyền TM" },
+  { "name": "Doxycycline", "brand": "Doxy", "group": "Kháng sinh", "strength": "100mg", "mechanism": "Tetracyclin: Ức chế tổng hợp protein.", "dosage": "100mg/ngày (ngày đầu 200mg).", "route": "Uống (nhiều nước)" },
+  { "name": "Clarithromycin", "brand": "Klacid", "group": "Kháng sinh", "strength": "250mg, 500mg", "mechanism": "Macrolid: Diệt HP, nhiễm khuẩn hô hấp.", "dosage": "250-500mg x 2 lần/ngày.", "route": "Uống" },
+  { "name": "Gentamicin", "brand": "Gentamicin", "group": "Kháng sinh", "strength": "80mg/2ml", "mechanism": "Aminoglycosid: Diệt khuẩn Gr-.", "dosage": "3-5mg/kg/ngày.", "route": "Tiêm bắp, Tiêm TM" },
+  { "name": "Enalapril", "brand": "Renitec", "group": "Tim mạch", "strength": "5mg, 10mg", "mechanism": "Ức chế men chuyển (ACE).", "dosage": "2.5-40mg/ngày.", "route": "Uống" },
+  { "name": "Bisoprolol", "brand": "Concor", "group": "Tim mạch", "strength": "2.5mg, 5mg", "mechanism": "Chẹn Beta-1 chọn lọc.", "dosage": "2.5-10mg/ngày.", "route": "Uống" },
+  { "name": "Nitroglycerin", "brand": "Nitromint", "group": "Tim mạch", "strength": "2.6mg, Spray", "mechanism": "Giãn mạch vành, cắt cơn đau ngực.", "dosage": "Ngậm/Xịt 1 nhát khi đau. Lặp lại sau 5p.", "route": "Ngậm dưới lưỡi, Xịt" },
+  { "name": "Digoxin", "brand": "Digoxin", "group": "Tim mạch", "strength": "0.25mg", "mechanism": "Trợ tim, tăng co bóp, giảm nhịp.", "dosage": "0.125 - 0.25mg/ngày.", "route": "Uống, Tiêm TM" },
+  { "name": "Clopidogrel", "brand": "Plavix", "group": "Tim mạch", "strength": "75mg", "mechanism": "Kháng kết tập tiểu cầu.", "dosage": "75mg/ngày.", "route": "Uống" },
+  { "name": "Famotidine", "brand": "Famotidin", "group": "Tiêu hóa", "strength": "20mg, 40mg", "mechanism": "Kháng Histamin H2: Giảm acid.", "dosage": "40mg/ngày (tối).", "route": "Uống, Tiêm" },
+  { "name": "Diosmectite", "brand": "Smecta", "group": "Tiêu hóa", "strength": "3g", "mechanism": "Hấp phụ độc tố, bao niêm mạc.", "dosage": "1 gói x 3 lần/ngày.", "route": "Uống" },
+  { "name": "Lactulose", "brand": "Duphalac", "group": "Tiêu hóa", "strength": "10g/15ml", "mechanism": "Nhuận tràng thẩm thấu.", "dosage": "1-3 gói/ngày.", "route": "Uống" },
+  { "name": "Insulin", "brand": "Mixtard, Lantus", "group": "Nội tiết", "strength": "100 IU/ml", "mechanism": "Hormone hạ đường huyết.", "dosage": "Cá thể hóa theo đường huyết.", "route": "Tiêm dưới da" },
+  { "name": "Gliclazide", "brand": "Diamicron", "group": "Nội tiết", "strength": "30mg, 80mg", "mechanism": "Kích thích tụy tiết Insulin.", "dosage": "30-120mg/ngày (sáng).", "route": "Uống" },
+  { "name": "Levothyroxine", "brand": "Berlthyrox", "group": "Nội tiết", "strength": "50mcg, 100mcg", "mechanism": "Hormone tuyến giáp T4.", "dosage": "25-100mcg/ngày (uống đói).", "route": "Uống" },
+  { "name": "Diazepam", "brand": "Seduxen", "group": "Thần kinh", "strength": "5mg, 10mg", "mechanism": "An thần, giãn cơ, chống co giật.", "dosage": "5-10mg/lần.", "route": "Uống, Tiêm TM" },
+  { "name": "Rotunda", "brand": "Rotundin", "group": "Thần kinh", "strength": "30mg, 60mg", "mechanism": "An thần thảo dược.", "dosage": "30-60mg trước ngủ.", "route": "Uống" },
+  { "name": "Codein", "brand": "Efferalgan Codeine", "group": "Giảm đau", "strength": "30mg", "mechanism": "Opioid yếu: Giảm đau, giảm ho.", "dosage": "30-60mg mỗi 4-6 giờ.", "route": "Uống" },
+  { "name": "Tramadol", "brand": "Ultracet", "group": "Giảm đau", "strength": "37.5mg, 50mg", "mechanism": "Opioid giảm đau trung ương.", "dosage": "50-100mg mỗi 4-6h. Max 400mg.", "route": "Uống, Tiêm" },
+  { "name": "Gabapentin", "brand": "Neurontin", "group": "Thần kinh", "strength": "300mg", "mechanism": "Trị đau thần kinh, động kinh.", "dosage": "300-1800mg/ngày.", "route": "Uống" },
+  { "name": "Oresol", "brand": "ORS", "group": "Điện giải", "strength": "Gói pha", "mechanism": "Bù nước và điện giải.", "dosage": "Uống theo nhu cầu.", "route": "Uống" },
+  { "name": "Kali Clorid", "brand": "Kaleorid", "group": "Điện giải", "strength": "600mg", "mechanism": "Bổ sung Kali.", "dosage": "1-2 viên/ngày.", "route": "Uống (sau ăn), Truyền TM" },
+  { "name": "Vitamin K1", "brand": "K1", "group": "Vitamin", "strength": "10mg/1ml", "mechanism": "Đông máu, kháng Warfarin.", "dosage": "10-20mg tiêm.", "route": "Tiêm bắp/TM" },
+  { "name": "Vitamin B1", "brand": "Thiamin", "group": "Vitamin", "strength": "100mg", "mechanism": "Coenzyme chuyển hóa.", "dosage": "100-300mg/ngày.", "route": "Uống, Tiêm" },
+  { "name": "Fexofenadine", "brand": "Telfast", "group": "Dị ứng", "strength": "60mg, 180mg", "mechanism": "Kháng Histamin H1 thế hệ 2.", "dosage": "180mg/ngày.", "route": "Uống" },
+  { "name": "Cetirizine", "brand": "Zyrtec", "group": "Dị ứng", "strength": "10mg", "mechanism": "Kháng Histamin H1 thế hệ 2.", "dosage": "10mg/ngày.", "route": "Uống" },
+  { "name": "Theophylline", "brand": "Theophyllin", "group": "Hô hấp", "strength": "100mg", "mechanism": "Giãn phế quản nhóm Xanthine.", "dosage": "10mg/kg/ngày.", "route": "Uống" },
+  { "name": "Budesonide", "brand": "Pulmicort", "group": "Hô hấp", "strength": "0.5mg/2ml", "mechanism": "Corticoid tại chỗ.", "dosage": "0.5-1mg x 2 lần/ngày (khí dung).", "route": "Khí dung" },
+  { "name": "Acyclovir", "brand": "Zovirax", "group": "Kháng virus", "strength": "200mg, 800mg", "mechanism": "Ức chế DNA virus Herpes/Zona.", "dosage": "200-800mg x 5 lần/ngày.", "route": "Uống, Bôi" },
+  { "name": "Fluconazole", "brand": "Diflucan", "group": "Kháng nấm", "strength": "150mg", "mechanism": "Kháng nấm Triazole.", "dosage": "150mg (thường liều duy nhất).", "route": "Uống" },
+  { "name": "Albendazole", "brand": "Zentel", "group": "Ký sinh trùng", "strength": "400mg", "mechanism": "Tẩy giun.", "dosage": "400mg liều duy nhất.", "route": "Uống (nhai)" },
+  { "name": "Lidocaine", "brand": "Xylocaine", "group": "Gây tê", "strength": "2%", "mechanism": "Thuốc tê, chống loạn nhịp.", "dosage": "Tùy thủ thuật.", "route": "Tiêm, Bôi" },
+  { "name": "Acid Tranexamic", "brand": "Transamin", "group": "Cầm máu", "strength": "250mg, 500mg", "mechanism": "Ức chế tiêu sợi huyết.", "dosage": "500mg - 1g x 2-3 lần/ngày.", "route": "Uống, Tiêm TM" },
+  { "name": "Sắt", "brand": "Ferrovit, Tardyferon", "group": "Vitamin", "strength": "60mg Fe", "mechanism": "Tạo hồng cầu.", "dosage": "1-2 viên/ngày.", "route": "Uống" },
+  { "name": "Allopurinol", "brand": "Zyloric", "group": "Gout", "strength": "100mg, 300mg", "mechanism": "Ức chế Xanthine oxidase, giảm a.uric.", "dosage": "100-300mg/ngày.", "route": "Uống" },
+  { "name": "Colchicine", "brand": "Colchicin", "group": "Gout", "strength": "1mg", "mechanism": "Chống viêm đặc hiệu Gout.", "dosage": "1mg ngay, sau đó 0.5mg/h.", "route": "Uống" },
+  { "name": "Alendronate", "brand": "Fosamax", "group": "Cơ xương khớp", "strength": "70mg", "mechanism": "Ức chế hủy cốt bào.", "dosage": "70mg/tuần.", "route": "Uống (đứng, bụng đói)" },
+  { "name": "Calci Carbonat + D3", "brand": "Calcium D", "group": "Vitamin", "strength": "500mg/200IU", "mechanism": "Bổ sung Canxi.", "dosage": "1-2 viên/ngày.", "route": "Uống" },
+  { "name": "Warfarin", "brand": "Coumadin", "group": "Tim mạch - Chống đông", "strength": "2mg, 5mg", "mechanism": "Kháng Vitamin K.", "dosage": "Chỉnh theo INR.", "route": "Uống" },
+  { "name": "Heparin (LMWH)", "brand": "Lovenox", "group": "Tim mạch - Chống đông", "strength": "40mg/0.4ml", "mechanism": "Chống huyết khối.", "dosage": "Dự phòng 20-40mg/ngày.", "route": "Tiêm dưới da" },
+  { "name": "Spironolactone", "brand": "Verospiron", "group": "Tim mạch - Lợi tiểu", "strength": "25mg", "mechanism": "Lợi tiểu kháng Aldosteron.", "dosage": "25-100mg/ngày.", "route": "Uống" },
+  { "name": "Nifedipine", "brand": "Adalat", "group": "Tim mạch", "strength": "10mg, 20mg", "mechanism": "Chẹn kênh Calci.", "dosage": "10-20mg x 2 lần/ngày.", "route": "Uống" },
+  { "name": "Metoclopramide", "brand": "Primperan", "group": "Tiêu hóa", "strength": "10mg", "mechanism": "Chống nôn trung ương.", "dosage": "10mg x 3 lần/ngày.", "route": "Uống, Tiêm" },
+  { "name": "Drotaverine", "brand": "No-Spa", "group": "Tiêu hóa", "strength": "40mg", "mechanism": "Giãn cơ trơn.", "dosage": "40-80mg x 2-3 lần/ngày.", "route": "Uống, Tiêm" },
+  { "name": "Hyoscine N-butylbromide", "brand": "Buscopan", "group": "Tiêu hóa", "strength": "10mg", "mechanism": "Kháng Cholinergic, giảm đau quặn.", "dosage": "10-20mg x 3-4 lần/ngày.", "route": "Uống, Tiêm" },
+  { "name": "Berberin", "brand": "Berberin", "group": "Tiêu hóa", "strength": "10mg", "mechanism": "Kháng khuẩn thực vật.", "dosage": "2-4 viên/lần.", "route": "Uống" },
+  { "name": "Sorbitol", "brand": "Sorbitol", "group": "Tiêu hóa", "strength": "5g", "mechanism": "Nhuận tràng thẩm thấu.", "dosage": "1 gói khi đói.", "route": "Uống" },
+  { "name": "Haloperidol", "brand": "Haldol", "group": "Tâm thần", "strength": "1.5mg", "mechanism": "Chống loạn thần.", "dosage": "1.5 - 5mg.", "route": "Uống, Tiêm" },
+  { "name": "Fluoxetine", "brand": "Prozac", "group": "Tâm thần", "strength": "20mg", "mechanism": "SSRI: Chống trầm cảm.", "dosage": "20mg/ngày.", "route": "Uống" },
+  { "name": "Carbamazepine", "brand": "Tegretol", "group": "Thần kinh", "strength": "200mg", "mechanism": "Chống động kinh.", "dosage": "100-200mg khởi đầu.", "route": "Uống" },
+  { "name": "Valproic Acid", "brand": "Depakine", "group": "Thần kinh", "strength": "200mg, 500mg", "mechanism": "Chống động kinh.", "dosage": "20-30mg/kg/ngày.", "route": "Uống" },
+  { "name": "Piracetam", "brand": "Nootropyl", "group": "Thần kinh", "strength": "400mg, 800mg", "mechanism": "Cải thiện chuyển hóa não.", "dosage": "2.4 - 4.8g/ngày.", "route": "Uống, Tiêm" },
+  { "name": "Chlorpheniramine", "brand": "Chlorpheniramin", "group": "Dị ứng", "strength": "4mg", "mechanism": "Kháng Histamin H1 (gây ngủ).", "dosage": "4mg mỗi 4-6 giờ.", "route": "Uống" },
+  { "name": "Dextromethorphan", "brand": "Dextromethorphan", "group": "Hô hấp", "strength": "10mg", "mechanism": "Giảm ho khan trung ương.", "dosage": "10-20mg mỗi 4-6 giờ.", "route": "Uống" },
+  { "name": "Montelukast", "brand": "Singulair", "group": "Hô hấp", "strength": "4mg, 10mg", "mechanism": "Kháng Leukotriene: Dự phòng hen.", "dosage": "1 viên/tối.", "route": "Uống" },
+  { "name": "Alpha Chymotrypsin", "brand": "Alpha Choay", "group": "Kháng viêm", "strength": "4.2mg", "mechanism": "Enzym giảm phù nề.", "dosage": "2 viên x 3-4 lần/ngày.", "route": "Ngậm, Uống" },
+  { "name": "Natri Clorid 0.9%", "brand": "Nước muối sinh lý", "group": "Dịch truyền", "strength": "0.9%", "mechanism": "Bù dịch đẳng trương.", "dosage": "Theo tình trạng mất nước.", "route": "Truyền TM, Rửa" },
+  { "name": "Glucose 5%", "brand": "Dextrose", "group": "Dịch truyền", "strength": "5%", "mechanism": "Cung cấp năng lượng.", "dosage": "Theo nhu cầu.", "route": "Truyền TM" },
+  { "name": "Glucose 20-30%", "brand": "Glucose ưu trương", "group": "Cấp cứu", "strength": "20%, 30%", "mechanism": "Cấp cứu hạ đường huyết.", "dosage": "20-50ml tiêm nhanh.", "route": "Tiêm TM" },
+  { "name": "Ringer Lactat", "brand": "Ringer", "group": "Dịch truyền", "strength": "Chai 500ml", "mechanism": "Bù điện giải, dịch.", "dosage": "Sốc, mất nước.", "route": "Truyền TM" },
+  { "name": "Natri Bicarbonat", "brand": "Natri Bicarbonat", "group": "Dịch truyền", "strength": "1.4%, 4.2%", "mechanism": "Kiềm hóa máu.", "dosage": "Theo khí máu.", "route": "Truyền TM" },
+  { "name": "Albumin", "brand": "Human Albumin", "group": "Dịch truyền", "strength": "20%", "mechanism": "Tăng áp lực keo.", "dosage": "Theo xét nghiệm Albumin.", "route": "Truyền TM" },
+  { "name": "Oxytocin", "brand": "Oxytocin", "group": "Sản khoa", "strength": "5 IU", "mechanism": "Gây co tử cung.", "dosage": "Theo phác đồ.", "route": "Truyền TM, Tiêm bắp" },
+  { "name": "Acid Folic", "brand": "Vitamin B9", "group": "Vitamin", "strength": "0.4mg, 5mg", "mechanism": "Tạo máu, ngừa dị tật thai.", "dosage": "0.4 - 1mg/ngày.", "route": "Uống" },
+  { "name": "Magnesi sulfat", "brand": "MgSO4", "group": "Sản khoa - Cấp cứu", "strength": "15%", "mechanism": "Chống co giật (tiền sản giật).", "dosage": "Theo phác đồ.", "route": "Tiêm bắp, Truyền TM" },
+  { "name": "Mifepristone", "brand": "Mifepristone", "group": "Sản khoa", "strength": "10mg, 200mg", "mechanism": "Kháng Progesterone.", "dosage": "Liều duy nhất.", "route": "Uống" },
+  { "name": "Misoprostol", "brand": "Misoprostol", "group": "Sản khoa - Tiêu hóa", "strength": "200mcg", "mechanism": "Prostaglandin E1: Co tử cung.", "dosage": "Theo chỉ định.", "route": "Ngậm, Đặt, Uống" },
+  { "name": "Povidone-Iodine", "brand": "Betadine", "group": "Sát khuẩn", "strength": "10%", "mechanism": "Sát khuẩn iod.", "dosage": "Bôi ngoài.", "route": "Ngoài da" },
+  { "name": "Mebendazol", "brand": "Fugacar", "group": "Ký sinh trùng", "strength": "500mg", "mechanism": "Tẩy giun.", "dosage": "500mg liều duy nhất.", "route": "Nhai" },
+  { "name": "Tobramycin", "brand": "Tobrex", "group": "Mắt", "strength": "0.3%", "mechanism": "Kháng sinh tại chỗ.", "dosage": "1-2 giọt mỗi 4h.", "route": "Nhỏ mắt" },
+  { "name": "Nước mắt nhân tạo", "brand": "Systane, Refresh", "group": "Mắt", "strength": "Dung dịch", "mechanism": "Giữ ẩm mắt.", "dosage": "Nhỏ khi cần.", "route": "Nhỏ mắt" },
+  { "name": "Than hoạt", "brand": "Activated Charcoal", "group": "Cấp cứu", "strength": "Bột/Viên", "mechanism": "Hấp phụ độc tố.", "dosage": "1g/kg.", "route": "Uống" },
+  { "name": "Scopolamine", "brand": "Ariel", "group": "Chống nôn", "strength": "1.5mg", "mechanism": "Kháng Cholinergic (Say xe).", "dosage": "Dán 1 miếng sau tai.", "route": "Dán da" },
+  { "name": "Vaccin uốn ván", "brand": "SAT/VAT", "group": "Vaccin", "strength": "1500IU", "mechanism": "Tạo miễn dịch uốn ván.", "dosage": "Tiêm dự phòng.", "route": "Tiêm bắp" }
+];
+
+        window.seedMedsDatabase = () => {
+            if(!window.isAdmin) return window.showToast("Chỉ Admin mới được nạp dữ liệu mẫu!", "error");
+            if(!confirm("⚠️ Nạp 100 thuốc mẫu vào Database?\nViệc này sẽ thêm dữ liệu vào kho thuốc.")) return;
+            
+            let count = 0;
+            SAMPLE_MEDS.forEach(med => {
+                push(ref(db, "library_meds"), {
+                    ...med,
+                    createdAt: Date.now(),
+                    addedBy: "System Admin"
+                });
+                count++;
+            });
+            window.showToast(`✅ Đã nạp thành công ${count} thuốc!`, "success");
+            window.addLog("Admin nạp 100 thuốc mẫu");
+        };
 
         function escapeHTML(str) { if (!str) return ''; return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])); }
         window.showToast = function(message, type = 'info') { const container = document.getElementById('toast-container'); const toast = document.createElement('div'); toast.className = `toast ${type}`; toast.innerHTML = `<div class="toast-content">${message}</div>`; container.appendChild(toast); setTimeout(() => { toast.remove(); }, 3500); }
         window.toggleNotify = () => document.getElementById("notifyPanel").classList.toggle("hidden");
         window.addLog = function(text) { if (!currentUser) return; const logRef = push(ref(db, "users/" + currentUser.uid + "/logs")); set(logRef, { text, time: new Date().toLocaleString("vi-VN") }); }
 
-        window.openJsonImport = () => { if (!window.isAdmin) return alert("Chỉ ADMIN được phép!"); document.getElementById("jsonImportModal").classList.remove("hidden"); };
+        // ===== NEW: GENERIC IMPORT =====
+        window.openJsonImport = (type) => { 
+            if (!window.isAdmin) return alert("Chỉ ADMIN được phép!"); 
+            currentImportType = type;
+            const hint = type === 'docs' ? 'Định dạng: [{"title": "Tên", "url": "Link", "folder": "capcuu"}]' : 'Định dạng: [{"name": "Tên thuốc", "ing": "Hoạt chất", "usage": "Công dụng", "group": "Nhóm"}]';
+            document.getElementById("jsonImportHint").innerText = hint;
+            document.getElementById("jsonInput").value = '';
+            document.getElementById("jsonImportModal").classList.remove("hidden"); 
+        };
         window.closeJsonImport = () => document.getElementById("jsonImportModal").classList.add("hidden");
-        window.importJsonDocs = () => {
+        
+        window.importJsonData = () => {
             if (!window.isAdmin) return;
             try {
                 const raw = document.getElementById("jsonInput").value;
                 const data = JSON.parse(raw);
                 if(!Array.isArray(data)) throw new Error("JSON phải là mảng []");
+                
                 let count = 0;
-                data.forEach(doc => { push(ref(db, "library_public"), { title: doc.title || "Không tên", url: doc.url, folder: doc.folder || "khac", createdAt: Date.now(), addedBy: currentUser.email }); count++; });
-                window.addLog("Import JSON: " + count + " file");
-                window.showToast(`✅ Import thành công ${count} file!`, 'success');
+                let targetRef = '';
+                
+                if (currentImportType === 'docs') {
+                    data.forEach(doc => { push(ref(db, "library_public"), { title: doc.title || "Không tên", url: doc.url, folder: doc.folder || "khac", createdAt: Date.now(), addedBy: currentUser.email }); count++; });
+                    window.addLog("Import Docs JSON: " + count);
+                } else if (currentImportType === 'meds') {
+                    data.forEach(med => { 
+                        // Map fields if necessary, or push as is
+                        push(ref(db, "library_meds"), { 
+                            name: med.name || "Không tên", 
+                            brand: med.brand || "",
+                            strength: med.strength || "",
+                            mechanism: med.mechanism || "",
+                            dosage: med.dosage || "",
+                            route: med.route || "",
+                            group: med.group || "Khác",
+                            // backward compatibility map
+                            ing: med.ing || med.strength || "", 
+                            usage: med.usage || med.mechanism || "", 
+                            
+                            createdAt: Date.now(), 
+                            addedBy: currentUser.email 
+                        }); 
+                        count++; 
+                    });
+                    window.addLog("Import Meds JSON: " + count);
+                }
+
+                window.showToast(`✅ Import thành công ${count} mục!`, 'success');
                 window.closeJsonImport();
             } catch (e) { alert("❌ JSON lỗi: " + e.message); }
         };
@@ -435,7 +617,7 @@
             }
             await signOut(auth);
             window.showToast("Đã đăng xuất thành công", "info");
-            publicDocs=[]; privateDocs=[]; window.isAdmin = false;
+            publicDocs=[]; privateDocs=[]; allMeds=[]; window.isAdmin = false;
             document.getElementById('logoutPanel').classList.add('hidden');
         };
 
@@ -445,6 +627,14 @@
             if (!newCode || newCode.length < 4) return alert("Mã phải có ít nhất 4 ký tự!");
             if(!confirm("Bạn có chắc chắn muốn đổi Mã kích hoạt không?")) return;
             set(ref(db, 'admin_settings/code'), newCode).then(() => { alert("✅ Đổi mã thành công!"); document.getElementById('newAdminCode').value = ''; window.addLog("Đã đổi mã kích hoạt Admin"); }).catch(e => alert("❌ Lỗi: Bạn không phải Admin hoặc chưa đăng nhập!"));
+        };
+
+        window.scrollToAdminTools = () => {
+            if(!window.isAdmin) return window.showToast("Bạn không phải Admin!", "error");
+            window.switchTab('tools', document.querySelectorAll('.segment-btn')[2]);
+            document.getElementById('tool-admin').parentElement.scrollIntoView({behavior: 'smooth'});
+            // Auto open accordion
+            document.getElementById('tool-admin').classList.add('open');
         };
 
         window.claimAdmin = () => {
@@ -461,15 +651,77 @@
             }).catch(e => alert("Lỗi kết nối: " + e.message));
         };
 
-        function loadDocsFromCloud(uid) {
+        function loadDataFromCloud(uid) {
             document.getElementById('loadingIndicator').classList.remove('hidden');
+            
+            // DOCS PUBLIC
             if (publicListener) off(publicListener);
-            publicListener = onValue(ref(db, 'library_public'), (snap) => { const data = snap.val(); publicDocs = []; if (data) Object.keys(data).forEach(k => publicDocs.push({ ...data[k], id: k, source: 'public' })); mergeAndRender(); });
+            publicListener = onValue(ref(db, 'library_public'), (snap) => { const data = snap.val(); publicDocs = []; if (data) Object.keys(data).forEach(k => publicDocs.push({ ...data[k], id: k, source: 'public' })); mergeAndRenderDocs(); });
+            
+            // DOCS PRIVATE
             if (privateListener) off(privateListener);
-            privateListener = onValue(ref(db, 'users/' + uid + '/docs'), (snap) => { const data = snap.val(); privateDocs = []; if (data) Object.keys(data).forEach(k => privateDocs.push({ ...data[k], id: k, source: 'private' })); mergeAndRender(); });
+            privateListener = onValue(ref(db, 'users/' + uid + '/docs'), (snap) => { const data = snap.val(); privateDocs = []; if (data) Object.keys(data).forEach(k => privateDocs.push({ ...data[k], id: k, source: 'private' })); mergeAndRenderDocs(); });
+
+            // MEDS (New)
+            if (medsListener) off(medsListener);
+            medsListener = onValue(ref(db, 'library_meds'), (snap) => {
+                const data = snap.val(); allMeds = [];
+                if (data) Object.keys(data).forEach(k => allMeds.push({ ...data[k], id: k }));
+                renderMeds(allMeds);
+                document.getElementById('loadingIndicatorMeds').classList.add('hidden');
+            });
         }
 
-        function mergeAndRender() { allDocs = [...publicDocs, ...privateDocs]; distributeDocs(); renderFolders(); if(currentViewFolder) window.openFolder(currentViewFolder); document.getElementById('loadingIndicator').classList.add('hidden'); }
+        function mergeAndRenderDocs() { 
+            allDocs = [...publicDocs, ...privateDocs]; 
+            // Batch rendering logic inside renderFolders/renderDocItem
+            distributeDocs(); 
+            renderFolders(); 
+            if(currentViewFolder) window.openFolder(currentViewFolder); 
+            document.getElementById('loadingIndicator').classList.add('hidden'); 
+        }
+
+        function renderMeds(list) {
+            const container = document.getElementById('medsList');
+            if(list.length === 0) { container.innerHTML = '<p class="text-center text-slate-500 mt-4">Chưa có dữ liệu thuốc.</p>'; return; }
+            
+            // Batch HTML update
+            const html = list.map(m => `
+                <div class="glass-card p-4 rounded-2xl flex flex-col gap-2 border border-white/50 shadow-sm hover:border-pink-400 transition relative group">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h4 class="font-bold text-slate-900 dark:text-white text-lg">${escapeHTML(m.name)} <span class="text-xs text-slate-500 font-normal">(${escapeHTML(m.brand || "")})</span></h4>
+                            <p class="text-xs font-bold text-pink-600 bg-pink-100 px-2 py-0.5 rounded-full w-fit mt-1">${escapeHTML(m.group)}</p>
+                        </div>
+                        ${window.isAdmin ? `<button onclick="window.deleteMed('${m.id}')" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>` : ''}
+                    </div>
+                    <div class="text-sm text-slate-700 dark:text-slate-300 mt-2 space-y-1">
+                        <p><i class="fa-solid fa-flask text-purple-500 mr-1 w-4"></i> <b>Hàm lượng:</b> ${escapeHTML(m.strength || m.ing)}</p>
+                        <p><i class="fa-solid fa-gears text-blue-500 mr-1 w-4"></i> <b>Cơ chế:</b> ${escapeHTML(m.mechanism || m.usage)}</p>
+                        <p><i class="fa-solid fa-prescription-bottle-medical text-green-500 mr-1 w-4"></i> <b>Liều dùng:</b> ${escapeHTML(m.dosage)}</p>
+                        <p><i class="fa-solid fa-route text-orange-500 mr-1 w-4"></i> <b>Đường dùng:</b> ${escapeHTML(m.route)}</p>
+                    </div>
+                </div>
+            `).join('');
+            container.innerHTML = html;
+        }
+
+        window.filterMeds = () => {
+            const term = document.getElementById('searchMedsInput').value.toLowerCase();
+            const filtered = allMeds.filter(m => 
+                (m.name && m.name.toLowerCase().includes(term)) || 
+                (m.brand && m.brand.toLowerCase().includes(term)) || 
+                (m.ing && m.ing.toLowerCase().includes(term)) ||
+                (m.strength && m.strength.toLowerCase().includes(term)) ||
+                (m.group && m.group.toLowerCase().includes(term))
+            );
+            renderMeds(filtered);
+        }
+
+        window.deleteMed = (id) => {
+            if(!confirm("Xóa thuốc này?")) return;
+            remove(ref(db, `library_meds/${id}`)).then(() => window.showToast("Đã xóa thuốc", "success"));
+        }
 
         onAuthStateChanged(auth, user => {
             currentUser = user;
@@ -488,7 +740,7 @@
                 document.getElementById('userName').innerText = user.displayName;
                 document.getElementById('userProfile').onclick = () => document.getElementById('logoutPanel').classList.toggle('hidden');
                 addDocBtn.classList.remove("hidden");
-                loadDocsFromCloud(user.uid);
+                loadDataFromCloud(user.uid);
                 onValue(ref(db, 'users/' + user.uid + '/note'), (snap) => document.getElementById('quickNote').value = snap.val() || "");
 
                 onValue(ref(db, "users/" + user.uid + "/role"), snap => {
@@ -508,7 +760,6 @@
                             box.innerHTML = "<b>Danh sách người dùng:</b><br>";
                             snap.forEach(u => {
                                 const v = u.val();
-                                // Display basic info, handle missing fields gracefully
                                 const role = v.role || "user";
                                 const email = v.docs ? (Object.values(v.docs)[0]?.addedBy || "Hidden Email") : "User ID: " + u.key.substring(0,6)+"...";
                                 box.innerHTML += `<div class="mt-1 pb-1 border-b border-white/10 text-xs">${email} — <b class="${role==='admin'?'text-red-500':'text-green-500'}">${role}</b></div>`;
@@ -549,17 +800,57 @@
             }
         });
 
+        // --- OPTIMIZED DEBOUNCE SEARCH ---
+        let debounceTimer;
+        window.debouncedFilterDocs = () => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => window.filterDocs(), 300);
+        };
+
         const folders = { "capcuu": { name: "1. Hồi sức Cấp cứu", icon: "fa-truck-medical", color: "text-red-500", items: [] }, "noikhoa": { name: "2. Nội khoa", icon: "fa-user-doctor", color: "text-blue-500", items: [] }, "ngoaikhoa": { name: "3. Ngoại khoa", icon: "fa-scalpel", color: "text-green-600", items: [] }, "san": { name: "4. Sản phụ khoa", icon: "fa-person-pregnant", color: "text-pink-500", items: [] }, "nhi": { name: "5. Nhi khoa", icon: "fa-baby", color: "text-orange-500", items: [] }, "canlamsang": { name: "6. Cận lâm sàng", icon: "fa-microscope", color: "text-purple-500", items: [] }, "khac": { name: "7. Tài liệu khác", icon: "fa-folder-open", color: "text-slate-500", items: [] } };
         function distributeDocs() { Object.keys(folders).forEach(k => folders[k].items = []); allDocs.forEach(doc => { if(folders[doc.folder]) folders[doc.folder].items.push(doc); else folders['khac'].items.push(doc); }); }
         const listEl = document.getElementById('docsList');
         const breadcrumb = document.getElementById('breadcrumb');
         let currentViewFolder = null;
 
-        window.renderFolders = function() { currentViewFolder = null; breadcrumb.classList.add('hidden'); listEl.innerHTML = ''; Object.keys(folders).forEach(key => { const f = folders[key]; const html = `<div onclick="window.openFolder('${key}')" class="glass-card p-5 rounded-3xl flex items-center gap-5 cursor-pointer hover:bg-white/90 dark:hover:bg-slate-700/80 transition group border-l-4 border-transparent hover:border-blue-500"><div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl ${f.color} shadow-md group-hover:scale-110 transition"><i class="fa-solid ${f.icon}"></i></div><div class="flex-1"><h3 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${f.name}</h3><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">${f.items.length} file</p></div><i class="fa-solid fa-chevron-right text-slate-300 font-bold"></i></div>`; listEl.insertAdjacentHTML('beforeend', html); }); }
-        window.openFolder = function(key) { currentViewFolder = key; const f = folders[key]; breadcrumb.classList.remove('hidden'); document.getElementById('currentFolderTitle').innerText = f.name; listEl.innerHTML = ''; if(f.items.length === 0) { listEl.innerHTML = `<div class="col-span-2 text-center py-20 opacity-60 dark:text-white font-bold">Thư mục trống</div>`; return; } f.items.forEach(doc => renderDocItem(doc)); }
-        window.filterDocs = function() { const term = document.getElementById('searchInput').value.toLowerCase(); if(!term) { window.renderFolders(); return; } breadcrumb.classList.add('hidden'); listEl.innerHTML = ''; const results = allDocs.filter(d => d.title.toLowerCase().includes(term)); if(results.length === 0) listEl.innerHTML = `<div class="col-span-2 text-center py-10 font-bold text-slate-500">Không tìm thấy kết quả</div>`; else results.forEach(doc => renderDocItem(doc)); }
+        // BATCH DOM UPDATE FOR PERFORMANCE
+        window.renderFolders = function() { 
+            currentViewFolder = null; 
+            breadcrumb.classList.add('hidden'); 
+            let html = '';
+            Object.keys(folders).forEach(key => { 
+                const f = folders[key]; 
+                html += `<div onclick="window.openFolder('${key}')" class="glass-card p-5 rounded-3xl flex items-center gap-5 cursor-pointer hover:bg-white/90 dark:hover:bg-slate-700/80 transition group border-l-4 border-transparent hover:border-blue-500"><div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl ${f.color} shadow-md group-hover:scale-110 transition"><i class="fa-solid ${f.icon}"></i></div><div class="flex-1"><h3 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${f.name}</h3><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">${f.items.length} file</p></div><i class="fa-solid fa-chevron-right text-slate-300 font-bold"></i></div>`; 
+            }); 
+            listEl.innerHTML = html;
+        }
+        
+        window.openFolder = function(key) { 
+            currentViewFolder = key; const f = folders[key]; 
+            breadcrumb.classList.remove('hidden'); 
+            document.getElementById('currentFolderTitle').innerText = f.name; 
+            if(f.items.length === 0) { listEl.innerHTML = `<div class="col-span-2 text-center py-20 opacity-60 dark:text-white font-bold">Thư mục trống</div>`; return; } 
+            
+            // Batch render items
+            let html = '';
+            f.items.forEach(doc => html += createDocItemHTML(doc));
+            listEl.innerHTML = html;
+        }
+        
+        window.filterDocs = function() { 
+            const term = document.getElementById('searchInput').value.toLowerCase(); 
+            if(!term) { window.renderFolders(); return; } 
+            breadcrumb.classList.add('hidden'); 
+            const results = allDocs.filter(d => d.title.toLowerCase().includes(term)); 
+            if(results.length === 0) listEl.innerHTML = `<div class="col-span-2 text-center py-10 font-bold text-slate-500">Không tìm thấy kết quả</div>`; 
+            else {
+                let html = '';
+                results.forEach(doc => html += createDocItemHTML(doc));
+                listEl.innerHTML = html;
+            }
+        }
 
-        function renderDocItem(doc) {
+        function createDocItemHTML(doc) {
             const isPublic = doc.source === 'public';
             const iconColor = isPublic ? 'text-orange-500 bg-orange-50' : 'text-blue-500 bg-blue-50';
             const iconClass = isPublic ? 'fa-book-open' : 'fa-file-lines';
@@ -567,8 +858,7 @@
             let deleteBtn = '';
             if (!isPublic) deleteBtn = `<button onclick="window.deleteDoc('${doc.id}', false)" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-red-100 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition opacity-0 group-hover:opacity-100 shadow-sm z-10"><i class="fa-solid fa-trash-can text-sm"></i></button>`;
             else if (isPublic && window.isAdmin) deleteBtn = `<button onclick="window.deleteDoc('${doc.id}', true)" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-orange-100 hover:bg-orange-500 hover:text-white text-orange-500 flex items-center justify-center transition opacity-0 group-hover:opacity-100 shadow-sm z-10"><i class="fa-solid fa-trash-can text-sm"></i></button>`;
-            const html = `<div class="glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm group relative pr-10"><div class="w-10 h-10 rounded-full ${iconColor} flex items-center justify-center flex-shrink-0"><i class="fa-solid ${iconClass} text-lg"></i></div><div class="flex-1 min-w-0"><div class="flex items-center"><h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${escapeHTML(doc.title)}</h4>${labelSource}</div><a href="${escapeHTML(doc.url)}" target="_blank" onclick="window.addLog('Mở tài liệu: ${escapeHTML(doc.title).replace(/'/g, "\\'")}')" class="text-xs font-bold text-blue-600 hover:underline uppercase tracking-wide">Mở tài liệu</a></div>${deleteBtn}</div>`;
-            listEl.insertAdjacentHTML('beforeend', html);
+            return `<div class="glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm group relative pr-10"><div class="w-10 h-10 rounded-full ${iconColor} flex items-center justify-center flex-shrink-0"><i class="fa-solid ${iconClass} text-lg"></i></div><div class="flex-1 min-w-0"><div class="flex items-center"><h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${escapeHTML(doc.title)}</h4>${labelSource}</div><a href="${escapeHTML(doc.url)}" target="_blank" onclick="window.addLog('Mở tài liệu: ${escapeHTML(doc.title).replace(/'/g, "\\'")}')" class="text-xs font-bold text-blue-600 hover:underline uppercase tracking-wide">Mở tài liệu</a></div>${deleteBtn}</div>`;
         }
 
         window.saveNewDoc = function() {
@@ -792,7 +1082,13 @@
 
         // ===== MODULE 6: DARK MODE & TABS & CLOCK =====
         window.toggleDarkMode = function() { document.documentElement.classList.toggle('dark'); localStorage.setItem('mdk_dark', document.documentElement.classList.contains('dark')); }
-        window.switchTab = function(tab, el) { document.querySelectorAll('.segment-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); document.getElementById('view-docs').classList.toggle('hidden', tab!=='docs'); document.getElementById('view-tools').classList.toggle('hidden', tab!=='tools'); }
+        window.switchTab = function(tab, el) { 
+            document.querySelectorAll('.segment-btn').forEach(b=>b.classList.remove('active')); 
+            el.classList.add('active'); 
+            document.getElementById('view-docs').classList.toggle('hidden', tab!=='docs'); 
+            document.getElementById('view-meds').classList.toggle('hidden', tab!=='meds');
+            document.getElementById('view-tools').classList.toggle('hidden', tab!=='tools'); 
+        }
         window.toggleTool = function(id) { document.getElementById('tool-'+id).classList.toggle('open'); }
         setInterval(()=>{ const d = new Date(); document.getElementById('clock').innerText = d.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}); document.getElementById('date-display').innerText = d.toLocaleDateString('vi-VN'); },1000);
         
