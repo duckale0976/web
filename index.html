@@ -3,735 +3,677 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinhducKale - Nền tảng Y Khoa Tổng Hợp</title>
-    <meta name="description" content="Nền tảng học tập, tra cứu thuốc và công cụ y khoa dành cho sinh viên Y.">
-    <meta name="author" content="Đào Minh Đức">
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <title>MinhducKale - Private Study Hub v5.3</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
+                    animation: {
+                        'blob': 'blob 10s infinite',
+                        'spin-slow': 'spin 10s linear infinite',
+                        'float': 'float 6s ease-in-out infinite',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 
     <style>
-        :root {
-            --primary-color: #007bb5; /* Medical Blue */
-            --secondary-color: #00a896; /* Teal */
-            --bg-color: #f4f7f6;
-            --card-bg: #ffffff;
-            --text-color: #333333;
-            --text-muted: #666666;
-            --border-color: #dddddd;
-            --danger-color: #d9534f;
-            --success-color: #5cb85c;
-            --header-height: 60px;
+        /* Base Transition */
+        body { transition: background-color 0.5s, color 0.5s; background-color: #e0f2fe; color: #1e293b; }
+        .dark body { background-color: #0f172a; color: #f1f5f9; }
+
+        /* Animated Blobs - Giữ nguyên fixed để nền đẹp khi lướt */
+        .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.8; z-index: -1; animation: blob 15s infinite alternate; pointer-events: none; }
+        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #93c5fd; }
+        .blob-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #6ee7b7; }
+        .blob-3 { top: 40%; left: 40%; width: 400px; height: 400px; background: #c4b5fd; }
+        
+        .dark .blob-1 { background: #1e40af; opacity: 0.4; }
+        .dark .blob-2 { background: #065f46; opacity: 0.4; }
+        .dark .blob-3 { background: #5b21b6; opacity: 0.4; }
+
+        /* Glassmorphism */
+        .glass-panel { 
+            background: rgba(255, 255, 255, 0.65); 
+            backdrop-filter: blur(25px); 
+            -webkit-backdrop-filter: blur(25px); 
+            border: 1px solid rgba(255, 255, 255, 0.7); 
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1);
+        }
+        .dark .glass-panel {
+            background: rgba(15, 23, 42, 0.75);
+            border: 1px solid rgba(255, 255, 255, 0.1);
         }
 
-        [data-theme="dark"] {
-            --primary-color: #4db6ac;
-            --secondary-color: #26a69a;
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --text-color: #e0e0e0;
-            --text-muted: #a0a0a0;
-            --border-color: #333333;
+        .glass-card { 
+            background: rgba(255, 255, 255, 0.75); 
+            backdrop-filter: blur(15px); 
+            border: 1px solid rgba(255, 255, 255, 0.6); 
+            transition: all 0.3s ease; 
         }
-
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Roboto', sans-serif; }
-        body { background-color: var(--bg-color); color: var(--text-color); line-height: 1.6; display: flex; flex-direction: column; min-height: 100vh; transition: background 0.3s; }
-
-        /* Helpers */
-        .hidden { display: none !important; }
-        .btn-primary, .btn-secondary { padding: 8px 16px; border: none; border-radius: 4px; cursor: pointer; font-weight: 500; transition: opacity 0.2s; }
-        .btn-primary { background-color: var(--primary-color); color: white; }
-        .btn-secondary { background-color: #6c757d; color: white; }
-        .btn-primary:hover, .btn-secondary:hover { opacity: 0.9; }
-        .full-width { width: 100%; margin-top: 10px; }
-
-        /* Header */
-        .app-header { height: var(--header-height); background-color: var(--card-bg); display: flex; align-items: center; justify-content: space-between; padding: 0 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); position: sticky; top: 0; z-index: 100; }
-        .logo-area h1 { font-size: 1.2rem; color: var(--primary-color); display: flex; align-items: center; gap: 8px; }
-        .main-nav { display: flex; gap: 5px; }
-        .main-nav .nav-btn { background: none; border: none; padding: 10px 15px; color: var(--text-muted); cursor: pointer; font-size: 0.95rem; border-radius: 4px; }
-        .main-nav .nav-btn.active, .main-nav .nav-btn:hover { color: var(--primary-color); background: rgba(0,0,0,0.05); font-weight: bold; }
-        .user-area { display: flex; align-items: center; gap: 10px; }
-        #user-avatar { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; border: 1px solid var(--border-color); }
-        #theme-toggle { background: none; border: none; color: var(--text-color); cursor: pointer; font-size: 1.1rem; padding: 5px; }
-
-        /* Main */
-        .app-content { flex: 1; padding: 20px; max-width: 1200px; margin: 0 auto; width: 100%; }
-        .view { display: none; animation: fadeIn 0.3s ease; }
-        .view.active { display: block; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* Hero */
-        .hero { text-align: center; padding: 40px 20px; background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); color: white; border-radius: 8px; margin-bottom: 20px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .cta-group { margin-top: 20px; display: flex; gap: 10px; justify-content: center; }
-        .info-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
-        .card { background: var(--card-bg); padding: 20px; border-radius: 8px; border: 1px solid var(--border-color); }
-        .text-link { color: var(--primary-color); text-decoration: none; font-weight: 500; }
-
-        /* Grids & Lists */
-        .section-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
-        .controls { display: flex; gap: 10px; flex-wrap: wrap; }
-        .controls input, .controls select { padding: 8px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--card-bg); color: var(--text-color); }
-        .grid-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 15px; }
-        .doc-item, .drug-item { background: var(--card-bg); padding: 15px; border-radius: 6px; border-left: 4px solid var(--primary-color); box-shadow: 0 1px 3px rgba(0,0,0,0.05); transition: transform 0.2s; }
-        .doc-item:hover, .drug-item:hover { transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
-        .doc-meta { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 10px; display: block; }
-        .drug-detail { font-size: 0.9rem; margin-top: 8px; border-top: 1px solid var(--border-color); padding-top: 8px; }
-
-        /* Notes */
-        .note-editor-container { height: 60vh; position: relative; }
-        #personal-note { width: 100%; height: 100%; padding: 20px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--card-bg); color: var(--text-color); resize: none; font-size: 1rem; line-height: 1.6; outline: none; }
-        .status-text { font-size: 0.8rem; color: var(--text-muted); font-style: italic; margin-right: 10px; }
-
-        /* Chat */
-        .chat-container { height: 70vh; display: flex; flex-direction: column; background: var(--card-bg); border-radius: 8px; border: 1px solid var(--border-color); overflow: hidden; }
-        .chat-header { padding: 15px; background: rgba(0,0,0,0.03); border-bottom: 1px solid var(--border-color); display: flex; justify-content: space-between; align-items: center; font-weight: bold; }
-        .chat-messages { flex: 1; overflow-y: auto; padding: 20px; display: flex; flex-direction: column; gap: 12px; }
-        .message { max-width: 80%; padding: 10px 14px; border-radius: 12px; font-size: 0.95rem; position: relative; }
-        .message.mine { align-self: flex-end; background-color: var(--primary-color); color: white; border-bottom-right-radius: 2px; }
-        .message.theirs { align-self: flex-start; background-color: var(--bg-color); color: var(--text-color); border: 1px solid var(--border-color); border-bottom-left-radius: 2px; }
-        .msg-meta { font-size: 0.7rem; opacity: 0.8; margin-bottom: 4px; display: block; font-weight: bold; }
-        .chat-input-area { padding: 15px; border-top: 1px solid var(--border-color); display: flex; gap: 10px; background: var(--card-bg); }
-        #chat-input { flex: 1; padding: 12px; border: 1px solid var(--border-color); border-radius: 25px; background: var(--bg-color); color: var(--text-color); outline: none; }
-
-        /* Tools */
-        .tools-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; }
-        .tool-card { background: var(--card-bg); padding: 25px; border-radius: 8px; border: 1px solid var(--border-color); text-align: center; }
-        .tool-card h3 { margin-bottom: 15px; color: var(--primary-color); }
-        .input-group { margin-bottom: 15px; text-align: left; }
-        .input-group label { display: block; margin-bottom: 5px; font-size: 0.9rem; }
-        .input-group input { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; background: var(--bg-color); color: var(--text-color); }
-        .result-box { margin-top: 20px; padding: 10px; background: rgba(0,0,0,0.05); border-radius: 4px; font-weight: bold; color: var(--primary-color); min-height: 40px; display: flex; align-items: center; justify-content: center; }
-        .timer-display { font-size: 3.5rem; margin: 20px 0; font-family: monospace; color: var(--text-color); }
-        .timer-controls { display: flex; justify-content: center; gap: 10px; }
-
-        /* Footer */
-        .app-footer { background-color: #2c3e50; color: #ecf0f1; padding: 40px 20px 20px; margin-top: 40px; }
-        .footer-content { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 30px; max-width: 1200px; margin: 0 auto; }
-        .footer-info h4 { margin-bottom: 10px; color: #3498db; }
-        .footer-info a, .footer-links a { color: #bdc3c7; text-decoration: none; transition: color 0.2s; }
-        .footer-info a:hover, .footer-links a:hover { color: white; }
-        .copyright { text-align: center; margin-top: 30px; font-size: 0.8rem; border-top: 1px solid #34495e; padding-top: 15px; color: #7f8c8d; }
-
-        /* Modal & Toast */
-        .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 1000; backdrop-filter: blur(2px); }
-        .modal { background: var(--card-bg); width: 90%; max-width: 500px; border-radius: 8px; overflow: hidden; box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: fadeIn 0.2s; }
-        .modal-header { padding: 15px 20px; background: var(--primary-color); color: white; display: flex; justify-content: space-between; align-items: center; }
-        .modal-header button { background: none; border: none; color: white; font-size: 1.5rem; cursor: pointer; }
-        .modal-body { padding: 20px; }
-        .modal-footer { padding: 15px 20px; border-top: 1px solid var(--border-color); text-align: right; }
-        .form-group { margin-bottom: 15px; }
-        .form-group input, .form-group textarea, .form-group select { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 4px; margin-top: 5px; background: var(--bg-color); color: var(--text-color); }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .main-nav span { display: none; }
-            .app-header { padding: 0 10px; }
-            .chat-container { height: 85vh; }
-            .tools-grid { grid-template-columns: 1fr; }
+        .dark .glass-card {
+            background: rgba(30, 41, 59, 0.8);
+            border: 1px solid rgba(255, 255, 255, 0.05);
         }
+        .glass-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+
+        /* Inputs */
+        .ios-input { 
+            background: rgba(255, 255, 255, 0.8); 
+            border: 1px solid rgba(203, 213, 225, 0.8); 
+            color: #0f172a; font-weight: 600;
+        }
+        .dark .ios-input { background: rgba(0, 0, 0, 0.5); border-color: rgba(255,255,255,0.2); color: white; }
+        .ios-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3); border-color: #3b82f6; }
+
+        /* Controls */
+        .segmented-control { background: rgba(200, 200, 200, 0.4); backdrop-filter: blur(10px); padding: 4px; border-radius: 12px; display: inline-flex; }
+        .dark .segmented-control { background: rgba(0,0,0,0.4); }
+        .segment-btn { padding: 6px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; color: #475569; }
+        .dark .segment-btn { color: #94a3b8; }
+        .segment-btn.active { background: white; color: #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .dark .segment-btn.active { background: #334155; color: white; }
+
+        .notification-dot { position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; border: 1px solid white; }
+        .tool-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+        .tool-content.open { max-height: 500px; }
+        
+        /* Volume Slider */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%; background: #3b82f6; cursor: pointer; margin-top: -4px; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #cbd5e1; border-radius: 2px; }
+        .dark input[type=range]::-webkit-slider-runnable-track { background: #475569; }
     </style>
 </head>
-<body>
+<body class="min-h-screen overflow-x-hidden">
 
-    <header class="app-header">
-        <div class="logo-area">
-            <h1><i class="fa-solid fa-staff-snake"></i> MinhducKale</h1>
-        </div>
-        <nav class="main-nav">
-            <button class="nav-btn active" data-target="home"><i class="fa-solid fa-home"></i> <span>Trang chủ</span></button>
-            <button class="nav-btn" data-target="docs"><i class="fa-solid fa-book-medical"></i> <span>Tài liệu</span></button>
-            <button class="nav-btn" data-target="drugs"><i class="fa-solid fa-pills"></i> <span>Thuốc</span></button>
-            <button class="nav-btn" data-target="notes"><i class="fa-solid fa-notes-medical"></i> <span>Ghi chú</span></button>
-            <button class="nav-btn" data-target="chat"><i class="fa-solid fa-comments"></i> <span>Thảo luận</span></button>
-            <button class="nav-btn" data-target="tools"><i class="fa-solid fa-calculator"></i> <span>Công cụ</span></button>
-        </nav>
-        <div class="user-area">
-            <button id="theme-toggle" title="Chế độ Sáng/Tối"><i class="fa-solid fa-moon"></i></button>
-            <div id="auth-container">
-                <button id="login-btn" class="btn-primary">Đăng nhập</button>
-                <div id="user-info" class="hidden">
-                    <img id="user-avatar" src="" alt="Avatar">
-                    <span id="user-name" style="font-size: 0.9rem; font-weight: 500;">Guest</span>
-                    <button id="logout-btn" style="background:none; border:none; color: var(--danger-color); cursor: pointer; margin-left: 5px;"><i class="fa-solid fa-sign-out-alt"></i></button>
-                </div>
-            </div>
-        </div>
-    </header>
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
 
-    <main class="app-content">
+    <div class="container mx-auto px-4 py-6 max-w-7xl min-h-screen flex flex-col">
         
-        <section id="home" class="view active">
-            <div class="hero">
-                <h2>Chào mừng đến với MinhducKale</h2>
-                <p>Nền tảng hỗ trợ học tập và thực hành lâm sàng cho sinh viên Y khoa.</p>
-                <div class="cta-group">
-                    <button class="btn-primary" onclick="switchView('docs')">Tìm tài liệu</button>
-                    <button class="btn-secondary" onclick="switchView('tools')">Công cụ Y khoa</button>
-                </div>
-            </div>
-            <div class="info-cards">
-                <div class="card">
-                    <h3><i class="fa-solid fa-link"></i> Nguồn Tài Liệu</h3>
-                    <p>Truy cập kho tài liệu tổng hợp từ Google Drive.</p>
-                    <a href="https://drive.google.com/drive/u/2/folders/1GnW2tjMYi-FcmEstNQQu8WD25AK06W9-" target="_blank" class="text-link">Mở Drive Tổng &rarr;</a>
-                </div>
-                <div class="card">
-                    <h3><i class="fa-solid fa-user-md"></i> Thông tin liên hệ</h3>
-                    <p>Chủ sở hữu: <strong>Đào Minh Đức</strong></p>
-                    <p>SĐT: 0976969072</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="docs" class="view">
-            <div class="section-header">
-                <h2>Kho Tài Liệu</h2>
-                <div class="controls">
-                    <input type="text" id="docs-search" placeholder="Tìm kiếm tài liệu...">
-                    <select id="docs-filter">
-                        <option value="all">Tất cả chuyên khoa</option>
-                        <option value="Nội">Nội khoa</option>
-                        <option value="Ngoại">Ngoại khoa</option>
-                        <option value="Sản">Sản phụ khoa</option>
-                        <option value="Nhi">Nhi khoa</option>
-                    </select>
-                    <button id="add-doc-btn" class="btn-primary admin-only hidden"><i class="fa-solid fa-plus"></i> Thêm</button>
-                </div>
-            </div>
-            <div id="docs-list" class="grid-list">
-                </div>
-        </section>
-
-        <section id="drugs" class="view">
-            <div class="section-header">
-                <h2>Tra Cứu Thuốc</h2>
-                <div class="controls">
-                    <input type="text" id="drugs-search" placeholder="Nhập tên thuốc/hoạt chất...">
-                    <button id="add-drug-btn" class="btn-primary admin-only hidden"><i class="fa-solid fa-plus"></i> Thêm</button>
-                </div>
-            </div>
-            <div id="drugs-result" class="list-view">
-                <div style="text-align: center; padding: 20px; color: var(--text-muted);">
-                    <i class="fa-solid fa-magnifying-glass" style="font-size: 2rem; margin-bottom: 10px;"></i>
-                    <p>Nhập từ khóa để bắt đầu tra cứu...</p>
-                </div>
-            </div>
-        </section>
-
-        <section id="notes" class="view">
-            <div class="section-header">
-                <h2>Ghi Chú Cá Nhân</h2>
-                <div class="controls">
-                    <span id="save-status" class="status-text">Đã đồng bộ</span>
-                    <button id="export-note-btn" class="btn-secondary"><i class="fa-solid fa-file-export"></i> Xuất .txt</button>
-                </div>
-            </div>
-            <div class="note-editor-container">
-                <textarea id="personal-note" placeholder="Viết ghi chú lâm sàng của bạn tại đây... (Yêu cầu đăng nhập để lưu)"></textarea>
-            </div>
-        </section>
-
-        <section id="chat" class="view">
-            <div class="chat-container">
-                <div class="chat-header">
-                    <div><i class="fa-solid fa-comments"></i> Thảo luận Lâm sàng</div>
-                    <span style="font-size: 0.8rem; font-weight: normal; background: #27ae60; color: white; padding: 2px 6px; border-radius: 4px;">Live</span>
-                </div>
-                <div id="chat-messages" class="chat-messages">
+        <header class="glass-panel rounded-3xl px-6 py-4 mb-8 flex flex-col md:flex-row justify-between items-center z-20 sticky top-4">
+            <div class="flex items-center gap-4 mb-4 md:mb-0">
+                <div id="authContainer" class="relative group">
+                    <button id="loginBtn" onclick="window.loginGoogle()" class="w-12 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 transition">
+                        <i class="fa-solid fa-right-to-bracket text-xl"></i>
+                    </button>
+                    <div id="userProfile" class="hidden flex items-center gap-3 cursor-pointer">
+                        <img id="userAvatar" src="" class="w-12 h-12 rounded-2xl border-2 border-white shadow-md">
+                        <div class="hidden md:block">
+                            <p id="userName" class="text-sm font-bold text-slate-900 dark:text-white">User</p>
+                            <p class="text-[10px] text-green-600 font-bold uppercase">Online</p>
+                        </div>
                     </div>
-                <form id="chat-form" class="chat-input-area">
-                    <input type="text" id="chat-input" placeholder="Nhập tin nhắn..." autocomplete="off" maxlength="500">
-                    <button type="submit" class="btn-primary"><i class="fa-solid fa-paper-plane"></i></button>
-                </form>
-            </div>
-        </section>
-
-        <section id="tools" class="view">
-            <div class="tools-grid">
-                <div class="tool-card">
-                    <h3>BMI Calculator</h3>
-                    <div class="input-group">
-                        <label>Cân nặng (kg)</label>
-                        <input type="number" id="bmi-weight" placeholder="VD: 60">
-                    </div>
-                    <div class="input-group">
-                        <label>Chiều cao (cm)</label>
-                        <input type="number" id="bmi-height" placeholder="VD: 170">
-                    </div>
-                    <button id="calc-bmi-btn" class="btn-primary full-width">Tính toán</button>
-                    <div id="bmi-result" class="result-box">Kết quả</div>
-                </div>
-
-                <div class="tool-card">
-                    <h3>Máy tính Y khoa</h3>
-                    <p style="font-size: 0.8rem; color: #666; margin-bottom: 10px;">Hỗ trợ +, -, *, /, ( ).</p>
-                    <div class="input-group">
-                        <input type="text" id="calc-input" placeholder="Ví dụ: (50 * 10) / 2">
-                    </div>
-                    <button id="calc-exec-btn" class="btn-primary full-width">Tính</button>
-                    <div id="calc-result" class="result-box">0</div>
-                </div>
-
-                <div class="tool-card">
-                    <h3>Timer Học tập</h3>
-                    <div class="timer-display" id="timer-display">25:00</div>
-                    <div class="timer-controls">
-                        <button id="timer-start" class="btn-primary">Start/Stop</button>
-                        <button id="timer-reset" class="btn-secondary">Reset</button>
+                    <div id="logoutPanel" class="hidden absolute top-14 left-0 w-40 glass-card p-2 rounded-xl">
+                         <button onclick="window.logoutFirebase()" class="w-full text-left px-4 py-2 text-red-500 font-bold text-sm hover:bg-white/50 rounded-lg">
+                            <i class="fa-solid fa-power-off mr-2"></i> Đăng xuất
+                         </button>
                     </div>
                 </div>
-            </div>
-        </section>
 
-    </main>
-
-    <div id="modal-overlay" class="modal-overlay hidden">
-        <div class="modal">
-            <div class="modal-header">
-                <h3 id="modal-title">Tiêu đề</h3>
-                <button id="modal-close">&times;</button>
+                <div>
+                    <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Private Study Server v5.3</p>
+                </div>
             </div>
-            <div class="modal-body" id="modal-body"></div>
-            <div class="modal-footer">
-                <button id="modal-action-btn" class="btn-primary">Lưu</button>
+            
+            <div class="segmented-control mb-4 md:mb-0">
+                <div class="segment-btn active" onclick="window.switchTab('docs')">Kho Tài liệu</div>
+                <div class="segment-btn" onclick="window.switchTab('tools')">Công cụ Y khoa</div>
+            </div>
+
+            <div class="flex items-center gap-4">
+                <div class="hidden lg:flex flex-col items-end mr-2 text-right">
+                    <span id="clock" class="text-lg font-mono font-bold text-slate-800 dark:text-slate-200">00:00</span>
+                    <span id="date-display" class="text-[10px] font-bold uppercase text-slate-500">...</span>
+                </div>
+
+                <div class="relative group">
+                    <button id="notifBtn" onclick="window.toggleNotif()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white flex items-center justify-center transition shadow-sm">
+                        <i class="fa-regular fa-bell text-slate-700 dark:text-slate-200 font-bold"></i>
+                        <span class="notification-dot" id="notifDot"></span>
+                    </button>
+                    <div id="notifPanel" class="hidden absolute right-0 top-12 w-80 glass-card p-4 rounded-2xl z-50 shadow-2xl animate-float">
+                        <h4 class="font-bold mb-2 text-slate-900 dark:text-white">Cập nhật hệ thống</h4>
+                        <div id="notifList" class="space-y-2 max-h-60 overflow-y-auto text-sm text-slate-700 dark:text-slate-300"></div>
+                    </div>
+                </div>
+                
+                <button onclick="window.toggleDarkMode()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white flex items-center justify-center transition text-slate-700 dark:text-yellow-400 shadow-sm">
+                    <i id="darkIcon" class="fa-solid fa-moon"></i>
+                </button>
+            </div>
+        </header>
+
+        <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 pb-10">
+            
+            <div class="lg:col-span-8 flex flex-col">
+                
+                <div id="view-docs" class="flex flex-col gap-6 fade-in">
+                    <div class="flex gap-3 relative z-10">
+                        <div class="relative flex-1 group">
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-600"></i>
+                            <input id="searchInput" type="text" onkeyup="window.filterDocs()"
+                                class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" 
+                                placeholder="Tìm kiếm tài liệu, thư mục...">
+                        </div>
+                        <button onclick="window.openAddDocModal()" class="w-14 rounded-2xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-700 text-white flex items-center justify-center shadow-lg active:scale-95 transition">
+                            <i class="fa-solid fa-plus text-xl"></i>
+                        </button>
+                    </div>
+
+                    <div id="breadcrumb" class="hidden flex items-center gap-2 text-sm font-extrabold text-slate-700 dark:text-slate-200 bg-white/30 w-fit px-3 py-1 rounded-lg">
+                        <button onclick="window.renderFolders()" class="hover:text-blue-600"><i class="fa-solid fa-house"></i> Home</button>
+                        <span class="text-slate-400">/</span>
+                        <span id="currentFolderTitle" class="text-blue-700 dark:text-blue-400">Folder Name</span>
+                    </div>
+
+                    <div id="docsList" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        </div>
+                </div>
+
+                <div id="view-tools" class="hidden flex-col gap-6 fade-in">
+                    
+                    <div class="glass-card rounded-2xl overflow-hidden border-l-4 border-green-500">
+                        <button onclick="window.toggleTool('data')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
+                            <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-database text-green-600 mr-2"></i>Quản lý Dữ liệu (Backup)</span>
+                            <i class="fa-solid fa-chevron-down text-slate-500"></i>
+                        </button>
+                        <div id="tool-data" class="tool-content px-4">
+                            <div class="py-4 space-y-3">
+                                <p class="text-sm text-slate-600 dark:text-slate-400">Xuất file để sao lưu hoặc chuyển sang máy khác.</p>
+                                <div class="flex gap-3">
+                                    <button onclick="window.exportData()" class="flex-1 py-2 bg-slate-200 dark:bg-slate-700 text-slate-800 dark:text-white font-bold rounded-xl hover:bg-slate-300 transition">
+                                        <i class="fa-solid fa-download mr-1"></i> Xuất File
+                                    </button>
+                                    <button onclick="document.getElementById('importFile').click()" class="flex-1 py-2 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition">
+                                        <i class="fa-solid fa-upload mr-1"></i> Nạp File
+                                    </button>
+                                </div>
+                                <input type="file" id="importFile" hidden accept=".json" onchange="window.importData(this)">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-2xl overflow-hidden">
+                        <button onclick="window.toggleTool('bmi')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
+                            <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-weight-scale text-indigo-600 mr-2"></i>Tính BMI</span>
+                            <i class="fa-solid fa-chevron-down text-slate-500"></i>
+                        </button>
+                        <div id="tool-bmi" class="tool-content px-4">
+                            <div class="py-4 space-y-3">
+                                <div class="flex gap-2">
+                                    <input type="number" id="bmi-w" placeholder="Cân nặng (kg)" class="w-1/2 ios-input p-2 rounded-xl">
+                                    <input type="number" id="bmi-h" placeholder="Chiều cao (cm)" class="w-1/2 ios-input p-2 rounded-xl">
+                                </div>
+                                <button onclick="window.calcBMI()" class="w-full py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md">Tính ngay</button>
+                                <div id="bmi-res" class="hidden text-center font-bold text-indigo-700 dark:text-indigo-300 mt-2 text-lg">Kết quả...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-2xl overflow-hidden">
+                        <button onclick="window.toggleTool('map')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
+                            <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-heart-pulse text-red-600 mr-2"></i>Huyết áp trung bình (MAP)</span>
+                            <i class="fa-solid fa-chevron-down text-slate-500"></i>
+                        </button>
+                        <div id="tool-map" class="tool-content px-4">
+                            <div class="py-4 space-y-3">
+                                <div class="flex gap-2">
+                                    <input type="number" id="map-sys" placeholder="Tâm thu" class="w-1/2 ios-input p-2 rounded-xl">
+                                    <input type="number" id="map-dia" placeholder="Tâm trương" class="w-1/2 ios-input p-2 rounded-xl">
+                                </div>
+                                <button onclick="window.calcMAP()" class="w-full py-2 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-md">Tính MAP</button>
+                                <div id="map-res" class="hidden text-center font-bold text-red-700 dark:text-red-300 mt-2 text-lg">Kết quả...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-2xl overflow-hidden">
+                        <button onclick="window.toggleTool('egfr')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
+                            <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-kidneys text-orange-600 mr-2"></i>eGFR (Cockcroft-Gault)</span>
+                            <i class="fa-solid fa-chevron-down text-slate-500"></i>
+                        </button>
+                        <div id="tool-egfr" class="tool-content px-4">
+                            <div class="py-4 space-y-3 text-sm">
+                                <div class="flex gap-2">
+                                    <input type="number" id="egfr-age" placeholder="Tuổi" class="w-1/3 ios-input p-2 rounded-xl">
+                                    <input type="number" id="egfr-w" placeholder="Cân nặng (kg)" class="w-1/3 ios-input p-2 rounded-xl">
+                                    <select id="egfr-sex" class="w-1/3 ios-input p-2 rounded-xl text-slate-700 dark:text-white">
+                                        <option value="1">Nam (x1)</option>
+                                        <option value="0.85">Nữ (x0.85)</option>
+                                    </select>
+                                </div>
+                                <input type="number" id="egfr-cre" placeholder="Creatinine (mg/dL) - Ví dụ: 0.9" step="0.01" class="w-full ios-input p-2 rounded-xl">
+                                <p class="text-[10px] text-slate-500 italic">*Công thức: ((140-tuổi)*CN) / (72*Cre)</p>
+                                <button onclick="window.calcEGFR()" class="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl shadow-md">Tính eGFR</button>
+                                <div id="egfr-res" class="hidden text-center font-bold text-orange-700 dark:text-orange-300 mt-2 text-lg">...</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-4 flex flex-col gap-6">
+                
+                <div class="glass-panel p-5 rounded-3xl shadow-lg relative overflow-hidden group">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-headphones text-pink-500"></i> Chill Focus
+                        </h3>
+                        <div class="text-[10px] bg-black text-white px-2 py-1 rounded font-bold uppercase">Lofi</div>
+                    </div>
+                    
+                    <div class="flex justify-center mb-4 relative">
+                         <div id="musicDisc" class="w-32 h-32 rounded-full bg-slate-900 border-4 border-slate-800 flex items-center justify-center overflow-hidden shadow-2xl">
+                            <img src="https://img.icons8.com/color/96/vinyl-music.png" class="w-full h-full opacity-90">
+                        </div>
+                        <div class="absolute inset-0 flex items-center justify-center">
+                            <div class="w-8 h-8 bg-white rounded-full border-2 border-slate-300 z-10"></div>
+                        </div>
+                    </div>
+
+                    <div class="text-center mb-4">
+                        <p id="musicTitle" class="text-sm font-bold text-slate-900 dark:text-white truncate">Ready to study?</p>
+                        <p id="musicArtist" class="text-xs text-slate-500 font-bold uppercase">MinhducKale Playlist</p>
+                    </div>
+
+                    <div class="flex justify-center items-center gap-6 mb-4">
+                        <button onclick="window.prevSong()" class="text-slate-500 hover:text-slate-900 dark:hover:text-white transition"><i class="fa-solid fa-backward-step text-xl"></i></button>
+                        <button onclick="window.toggleMusic()" id="playBtnIcon" class="w-14 h-14 rounded-full bg-slate-900 text-white flex items-center justify-center hover:scale-105 transition shadow-xl"><i class="fa-solid fa-play text-xl ml-1"></i></button>
+                        <button onclick="window.nextSong()" class="text-slate-500 hover:text-slate-900 dark:hover:text-white transition"><i class="fa-solid fa-forward-step text-xl"></i></button>
+                    </div>
+                    
+                    <div class="flex items-center gap-2 px-2">
+                        <i class="fa-solid fa-volume-low text-xs text-slate-400"></i>
+                        <input type="range" id="volSlider" min="0" max="1" step="0.1" value="0.8" oninput="window.changeVolume(this.value)">
+                        <i class="fa-solid fa-volume-high text-xs text-slate-400"></i>
+                    </div>
+
+                    <audio id="bgAudio" class="hidden"></audio>
+                </div>
+
+                <div class="glass-card p-5 rounded-3xl flex flex-col relative group border border-yellow-200 dark:border-yellow-900/30">
+                    <div class="flex justify-between items-center mb-2">
+                        <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
+                            <i class="fa-solid fa-note-sticky text-yellow-500"></i> Ghi chú nhanh
+                        </h3>
+                        <span id="saveStatus" class="text-[10px] font-bold text-green-600 opacity-0 transition">Đã lưu</span>
+                    </div>
+                    <textarea id="quickNote" oninput="window.saveNote()" 
+                        class="w-full bg-white/50 dark:bg-slate-900/50 rounded-xl p-3 ios-input text-sm leading-relaxed shadow-inner focus:ring-2 ring-yellow-400/50 h-40" 
+                        placeholder="Viết ý tưởng, nhắc nhở ở đây... (Tự động lưu)"></textarea>
+                 </div>
             </div>
         </div>
     </div>
 
-    <footer class="app-footer">
-        <div class="footer-content">
-            <div class="footer-info">
-                <h4>MinhducKale</h4>
-                <p>Chủ sở hữu: <strong>Đào Minh Đức</strong></p>
-                <p>SĐT: <a href="tel:0976969072">0976969072</a></p>
-                <p>
-                    <a href="https://duckale0976.github.io/web/" target="_blank">Website chính</a> | 
-                    <a href="#" onclick="alert('Xem README để biết danh sách nguồn')">Nguồn tham khảo y khoa</a>
-                </p>
-            </div>
-            <div class="footer-links">
-                <a href="https://drive.google.com/drive/u/2/folders/1GnW2tjMYi-FcmEstNQQu8WD25AK06W9-" target="_blank">
-                    <i class="fa-brands fa-google-drive"></i> Kho Tài Liệu Tổng
-                </a>
+    <div id="addDocModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-md">
+        <div class="bg-white/95 dark:bg-slate-800/95 w-[90%] md:w-[400px] p-6 rounded-3xl shadow-2xl border border-white/50 animate-float">
+            <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4">Thêm Tài Liệu Mới</h3>
+            <div class="space-y-4">
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase">Tên tài liệu</label>
+                    <input id="newDocTitle" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="Nhập tên...">
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase">Thư mục</label>
+                    <select id="newDocFolder" class="w-full ios-input p-3 rounded-xl mt-1 font-bold text-slate-700 dark:text-slate-200 dark:bg-slate-700"></select>
+                </div>
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase">Link Drive</label>
+                    <input id="newDocLink" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="https://...">
+                </div>
+                <div class="flex gap-3 pt-2">
+                    <button onclick="document.getElementById('addDocModal').classList.add('hidden')" class="flex-1 py-3 rounded-xl bg-slate-200 text-slate-600 font-bold hover:bg-slate-300">Hủy</button>
+                    <button onclick="window.saveNewDoc()" class="flex-1 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg">Lưu ngay</button>
+                </div>
             </div>
         </div>
-        <div class="copyright">
-            &copy; 2025 MinhducKale. Medical Education Platform.
-        </div>
-    </footer>
+    </div>
 
     <script type="module">
-        // Import Firebase SDKs from CDN
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-auth.js";
-        import { getFirestore, collection, addDoc, getDocs, getDoc, setDoc, doc, query, where, orderBy, limit, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/9.22.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
 
-        // ==========================================
-        // CONFIGURATION (THAY API KEY CỦA BẠN VÀO ĐÂY)
-        // ==========================================
         const firebaseConfig = {
-            apiKey: "YOUR_API_KEY_HERE",
-            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-            projectId: "YOUR_PROJECT_ID",
-            storageBucket: "YOUR_PROJECT_ID.appspot.com",
-            messagingSenderId: "SENDER_ID",
-            appId: "APP_ID"
+            apiKey: "AIzaSyAcfs8LFgPeAkGyaSkmJeECoRBEwtfRv8E",
+            authDomain: "minhduckale1.firebaseapp.com",
+            databaseURL: "https://minhduckale1-default-rtdb.asia-southeast1.firebasedatabase.app",
+            projectId: "minhduckale1",
+            storageBucket: "minhduckale1.firebasestorage.app",
+            messagingSenderId: "479002042854",
+            appId: "1:479002042854:web:c9e4b614ad48fefd10f627",
+            measurementId: "G-GWWCJ6BNLF"
         };
 
-        // Initialize Firebase
-        // Lưu ý: Nếu chưa thay config, app sẽ lỗi khi gọi DB.
-        let app, auth, db, googleProvider;
-        try {
-            app = initializeApp(firebaseConfig);
-            auth = getAuth(app);
-            db = getFirestore(app);
-            googleProvider = new GoogleAuthProvider();
-            console.log("Firebase Initialized");
-        } catch (e) {
-            console.error("Firebase Init Error (Kiểm tra Config):", e);
-        }
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
 
-        // Global State
-        let currentUser = null;
-        let isAdmin = false;
+        window.loginGoogle = () => {
+            signInWithPopup(auth, provider)
+                .then((result) => { console.log("Logged in:", result.user); })
+                .catch((error) => { alert("Lỗi đăng nhập: " + error.message); });
+        };
 
-        // ==========================================
-        // UI HELPERS
-        // ==========================================
-        
-        // Navigation Logic
-        const navBtns = document.querySelectorAll('.nav-btn');
-        const views = document.querySelectorAll('.view');
-        
-        window.switchView = (targetId) => {
-            navBtns.forEach(b => {
-                b.classList.remove('active');
-                if(b.getAttribute('data-target') === targetId) b.classList.add('active');
-            });
-            views.forEach(v => {
-                v.classList.remove('active');
-                if(v.id === targetId) v.classList.add('active');
+        window.logoutFirebase = () => {
+            signOut(auth).then(() => {
+                document.getElementById('logoutPanel').classList.add('hidden');
+                console.log("Logged out");
             });
         };
 
-        navBtns.forEach(btn => {
-            btn.addEventListener('click', () => switchView(btn.getAttribute('data-target')));
-        });
+        onAuthStateChanged(auth, (user) => {
+            const loginBtn = document.getElementById('loginBtn');
+            const userProfile = document.getElementById('userProfile');
+            const userAvatar = document.getElementById('userAvatar');
+            const userName = document.getElementById('userName');
 
-        // Theme Toggle
-        const themeBtn = document.getElementById('theme-toggle');
-        if (localStorage.getItem('theme') === 'dark') {
-            document.body.setAttribute('data-theme', 'dark');
-            themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
-        }
-        themeBtn.addEventListener('click', () => {
-            if (document.body.getAttribute('data-theme') === 'dark') {
-                document.body.removeAttribute('data-theme');
-                localStorage.setItem('theme', 'light');
-                themeBtn.innerHTML = '<i class="fa-solid fa-moon"></i>';
+            if (user) {
+                loginBtn.classList.add('hidden');
+                userProfile.classList.remove('hidden');
+                userProfile.classList.add('flex');
+                userAvatar.src = user.photoURL || "https://img.icons8.com/color/96/user-male-circle--v1.png";
+                userName.innerText = user.displayName || "MinhducKale User";
+                userProfile.onclick = () => document.getElementById('logoutPanel').classList.toggle('hidden');
             } else {
-                document.body.setAttribute('data-theme', 'dark');
-                localStorage.setItem('theme', 'dark');
-                themeBtn.innerHTML = '<i class="fa-solid fa-sun"></i>';
+                loginBtn.classList.remove('hidden');
+                userProfile.classList.add('hidden');
+                userProfile.classList.remove('flex');
+                document.getElementById('logoutPanel').classList.add('hidden');
             }
         });
 
-        // Toast Notification
-        function showToast(message, type = 'info') {
-            const toast = document.createElement('div');
-            toast.innerText = message;
-            toast.style.position = 'fixed';
-            toast.style.bottom = '20px';
-            toast.style.right = '20px';
-            toast.style.padding = '10px 20px';
-            toast.style.borderRadius = '4px';
-            toast.style.color = '#fff';
-            toast.style.zIndex = '9999';
-            toast.style.boxShadow = '0 2px 5px rgba(0,0,0,0.2)';
-            
-            if (type === 'success') toast.style.background = '#5cb85c';
-            else if (type === 'error') toast.style.background = '#d9534f';
-            else toast.style.background = '#007bb5';
+        const driveBase = "https://drive.google.com/drive/folders/1GnW2tjMYi-FcmEstNQQu8WD25AK06W9-?usp=drive_link";
 
-            document.body.appendChild(toast);
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                setTimeout(() => document.body.removeChild(toast), 300);
-            }, 3000);
+        const folders = {
+            "capcuu": { name: "1. Hồi sức Cấp cứu", icon: "fa-truck-medical", color: "text-red-500", items: [] },
+            "noikhoa": { name: "2. Nội khoa", icon: "fa-user-doctor", color: "text-blue-500", items: [] },
+            "ngoaikhoa": { name: "3. Ngoại khoa", icon: "fa-scalpel", color: "text-green-600", items: [] },
+            "san": { name: "4. Sản phụ khoa", icon: "fa-person-pregnant", color: "text-pink-500", items: [] },
+            "nhi": { name: "5. Nhi khoa", icon: "fa-baby", color: "text-orange-500", items: [] },
+            "canlamsang": { name: "6. Cận lâm sàng", icon: "fa-microscope", color: "text-purple-500", items: [] },
+            "khac": { name: "7. Tài liệu khác", icon: "fa-folder-open", color: "text-slate-500", items: [] }
+        };
+
+        const initialDocs = [
+            { id: 'd1', title: 'Truy cập Drive Tổng', folder: 'khac', url: driveBase, type: 'DOC' },
+        ];
+
+        let currentViewFolder = null; 
+        let userDocs = JSON.parse(localStorage.getItem('mdk_user_docs_v2') || '[]');
+        let allDocs = [];
+
+        function init() {
+            allDocs = [...userDocs, ...initialDocs];
+            distributeDocs();
+            renderFolders();
+            populateFolderSelect();
+            checkNotifications();
+            if(localStorage.getItem('mdk_dark') === 'true') document.documentElement.classList.add('dark');
+            loadNote();
+            updateClock();
         }
 
-        // Modal Helper
-        function openModal(title, bodyHtml, onSave) {
-            const overlay = document.getElementById('modal-overlay');
-            document.getElementById('modal-title').innerText = title;
-            document.getElementById('modal-body').innerHTML = bodyHtml;
-            
-            const saveBtn = document.getElementById('modal-action-btn');
-            const newBtn = saveBtn.cloneNode(true); // Remove old listeners
-            saveBtn.parentNode.replaceChild(newBtn, saveBtn);
-            
-            newBtn.addEventListener('click', () => {
-                if(onSave) onSave();
-                overlay.classList.add('hidden');
-            });
-            
-            overlay.classList.remove('hidden');
-            document.getElementById('modal-close').onclick = () => overlay.classList.add('hidden');
-        }
-
-        // Debounce
-        function debounce(func, timeout = 300){
-            let timer;
-            return (...args) => {
-                clearTimeout(timer);
-                timer = setTimeout(() => { func.apply(this, args); }, timeout);
-            };
-        }
-
-        // ==========================================
-        // AUTHENTICATION
-        // ==========================================
-        const loginBtn = document.getElementById('login-btn');
-        const logoutBtn = document.getElementById('logout-btn');
-        const userInfo = document.getElementById('user-info');
-
-        loginBtn.addEventListener('click', async () => {
-            try {
-                await signInWithPopup(auth, googleProvider);
-                showToast('Đăng nhập thành công', 'success');
-            } catch (error) {
-                console.error(error);
-                showToast('Lỗi đăng nhập: ' + error.message, 'error');
-            }
-        });
-
-        logoutBtn.addEventListener('click', async () => {
-            await signOut(auth);
-            showToast('Đã đăng xuất');
-        });
-
-        if(auth) {
-            onAuthStateChanged(auth, async (user) => {
-                currentUser = user;
-                if (user) {
-                    loginBtn.classList.add('hidden');
-                    userInfo.classList.remove('hidden');
-                    document.getElementById('user-avatar').src = user.photoURL || 'https://via.placeholder.com/32';
-                    document.getElementById('user-name').innerText = user.displayName;
-                    
-                    // Check Admin (Simulated check, real check is in Rules)
-                    // Ở đây bạn có thể check role từ Firestore nếu muốn
-                    const idToken = await user.getIdTokenResult();
-                    if(idToken.claims.admin) isAdmin = true;
-                } else {
-                    loginBtn.classList.remove('hidden');
-                    userInfo.classList.add('hidden');
-                    isAdmin = false;
-                }
-                
-                // Toggle Admin Buttons
-                document.querySelectorAll('.admin-only').forEach(el => {
-                    el.classList.toggle('hidden', !isAdmin);
-                });
-
-                // Reload notes if user changes
-                loadNote();
+        function distributeDocs() {
+            Object.keys(folders).forEach(k => folders[k].items = []);
+            allDocs.forEach(doc => {
+                if(folders[doc.folder]) folders[doc.folder].items.push(doc);
+                else folders['khac'].items.push(doc);
             });
         }
 
-        // ==========================================
-        // FEATURES
-        // ==========================================
+        const listEl = document.getElementById('docsList');
+        const breadcrumb = document.getElementById('breadcrumb');
 
-        /* --- DOCS SYSTEM --- */
-        async function loadDocs(search = '', cat = 'all') {
-            const listEl = document.getElementById('docs-list');
-            listEl.innerHTML = '<p>Đang tải...</p>';
-            try {
-                // In prod: use compound queries. Here: fetch all & filter (small scale)
-                const snapshot = await getDocs(collection(db, 'docs'));
-                let docs = [];
-                snapshot.forEach(d => docs.push({id: d.id, ...d.data()}));
-
-                if (cat !== 'all') docs = docs.filter(d => d.category === cat);
-                if (search) docs = docs.filter(d => d.title.toLowerCase().includes(search.toLowerCase()));
-
-                listEl.innerHTML = '';
-                if(docs.length === 0) {
-                    listEl.innerHTML = '<p>Không tìm thấy tài liệu.</p>';
-                    return;
-                }
-
-                docs.forEach(doc => {
-                    const div = document.createElement('div');
-                    div.className = 'doc-item';
-                    div.innerHTML = `
-                        <h4>${doc.title}</h4>
-                        <span class="doc-meta"><i class="fa-solid fa-tag"></i> ${doc.category}</span>
-                        <p>${doc.desc || ''}</p>
-                        <a href="${doc.link}" target="_blank" class="text-link">Xem tài liệu <i class="fa-solid fa-external-link-alt"></i></a>
-                    `;
-                    listEl.appendChild(div);
-                });
-            } catch (e) {
-                console.warn(e);
-                listEl.innerHTML = '<p>Chưa kết nối Database hoặc lỗi.</p>';
-            }
-        }
-
-        document.getElementById('add-doc-btn').addEventListener('click', () => {
-            const formHtml = `
-                <div class="form-group"><label>Tiêu đề</label><input id="d-title"></div>
-                <div class="form-group"><label>Chuyên khoa</label>
-                    <select id="d-cat"><option value="Nội">Nội</option><option value="Ngoại">Ngoại</option><option value="Sản">Sản</option><option value="Nhi">Nhi</option></select>
-                </div>
-                <div class="form-group"><label>Link</label><input id="d-link"></div>
-                <div class="form-group"><label>Mô tả</label><textarea id="d-desc"></textarea></div>
-            `;
-            openModal('Thêm tài liệu', formHtml, async () => {
-                const title = document.getElementById('d-title').value;
-                const category = document.getElementById('d-cat').value;
-                const link = document.getElementById('d-link').value;
-                const desc = document.getElementById('d-desc').value;
-                if(!title) return;
-                try {
-                    await addDoc(collection(db, 'docs'), { title, category, link, desc, createdAt: new Date() });
-                    showToast('Đã thêm');
-                    loadDocs();
-                } catch(e) { showToast('Lỗi (Quyền Admin?)', 'error'); }
-            });
-        });
-
-        // Search Listeners
-        document.getElementById('docs-search').addEventListener('input', debounce((e) => loadDocs(e.target.value, document.getElementById('docs-filter').value)));
-        document.getElementById('docs-filter').addEventListener('change', (e) => loadDocs(document.getElementById('docs-search').value, e.target.value));
-
-        /* --- DRUGS SYSTEM --- */
-        async function searchDrugs(term) {
-            const resEl = document.getElementById('drugs-result');
-            if(!term) return;
-            resEl.innerHTML = 'Đang tìm...';
+        window.renderFolders = function() {
+            currentViewFolder = null;
+            breadcrumb.classList.add('hidden');
+            listEl.innerHTML = '';
             
-            try {
-                // Simplified client-side filter
-                const snapshot = await getDocs(query(collection(db, 'drugs'), limit(50)));
-                const res = [];
-                snapshot.forEach(d => {
-                    const data = d.data();
-                    if(data.name.toLowerCase().includes(term.toLowerCase()) || data.activeIngredient?.toLowerCase().includes(term.toLowerCase()))
-                        res.push(data);
-                });
-                
-                resEl.innerHTML = '';
-                if(res.length === 0) resEl.innerHTML = 'Không tìm thấy thuốc.';
-                
-                res.forEach(d => {
-                    const div = document.createElement('div');
-                    div.className = 'drug-item';
-                    div.innerHTML = `<h4>${d.name} <small>(${d.activeIngredient})</small></h4>
-                        <div class="drug-detail"><strong>Liều:</strong> ${d.dosage}</div>
-                        <div class="drug-detail"><strong>Chống chỉ định:</strong> ${d.contra}</div>`;
-                    resEl.appendChild(div);
-                });
-            } catch(e) { resEl.innerHTML = 'Lỗi kết nối.'; }
+            Object.keys(folders).forEach(key => {
+                const f = folders[key];
+                const count = f.items.length;
+                const html = `
+                    <div onclick="window.openFolder('${key}')" class="glass-card p-5 rounded-3xl flex items-center gap-5 cursor-pointer hover:bg-white/90 dark:hover:bg-slate-700/80 transition group border-l-4 border-transparent hover:border-blue-500">
+                        <div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl ${f.color} shadow-md group-hover:scale-110 transition">
+                            <i class="fa-solid ${f.icon}"></i>
+                        </div>
+                        <div class="flex-1">
+                            <h3 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${f.name}</h3>
+                            <p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">${count} file</p>
+                        </div>
+                        <i class="fa-solid fa-chevron-right text-slate-300 font-bold"></i>
+                    </div>
+                `;
+                listEl.insertAdjacentHTML('beforeend', html);
+            });
         }
 
-        document.getElementById('drugs-search').addEventListener('input', debounce(e => searchDrugs(e.target.value)));
-        document.getElementById('add-drug-btn').addEventListener('click', () => {
-            const html = `<div class="form-group"><label>Tên</label><input id="dr-name"></div>
-                          <div class="form-group"><label>Hoạt chất</label><input id="dr-active"></div>
-                          <div class="form-group"><label>Liều</label><input id="dr-dose"></div>
-                          <div class="form-group"><label>CCĐ</label><input id="dr-contra"></div>`;
-            openModal('Thêm thuốc', html, async () => {
-                try {
-                    await addDoc(collection(db, 'drugs'), {
-                        name: document.getElementById('dr-name').value,
-                        activeIngredient: document.getElementById('dr-active').value,
-                        dosage: document.getElementById('dr-dose').value,
-                        contra: document.getElementById('dr-contra').value
-                    });
-                    showToast('Đã thêm');
-                } catch(e) { showToast('Lỗi', 'error'); }
-            });
-        });
-
-        /* --- NOTES SYSTEM --- */
-        const noteArea = document.getElementById('personal-note');
-        const saveStatus = document.getElementById('save-status');
-        
-        async function loadNote() {
-            if(!currentUser) {
-                noteArea.value = '';
-                noteArea.disabled = true;
-                noteArea.placeholder = "Đăng nhập để sử dụng ghi chú.";
+        window.openFolder = function(key) {
+            currentViewFolder = key;
+            const f = folders[key];
+            breadcrumb.classList.remove('hidden');
+            document.getElementById('currentFolderTitle').innerText = f.name;
+            
+            listEl.innerHTML = '';
+            if(f.items.length === 0) {
+                listEl.innerHTML = `<div class="col-span-2 text-center py-20 opacity-60 dark:text-white font-bold">Thư mục trống</div>`;
                 return;
             }
-            noteArea.disabled = false;
-            noteArea.placeholder = "Ghi chú của bạn...";
-            try {
-                const snap = await getDoc(doc(db, 'users', currentUser.uid, 'notes', 'personal'));
-                if(snap.exists()) noteArea.value = snap.data().content || '';
-            } catch(e) {}
-        }
 
-        const saveNote = debounce(async (val) => {
-            if(!currentUser) return;
-            saveStatus.innerText = 'Đang lưu...';
-            try {
-                await setDoc(doc(db, 'users', currentUser.uid, 'notes', 'personal'), { content: val }, { merge: true });
-                saveStatus.innerText = 'Đã lưu';
-            } catch(e) { saveStatus.innerText = 'Lỗi lưu'; }
-        }, 1000);
-
-        noteArea.addEventListener('input', e => {
-            saveStatus.innerText = 'Chưa lưu...';
-            saveNote(e.target.value);
-        });
-
-        document.getElementById('export-note-btn').addEventListener('click', () => {
-            const blob = new Blob([noteArea.value], {type: "text/plain"});
-            const a = document.createElement('a');
-            a.href = URL.createObjectURL(blob);
-            a.download = "MinhducKale_Note.txt";
-            a.click();
-        });
-
-        /* --- CHAT SYSTEM --- */
-        const chatMsg = document.getElementById('chat-messages');
-        function initChat() {
-            const q = query(collection(db, 'chat'), orderBy('timestamp', 'asc'), limit(50));
-            onSnapshot(q, (snap) => {
-                chatMsg.innerHTML = '';
-                snap.forEach(d => {
-                    const data = d.data();
-                    const isMine = currentUser && data.uid === currentUser.uid;
-                    const div = document.createElement('div');
-                    div.className = `message ${isMine ? 'mine' : 'theirs'}`;
-                    div.innerHTML = `<span class="msg-meta">${data.displayName}</span>${data.text.replace(/</g, "&lt;")}`;
-                    chatMsg.appendChild(div);
-                });
-                chatMsg.scrollTop = chatMsg.scrollHeight;
+            f.items.forEach(doc => {
+                const icon = 'fa-file-lines text-blue-500';
+                const html = `
+                    <div class="glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm">
+                        <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center"><i class="fa-solid ${icon} text-lg"></i></div>
+                        <div class="flex-1 min-w-0">
+                            <h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${doc.title}</h4>
+                            <a href="${doc.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-blue-600 hover:underline uppercase tracking-wide">Mở tài liệu</a>
+                        </div>
+                        <i class="fa-solid fa-arrow-up-right-from-square text-slate-300 text-xs"></i>
+                    </div>
+                `;
+                listEl.insertAdjacentHTML('beforeend', html);
             });
         }
-        
-        document.getElementById('chat-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const input = document.getElementById('chat-input');
-            const txt = input.value.trim();
-            if(!txt || !currentUser) return;
-            try {
-                await addDoc(collection(db, 'chat'), {
-                    text: txt, uid: currentUser.uid, displayName: currentUser.displayName, timestamp: serverTimestamp()
-                });
-                input.value = '';
-            } catch(e) { showToast('Lỗi gửi', 'error'); }
-        });
 
-        /* --- TOOLS --- */
-        // BMI
-        document.getElementById('calc-bmi-btn').addEventListener('click', () => {
-            const w = parseFloat(document.getElementById('bmi-weight').value);
-            const h = parseFloat(document.getElementById('bmi-height').value) / 100;
-            if(w && h) {
-                const bmi = (w/(h*h)).toFixed(1);
-                document.getElementById('bmi-result').innerText = `BMI: ${bmi}`;
+        window.filterDocs = function() {
+            const term = document.getElementById('searchInput').value.toLowerCase();
+            if(!term) { window.renderFolders(); return; }
+            breadcrumb.classList.add('hidden');
+            listEl.innerHTML = '';
+            
+            const results = allDocs.filter(d => d.title.toLowerCase().includes(term));
+            
+            if(results.length === 0) {
+                 listEl.innerHTML = `<div class="col-span-2 text-center py-10 font-bold text-slate-500">Không tìm thấy kết quả</div>`;
+                 return;
             }
-        });
 
-        // Calc
-        document.getElementById('calc-exec-btn').addEventListener('click', () => {
-            try {
-                const val = document.getElementById('calc-input').value;
-                if(/[^0-9+\-*/().\s]/.test(val)) throw new Error();
-                const res = new Function('return ' + val)();
-                document.getElementById('calc-result').innerText = res;
-            } catch(e) { document.getElementById('calc-result').innerText = 'Lỗi'; }
-        });
+            results.forEach(doc => {
+                const html = `<div class="glass-card p-4 rounded-2xl"><h4 class="font-bold text-slate-900 dark:text-white">${doc.title}</h4><p class="text-xs font-bold text-slate-500">Trong: ${folders[doc.folder]?.name}</p><a href="${doc.url}" target="_blank" rel="noopener noreferrer" class="text-xs font-bold text-blue-600 mt-2 block">MỞ NGAY</a></div>`;
+                listEl.insertAdjacentHTML('beforeend', html);
+            });
+        }
 
-        // Timer
-        let timerInt;
-        let timeLeft = 1500;
-        let running = false;
-        document.getElementById('timer-start').addEventListener('click', () => {
-            if(running) { clearInterval(timerInt); running = false; return; }
-            running = true;
-            timerInt = setInterval(() => {
-                timeLeft--;
-                const m = Math.floor(timeLeft/60);
-                const s = timeLeft%60;
-                document.getElementById('timer-display').innerText = `${m}:${s<10?'0'+s:s}`;
-                if(timeLeft<=0) clearInterval(timerInt);
-            }, 1000);
-        });
-        document.getElementById('timer-reset').addEventListener('click', () => {
-            clearInterval(timerInt); running = false; timeLeft = 1500;
-            document.getElementById('timer-display').innerText = "25:00";
-        });
+        window.saveNewDoc = function() {
+            const title = document.getElementById('newDocTitle').value;
+            const folder = document.getElementById('newDocFolder').value;
+            const link = document.getElementById('newDocLink').value;
+            if(!title || !link) return alert("Thiếu thông tin");
+            
+            const newDoc = { id: 'u'+Date.now(), title, folder, url: link, type: 'DOC' };
+            userDocs.push(newDoc);
+            saveToLocalStorage();
+            
+            document.getElementById('addDocModal').classList.add('hidden');
+            allDocs = [...userDocs, ...initialDocs];
+            distributeDocs();
+            if(currentViewFolder === folder) window.openFolder(folder);
+            else window.renderFolders();
+        }
 
-        // Init
-        loadDocs();
-        initChat();
+        function saveToLocalStorage() { localStorage.setItem('mdk_user_docs_v2', JSON.stringify(userDocs)); }
 
+        window.exportData = function() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(userDocs));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "minhduckale_backup_" + new Date().toISOString().slice(0,10) + ".json");
+            document.body.appendChild(downloadAnchorNode);
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        window.importData = function(input) {
+            const file = input.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedDocs = JSON.parse(e.target.result);
+                    if(Array.isArray(importedDocs)) {
+                        if(confirm("Hành động này sẽ thay thế dữ liệu hiện tại bằng file backup. Bạn có chắc chắn?")) {
+                            userDocs = importedDocs;
+                            saveToLocalStorage();
+                            alert("Khôi phục thành công! Đang tải lại...");
+                            location.reload();
+                        }
+                    } else { alert("File không đúng định dạng!"); }
+                } catch(err) { alert("Lỗi khi đọc file: " + err); }
+            };
+            reader.readAsText(file);
+        }
+
+        window.saveNote = function() {
+            const content = document.getElementById('quickNote').value;
+            localStorage.setItem('mdk_sticky_note', content);
+            const status = document.getElementById('saveStatus');
+            status.style.opacity = '1';
+            setTimeout(() => { status.style.opacity = '0'; }, 2000);
+        }
+        function loadNote() {
+            const saved = localStorage.getItem('mdk_sticky_note');
+            if(saved) document.getElementById('quickNote').value = saved;
+        }
+
+        const playlist = [
+            {t:"Chill Lofi Beat", a:"Unknown", u:"https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"}, 
+            {t:"Relaxing Piano", a:"Pixabay", u:"https://cdn.pixabay.com/download/audio/2022/03/10/audio_5b8220a28f.mp3?filename=piano-moment-11153.mp3"},
+            {t:"Deep Focus", a:"Ambient", u:"https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=soft-rain-ambient-111154.mp3"}
+        ];
+        let trackIdx = 0;
+        const audio = document.getElementById('bgAudio');
+        const disc = document.getElementById('musicDisc');
+
+        function loadTrack(i) {
+            audio.src = playlist[i].u;
+            document.getElementById('musicTitle').innerText = playlist[i].t;
+            document.getElementById('musicArtist').innerText = playlist[i].a;
+            audio.volume = document.getElementById('volSlider').value;
+        }
+        window.toggleMusic = function() {
+            if(audio.paused) { 
+                audio.play(); 
+                document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-pause text-xl ml-0"></i>';
+                disc.classList.add('animate-spin-slow');
+            } else { 
+                audio.pause(); 
+                document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-play text-xl ml-1"></i>';
+                disc.classList.remove('animate-spin-slow');
+            }
+        }
+        window.nextSong = function() {
+            trackIdx = (trackIdx + 1) % playlist.length;
+            loadTrack(trackIdx); audio.play();
+            disc.classList.add('animate-spin-slow'); document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-pause text-xl"></i>';
+        }
+        window.prevSong = function() {
+            trackIdx = (trackIdx - 1 + playlist.length) % playlist.length;
+            loadTrack(trackIdx); audio.play();
+        }
+        window.changeVolume = function(val) { audio.volume = val; }
+        loadTrack(0);
+
+        function populateFolderSelect() {
+            const sel = document.getElementById('newDocFolder');
+            Object.keys(folders).forEach(k => {
+                const opt = document.createElement('option');
+                opt.value = k; opt.text = folders[k].name;
+                sel.appendChild(opt);
+            });
+        }
+        window.openAddDocModal = function() { document.getElementById('addDocModal').classList.remove('hidden'); }
+        window.toggleTool = function(id) { document.getElementById('tool-'+id).classList.toggle('open'); }
+        window.switchTab = function(t) {
+            document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
+            event.target.classList.add('active');
+            if(t === 'docs') { document.getElementById('view-docs').classList.remove('hidden'); document.getElementById('view-tools').classList.add('hidden'); }
+            else { document.getElementById('view-docs').classList.add('hidden'); document.getElementById('view-tools').classList.remove('hidden'); }
+        }
+        window.toggleDarkMode = function() {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('mdk_dark', document.documentElement.classList.contains('dark'));
+        }
+        function updateClock() {
+            const now = new Date();
+            document.getElementById('clock').innerText = now.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
+            document.getElementById('date-display').innerText = now.toLocaleDateString('vi-VN');
+        }
+        window.toggleNotif = function() {
+            document.getElementById('notifPanel').classList.toggle('hidden');
+            document.getElementById('notifDot').style.display = 'none';
+        }
+        function checkNotifications() {
+            document.getElementById('notifDot').style.display = 'block';
+            document.getElementById('notifList').innerHTML = 
+                `<div class="p-2 border-b dark:border-slate-700 font-bold text-blue-600">v5.3: Fix Scrolling</div>
+                 <div class="p-2 border-b dark:border-slate-700">Đã tích hợp Firebase Auth</div>
+                 <div class="p-2">Hệ thống sẵn sàng</div>`;
+        }
+
+        window.calcBMI = () => { const w = document.getElementById('bmi-w').value, h = document.getElementById('bmi-h').value/100; if(w&&h) { document.getElementById('bmi-res').innerText = "BMI: " + (w/(h*h)).toFixed(1); document.getElementById('bmi-res').classList.remove('hidden'); } }
+        window.calcMAP = () => { const s = Number(document.getElementById('map-sys').value), d = Number(document.getElementById('map-dia').value); if(s&&d) { document.getElementById('map-res').innerText = "MAP: " + ((2*d+s)/3).toFixed(0) + " mmHg"; document.getElementById('map-res').classList.remove('hidden'); } }
+        window.calcEGFR = () => {
+            const age = parseFloat(document.getElementById('egfr-age').value);
+            const w = parseFloat(document.getElementById('egfr-w').value);
+            const cre = parseFloat(document.getElementById('egfr-cre').value);
+            const sex = parseFloat(document.getElementById('egfr-sex').value);
+            if(age && w && cre) {
+                let res = ((140 - age) * w) / (72 * cre);
+                res = res * sex;
+                document.getElementById('egfr-res').innerText = "eGFR: " + res.toFixed(2) + " ml/min";
+                document.getElementById('egfr-res').classList.remove('hidden');
+            } else { alert("Thiếu thông tin"); }
+        }
+
+        setInterval(updateClock, 1000);
+        init();
     </script>
 </body>
 </html>
