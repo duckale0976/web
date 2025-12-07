@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinhducKale - Cloud Sync v6.4</title>
+    <title>MinhducKale - Cloud Sync v7.0 (Hybrid)</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -16,10 +16,11 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
-                    animation: { 'blob': 'blob 10s infinite', 'spin-slow': 'spin 10s linear infinite', 'float': 'float 6s ease-in-out infinite' },
+                    animation: { 'blob': 'blob 10s infinite', 'spin-slow': 'spin 10s linear infinite', 'float': 'float 6s ease-in-out infinite', 'slideIn': 'slideIn 0.3s ease-out forwards' },
                     keyframes: {
                         blob: { '0%': { transform: 'translate(0,0) scale(1)' }, '33%': { transform: 'translate(30px,-50px) scale(1.1)' }, '66%': { transform: 'translate(-20px,20px) scale(0.9)' }, '100%': { transform: 'translate(0,0) scale(1)' } },
-                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } }
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
+                        slideIn: { 'from': { transform: 'translateX(100%)', opacity: '0' }, 'to': { transform: 'translateX(0)', opacity: '1' } }
                     }
                 }
             }
@@ -55,16 +56,23 @@
         .segment-btn.active { background: white; color: #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .dark .segment-btn.active { background: #334155; color: white; }
         
-        .notification-dot { position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; border: 1px solid white; }
         .tool-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
         .tool-content.open { max-height: 500px; }
-        
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%; background: #3b82f6; cursor: pointer; margin-top: -4px; }
         
         /* Loader */
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 24px; height: 24px; animation: spin 2s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* Toast */
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 10px; }
+        .toast { min-width: 280px; padding: 16px; border-radius: 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; animation: slideIn 0.3s ease-out forwards; border-left: 4px solid #3b82f6; }
+        .toast.error { border-left-color: #ef4444; }
+        .toast.success { border-left-color: #22c55e; }
+        .toast-content { font-weight: 600; font-size: 14px; color: #1e293b; }
+        .dark .toast { background: rgba(30, 41, 59, 0.95); color: white; border: 1px solid rgba(255,255,255,0.1); }
+        .dark .toast-content { color: white; }
     </style>
 </head>
 <body class="min-h-screen overflow-x-hidden selection:bg-blue-500 selection:text-white">
@@ -85,7 +93,7 @@
                         <img id="userAvatar" src="" class="w-12 h-12 rounded-2xl border-2 border-white shadow-md">
                         <div class="hidden md:block">
                             <p id="userName" class="text-sm font-bold text-slate-900 dark:text-white">User</p>
-                            <p class="text-[10px] text-green-600 font-bold uppercase">Synced</p>
+                            <p class="text-[10px] text-green-600 font-bold uppercase">Online</p>
                         </div>
                     </div>
                     <div id="logoutPanel" class="hidden absolute top-14 left-0 w-40 glass-card p-2 rounded-xl">
@@ -97,13 +105,13 @@
 
                 <div>
                     <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v6.4</p>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v7.0</p>
                 </div>
             </div>
             
             <div class="segmented-control mb-4 md:mb-0">
-                <div class="segment-btn active" onclick="window.switchTab('docs')">Kho Tài liệu</div>
-                <div class="segment-btn" onclick="window.switchTab('tools')">Công cụ Y khoa</div>
+                <div class="segment-btn active" onclick="window.switchTab('docs', this)">Kho Tài liệu</div>
+                <div class="segment-btn" onclick="window.switchTab('tools', this)">Công cụ Y khoa</div>
             </div>
 
             <div class="flex items-center gap-4">
@@ -127,7 +135,7 @@
                             <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-600"></i>
                             <input id="searchInput" type="text" onkeyup="window.filterDocs()"
                                 class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" 
-                                placeholder="Tìm kiếm tài liệu, bệnh án, sách...">
+                                placeholder="Tìm kiếm tài liệu, sách...">
                         </div>
                         <button onclick="window.openAddDocModal()" class="w-14 rounded-2xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-700 text-white flex items-center justify-center shadow-lg active:scale-95 transition">
                             <i class="fa-solid fa-plus text-xl"></i>
@@ -145,31 +153,18 @@
                 </div>
 
                 <div id="view-tools" class="hidden flex-col gap-6 fade-in">
-                    
                     <div class="glass-card rounded-2xl overflow-hidden border-l-4 border-green-500">
                         <button onclick="window.toggleTool('data')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
-                            <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-database text-green-600 mr-2"></i>Quản lý Dữ liệu (Backup & Drive)</span>
+                            <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-database text-green-600 mr-2"></i>Quản lý Dữ liệu</span>
                             <i class="fa-solid fa-chevron-down text-slate-500"></i>
                         </button>
                         <div id="tool-data" class="tool-content px-4">
                             <div class="py-4 space-y-4">
-                                <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-xl border border-blue-200 dark:border-blue-700">
-                                    <p class="text-xs font-bold text-blue-600 dark:text-blue-300 uppercase mb-2">1. Nạp từ Google Drive (File JSON)</p>
-                                    <p class="text-xs text-slate-600 dark:text-slate-300 mb-2">Sau khi nạp, dữ liệu sẽ tự động ĐỒNG BỘ lên tài khoản của bạn.</p>
-                                    <button onclick="document.getElementById('importJsonInput').click()" class="w-full py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition">
-                                        <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Nạp File JSON & Đồng bộ
-                                    </button>
-                                    <input type="file" id="importJsonInput" hidden accept=".json" onchange="window.importData(this)">
-                                </div>
-
+                                <p class="text-xs text-slate-600 dark:text-slate-300">Tính năng Import/Export Excel (Local Only).</p>
                                 <div class="grid grid-cols-2 gap-3">
                                     <button onclick="window.exportToExcel()" class="py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition shadow-sm text-xs">
                                         <i class="fa-solid fa-file-excel mr-1"></i> Xuất Excel
                                     </button>
-                                    <button onclick="document.getElementById('importExcelInput').click()" class="py-2 bg-slate-200 text-slate-800 font-bold rounded-lg hover:bg-slate-300 transition text-xs">
-                                        <i class="fa-solid fa-file-import mr-1"></i> Nạp Excel
-                                    </button>
-                                    <input type="file" id="importExcelInput" hidden accept=".xlsx" onchange="window.importFromExcel(this)">
                                 </div>
                             </div>
                         </div>
@@ -194,7 +189,7 @@
 
                     <div class="glass-card rounded-2xl overflow-hidden">
                         <button onclick="window.toggleTool('map')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
-                            <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-heart-pulse text-red-600 mr-2"></i>Huyết áp trung bình (MAP)</span>
+                            <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-heart-pulse text-red-600 mr-2"></i>Huyết áp (MAP)</span>
                             <i class="fa-solid fa-chevron-down text-slate-500"></i>
                         </button>
                         <div id="tool-map" class="tool-content px-4">
@@ -211,7 +206,7 @@
 
                     <div class="glass-card rounded-2xl overflow-hidden">
                         <button onclick="window.toggleTool('egfr')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
-                            <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-kidneys text-orange-600 mr-2"></i>eGFR (Cockcroft-Gault)</span>
+                            <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-kidneys text-orange-600 mr-2"></i>eGFR</span>
                             <i class="fa-solid fa-chevron-down text-slate-500"></i>
                         </button>
                         <div id="tool-egfr" class="tool-content px-4">
@@ -224,7 +219,7 @@
                                         <option value="0.85">Nữ (x0.85)</option>
                                     </select>
                                 </div>
-                                <input type="number" id="egfr-cre" placeholder="Creatinine (mg/dL) - Ví dụ: 0.9" step="0.01" class="w-full ios-input p-2 rounded-xl">
+                                <input type="number" id="egfr-cre" placeholder="Creatinine (mg/dL)" step="0.01" class="w-full ios-input p-2 rounded-xl">
                                 <button onclick="window.calcEGFR()" class="w-full py-2 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl shadow-md">Tính eGFR</button>
                                 <div id="egfr-res" class="hidden text-center font-bold text-orange-700 dark:text-orange-300 mt-2 text-lg">...</div>
                             </div>
@@ -250,7 +245,7 @@
                         </div>
                     </div>
                     <div class="text-center mb-4">
-                        <p id="musicTitle" class="text-sm font-bold text-slate-900 dark:text-white truncate">Ready to study?</p>
+                        <p id="musicTitle" class="text-sm font-bold text-slate-900 dark:text-white truncate">Loading...</p>
                     </div>
                     <div class="flex justify-center items-center gap-6 mb-4">
                         <button onclick="window.prevSong()" class="text-slate-500 hover:text-slate-900 dark:hover:text-white transition"><i class="fa-solid fa-backward-step text-xl"></i></button>
@@ -260,7 +255,6 @@
                     <div class="flex items-center gap-2 px-2">
                         <i class="fa-solid fa-volume-low text-xs text-slate-400"></i>
                         <input type="range" id="volSlider" min="0" max="1" step="0.1" value="0.8" oninput="window.changeVolume(this.value)">
-                        <i class="fa-solid fa-volume-high text-xs text-slate-400"></i>
                     </div>
                     <audio id="bgAudio" class="hidden"></audio>
                 </div>
@@ -270,11 +264,11 @@
                         <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2">
                             <i class="fa-solid fa-note-sticky text-yellow-500"></i> Ghi chú Cloud
                         </h3>
-                        <span id="saveStatus" class="text-[10px] font-bold text-green-600 opacity-0 transition">Đã đồng bộ</span>
+                        <span id="saveStatus" class="text-[10px] font-bold text-green-600 opacity-0 transition">Đã lưu</span>
                     </div>
                     <textarea id="quickNote" oninput="window.saveNote()" 
                         class="w-full bg-white/50 dark:bg-slate-900/50 rounded-xl p-3 ios-input text-sm leading-relaxed shadow-inner focus:ring-2 ring-yellow-400/50 h-40" 
-                        placeholder="Viết ý tưởng... (Lưu trực tiếp lên Cloud nếu đã đăng nhập)"></textarea>
+                        placeholder="Viết ý tưởng..."></textarea>
                  </div>
             </div>
         </div>
@@ -282,7 +276,7 @@
 
     <div id="addDocModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-md">
         <div class="bg-white/95 dark:bg-slate-800/95 w-[90%] md:w-[400px] p-6 rounded-3xl shadow-2xl border border-white/50 animate-float">
-            <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4">Thêm Tài Liệu Mới</h3>
+            <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4">Thêm Tài Liệu Cá Nhân</h3>
             <div class="space-y-4">
                 <div>
                     <label class="text-xs font-bold text-slate-500 uppercase">Tên tài liệu</label>
@@ -304,12 +298,14 @@
         </div>
     </div>
 
+    <div id="toast-container"></div>
+
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue, off, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // CONFIG FIREBASE
+        // 1. FIREBASE CONFIG
         const firebaseConfig = {
             apiKey: "AIzaSyAcfs8LFgPeAkGyaSkmJeECoRBEwtfRv8E",
             authDomain: "minhduckale1.firebaseapp.com",
@@ -317,8 +313,7 @@
             projectId: "minhduckale1",
             storageBucket: "minhduckale1.firebasestorage.app",
             messagingSenderId: "479002042854",
-            appId: "1:479002042854:web:c9e4b614ad48fefd10f627",
-            measurementId: "G-GWWCJ6BNLF"
+            appId: "1:479002042854:web:c9e4b614ad48fefd10f627"
         };
 
         const app = initializeApp(firebaseConfig);
@@ -327,60 +322,94 @@
         const provider = new GoogleAuthProvider();
 
         let currentUser = null;
-        let allDocs = JSON.parse(localStorage.getItem('mdk_user_docs_v2') || '[]');
+        let allDocs = [];
+        let publicDocs = [];
+        let privateDocs = [];
+        let publicListener = null;
+        let privateListener = null;
 
-        // --- AUTH & SYNC ---
-        window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert(e.message));
-        window.logoutFirebase = () => signOut(auth);
+        // 2. HELPER: XSS Protection & Toast
+        function escapeHTML(str) {
+            if (!str) return '';
+            return str.replace(/[&<>'"]/g, tag => ({
+                '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;'
+            }[tag]));
+        }
+
+        window.showToast = function(message, type = 'info') {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<div class="toast-content">${message}</div>`;
+            container.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 3500);
+        }
+
+        // 3. AUTH & HYBRID SYNC LOGIC
+        window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => window.showToast(e.message, 'error'));
+        
+        window.logoutFirebase = () => {
+            if (publicListener) off(publicListener);
+            if (privateListener) off(privateListener);
+            publicDocs = []; privateDocs = [];
+            signOut(auth);
+        };
 
         function loadDocsFromCloud(uid) {
             document.getElementById('loadingIndicator').classList.remove('hidden');
-            const docsRef = ref(db, 'users/' + uid + '/docs');
-            onValue(docsRef, (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    // Firebase trả về Object hoặc Array tùy cách lưu
-                    // Chúng ta chuyển về Array để xử lý
-                    allDocs = Array.isArray(data) ? data : Object.values(data);
-                    distributeDocs();
-                    renderFolders();
-                }
-                document.getElementById('loadingIndicator').classList.add('hidden');
+
+            // Listen Public Library
+            const publicRef = ref(db, 'library_public');
+            if (publicListener) off(publicListener);
+            publicListener = onValue(publicRef, (snap) => {
+                const data = snap.val();
+                publicDocs = [];
+                if (data) Object.keys(data).forEach(k => publicDocs.push({ ...data[k], id: k, source: 'public' }));
+                mergeAndRender();
             });
+
+            // Listen Private User Docs
+            const privateRef = ref(db, 'users/' + uid + '/docs');
+            if (privateListener) off(privateListener);
+            privateListener = onValue(privateRef, (snap) => {
+                const data = snap.val();
+                privateDocs = [];
+                if (data) Object.keys(data).forEach(k => privateDocs.push({ ...data[k], id: k, source: 'private' }));
+                mergeAndRender();
+            });
+        }
+
+        function mergeAndRender() {
+            allDocs = [...publicDocs, ...privateDocs];
+            distributeDocs();
+            renderFolders();
+            if(currentViewFolder) window.openFolder(currentViewFolder);
+            document.getElementById('loadingIndicator').classList.add('hidden');
         }
 
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
-            const loginBtn = document.getElementById('loginBtn');
-            const userProfile = document.getElementById('userProfile');
             if (user) {
-                loginBtn.classList.add('hidden');
-                userProfile.classList.remove('hidden');
-                userProfile.classList.add('flex');
-                document.getElementById('userAvatar').src = user.photoURL || "https://img.icons8.com/color/96/user-male-circle--v1.png";
+                document.getElementById('loginBtn').classList.add('hidden');
+                document.getElementById('userProfile').classList.remove('hidden');
+                document.getElementById('userProfile').classList.add('flex');
+                document.getElementById('userAvatar').src = user.photoURL;
                 document.getElementById('userName').innerText = user.displayName;
-                userProfile.onclick = () => document.getElementById('logoutPanel').classList.toggle('hidden');
+                document.getElementById('userProfile').onclick = () => document.getElementById('logoutPanel').classList.toggle('hidden');
                 
-                // AUTO SYNC DATA DOWN
                 loadDocsFromCloud(user.uid);
-
-                // Load Cloud Note
-                onValue(ref(db, 'users/' + user.uid + '/note'), (snap) => {
-                    document.getElementById('quickNote').value = snap.val() || "";
-                });
+                onValue(ref(db, 'users/' + user.uid + '/note'), (snap) => document.getElementById('quickNote').value = snap.val() || "");
             } else {
-                loginBtn.classList.remove('hidden');
-                userProfile.classList.add('hidden');
-                userProfile.classList.remove('flex');
+                document.getElementById('loginBtn').classList.remove('hidden');
+                document.getElementById('userProfile').classList.add('hidden');
+                document.getElementById('userProfile').classList.remove('flex');
                 document.getElementById('logoutPanel').classList.add('hidden');
-                // Load Local if logout
-                allDocs = JSON.parse(localStorage.getItem('mdk_user_docs_v2') || '[]');
-                distributeDocs();
-                renderFolders();
+                // Clear Data on Logout
+                allDocs = []; distributeDocs(); renderFolders();
             }
         });
 
-        // --- DOCS LOGIC ---
+        // 4. DOCS LOGIC & UI
         const folders = {
             "capcuu": { name: "1. Hồi sức Cấp cứu", icon: "fa-truck-medical", color: "text-red-500", items: [] },
             "noikhoa": { name: "2. Nội khoa", icon: "fa-user-doctor", color: "text-blue-500", items: [] },
@@ -440,116 +469,76 @@
         }
 
         function renderDocItem(doc) {
+            const isPublic = doc.source === 'public';
+            const iconColor = isPublic ? 'text-orange-500 bg-orange-50' : 'text-blue-500 bg-blue-50';
+            const iconClass = isPublic ? 'fa-book-open' : 'fa-file-lines';
+            const labelSource = isPublic ? '<span class="text-[10px] bg-orange-100 text-orange-600 px-1.5 rounded border border-orange-200 ml-2">Shared</span>' : '';
+            
+            const deleteBtn = isPublic ? '' : `
+                <button onclick="window.deleteDoc('${doc.id}')" 
+                    class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-red-100 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition opacity-0 group-hover:opacity-100 shadow-sm z-10"
+                    title="Xóa tài liệu">
+                    <i class="fa-solid fa-trash-can text-sm"></i>
+                </button>`;
+
             const html = `
-                <div class="glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm">
-                    <div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center"><i class="fa-solid fa-file-lines text-blue-500 text-lg"></i></div>
-                    <div class="flex-1 min-w-0">
-                        <h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${doc.title}</h4>
-                        <a href="${doc.url}" target="_blank" class="text-xs font-bold text-blue-600 hover:underline uppercase tracking-wide">Mở tài liệu</a>
+                <div class="glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm group relative pr-10">
+                    <div class="w-10 h-10 rounded-full ${iconColor} flex items-center justify-center flex-shrink-0">
+                        <i class="fa-solid ${iconClass} text-lg"></i>
                     </div>
-                    <i class="fa-solid fa-arrow-up-right-from-square text-slate-300 text-xs"></i>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center">
+                            <h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${escapeHTML(doc.title)}</h4>
+                            ${labelSource}
+                        </div>
+                        <a href="${escapeHTML(doc.url)}" target="_blank" class="text-xs font-bold text-blue-600 hover:underline uppercase tracking-wide">Mở tài liệu</a>
+                    </div>
+                    ${deleteBtn}
                 </div>`;
             listEl.insertAdjacentHTML('beforeend', html);
         }
 
-        // --- IMPORT/EXPORT + SYNC LOGIC ---
-        function saveToLocalStorage() {
-            try { localStorage.setItem('mdk_user_docs_v2', JSON.stringify(allDocs)); } catch (e) {}
-        }
-
-        // MAIN IMPORT FUNCTION WITH SYNC
-        window.importData = function(input) {
-            const file = input.files[0];
-            if (!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const imported = JSON.parse(e.target.result);
-                    if(Array.isArray(imported)) {
-                        if(confirm(`Tìm thấy ${imported.length} tài liệu. Bạn có muốn nạp và ĐỒNG BỘ lên Cloud không?`)) {
-                            allDocs = imported;
-                            distributeDocs();
-                            renderFolders();
-                            
-                            // SYNC TO CLOUD
-                            if (currentUser) {
-                                set(ref(db, 'users/' + currentUser.uid + '/docs'), imported)
-                                    .then(() => alert(`✅ Đã đồng bộ ${imported.length} tài liệu lên Cloud thành công!`))
-                                    .catch(err => alert("❌ Lỗi đồng bộ: " + err.message));
-                            } else {
-                                saveToLocalStorage();
-                                alert("⚠️ Bạn chưa đăng nhập! Dữ liệu chỉ lưu trên máy này.");
-                            }
-                        }
-                    } else alert("File lỗi!");
-                } catch(err) { alert("Lỗi đọc file JSON"); }
-            };
-            reader.readAsText(file);
-            input.value = '';
-        }
-
-        window.exportToExcel = () => {
-            if(allDocs.length === 0) return alert("Chưa có dữ liệu!");
-            const dataToExport = allDocs.map(doc => ({ "Tên tài liệu": doc.title, "Link": doc.url, "Thư mục": doc.folder }));
-            const worksheet = XLSX.utils.json_to_sheet(dataToExport);
-            const workbook = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(workbook, worksheet, "TaiLieu");
-            XLSX.writeFile(workbook, "MinhducKale_Data.xlsx");
-        }
-
-        window.importFromExcel = function(input) {
-            const file = input.files[0];
-            if(!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                const data = new Uint8Array(e.target.result);
-                const workbook = XLSX.read(data, {type: 'array'});
-                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                const json = XLSX.utils.sheet_to_json(worksheet);
-                if(json.length > 0) {
-                    let count = 0;
-                    json.forEach(row => {
-                        const title = row["Tên tài liệu"]; const url = row["Link"]; const folder = row["Thư mục"] || "khac";
-                        if(title && url) { allDocs.push({ id: 'u'+Date.now()+Math.random(), title, folder, url, type: 'DOC' }); count++; }
-                    });
-                    
-                    if (currentUser) {
-                        set(ref(db, 'users/' + currentUser.uid + '/docs'), allDocs)
-                            .then(() => alert(`✅ Đã thêm ${count} tài liệu và đồng bộ!`));
-                    } else {
-                        saveToLocalStorage();
-                        alert(`Đã thêm ${count} tài liệu (Lưu cục bộ)!`);
-                    }
-                    distributeDocs(); renderFolders();
-                }
-            };
-            reader.readAsArrayBuffer(file);
-        }
-
+        // 5. CRUD OPERATIONS
         window.saveNewDoc = function() {
             const title = document.getElementById('newDocTitle').value;
             const folder = document.getElementById('newDocFolder').value;
             const link = document.getElementById('newDocLink').value;
-            if(!title || !link) return alert("Thiếu thông tin");
-            
-            const newDoc = { id: 'u'+Date.now(), title, folder, url: link, type: 'DOC' };
-            allDocs.push(newDoc);
+            if(!title || !link) return window.showToast("Thiếu thông tin!", "error");
             
             if (currentUser) {
-                // Push new doc to cloud list
-                // Cách an toàn là push vào array rồi set lại, hoặc dùng push() của firebase nhưng cần đổi cấu trúc allDocs
-                // Ở đây ta set lại toàn bộ mảng cho đồng bộ nhất quán với import JSON
-                set(ref(db, 'users/' + currentUser.uid + '/docs'), allDocs);
+                // Sử dụng PUSH để tránh ghi đè
+                push(ref(db, 'users/' + currentUser.uid + '/docs'), { 
+                    title, folder, url: link, createdAt: Date.now() 
+                })
+                .then(() => {
+                    document.getElementById('addDocModal').classList.add('hidden');
+                    document.getElementById('newDocTitle').value = '';
+                    document.getElementById('newDocLink').value = '';
+                    window.showToast("Đã thêm tài liệu cá nhân!", "success");
+                })
+                .catch(e => window.showToast(e.message, "error"));
             } else {
-                saveToLocalStorage();
+                window.showToast("Vui lòng đăng nhập để lưu!", "error");
             }
-            
-            document.getElementById('addDocModal').classList.add('hidden');
-            distributeDocs();
-            if(currentViewFolder === folder) window.openFolder(folder); else window.renderFolders();
         }
 
-        // --- UTILS ---
+        window.deleteDoc = function(key) {
+            if(!confirm("Bạn có chắc chắn muốn xóa?")) return;
+            if(currentUser) {
+                remove(ref(db, 'users/' + currentUser.uid + '/docs/' + key))
+                .then(() => window.showToast("Đã xóa tài liệu!", "success"))
+                .catch(e => window.showToast(e.message, "error"));
+            }
+        }
+
+        // ADMIN TOOL (Console Only)
+        window.adminAddDoc = function(title, url, folder = 'khac') {
+            if (!currentUser) return console.error("Chưa đăng nhập!");
+            push(ref(db, 'library_public'), { title, url, folder, createdAt: Date.now(), addedBy: currentUser.email })
+                .then(() => console.log("✅ Đã thêm vào Kho chung!"))
+                .catch(e => console.error("❌ Lỗi Permission:", e.message));
+        }
+
         window.saveNote = function() {
             const content = document.getElementById('quickNote').value;
             if (currentUser) {
@@ -558,20 +547,35 @@
                 setTimeout(() => { document.getElementById('saveStatus').style.opacity = '0'; }, 2000);
             }
         }
-        
-        // Music Player
+
+        window.exportToExcel = () => {
+            if(allDocs.length === 0) return window.showToast("Chưa có dữ liệu!", "error");
+            const dataToExport = allDocs.map(doc => ({ "Tên": doc.title, "Link": doc.url, "Thư mục": doc.folder, "Nguồn": doc.source }));
+            const worksheet = XLSX.utils.json_to_sheet(dataToExport);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "TaiLieu");
+            XLSX.writeFile(workbook, "MinhducKale_Data.xlsx");
+        }
+
+        // 6. UTILS & UI
         const playlist = [{t:"Chill Lofi Beat", a:"Unknown", u:"https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"}, {t:"Relaxing Piano", a:"Pixabay", u:"https://cdn.pixabay.com/download/audio/2022/03/10/audio_5b8220a28f.mp3?filename=piano-moment-11153.mp3"}];
         let trackIdx = 0;
         const audio = document.getElementById('bgAudio');
         const disc = document.getElementById('musicDisc');
+
+        // Restore Music State
+        const savedIdx = localStorage.getItem('mdk_music_idx');
+        const savedVol = localStorage.getItem('mdk_music_vol');
+        if(savedIdx) trackIdx = parseInt(savedIdx);
+        if(savedVol) { audio.volume = parseFloat(savedVol); document.getElementById('volSlider').value = savedVol; }
+
         function loadTrack(i) { audio.src = playlist[i].u; document.getElementById('musicTitle').innerText = playlist[i].t; }
         window.toggleMusic = function() { if(audio.paused) { audio.play(); disc.classList.add('animate-spin-slow'); } else { audio.pause(); disc.classList.remove('animate-spin-slow'); } }
-        window.nextSong = function() { trackIdx = (trackIdx + 1) % playlist.length; loadTrack(trackIdx); audio.play(); }
-        window.prevSong = function() { trackIdx = (trackIdx - 1 + playlist.length) % playlist.length; loadTrack(trackIdx); audio.play(); }
-        window.changeVolume = function(val) { audio.volume = val; }
-        loadTrack(0);
+        window.nextSong = function() { trackIdx = (trackIdx + 1) % playlist.length; localStorage.setItem('mdk_music_idx', trackIdx); loadTrack(trackIdx); audio.play(); }
+        window.prevSong = function() { trackIdx = (trackIdx - 1 + playlist.length) % playlist.length; localStorage.setItem('mdk_music_idx', trackIdx); loadTrack(trackIdx); audio.play(); }
+        window.changeVolume = function(val) { audio.volume = val; localStorage.setItem('mdk_music_vol', val); }
+        loadTrack(trackIdx);
 
-        // General UI
         function populateFolderSelect() {
             const sel = document.getElementById('newDocFolder');
             Object.keys(folders).forEach(k => {
@@ -580,23 +584,25 @@
         }
         window.openAddDocModal = function() { document.getElementById('addDocModal').classList.remove('hidden'); }
         window.toggleTool = function(id) { document.getElementById('tool-'+id).classList.toggle('open'); }
-        window.switchTab = function(t) {
+        
+        window.switchTab = function(t, el) {
             document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
-            event.target.classList.add('active');
+            if(el) el.classList.add('active');
             if(t === 'docs') { document.getElementById('view-docs').classList.remove('hidden'); document.getElementById('view-tools').classList.add('hidden'); }
             else { document.getElementById('view-docs').classList.add('hidden'); document.getElementById('view-tools').classList.remove('hidden'); }
         }
+        
         window.toggleDarkMode = function() {
             document.documentElement.classList.toggle('dark');
             localStorage.setItem('mdk_dark', document.documentElement.classList.contains('dark'));
         }
+        
         function updateClock() {
             const now = new Date();
             document.getElementById('clock').innerText = now.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
             document.getElementById('date-display').innerText = now.toLocaleDateString('vi-VN');
         }
 
-        // Calculators
         window.calcBMI = () => { const w = document.getElementById('bmi-w').value, h = document.getElementById('bmi-h').value/100; if(w&&h) { document.getElementById('bmi-res').innerText = "BMI: " + (w/(h*h)).toFixed(1); document.getElementById('bmi-res').classList.remove('hidden'); } }
         window.calcMAP = () => { const s = Number(document.getElementById('map-sys').value), d = Number(document.getElementById('map-dia').value); if(s&&d) { document.getElementById('map-res').innerText = "MAP: " + ((2*d+s)/3).toFixed(0) + " mmHg"; document.getElementById('map-res').classList.remove('hidden'); } }
         window.calcEGFR = () => {
@@ -608,10 +614,9 @@
                 let res = ((140 - age) * w) / (72 * cre); res = res * sex;
                 document.getElementById('egfr-res').innerText = "eGFR: " + res.toFixed(2) + " ml/min";
                 document.getElementById('egfr-res').classList.remove('hidden');
-            } else { alert("Thiếu thông tin"); }
+            } else { window.showToast("Thiếu thông tin!", "error"); }
         }
 
-        // Init
         setInterval(updateClock, 1000);
         populateFolderSelect();
         distributeDocs();
