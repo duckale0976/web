@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinhducKale - Cloud Sync v7.0 (Hybrid)</title>
+    <title>MinhducKale - Cloud Sync v7.3</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -28,7 +28,7 @@
     </script>
 
     <style>
-        /* CSS CUSTOM */
+        /* CSS CUSTOM GIỮ NGUYÊN */
         body { transition: background-color 0.5s, color 0.5s; background-color: #e0f2fe; color: #1e293b; }
         .dark body { background-color: #0f172a; color: #f1f5f9; }
         .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.8; z-index: -1; animation: blob 15s infinite alternate; pointer-events: none; }
@@ -105,7 +105,7 @@
 
                 <div>
                     <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v7.0</p>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v7.3</p>
                 </div>
             </div>
             
@@ -276,7 +276,7 @@
 
     <div id="addDocModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-md">
         <div class="bg-white/95 dark:bg-slate-800/95 w-[90%] md:w-[400px] p-6 rounded-3xl shadow-2xl border border-white/50 animate-float">
-            <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4">Thêm Tài Liệu Cá Nhân</h3>
+            <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4">Thêm Tài Liệu Mới</h3>
             <div class="space-y-4">
                 <div>
                     <label class="text-xs font-bold text-slate-500 uppercase">Tên tài liệu</label>
@@ -290,6 +290,12 @@
                     <label class="text-xs font-bold text-slate-500 uppercase">Link Drive</label>
                     <input id="newDocLink" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="https://...">
                 </div>
+                
+                <div class="p-3 bg-orange-50 border border-orange-200 rounded-xl flex items-center gap-3">
+                    <input type="checkbox" id="isPublicDoc" class="w-5 h-5 accent-orange-600 rounded cursor-pointer">
+                    <label for="isPublicDoc" class="text-sm font-bold text-orange-700 cursor-pointer select-none">Lưu vào Kho dùng chung (Cần Passcode)</label>
+                </div>
+
                 <div class="flex gap-3 pt-2">
                     <button onclick="document.getElementById('addDocModal').classList.add('hidden')" class="flex-1 py-3 rounded-xl bg-slate-200 text-slate-600 font-bold hover:bg-slate-300">Hủy</button>
                     <button onclick="window.saveNewDoc()" class="flex-1 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg">Lưu ngay</button>
@@ -304,6 +310,9 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, off, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+        // --- CẤU HÌNH MẬT KHẨU ADMIN ---
+        const ADMIN_PASSWORD = "123456"; 
 
         // 1. FIREBASE CONFIG
         const firebaseConfig = {
@@ -404,7 +413,6 @@
                 document.getElementById('userProfile').classList.add('hidden');
                 document.getElementById('userProfile').classList.remove('flex');
                 document.getElementById('logoutPanel').classList.add('hidden');
-                // Clear Data on Logout
                 allDocs = []; distributeDocs(); renderFolders();
             }
         });
@@ -470,16 +478,32 @@
 
         function renderDocItem(doc) {
             const isPublic = doc.source === 'public';
+            
             const iconColor = isPublic ? 'text-orange-500 bg-orange-50' : 'text-blue-500 bg-blue-50';
             const iconClass = isPublic ? 'fa-book-open' : 'fa-file-lines';
             const labelSource = isPublic ? '<span class="text-[10px] bg-orange-100 text-orange-600 px-1.5 rounded border border-orange-200 ml-2">Shared</span>' : '';
             
-            const deleteBtn = isPublic ? '' : `
-                <button onclick="window.deleteDoc('${doc.id}')" 
+            // LOGIC HIỂN THỊ NÚT XÓA:
+            // - Nếu là Private: Hiện nút xóa đỏ.
+            // - Nếu là Public: Vẫn hiện nút xóa (màu cam) để user click vào -> sau đó mới hỏi pass.
+            let deleteBtn = '';
+            if (!isPublic) {
+                // Nút xóa riêng tư
+                deleteBtn = `
+                <button onclick="window.deleteDoc('${doc.id}', false)" 
                     class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-red-100 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition opacity-0 group-hover:opacity-100 shadow-sm z-10"
                     title="Xóa tài liệu">
                     <i class="fa-solid fa-trash-can text-sm"></i>
                 </button>`;
+            } else {
+                // Nút xóa chung (Cần pass)
+                deleteBtn = `
+                <button onclick="window.deleteDoc('${doc.id}', true)" 
+                    class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-orange-100 hover:bg-orange-500 hover:text-white text-orange-500 flex items-center justify-center transition opacity-0 group-hover:opacity-100 shadow-sm z-10"
+                    title="Xóa file chung (Cần Mật khẩu)">
+                    <i class="fa-solid fa-trash-can text-sm"></i>
+                </button>`;
+            }
 
             const html = `
                 <div class="glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm group relative pr-10">
@@ -498,45 +522,71 @@
             listEl.insertAdjacentHTML('beforeend', html);
         }
 
-        // 5. CRUD OPERATIONS
+        // 5. CRUD OPERATIONS UPDATED
         window.saveNewDoc = function() {
             const title = document.getElementById('newDocTitle').value;
             const folder = document.getElementById('newDocFolder').value;
             const link = document.getElementById('newDocLink').value;
+            // Lấy trạng thái checkbox
+            const isPublicChecked = document.getElementById('isPublicDoc').checked;
+
             if(!title || !link) return window.showToast("Thiếu thông tin!", "error");
+            if (!currentUser) return window.showToast("Vui lòng đăng nhập!", "error");
             
-            if (currentUser) {
-                // Sử dụng PUSH để tránh ghi đè
+            if (isPublicChecked) {
+                // 1. Hỏi mật khẩu
+                const pass = prompt("Nhập mật khẩu Admin để lưu vào Kho chung:");
+                if (pass !== ADMIN_PASSWORD) {
+                    return window.showToast("❌ Sai mật khẩu Admin!", "error");
+                }
+                
+                // 2. Lưu vào public
+                push(ref(db, 'library_public'), { 
+                    title, folder, url: link, createdAt: Date.now(), addedBy: currentUser.email 
+                })
+                .then(() => {
+                    resetModal();
+                    window.showToast("✅ Đã thêm vào Kho chung!", "success");
+                })
+                .catch(e => window.showToast("Lỗi: " + e.message, "error"));
+
+            } else {
+                // Lưu cá nhân (Không cần pass)
                 push(ref(db, 'users/' + currentUser.uid + '/docs'), { 
                     title, folder, url: link, createdAt: Date.now() 
                 })
                 .then(() => {
-                    document.getElementById('addDocModal').classList.add('hidden');
-                    document.getElementById('newDocTitle').value = '';
-                    document.getElementById('newDocLink').value = '';
+                    resetModal();
                     window.showToast("Đã thêm tài liệu cá nhân!", "success");
                 })
                 .catch(e => window.showToast(e.message, "error"));
+            }
+        }
+
+        function resetModal() {
+            document.getElementById('addDocModal').classList.add('hidden');
+            document.getElementById('newDocTitle').value = '';
+            document.getElementById('newDocLink').value = '';
+            document.getElementById('isPublicDoc').checked = false; 
+        }
+
+        window.deleteDoc = function(key, isPublic) {
+            if(isPublic) {
+                // Xóa file chung -> Hỏi pass
+                const pass = prompt("⚠️ ĐÂY LÀ FILE CHUNG!\nNhập mật khẩu Admin để xóa:");
+                if(pass !== ADMIN_PASSWORD) return window.showToast("❌ Sai mật khẩu!", "error");
+                
+                remove(ref(db, `library_public/${key}`))
+                    .then(() => window.showToast("Đã xóa file chung!", "success"))
+                    .catch(e => window.showToast(e.message, "error"));
             } else {
-                window.showToast("Vui lòng đăng nhập để lưu!", "error");
+                // Xóa file riêng -> Hỏi confirm
+                if(!confirm("Bạn có chắc chắn muốn xóa file này?")) return;
+                
+                remove(ref(db, `users/${currentUser.uid}/docs/${key}`))
+                    .then(() => window.showToast("Đã xóa tài liệu!", "success"))
+                    .catch(e => window.showToast(e.message, "error"));
             }
-        }
-
-        window.deleteDoc = function(key) {
-            if(!confirm("Bạn có chắc chắn muốn xóa?")) return;
-            if(currentUser) {
-                remove(ref(db, 'users/' + currentUser.uid + '/docs/' + key))
-                .then(() => window.showToast("Đã xóa tài liệu!", "success"))
-                .catch(e => window.showToast(e.message, "error"));
-            }
-        }
-
-        // ADMIN TOOL (Console Only)
-        window.adminAddDoc = function(title, url, folder = 'khac') {
-            if (!currentUser) return console.error("Chưa đăng nhập!");
-            push(ref(db, 'library_public'), { title, url, folder, createdAt: Date.now(), addedBy: currentUser.email })
-                .then(() => console.log("✅ Đã thêm vào Kho chung!"))
-                .catch(e => console.error("❌ Lỗi Permission:", e.message));
         }
 
         window.saveNote = function() {
@@ -557,13 +607,12 @@
             XLSX.writeFile(workbook, "MinhducKale_Data.xlsx");
         }
 
-        // 6. UTILS & UI
+        // 6. UTILS & UI (Giữ nguyên)
         const playlist = [{t:"Chill Lofi Beat", a:"Unknown", u:"https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"}, {t:"Relaxing Piano", a:"Pixabay", u:"https://cdn.pixabay.com/download/audio/2022/03/10/audio_5b8220a28f.mp3?filename=piano-moment-11153.mp3"}];
         let trackIdx = 0;
         const audio = document.getElementById('bgAudio');
         const disc = document.getElementById('musicDisc');
 
-        // Restore Music State
         const savedIdx = localStorage.getItem('mdk_music_idx');
         const savedVol = localStorage.getItem('mdk_music_vol');
         if(savedIdx) trackIdx = parseInt(savedIdx);
