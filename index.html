@@ -3,94 +3,77 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinhducKale - Super App v7.0 (One File)</title>
-    
+    <title>MinhducKale Hub</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
     <script>
-        tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] }, animation: { 'blob': 'blob 10s infinite', 'spin-slow': 'spin 10s linear infinite', 'float': 'float 6s ease-in-out infinite' }, keyframes: { blob: { '0%': { transform: 'translate(0,0) scale(1)' }, '33%': { transform: 'translate(30px,-50px) scale(1.1)' }, '66%': { transform: 'translate(-20px,20px) scale(0.9)' }, '100%': { transform: 'translate(0,0) scale(1)' } }, float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } } } } } }
+        tailwind.config = { darkMode: 'class', theme: { extend: { fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] }, animation: { 'blob': 'blob 10s infinite', 'spin-slow': 'spin 10s linear infinite' }, keyframes: { blob: { '0%': { transform: 'translate(0,0) scale(1)' }, '33%': { transform: 'translate(30px,-50px) scale(1.1)' }, '66%': { transform: 'translate(-20px,20px) scale(0.9)' }, '100%': { transform: 'translate(0,0) scale(1)' } } } } } }
     </script>
-
     <style>
-        /* CSS START */
         body { transition: background-color 0.5s, color 0.5s; background-color: #e0f2fe; color: #1e293b; }
         .dark body { background-color: #0f172a; color: #f1f5f9; }
         .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.8; z-index: -1; animation: blob 15s infinite alternate; pointer-events: none; }
-        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #93c5fd; }
+        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #93c5fd; } 
         .blob-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #6ee7b7; }
-        .blob-3 { top: 40%; left: 40%; width: 400px; height: 400px; background: #c4b5fd; }
-        .dark .blob-1 { background: #1e40af; opacity: 0.4; }
-        .dark .blob-2 { background: #065f46; opacity: 0.4; }
-        .dark .blob-3 { background: #5b21b6; opacity: 0.4; }
+        .dark .blob-1 { background: #1e40af; opacity: 0.3; } /* Giảm opacity dark mode */
+        .dark .blob-2 { background: #065f46; opacity: 0.3; }
 
-        .glass-panel { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); }
-        .dark .glass-panel { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); transition: all 0.3s ease; }
-        .dark .glass-card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); }
+        /* UI FIX: Giảm độ chói border/bg ở dark mode */
+        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.6); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); }
+        .dark .glass-panel { background: rgba(15, 23, 42, 0.85); border: 1px solid rgba(255, 255, 255, 0.08); } 
+        .glass-card { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.5); transition: all 0.3s ease; }
+        .dark .glass-card { background: rgba(30, 41, 59, 0.7); border: 1px solid rgba(255, 255, 255, 0.05); } /* Nền tối hơn */
         .glass-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
 
-        .ios-input { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(203, 213, 225, 0.8); color: #0f172a; font-weight: 600; }
-        .dark .ios-input { background: rgba(0, 0, 0, 0.5); border-color: rgba(255,255,255,0.2); color: white; }
+        .ios-input { background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(203, 213, 225, 0.8); color: #0f172a; font-weight: 600; }
+        .dark .ios-input { background: rgba(0, 0, 0, 0.4); border-color: rgba(255,255,255,0.15); color: white; }
         .ios-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3); border-color: #3b82f6; }
 
-        .segmented-control { background: rgba(200, 200, 200, 0.4); backdrop-filter: blur(10px); padding: 4px; border-radius: 12px; display: inline-flex; }
-        .dark .segmented-control { background: rgba(0,0,0,0.4); }
         .segment-btn { padding: 6px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; color: #475569; }
         .dark .segment-btn { color: #94a3b8; }
         .segment-btn.active { background: white; color: #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .dark .segment-btn.active { background: #334155; color: white; }
 
+        /* Animation Fix: Dùng max-height thay vì hidden cho accordion */
+        .tool-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; opacity: 0; }
+        .tool-content.open { max-height: 500px; opacity: 1; margin-top: 0.5rem; }
+        
         .notification-dot { position: absolute; top: 2px; right: 2px; width: 8px; height: 8px; background: #ef4444; border-radius: 50%; border: 1px solid white; }
-        .tool-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-        .tool-content.open { max-height: 500px; }
-
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: transparent; }
-        ::-webkit-scrollbar-thumb { background-color: rgba(156, 163, 175, 0.5); border-radius: 20px; }
-
-        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%; background: #3b82f6; cursor: pointer; margin-top: -4px; }
-
-        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 24px; height: 24px; animation: spin 2s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        /* CSS END */
+        ::-webkit-scrollbar { width: 6px; } ::-webkit-scrollbar-track { background: transparent; } ::-webkit-scrollbar-thumb { background-color: rgba(156, 163, 175, 0.5); border-radius: 20px; }
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; } input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 12px; width: 12px; border-radius: 50%; background: #3b82f6; cursor: pointer; margin-top: -4px; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #3498db; border-radius: 50%; width: 24px; height: 24px; animation: spin 2s linear infinite; } @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="min-h-screen overflow-x-hidden selection:bg-blue-500 selection:text-white">
-
-    <div class="bg-blob blob-1"></div>
-    <div class="bg-blob blob-2"></div>
-    <div class="bg-blob blob-3"></div>
+    <div class="bg-blob blob-1"></div><div class="bg-blob blob-2"></div>
 
     <div class="container mx-auto px-4 py-6 max-w-7xl min-h-screen flex flex-col">
-        
         <header class="glass-panel rounded-3xl px-6 py-4 mb-8 flex flex-col md:flex-row justify-between items-center z-20 sticky top-4">
             <div class="flex items-center gap-4 mb-4 md:mb-0">
                 <div id="authContainer" class="relative group">
-                    <button id="loginBtn" onclick="window.loginGoogle()" class="w-12 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 transition"><i class="fa-solid fa-right-to-bracket text-xl"></i></button>
+                    <button id="loginBtn" aria-label="Đăng nhập Google" onclick="window.loginGoogle()" class="w-12 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 transition"><i class="fa-solid fa-right-to-bracket text-xl"></i></button>
                     <div id="userProfile" class="hidden flex items-center gap-3 cursor-pointer" onclick="document.getElementById('logoutPanel').classList.toggle('hidden')">
-                        <img id="userAvatar" src="" class="w-12 h-12 rounded-2xl border-2 border-white shadow-md">
-                        <div class="hidden md:block"><p id="userName" class="text-sm font-bold text-slate-900 dark:text-white">User</p><p class="text-[10px] text-green-600 font-bold uppercase">Super App v7.0</p></div>
+                        <img id="userAvatar" src="" alt="Avatar người dùng" class="w-12 h-12 rounded-2xl border-2 border-white shadow-md">
+                        <div class="hidden md:block"><p id="userName" class="text-sm font-bold text-slate-900 dark:text-white">User</p><p class="text-[10px] text-green-600 font-bold uppercase">Online</p></div>
                     </div>
-                    <div id="logoutPanel" class="hidden absolute top-14 left-0 w-40 glass-card p-2 rounded-xl">
+                    <div id="logoutPanel" class="hidden absolute top-14 left-0 w-40 glass-card p-2 rounded-xl z-50">
                          <button onclick="window.logoutFirebase()" class="w-full text-left px-4 py-2 text-red-500 font-bold text-sm hover:bg-white/50 rounded-lg"><i class="fa-solid fa-power-off mr-2"></i> Đăng xuất</button>
                     </div>
                 </div>
-                <div><h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Minhduc<span class="text-blue-600">Kale</span></h1><p class="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider hidden md:block">Ultimate Study Hub</p></div>
+                <div><h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Minhduc<span class="text-blue-600">Kale</span></h1></div>
             </div>
             
-            <div class="segmented-control mb-4 md:mb-0">
+            <div class="glass-card rounded-xl p-1 flex mb-4 md:mb-0">
                 <div class="segment-btn active" onclick="window.switchTab('docs')" id="btn-docs">Tài liệu</div>
-                <div class="segment-btn" onclick="window.switchTab('fav')" id="btn-fav">Yêu thích <i class="fa-solid fa-star text-yellow-500 ml-1"></i></div>
+                <div class="segment-btn" onclick="window.switchTab('fav')" id="btn-fav">Yêu thích</div>
                 <div class="segment-btn" onclick="window.switchTab('tools')" id="btn-tools">Công cụ</div>
             </div>
 
             <div class="flex items-center gap-4">
                 <div class="hidden lg:flex flex-col items-end mr-2 text-right"><span id="clock" class="text-lg font-mono font-bold text-slate-800 dark:text-slate-200">00:00</span><span id="date-display" class="text-[10px] font-bold uppercase text-slate-500">...</span></div>
-                <button onclick="window.toggleDarkMode()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white flex items-center justify-center transition text-slate-700 dark:text-yellow-400 shadow-sm"><i id="darkIcon" class="fa-solid fa-moon"></i></button>
+                <button aria-label="Chuyển chế độ tối" onclick="window.toggleDarkMode()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white flex items-center justify-center transition text-slate-700 dark:text-yellow-400 shadow-sm"><i id="darkIcon" class="fa-solid fa-moon"></i></button>
             </div>
         </header>
 
@@ -99,57 +82,50 @@
                 <div id="view-docs" class="flex flex-col gap-6 fade-in">
                     <div id="recentSection" class="hidden"><h4 class="text-xs font-bold text-slate-500 uppercase mb-2 ml-1">Vừa truy cập</h4><div id="recentList" class="flex gap-3 overflow-x-auto pb-2"></div></div>
                     <div class="flex gap-3 relative z-10">
-                        <div class="relative flex-1 group"><i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-600"></i><input id="searchInput" type="text" onkeyup="window.filterDocs()" class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm kiếm thông minh (gõ không dấu)..."></div>
-                        <button onclick="window.openAddDocModal()" class="w-14 rounded-2xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-700 text-white flex items-center justify-center shadow-lg active:scale-95 transition"><i class="fa-solid fa-plus text-xl"></i></button>
+                        <div class="relative flex-1 group"><i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-600"></i><input id="searchInput" type="text" class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm kiếm tài liệu..."></div>
+                        <button aria-label="Thêm tài liệu" onclick="window.openAddDocModal()" class="w-14 rounded-2xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-700 text-white flex items-center justify-center shadow-lg active:scale-95 transition"><i class="fa-solid fa-plus text-xl"></i></button>
                     </div>
-                    <div id="breadcrumb" class="hidden flex items-center gap-2 text-sm font-extrabold text-slate-700 dark:text-slate-200 bg-white/30 w-fit px-3 py-1 rounded-lg"><button onclick="window.renderFolders()" class="hover:text-blue-600"><i class="fa-solid fa-house"></i> Home</button><span class="text-slate-400">/</span><span id="currentFolderTitle" class="text-blue-700 dark:text-blue-400">Folder Name</span></div>
+                    <div id="breadcrumb" class="hidden flex items-center gap-2 text-sm font-extrabold text-slate-700 dark:text-slate-200 bg-white/30 w-fit px-3 py-1 rounded-lg"><button onclick="window.renderFolders()" class="hover:text-blue-600"><i class="fa-solid fa-house"></i> Home</button><span class="text-slate-400">/</span><span id="currentFolderTitle" class="text-blue-700 dark:text-blue-400">Folder</span></div>
                     <div id="loadingIndicator" class="hidden text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-slate-500 font-bold">Đang đồng bộ...</p></div>
                     <div id="docsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </div>
 
-                <div id="view-fav" class="hidden flex-col gap-6 fade-in"><h3 class="text-xl font-bold text-slate-800 dark:text-white"><i class="fa-solid fa-star text-yellow-500 mr-2"></i>Tài liệu đã lưu</h3><div id="favList" class="grid grid-cols-1 md:grid-cols-2 gap-4"><p class="text-slate-500 italic">Chưa có tài liệu yêu thích nào.</p></div></div>
+                <div id="view-fav" class="hidden flex-col gap-6 fade-in"><h3 class="text-xl font-bold text-slate-800 dark:text-white"><i class="fa-solid fa-star text-yellow-500 mr-2"></i>Đã lưu</h3><div id="favList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div></div>
 
                 <div id="view-tools" class="hidden flex-col gap-6 fade-in">
                     <div class="glass-card rounded-2xl overflow-hidden border-l-4 border-green-500">
                         <button class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition" onclick="window.toggleTool('data')"><span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-database text-green-600 mr-2"></i>Quản lý Dữ liệu</span><i class="fa-solid fa-chevron-down text-slate-500"></i></button>
                         <div id="tool-data" class="tool-content px-4">
                             <div class="py-4 space-y-4">
-                                <div class="bg-blue-50 dark:bg-blue-900/30 p-4 rounded-xl border border-blue-200 dark:border-blue-700 text-center">
-                                    <p class="text-sm font-bold text-blue-700 dark:text-blue-300 uppercase mb-2">⚡ Đồng bộ Siêu tốc</p>
-                                    <button onclick="window.pasteFromClipboard()" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg flex items-center justify-center gap-2"><i class="fa-regular fa-clipboard text-lg"></i> Dán từ Clipboard</button>
-                                </div>
-                                <div class="grid grid-cols-2 gap-3">
-                                    <button onclick="window.exportToExcel()" class="py-2 bg-green-600 text-white font-bold rounded-lg hover:bg-green-700 transition shadow-sm text-xs"><i class="fa-solid fa-file-excel mr-1"></i> Xuất Excel</button>
-                                    <button onclick="document.getElementById('importJsonInput').click()" class="py-2 bg-slate-200 text-slate-800 font-bold rounded-lg hover:bg-slate-300 transition text-xs"><i class="fa-solid fa-file-import mr-1"></i> Nạp JSON</button>
-                                    <input type="file" id="importJsonInput" hidden accept=".json" onchange="window.importData(this)">
-                                </div>
+                                <button onclick="window.pasteFromClipboard()" class="w-full py-3 bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-700 transition shadow-lg flex items-center justify-center gap-2"><i class="fa-regular fa-clipboard text-lg"></i> Dán từ Clipboard</button>
+                                <div class="grid grid-cols-2 gap-3"><button onclick="window.exportToExcel()" class="py-2 bg-green-600 text-white font-bold rounded-lg text-xs">Xuất Excel</button><button onclick="document.getElementById('importJsonInput').click()" class="py-2 bg-slate-200 text-slate-800 font-bold rounded-lg text-xs">Nạp JSON</button><input type="file" id="importJsonInput" hidden accept=".json" onchange="window.importData(this)"></div>
                             </div>
                         </div>
                     </div>
-                    <div class="glass-card rounded-2xl p-4"><h4 class="font-bold text-slate-800 dark:text-white mb-2">Máy tính nhanh</h4><div class="grid grid-cols-1 md:grid-cols-3 gap-3"><button onclick="window.toggleTool('bmi')" class="py-2 bg-white/50 rounded-lg font-bold text-indigo-600 border border-indigo-200">BMI</button><button onclick="window.toggleTool('map')" class="py-2 bg-white/50 rounded-lg font-bold text-red-600 border border-red-200">MAP</button><button onclick="window.toggleTool('egfr')" class="py-2 bg-white/50 rounded-lg font-bold text-orange-600 border border-orange-200">eGFR</button></div><div id="tool-bmi" class="tool-content mt-2 hidden"><input id="bmi-w" placeholder="kg" class="ios-input w-20 p-1 mr-2 rounded"><input id="bmi-h" placeholder="cm" class="ios-input w-20 p-1 mr-2 rounded"><button onclick="window.calcBMI()" class="bg-indigo-600 text-white px-3 py-1 rounded">Tính</button><span id="bmi-res" class="ml-2 font-bold text-indigo-700"></span></div><div id="tool-map" class="tool-content mt-2 hidden"><input id="map-sys" placeholder="Tâm thu" class="ios-input w-20 p-1 mr-2 rounded"><input id="map-dia" placeholder="Tâm trương" class="ios-input w-20 p-1 mr-2 rounded"><button onclick="window.calcMAP()" class="bg-red-600 text-white px-3 py-1 rounded">Tính</button><span id="map-res" class="ml-2 font-bold text-red-700"></span></div><div id="tool-egfr" class="tool-content mt-2 hidden"><input id="egfr-age" placeholder="Tuổi" class="ios-input w-16 p-1 mr-1 rounded"><input id="egfr-w" placeholder="Kg" class="ios-input w-16 p-1 mr-1 rounded"><input id="egfr-cre" placeholder="Cre" class="ios-input w-16 p-1 mr-1 rounded"><button onclick="window.calcEGFR()" class="bg-orange-600 text-white px-3 py-1 rounded">Tính</button><span id="egfr-res" class="ml-2 font-bold text-orange-700"></span></div></div>
+                    <div class="glass-card rounded-2xl p-4"><h4 class="font-bold text-slate-800 dark:text-white mb-2">Máy tính nhanh</h4><div class="grid grid-cols-1 md:grid-cols-3 gap-3"><button onclick="window.toggleTool('bmi')" class="py-2 bg-white/50 rounded-lg font-bold text-indigo-600 border border-indigo-200">BMI</button><button onclick="window.toggleTool('map')" class="py-2 bg-white/50 rounded-lg font-bold text-red-600 border border-red-200">MAP</button><button onclick="window.toggleTool('egfr')" class="py-2 bg-white/50 rounded-lg font-bold text-orange-600 border border-orange-200">eGFR</button></div><div id="tool-bmi" class="tool-content mt-2"><input id="bmi-w" placeholder="kg" class="ios-input w-20 p-1 mr-2 rounded"><input id="bmi-h" placeholder="cm" class="ios-input w-20 p-1 mr-2 rounded"><button onclick="window.calcBMI()" class="bg-indigo-600 text-white px-3 py-1 rounded">Tính</button><span id="bmi-res" class="ml-2 font-bold text-indigo-700"></span></div><div id="tool-map" class="tool-content mt-2"><input id="map-sys" placeholder="Tâm thu" class="ios-input w-20 p-1 mr-2 rounded"><input id="map-dia" placeholder="Tâm trương" class="ios-input w-20 p-1 mr-2 rounded"><button onclick="window.calcMAP()" class="bg-red-600 text-white px-3 py-1 rounded">Tính</button><span id="map-res" class="ml-2 font-bold text-red-700"></span></div><div id="tool-egfr" class="tool-content mt-2"><input id="egfr-age" placeholder="Tuổi" class="ios-input w-16 p-1 mr-1 rounded"><input id="egfr-w" placeholder="Kg" class="ios-input w-16 p-1 mr-1 rounded"><input id="egfr-cre" placeholder="Cre" class="ios-input w-16 p-1 mr-1 rounded"><button onclick="window.calcEGFR()" class="bg-orange-600 text-white px-3 py-1 rounded">Tính</button><span id="egfr-res" class="ml-2 font-bold text-orange-700"></span></div></div>
                 </div>
             </div>
 
             <div class="lg:col-span-4 flex flex-col gap-6">
                 <div class="glass-card p-5 rounded-3xl flex flex-col relative group border border-blue-200 dark:border-blue-900/30 max-h-[300px]">
                     <div class="flex justify-between items-center mb-3"><h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-list-check text-blue-500"></i> Việc cần làm</h3></div>
-                    <div class="flex gap-2 mb-3"><input id="newTodoInput" type="text" class="flex-1 ios-input p-2 rounded-xl text-sm" placeholder="Thêm việc mới..."><button onclick="window.addTodo()" class="w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center"><i class="fa-solid fa-plus"></i></button></div>
+                    <div class="flex gap-2 mb-3"><input id="newTodoInput" type="text" class="flex-1 ios-input p-2 rounded-xl text-sm" placeholder="Thêm việc..." aria-label="Nhập công việc"><button onclick="window.addTodo()" aria-label="Thêm" class="w-8 h-8 bg-blue-600 text-white rounded-lg flex items-center justify-center"><i class="fa-solid fa-plus"></i></button></div>
                     <div id="todoList" class="overflow-y-auto pr-1 flex-1 space-y-2"></div>
                 </div>
-                <div class="glass-card p-5 rounded-3xl flex flex-col relative group border border-yellow-200 dark:border-yellow-900/30"><div class="flex justify-between items-center mb-2"><h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-note-sticky text-yellow-500"></i> Ghi chú Cloud</h3><span id="saveStatus" class="text-[10px] font-bold text-green-600 opacity-0 transition">Đã lưu</span></div><textarea id="quickNote" oninput="window.saveNote()" class="w-full bg-white/50 dark:bg-slate-900/50 rounded-xl p-3 ios-input text-sm leading-relaxed shadow-inner focus:ring-2 ring-yellow-400/50 h-32" placeholder="Viết ý tưởng..."></textarea></div>
-                <div class="glass-panel p-4 rounded-3xl shadow-lg relative overflow-hidden group"><div class="flex items-center gap-3"><div id="musicDisc" class="w-12 h-12 rounded-full bg-slate-900 border-2 border-slate-800 flex items-center justify-center overflow-hidden shrink-0"><img src="https://img.icons8.com/color/96/vinyl-music.png" class="w-full h-full opacity-90"></div><div class="flex-1 min-w-0"><p id="musicTitle" class="text-xs font-bold text-slate-900 dark:text-white truncate">Ready to study?</p><div class="flex gap-4 mt-1"><button onclick="window.prevSong()"><i class="fa-solid fa-backward-step text-xs text-slate-500"></i></button><button onclick="window.toggleMusic()"><i id="playBtnIcon" class="fa-solid fa-play text-sm text-blue-600"></i></button><button onclick="window.nextSong()"><i class="fa-solid fa-forward-step text-xs text-slate-500"></i></button></div></div></div><audio id="bgAudio" class="hidden"></audio></div>
+                <div class="glass-card p-5 rounded-3xl flex flex-col relative group border border-yellow-200 dark:border-yellow-900/30"><div class="flex justify-between items-center mb-2"><h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-note-sticky text-yellow-500"></i> Ghi chú</h3><span id="saveStatus" class="text-[10px] font-bold text-green-600 opacity-0 transition">Đã lưu</span></div><textarea id="quickNote" oninput="window.saveNote()" class="w-full bg-white/50 dark:bg-slate-900/50 rounded-xl p-3 ios-input text-sm leading-relaxed shadow-inner focus:ring-2 ring-yellow-400/50 h-32" placeholder="Ghi chú nhanh..."></textarea></div>
+                <div class="glass-panel p-4 rounded-3xl shadow-lg relative overflow-hidden group"><div class="flex items-center gap-3"><div id="musicDisc" class="w-12 h-12 rounded-full bg-slate-900 border-2 border-slate-800 flex items-center justify-center overflow-hidden shrink-0"><img src="https://img.icons8.com/color/96/vinyl-music.png" alt="Đĩa nhạc" class="w-full h-full opacity-90"></div><div class="flex-1 min-w-0"><p id="musicTitle" class="text-xs font-bold text-slate-900 dark:text-white truncate">Lofi Study</p><div class="flex gap-4 mt-1"><button aria-label="Bài trước" onclick="window.prevSong()"><i class="fa-solid fa-backward-step text-xs text-slate-500"></i></button><button aria-label="Phát/Dừng" onclick="window.toggleMusic()"><i id="playBtnIcon" class="fa-solid fa-play text-sm text-blue-600"></i></button><button aria-label="Bài sau" onclick="window.nextSong()"><i class="fa-solid fa-forward-step text-xs text-slate-500"></i></button></div></div></div><audio id="bgAudio" class="hidden"></audio></div>
             </div>
         </div>
     </div>
 
     <div id="addDocModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-md">
         <div class="bg-white/95 dark:bg-slate-800/95 w-[90%] md:w-[400px] p-6 rounded-3xl shadow-2xl border border-white/50 animate-float">
-            <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4">Thêm Tài Liệu Mới</h3>
+            <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4">Thêm Tài Liệu</h3>
             <div class="space-y-4">
-                <div><label class="text-xs font-bold text-slate-500 uppercase">Tên tài liệu</label><input id="newDocTitle" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="Nhập tên..."></div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase">Thư mục</label><select id="newDocFolder" class="w-full ios-input p-3 rounded-xl mt-1 font-bold text-slate-700 dark:text-slate-200 dark:bg-slate-700"></select></div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase">Link Drive</label><input id="newDocLink" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="https://..."></div>
-                <div class="flex gap-3 pt-2"><button onclick="document.getElementById('addDocModal').classList.add('hidden')" class="flex-1 py-3 rounded-xl bg-slate-200 text-slate-600 font-bold hover:bg-slate-300">Hủy</button><button onclick="window.saveNewDoc()" class="flex-1 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg">Lưu ngay</button></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase">Tên</label><input id="newDocTitle" type="text" class="w-full ios-input p-3 rounded-xl mt-1"></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase">Mục</label><select id="newDocFolder" class="w-full ios-input p-3 rounded-xl mt-1 font-bold text-slate-700 dark:text-slate-200 dark:bg-slate-700"></select></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase">Link</label><input id="newDocLink" type="text" class="w-full ios-input p-3 rounded-xl mt-1"></div>
+                <div class="flex gap-3 pt-2"><button onclick="document.getElementById('addDocModal').classList.add('hidden')" class="flex-1 py-3 rounded-xl bg-slate-200 text-slate-600 font-bold hover:bg-slate-300">Hủy</button><button onclick="window.saveNewDoc()" class="flex-1 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg">Lưu</button></div>
             </div>
         </div>
     </div>
@@ -157,8 +133,10 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, remove, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, onValue, remove, update, off } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+        // --- PUBLIC API KEY LÀ BÌNH THƯỜNG VỚI CLIENT-SIDE APP ---
+        // BẢO MẬT BẰNG FIREBASE SECURITY RULES (XEM HƯỚNG DẪN)
         const firebaseConfig = {
             apiKey: "AIzaSyAcfs8LFgPeAkGyaSkmJeECoRBEwtfRv8E",
             authDomain: "minhduckale1.firebaseapp.com",
@@ -180,32 +158,22 @@
         let favorites = JSON.parse(localStorage.getItem('mdk_fav_v2') || '[]');
         let recentDocs = JSON.parse(localStorage.getItem('mdk_recent_v2') || '[]');
         let todos = [];
+        let listeners = []; // Store DB listeners to unsubscribe
+
+        // --- AUTH ---
+        window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert(e.message));
         
-        const folders = {
-            "capcuu": { name: "1. Hồi sức Cấp cứu", icon: "fa-truck-medical", color: "text-red-500", items: [] },
-            "noikhoa": { name: "2. Nội khoa", icon: "fa-user-doctor", color: "text-blue-500", items: [] },
-            "ngoaikhoa": { name: "3. Ngoại khoa", icon: "fa-scalpel", color: "text-green-600", items: [] },
-            "san": { name: "4. Sản phụ khoa", icon: "fa-person-pregnant", color: "text-pink-500", items: [] },
-            "nhi": { name: "5. Nhi khoa", icon: "fa-baby", color: "text-orange-500", items: [] },
-            "canlamsang": { name: "6. Cận lâm sàng", icon: "fa-microscope", color: "text-purple-500", items: [] },
-            "khac": { name: "7. Tài liệu khác", icon: "fa-folder-open", color: "text-slate-500", items: [] }
+        window.logoutFirebase = () => {
+            // Unsubscribe all listeners on logout (Fix Memory Leak)
+            listeners.forEach(l => off(l));
+            listeners = [];
+            signOut(auth);
         };
 
-        // --- AUTH & SYNC ---
-        window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert(e.message));
-        window.logoutFirebase = () => signOut(auth);
-
-        function loadUserData(uid) {
-            document.getElementById('loadingIndicator').classList.remove('hidden');
-            onValue(ref(db, 'users/' + uid + '/docs'), (snapshot) => {
-                const data = snapshot.val();
-                if (data) { allDocs = Array.isArray(data) ? data : Object.values(data); distributeDocs(); renderFolders(); }
-                document.getElementById('loadingIndicator').classList.add('hidden');
-            });
-            onValue(ref(db, 'users/' + uid + '/favorites'), (snap) => { favorites = snap.val() || []; if(!document.getElementById('view-fav').classList.contains('hidden')) renderFavorites(); });
-            onValue(ref(db, 'users/' + uid + '/recent'), (snap) => { recentDocs = snap.val() || []; renderRecent(); });
-            onValue(ref(db, 'users/' + uid + '/todos'), (snap) => { todos = snap.val() ? Object.values(snap.val()) : []; renderTodos(); });
-            onValue(ref(db, 'users/' + uid + '/note'), (snap) => document.getElementById('quickNote').value = snap.val() || "");
+        function attachListener(path, callback) {
+            const r = ref(db, path);
+            onValue(r, callback);
+            listeners.push(r);
         }
 
         onAuthStateChanged(auth, (user) => {
@@ -214,247 +182,134 @@
                 document.getElementById('loginBtn').classList.add('hidden');
                 document.getElementById('userProfile').classList.remove('hidden');
                 document.getElementById('userProfile').classList.add('flex');
-                document.getElementById('userAvatar').src = user.photoURL;
+                document.getElementById('userAvatar').src = user.photoURL || "https://img.icons8.com/color/96/user-male-circle--v1.png";
                 document.getElementById('userName').innerText = user.displayName;
-                loadUserData(user.uid);
+                
+                document.getElementById('loadingIndicator').classList.remove('hidden');
+                
+                // Attach new listeners
+                attachListener('users/' + user.uid + '/docs', (snap) => {
+                    const data = snap.val();
+                    if (data) { allDocs = Array.isArray(data) ? data : Object.values(data); distributeDocs(); renderFolders(); }
+                    document.getElementById('loadingIndicator').classList.add('hidden');
+                });
+                attachListener('users/' + user.uid + '/favorites', (snap) => { favorites = snap.val() || []; if(!document.getElementById('view-fav').classList.contains('hidden')) renderFavorites(); });
+                attachListener('users/' + user.uid + '/recent', (snap) => { recentDocs = snap.val() || []; renderRecent(); });
+                attachListener('users/' + user.uid + '/todos', (snap) => { todos = snap.val() ? Object.values(snap.val()) : []; renderTodos(); });
+                attachListener('users/' + user.uid + '/note', (snap) => document.getElementById('quickNote').value = snap.val() || "");
+
             } else {
                 document.getElementById('loginBtn').classList.remove('hidden');
                 document.getElementById('userProfile').classList.add('hidden');
                 document.getElementById('logoutPanel').classList.add('hidden');
+                // Load Local
+                allDocs = JSON.parse(localStorage.getItem('mdk_user_docs_v2') || '[]');
                 distributeDocs(); renderFolders(); renderFavorites(); renderRecent(); renderTodos();
             }
         });
 
-        // --- CORE LOGIC ---
-        function removeVietnameseTones(str) {
-            str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g,"a"); str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g,"e"); str = str.replace(/ì|í|ị|ỉ|ĩ/g,"i"); str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g,"o"); str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g,"u"); str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g,"y"); str = str.replace(/đ/g,"d");
-            return str.normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/đ/g, "d").replace(/Đ/g, "D");
-        }
+        const folders = { "capcuu":{name:"1. Hồi sức Cấp cứu",icon:"fa-truck-medical",color:"text-red-500",items:[]},"noikhoa":{name:"2. Nội khoa",icon:"fa-user-doctor",color:"text-blue-500",items:[]},"ngoaikhoa":{name:"3. Ngoại khoa",icon:"fa-scalpel",color:"text-green-600",items:[]},"san":{name:"4. Sản phụ khoa",icon:"fa-person-pregnant",color:"text-pink-500",items:[]},"nhi":{name:"5. Nhi khoa",icon:"fa-baby",color:"text-orange-500",items:[]},"canlamsang":{name:"6. Cận lâm sàng",icon:"fa-microscope",color:"text-purple-500",items:[]},"khac":{name:"7. Tài liệu khác",icon:"fa-folder-open",color:"text-slate-500",items:[]} };
 
-        function distributeDocs() {
-            Object.keys(folders).forEach(k => folders[k].items = []);
-            allDocs.forEach(doc => { if(folders[doc.folder]) folders[doc.folder].items.push(doc); else folders['khac'].items.push(doc); });
-        }
+        function removeVietnameseTones(str) { str=str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g,"a");str=str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g,"e");str=str.replace(/ì|í|ị|ỉ|ĩ/g,"i");str=str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g,"o");str=str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g,"u");str=str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g,"y");str=str.replace(/đ/g,"d"); return str.normalize("NFD").replace(/[\u0300-\u036f]/g,"").replace(/đ/g,"d").replace(/Đ/g,"D"); }
 
-        window.renderFolders = function() {
-            document.getElementById('breadcrumb').classList.add('hidden');
-            const container = document.getElementById('docsList');
-            container.innerHTML = '';
-            Object.keys(folders).forEach(key => {
-                const f = folders[key];
-                const html = `<div onclick="window.openFolder('${key}')" class="glass-card p-5 rounded-3xl flex items-center gap-5 cursor-pointer hover:bg-white/90 dark:hover:bg-slate-700/80 transition group border-l-4 border-transparent hover:border-blue-500"><div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl ${f.color} shadow-md group-hover:scale-110 transition"><i class="fa-solid ${f.icon}"></i></div><div class="flex-1"><h3 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${f.name}</h3><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">${f.items.length} file</p></div><i class="fa-solid fa-chevron-right text-slate-300 font-bold"></i></div>`;
-                container.insertAdjacentHTML('beforeend', html);
-            });
-        }
+        function distributeDocs() { Object.keys(folders).forEach(k=>folders[k].items=[]); allDocs.forEach(doc=>{ if(folders[doc.folder]) folders[doc.folder].items.push(doc); else folders['khac'].items.push(doc); }); }
 
-        window.openFolder = function(key) {
-            const f = folders[key];
-            document.getElementById('breadcrumb').classList.remove('hidden');
-            document.getElementById('currentFolderTitle').innerText = f.name;
-            const container = document.getElementById('docsList');
-            container.innerHTML = '';
-            if(f.items.length === 0) { container.innerHTML = `<div class="col-span-2 text-center py-20 opacity-60 dark:text-white font-bold">Thư mục trống</div>`; return; }
-            f.items.forEach(doc => renderDocItem(doc, container));
-        }
+        window.renderFolders = () => { document.getElementById('breadcrumb').classList.add('hidden'); const c=document.getElementById('docsList'); c.innerHTML=''; Object.keys(folders).forEach(k=>{ const f=folders[k]; c.insertAdjacentHTML('beforeend', `<div onclick="window.openFolder('${k}')" class="glass-card p-5 rounded-3xl flex items-center gap-5 cursor-pointer hover:bg-white/90 dark:hover:bg-slate-700/80 transition group border-l-4 border-transparent hover:border-blue-500"><div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl ${f.color} shadow-md group-hover:scale-110 transition"><i class="fa-solid ${f.icon}"></i></div><div class="flex-1"><h3 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${f.name}</h3><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">${f.items.length} file</p></div><i class="fa-solid fa-chevron-right text-slate-300 font-bold"></i></div>`); }); }
 
-        window.filterDocs = function() {
-            const term = removeVietnameseTones(document.getElementById('searchInput').value.toLowerCase());
-            if(!term) { window.renderFolders(); return; }
-            document.getElementById('breadcrumb').classList.add('hidden');
-            const container = document.getElementById('docsList');
-            container.innerHTML = '';
-            const results = allDocs.filter(d => removeVietnameseTones(d.title.toLowerCase()).includes(term));
-            if(results.length === 0) container.innerHTML = `<div class="col-span-2 text-center py-10 font-bold text-slate-500">Không tìm thấy kết quả</div>`;
-            else results.forEach(doc => renderDocItem(doc, container));
-        }
+        window.openFolder = (key) => { const f=folders[key]; document.getElementById('breadcrumb').classList.remove('hidden'); document.getElementById('currentFolderTitle').innerText=f.name; const c=document.getElementById('docsList'); c.innerHTML=''; if(f.items.length===0){c.innerHTML=`<div class="col-span-2 text-center py-20 opacity-60 dark:text-white font-bold">Trống</div>`;return;} f.items.forEach(d=>renderDocItem(d,c)); }
+
+        // PERF FIX: Debounce Search
+        let searchTimeout;
+        document.getElementById('searchInput').addEventListener('keyup', (e) => {
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                const term = removeVietnameseTones(e.target.value.toLowerCase());
+                if(!term) { window.renderFolders(); return; }
+                document.getElementById('breadcrumb').classList.add('hidden');
+                const c = document.getElementById('docsList'); c.innerHTML='';
+                const res = allDocs.filter(d => removeVietnameseTones(d.title.toLowerCase()).includes(term));
+                if(res.length===0) c.innerHTML=`<div class="col-span-2 text-center py-10 font-bold text-slate-500">Không tìm thấy</div>`;
+                else res.forEach(d => renderDocItem(d,c));
+            }, 300); // 300ms delay
+        });
 
         function renderDocItem(doc, container) {
             const isFav = favorites.includes(doc.id);
             const favClass = isFav ? "text-yellow-500" : "text-slate-300";
             const div = document.createElement('div');
             div.className = "glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm";
-            div.innerHTML = `<div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center"><i class="fa-solid fa-file-lines text-blue-500 text-lg"></i></div><div class="flex-1 min-w-0 cursor-pointer click-area"><h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${doc.title}</h4><p class="text-xs text-blue-600 hover:underline uppercase tracking-wide">Mở tài liệu</p></div><button class="p-2 hover:scale-110 transition btn-fav"><i class="fa-solid fa-star ${favClass}"></i></button>`;
-            div.querySelector('.click-area').onclick = () => openDoc(doc.id);
-            div.querySelector('.btn-fav').onclick = (e) => { e.stopPropagation(); toggleFav(doc.id, div.querySelector('i')); };
+            div.innerHTML = `<div class="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center"><i class="fa-solid fa-file-lines text-blue-500 text-lg"></i></div><div class="flex-1 min-w-0 cursor-pointer click-area"><h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${doc.title}</h4><p class="text-xs text-blue-600 hover:underline uppercase tracking-wide">Mở</p></div><button aria-label="Yêu thích" class="p-2 hover:scale-110 transition btn-fav"><i class="fa-solid fa-star ${favClass}"></i></button>`;
+            div.querySelector('.click-area').onclick=()=>window.openDoc(doc.id);
+            div.querySelector('.btn-fav').onclick=(e)=>{e.stopPropagation(); window.toggleFav(doc.id, div.querySelector('i'));};
             container.appendChild(div);
         }
 
-        function openDoc(id) {
-            const doc = allDocs.find(d => d.id === id);
-            if(doc) {
-                recentDocs = recentDocs.filter(d => d.id !== id);
-                recentDocs.unshift(doc);
-                if(recentDocs.length > 10) recentDocs.pop();
-                if(currentUser) set(ref(db, 'users/' + currentUser.uid + '/recent'), recentDocs);
-                else localStorage.setItem('mdk_recent_v2', JSON.stringify(recentDocs));
-                renderRecent();
-                window.open(doc.url, '_blank', 'noopener,noreferrer');
-            }
+        window.openDoc = (id) => {
+            const doc = allDocs.find(d=>d.id===id); if(!doc) return;
+            recentDocs = recentDocs.filter(d=>d.id!==id); recentDocs.unshift(doc); if(recentDocs.length>10) recentDocs.pop();
+            if(currentUser) set(ref(db,'users/'+currentUser.uid+'/recent'), recentDocs); else localStorage.setItem('mdk_recent_v2',JSON.stringify(recentDocs));
+            renderRecent(); window.open(doc.url, '_blank', 'noopener,noreferrer');
         }
 
         window.toggleFav = (id, icon) => {
-            if(favorites.includes(id)) favorites = favorites.filter(f => f !== id); else favorites.push(id);
-            if(currentUser) set(ref(db, 'users/' + currentUser.uid + '/favorites'), favorites);
-            else localStorage.setItem('mdk_fav_v2', JSON.stringify(favorites));
-            
+            if(favorites.includes(id)) favorites=favorites.filter(f=>f!==id); else favorites.push(id);
+            if(currentUser) set(ref(db,'users/'+currentUser.uid+'/favorites'), favorites); else localStorage.setItem('mdk_fav_v2',JSON.stringify(favorites));
+            if(icon) { icon.classList.toggle('text-yellow-500'); icon.classList.toggle('text-slate-300'); }
             if(!document.getElementById('view-fav').classList.contains('hidden')) renderFavorites();
-            else {
-                if(icon) { icon.classList.toggle('text-yellow-500'); icon.classList.toggle('text-slate-300'); }
-            }
         }
 
-        function renderFavorites() {
-            const container = document.getElementById('favList');
-            container.innerHTML = '';
-            const favDocs = allDocs.filter(d => favorites.includes(d.id));
-            if(favDocs.length === 0) container.innerHTML = `<p class="text-slate-500 italic col-span-2 text-center">Chưa có tài liệu yêu thích.</p>`;
-            else favDocs.forEach(doc => renderDocItem(doc, container));
+        function renderFavorites() { const c=document.getElementById('favList'); c.innerHTML=''; const f=allDocs.filter(d=>favorites.includes(d.id)); if(f.length===0) c.innerHTML=`<p class="text-slate-500 italic col-span-2 text-center">Trống</p>`; else f.forEach(d=>renderDocItem(d,c)); }
+        function renderRecent() { const c=document.getElementById('recentList'); if(recentDocs.length===0){document.getElementById('recentSection').classList.add('hidden');return;} document.getElementById('recentSection').classList.remove('hidden'); c.innerHTML=''; recentDocs.forEach(d=>{ c.insertAdjacentHTML('beforeend', `<div onclick="window.openDoc('${d.id}')" class="shrink-0 w-32 h-24 glass-card p-3 rounded-xl flex flex-col justify-between cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-700"><i class="fa-solid fa-clock-rotate-left text-blue-400 text-xs"></i><p class="text-xs font-bold text-slate-800 dark:text-white line-clamp-2 leading-tight">${d.title}</p></div>`); }); }
+
+        window.addTodo = () => { const i=document.getElementById('newTodoInput'); const t=i.value.trim(); if(!t)return; const n={id:Date.now(),text:t,done:false}; if(currentUser) set(ref(db,'users/'+currentUser.uid+'/todos/'+n.id),n); else {todos.push(n); renderTodos();} i.value=''; }
+        window.toggleTodo = (id) => { if(currentUser){const t=todos.find(x=>x.id==id);if(t) update(ref(db,'users/'+currentUser.uid+'/todos/'+id),{done:!t.done});} else {const t=todos.find(x=>x.id==id);if(t)t.done=!t.done;renderTodos();} }
+        window.deleteTodo = (id) => { if(currentUser) remove(ref(db,'users/'+currentUser.uid+'/todos/'+id)); else {todos=todos.filter(x=>x.id!=id);renderTodos();} }
+        function renderTodos() { const c=document.getElementById('todoList'); c.innerHTML=''; if(todos.length===0){c.innerHTML='<p class="text-center text-xs text-slate-400 mt-4">Trống</p>';return;} todos.forEach(t=>{ const dc=t.done?"line-through text-slate-400":"text-slate-800 dark:text-white"; const ic=t.done?"fa-circle-check text-green-500":"fa-circle text-slate-300"; c.insertAdjacentHTML('beforeend', `<div class="flex items-center gap-2 group p-2 rounded-lg hover:bg-white/40 dark:hover:bg-white/5 transition"><button aria-label="Xong" onclick="window.toggleTodo(${t.id})"><i class="fa-regular ${ic}"></i></button><span class="flex-1 text-sm font-medium ${dc}">${t.text}</span><button aria-label="Xóa" onclick="window.deleteTodo(${t.id})" class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 transition"><i class="fa-solid fa-trash text-xs"></i></button></div>`); }); }
+
+        window.pasteFromClipboard = async () => { try { const t=await navigator.clipboard.readText(); if(!t)throw new Error("Trống"); processImportedText(t); } catch(e){ const m=prompt("Dán (Ctrl+V) JSON:"); if(m) processImportedText(m); } };
+        function processImportedText(t) {
+            try { const s=t.indexOf('['); const e=t.lastIndexOf(']'); if(s===-1)throw new Error("Lỗi"); const imp=JSON.parse(t.substring(s,e+1));
+                if(Array.isArray(imp)){ if(confirm(`Đồng bộ ${imp.length} file?`)){
+                    // BUG FIX: Clone array to avoid reference issues
+                    allDocs = [...imp]; 
+                    if(currentUser) set(ref(db,'users/'+currentUser.uid+'/docs'), allDocs).then(()=>alert("Đã đồng bộ!")); else localStorage.setItem('mdk_user_docs_v2',JSON.stringify(allDocs));
+                    distributeDocs(); renderFolders();
+                }}
+            } catch(e){alert("Dữ liệu lỗi");}
         }
 
-        function renderRecent() {
-            const container = document.getElementById('recentList');
-            if(recentDocs.length === 0) { document.getElementById('recentSection').classList.add('hidden'); return; }
-            document.getElementById('recentSection').classList.remove('hidden');
-            container.innerHTML = '';
-            recentDocs.forEach(doc => {
-                const html = `<div onclick="window.openDoc('${doc.id}')" class="shrink-0 w-32 h-24 glass-card p-3 rounded-xl flex flex-col justify-between cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-700"><i class="fa-solid fa-clock-rotate-left text-blue-400 text-xs"></i><p class="text-xs font-bold text-slate-800 dark:text-white line-clamp-2 leading-tight">${doc.title}</p></div>`;
-                container.insertAdjacentHTML('beforeend', html);
-            });
-        }
+        window.importData = function(input) { const f=input.files[0]; if(!f)return; const r=new FileReader(); r.onload=function(e){processImportedText(e.target.result);}; r.readAsText(f); input.value=''; }
+        window.exportToExcel = () => { if(allDocs.length===0)return alert("Trống"); const ws=XLSX.utils.json_to_sheet(allDocs.map(d=>({"Tên":d.title,"Link":d.url,"Folder":d.folder}))); const wb=XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,"Docs"); XLSX.writeFile(wb,"Data.xlsx"); }
 
-        // --- TODO ---
-        window.addTodo = () => {
-            const input = document.getElementById('newTodoInput');
-            const text = input.value.trim();
-            if(!text) return;
-            const newTodo = { id: Date.now(), text, done: false };
-            if(currentUser) set(ref(db, 'users/' + currentUser.uid + '/todos/' + newTodo.id), newTodo);
-            else { todos.push(newTodo); renderTodos(); }
-            input.value = '';
-        }
+        window.saveNewDoc = () => { const t=document.getElementById('newDocTitle').value; const f=document.getElementById('newDocFolder').value; const l=document.getElementById('newDocLink').value; if(!t||!l)return alert("Thiếu"); const n={id:'u'+Date.now(),title:t,folder:f,url:l,type:'DOC'}; 
+        // BUG FIX: Clone before push
+        const newArr = [...allDocs, n]; allDocs = newArr;
+        if(currentUser) set(ref(db,'users/'+currentUser.uid+'/docs'),allDocs); else localStorage.setItem('mdk_user_docs_v2',JSON.stringify(allDocs)); document.getElementById('addDocModal').classList.add('hidden'); distributeDocs(); window.renderFolders(); }
         
-        window.toggleTodo = (id) => {
-            if(currentUser) { const t=todos.find(x=>x.id==id); if(t) update(ref(db,'users/'+currentUser.uid+'/todos/'+id),{done:!t.done}); }
-            else { const t=todos.find(x=>x.id==id); if(t) t.done=!t.done; renderTodos(); }
-        }
+        window.saveNote = () => { const c=document.getElementById('quickNote').value; if(currentUser){ set(ref(db,'users/'+currentUser.uid+'/note'),c); const s=document.getElementById('saveStatus'); s.style.opacity='1'; setTimeout(()=>s.style.opacity='0',2000); } }
         
-        window.deleteTodo = (id) => {
-            if(currentUser) remove(ref(db,'users/'+currentUser.uid+'/todos/'+id));
-            else { todos=todos.filter(x=>x.id!=id); renderTodos(); }
-        }
-
-        function renderTodos() {
-            const container = document.getElementById('todoList');
-            container.innerHTML = '';
-            if(todos.length === 0) { container.innerHTML = '<p class="text-center text-xs text-slate-400 mt-4">Trống</p>'; return; }
-            todos.forEach(t => {
-                const doneClass = t.done ? "line-through text-slate-400" : "text-slate-800 dark:text-white";
-                const checkIcon = t.done ? "fa-circle-check text-green-500" : "fa-circle text-slate-300";
-                const div = document.createElement('div');
-                div.className = "flex items-center gap-2 group p-2 rounded-lg hover:bg-white/40 dark:hover:bg-white/5 transition";
-                div.innerHTML = `<button onclick="window.toggleTodo(${t.id})"><i class="fa-regular ${checkIcon}"></i></button><span class="flex-1 text-sm font-medium ${doneClass}">${t.text}</span><button onclick="window.deleteTodo(${t.id})" class="opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 transition"><i class="fa-solid fa-trash text-xs"></i></button>`;
-                container.appendChild(div);
-            });
-        }
-
-        // --- CLIPBOARD & IMPORT ---
-        window.pasteFromClipboard = async () => {
-            try {
-                const text = await navigator.clipboard.readText();
-                if(!text) throw new Error("Clipboard trống");
-                processImportedText(text);
-            } catch (err) {
-                const manual = prompt("Trình duyệt chặn đọc Clipboard. Hãy dán (Ctrl+V) vào đây:");
-                if(manual) processImportedText(manual); else alert("Lỗi: " + err.message);
-            }
-        };
-
-        function processImportedText(text) {
-            try {
-                const start = text.indexOf('['); const end = text.lastIndexOf(']');
-                if(start === -1 || end === -1) throw new Error("Không tìm thấy JSON");
-                const imported = JSON.parse(text.substring(start, end + 1));
-                if(Array.isArray(imported)) {
-                    if(confirm(`Đã đọc được ${imported.length} tài liệu. Đồng bộ lên Cloud?`)) {
-                        allDocs = imported;
-                        if (currentUser) set(ref(db, 'users/' + currentUser.uid + '/docs'), imported).then(() => alert("✅ Đồng bộ thành công!"));
-                        else localStorage.setItem('mdk_user_docs_v2', JSON.stringify(allDocs));
-                        distributeDocs(); renderFolders();
-                    }
-                }
-            } catch (e) { alert("Dữ liệu lỗi!"); }
-        }
-
-        window.importData = function(input) {
-            const file = input.files[0]; if(!file) return;
-            const reader = new FileReader();
-            reader.onload = function(e) { processImportedText(e.target.result); };
-            reader.readAsText(file);
-            input.value = '';
-        }
-
-        window.exportToExcel = () => {
-            if(allDocs.length === 0) return alert("Trống!");
-            const ws = XLSX.utils.json_to_sheet(allDocs.map(d => ({ "Tên": d.title, "Link": d.url, "Folder": d.folder })));
-            const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Docs");
-            XLSX.writeFile(wb, "Data.xlsx");
-        }
-
-        // --- UTILS ---
-        const sel = document.getElementById('newDocFolder');
-        Object.keys(folders).forEach(k => { const opt = document.createElement('option'); opt.value = k; opt.text = folders[k].name; sel.appendChild(opt); });
-
-        window.saveNewDoc = () => {
-            const title = document.getElementById('newDocTitle').value; const folder = document.getElementById('newDocFolder').value; const link = document.getElementById('newDocLink').value;
-            if(!title || !link) return alert("Thiếu thông tin");
-            const newDoc = { id: 'u'+Date.now(), title, folder, url: link, type: 'DOC' };
-            allDocs.push(newDoc);
-            if(currentUser) set(ref(db, 'users/' + currentUser.uid + '/docs'), allDocs); else localStorage.setItem('mdk_user_docs_v2', JSON.stringify(allDocs));
-            document.getElementById('addDocModal').classList.add('hidden'); distributeDocs();
-            if(!document.getElementById('view-docs').classList.contains('hidden')) { if(document.getElementById('searchInput').value) window.filterDocs(); else window.renderFolders(); }
-        }
-
-        window.saveNote = () => {
-            const content = document.getElementById('quickNote').value;
-            if (currentUser) { set(ref(db, 'users/' + currentUser.uid + '/note'), content); document.getElementById('saveStatus').style.opacity = '1'; setTimeout(() => document.getElementById('saveStatus').style.opacity = '0', 2000); }
-        }
-
-        window.toggleDarkMode = () => { document.documentElement.classList.toggle('dark'); localStorage.setItem('mdk_dark', document.documentElement.classList.contains('dark')); };
+        // Anim Fix: Toggle class open instead of hidden
+        window.toggleTool = (id) => document.getElementById('tool-'+id).classList.toggle('open');
+        window.switchTab = (t) => { document.querySelectorAll('.segment-btn').forEach(b=>{ b.classList.remove('active'); if(b.id==='btn-'+t)b.classList.add('active'); }); ['docs','fav','tools'].forEach(x=>document.getElementById('view-'+x).classList.add('hidden')); document.getElementById('view-'+t).classList.remove('hidden'); if(t==='docs') document.getElementById('view-docs').classList.add('flex'); if(t==='fav'){document.getElementById('view-fav').classList.add('flex');renderFavorites();} if(t==='tools') document.getElementById('view-tools').classList.add('flex'); }
+        window.toggleDarkMode = () => { document.documentElement.classList.toggle('dark'); localStorage.setItem('mdk_dark', document.documentElement.classList.contains('dark')); }
         window.openAddDocModal = () => document.getElementById('addDocModal').classList.remove('hidden');
-        window.toggleTool = (id) => document.getElementById('tool-'+id).classList.toggle('hidden');
+
+        // Calcs & Init
+        window.calcBMI=()=>{const w=document.getElementById('bmi-w').value,h=document.getElementById('bmi-h').value/100;if(w&&h)document.getElementById('bmi-res').innerText=(w/(h*h)).toFixed(1)};
+        window.calcMAP=()=>{const s=Number(document.getElementById('map-sys').value),d=Number(document.getElementById('map-dia').value);if(s&&d)document.getElementById('map-res').innerText=((2*d+s)/3).toFixed(0)};
+        window.calcEGFR=()=>{const a=document.getElementById('egfr-age').value,w=document.getElementById('egfr-w').value,c=document.getElementById('egfr-cre').value;if(a&&w&&c)document.getElementById('egfr-res').innerText=(((140-a)*w)/(72*c)).toFixed(1)};
         
-        window.switchTab = (t) => {
-            document.querySelectorAll('.segment-btn').forEach(b => {
-                b.classList.remove('active');
-                if(b.id === 'btn-'+t) b.classList.add('active');
-            });
-            ['docs', 'fav', 'tools'].forEach(x => document.getElementById('view-'+x).classList.add('hidden'));
-            document.getElementById('view-'+t).classList.remove('hidden');
-            if(t==='docs') document.getElementById('view-docs').classList.add('flex');
-            if(t==='fav') { document.getElementById('view-fav').classList.add('flex'); renderFavorites(); }
-            if(t==='tools') document.getElementById('view-tools').classList.add('flex');
-        }
-
-        // Calcs
-        window.calcBMI = () => { const w = document.getElementById('bmi-w').value, h = document.getElementById('bmi-h').value/100; if(w&&h) document.getElementById('bmi-res').innerText = (w/(h*h)).toFixed(1); };
-        window.calcMAP = () => { const s = Number(document.getElementById('map-sys').value), d = Number(document.getElementById('map-dia').value); if(s&&d) document.getElementById('map-res').innerText = ((2*d+s)/3).toFixed(0); };
-        window.calcEGFR = () => { const a = document.getElementById('egfr-age').value, w = document.getElementById('egfr-w').value, c = document.getElementById('egfr-cre').value; if(a&&w&&c) document.getElementById('egfr-res').innerText = (((140-a)*w)/(72*c)).toFixed(1); };
-
-        document.getElementById('newTodoInput').onkeypress = (e) => { if(e.key === 'Enter') window.addTodo(); };
+        const sel=document.getElementById('newDocFolder'); Object.keys(folders).forEach(k=>{const o=document.createElement('option');o.value=k;o.text=folders[k].name;sel.appendChild(o);});
+        if(localStorage.getItem('mdk_dark')==='true')document.documentElement.classList.add('dark');
+        distributeDocs(); renderFolders(); renderRecent(); renderTodos(); renderFavorites();
+        setInterval(()=>{const n=new Date();document.getElementById('clock').innerText=n.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'});document.getElementById('date-display').innerText=n.toLocaleDateString('vi-VN');},1000);
+        document.getElementById('newTodoInput').onkeypress=(e)=>{if(e.key==='Enter')window.addTodo()};
 
         // Music
-        const playlist = [{t:"Lofi Beat",u:"https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3"},{t:"Piano",u:"https://cdn.pixabay.com/download/audio/2022/03/10/audio_5b8220a28f.mp3"}];
-        let trackIdx=0; const aud=document.getElementById('bgAudio');
-        function loadTrack(i) { aud.src=playlist[i].u; document.getElementById('musicTitle').innerText=playlist[i].t; }
-        window.toggleMusic = () => { if(aud.paused) aud.play(); else aud.pause(); };
-        window.nextSong = () => { trackIdx = (trackIdx+1)%playlist.length; loadTrack(trackIdx); aud.play(); };
-        window.prevSong = () => { trackIdx = (trackIdx-1+playlist.length)%playlist.length; loadTrack(trackIdx); aud.play(); };
-        window.changeVolume = (val) => { aud.volume = val; };
-        loadTrack(0);
-
-        if(localStorage.getItem('mdk_dark') === 'true') document.documentElement.classList.add('dark');
-        distributeDocs(); renderFolders(); renderRecent(); renderTodos(); renderFavorites();
-        setInterval(() => { const n = new Date(); document.getElementById('clock').innerText = n.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}); document.getElementById('date-display').innerText = n.toLocaleDateString('vi-VN'); }, 1000);
+        const pl=[{t:"Lofi Beat",u:"https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3"},{t:"Piano",u:"https://cdn.pixabay.com/download/audio/2022/03/10/audio_5b8220a28f.mp3"}];
+        let trk=0; const aud=document.getElementById('bgAudio');
+        function ldTrk(i){aud.src=pl[i].u;document.getElementById('musicTitle').innerText=pl[i].t;}
+        window.toggleMusic=()=>{if(aud.paused)aud.play();else aud.pause();}; window.nextSong=()=>{trk=(trk+1)%pl.length;ldTrk(trk);aud.play();}; window.prevSong=()=>{trk=(trk-1+pl.length)%pl.length;ldTrk(trk);aud.play();}; window.changeVolume=(v)=>{aud.volume=v;}; ldTrk(0);
     </script>
 </body>
 </html>
