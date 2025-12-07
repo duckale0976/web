@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinhducKale - Cloud Sync v9.4 (Dynamic Admin)</title>
+    <title>MinhducKale - Cloud Sync v9.5 (Ultimate)</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -95,6 +95,18 @@
         .music-tab { font-size: 10px; font-weight: bold; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; cursor: pointer; opacity: 0.6; transition: all 0.3s; }
         .music-tab.active { background: rgba(59, 130, 246, 0.2); color: #3b82f6; opacity: 1; }
         .dark .music-tab.active { background: rgba(255, 255, 255, 0.1); color: #fff; }
+
+        /* ===== UPGRADE v9.5: Flip Card & Task List ===== */
+        .flip-card-inner { position: relative; width: 100%; height: 100%; text-align: center; transition: transform 0.6s; transform-style: preserve-3d; }
+        .flip-card.flipped .flip-card-inner { transform: rotateY(180deg); }
+        .flip-card-front, .flip-card-back { position: absolute; width: 100%; height: 100%; -webkit-backface-visibility: hidden; backface-visibility: hidden; display: flex; align-items: center; justify-content: center; border-radius: 1rem; padding: 1rem; flex-direction: column; }
+        .flip-card-front { background-color: #f1f5f9; color: #0f172a; }
+        .dark .flip-card-front { background-color: #1e293b; color: white; }
+        .flip-card-back { background-color: #3b82f6; color: white; transform: rotateY(180deg); }
+        
+        .task-item { transition: all 0.3s ease; }
+        .task-item.completed span { text-decoration: line-through; opacity: 0.6; }
+        .task-checkbox:checked + span { color: #10b981; }
     </style>
 </head>
 <body class="min-h-screen overflow-x-hidden selection:bg-blue-500 selection:text-white">
@@ -138,7 +150,7 @@
 
                 <div>
                     <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v9.4</p>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v9.5</p>
                 </div>
             </div>
             
@@ -243,6 +255,40 @@
                             </div>
                         </div>
                     </div>
+
+                    <div class="glass-card rounded-2xl overflow-hidden border-l-4 border-cyan-500">
+                        <button onclick="window.toggleTool('ivdrip')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition"><span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-droplet text-cyan-500 mr-2"></i>Tốc độ truyền dịch</span><i class="fa-solid fa-chevron-down text-slate-500"></i></button>
+                        <div id="tool-ivdrip" class="tool-content px-4">
+                            <div class="py-4 space-y-3">
+                                <div class="flex gap-2">
+                                    <input type="number" id="iv-vol" placeholder="Thể tích (ml)" class="w-1/3 ios-input p-2 rounded-xl">
+                                    <input type="number" id="iv-time" placeholder="Giờ" class="w-1/3 ios-input p-2 rounded-xl">
+                                    <select id="iv-factor" class="w-1/3 ios-input p-2 rounded-xl text-slate-700 dark:text-white"><option value="20">20 giọt/ml</option><option value="15">15 giọt/ml</option><option value="60">60 (Micro)</option></select>
+                                </div>
+                                <button onclick="window.calcIV()" class="w-full py-2 bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-xl shadow-md">Tính số giọt/phút</button>
+                                <div id="iv-res" class="hidden text-center font-bold text-cyan-700 dark:text-cyan-300 mt-2 text-lg"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="glass-card rounded-2xl overflow-hidden border-l-4 border-emerald-500">
+                        <button onclick="window.toggleTool('flashcard')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition"><span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-layer-group text-emerald-500 mr-2"></i>Flashcard Ôn thi</span><i class="fa-solid fa-chevron-down text-slate-500"></i></button>
+                        <div id="tool-flashcard" class="tool-content px-4">
+                            <div class="py-4 flex flex-col items-center gap-4">
+                                <div id="flashCardItem" class="flip-card w-full h-48 cursor-pointer" onclick="this.classList.toggle('flipped')">
+                                    <div class="flip-card-inner shadow-inner rounded-2xl border border-slate-200 dark:border-slate-700">
+                                        <div class="flip-card-front"><h4 class="font-bold text-lg mb-2 text-slate-500 uppercase">Câu hỏi</h4><p id="fc-q" class="text-xl font-extrabold px-4">Bấm 'Tải' để bắt đầu</p><p class="text-xs text-slate-400 absolute bottom-2">(Nhấn để lật)</p></div>
+                                        <div class="flip-card-back"><h4 class="font-bold text-white/80 uppercase text-xs mb-2">Đáp án</h4><p id="fc-a" class="text-lg font-bold px-4">...</p></div>
+                                    </div>
+                                </div>
+                                <div class="flex gap-2 w-full">
+                                    <button onclick="window.loadFlashcards()" class="flex-1 py-2 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700"><i class="fa-solid fa-rotate mr-1"></i> Tải bộ đề</button>
+                                    <button onclick="window.nextCard()" class="flex-1 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-white rounded-xl font-bold hover:bg-slate-300">Tiếp theo <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
 
@@ -294,6 +340,21 @@
                     <div class="flex justify-between items-center mb-2"><h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-note-sticky text-yellow-500"></i> Ghi chú Cloud</h3><span id="saveStatus" class="text-[10px] font-bold text-green-600 opacity-0 transition">Đã lưu</span></div>
                     <textarea id="quickNote" oninput="window.saveNote()" class="w-full bg-white/50 dark:bg-slate-900/50 rounded-xl p-3 ios-input text-sm leading-relaxed shadow-inner focus:ring-2 ring-yellow-400/50 h-32" placeholder="Viết ý tưởng..."></textarea>
                  </div>
+
+                <div class="glass-card p-5 rounded-3xl flex flex-col relative border border-indigo-200 dark:border-indigo-900/30">
+                    <div class="flex justify-between items-center mb-4">
+                        <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-check-double text-indigo-500"></i> Việc cần làm</h3>
+                        <span id="taskCount" class="text-[10px] bg-indigo-100 text-indigo-600 px-2 py-1 rounded-full font-bold">0</span>
+                    </div>
+                    <div class="flex gap-2 mb-3">
+                        <input type="text" id="newTaskInput" placeholder="Thêm việc mới..." class="flex-1 ios-input p-2 rounded-xl text-sm" onkeypress="if(event.key==='Enter') window.addTask()">
+                        <button onclick="window.addTask()" class="w-10 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl flex items-center justify-center"><i class="fa-solid fa-plus"></i></button>
+                    </div>
+                    <div id="taskList" class="space-y-2 max-h-48 overflow-y-auto pr-1">
+                        <p class="text-xs text-center text-slate-400 py-4">Đang tải danh sách...</p>
+                    </div>
+                </div>
+
             </div>
         </div>
     </div>
@@ -436,6 +497,107 @@
 
         function mergeAndRender() { allDocs = [...publicDocs, ...privateDocs]; distributeDocs(); renderFolders(); if(currentViewFolder) window.openFolder(currentViewFolder); document.getElementById('loadingIndicator').classList.add('hidden'); }
 
+        // ===== UPGRADE v9.5 LOGIC: IV DRIP, FLASHCARD, TODO =====
+
+        // 1. IV Drip Calculator
+        window.calcIV = () => {
+            const v = parseFloat(document.getElementById('iv-vol').value);
+            const t = parseFloat(document.getElementById('iv-time').value);
+            const f = parseFloat(document.getElementById('iv-factor').value);
+            if(!v || !t) return;
+            const res = Math.round((v * f) / (t * 60));
+            const el = document.getElementById('iv-res');
+            el.classList.remove('hidden');
+            el.innerHTML = `<span class="text-3xl">${res}</span> <span class="text-sm">giọt/phút</span>`;
+            if(res > 100) window.showToast("⚠️ Tốc độ truyền quá nhanh!", "error");
+        };
+
+        // 2. Flashcards System
+        const flashData = [
+            {q: "Tam chứng Charcot?", a: "Đau bụng, Sốt, Vàng da (Viêm đường mật)"},
+            {q: "Vị trí tiêm tĩnh mạch?", a: "Mu bàn tay, Cổ tay, Khuỷu tay"},
+            {q: "Huyết áp bình thường?", a: "Tâm thu: 90-120, Tâm trương: 60-80 mmHg"},
+            {q: "Liều Adrenalin cấp cứu sốc phản vệ?", a: "Người lớn: 1/2 ống (0.5mg) tiêm bắp"},
+            {q: "Glasgow 3 điểm?", a: "Hôn mê sâu (Mắt 1, Lời 1, Động 1)"}
+        ];
+        let currentCardIdx = 0;
+        
+        window.loadFlashcards = () => {
+            currentCardIdx = 0;
+            window.renderCard();
+            window.showToast("Đã tải 5 câu hỏi ôn tập!", "success");
+        };
+        
+        window.renderCard = () => {
+            const item = flashData[currentCardIdx];
+            document.getElementById('fc-q').innerText = item.q;
+            document.getElementById('fc-a').innerText = item.a;
+            document.getElementById('flashCardItem').classList.remove('flipped');
+        };
+        
+        window.nextCard = () => {
+            currentCardIdx = (currentCardIdx + 1) % flashData.length;
+            window.renderCard();
+        };
+
+        // 3. Todo List Logic
+        window.addTask = () => {
+            const input = document.getElementById('newTaskInput');
+            const text = input.value.trim();
+            if (!text) return;
+            if (!currentUser) return window.showToast("Đăng nhập để lưu Task!", "error");
+            
+            push(ref(db, `users/${currentUser.uid}/tasks`), {
+                text: text,
+                done: false,
+                createdAt: Date.now()
+            });
+            input.value = '';
+        };
+
+        window.toggleTask = (key, status) => {
+            set(ref(db, `users/${currentUser.uid}/tasks/${key}/done`), status);
+        };
+
+        window.deleteTask = (key) => {
+            remove(ref(db, `users/${currentUser.uid}/tasks/${key}`));
+        };
+
+        let taskListener = null;
+        function loadTasks(uid) {
+            const listEl = document.getElementById('taskList');
+            const countEl = document.getElementById('taskCount');
+            if (taskListener) off(taskListener);
+            
+            taskListener = onValue(ref(db, `users/${uid}/tasks`), (snap) => {
+                const data = snap.val();
+                listEl.innerHTML = '';
+                if (!data) {
+                    countEl.innerText = '0';
+                    listEl.innerHTML = '<p class="text-xs text-center text-slate-400 py-4">Chưa có công việc nào</p>';
+                    return;
+                }
+                
+                const tasks = Object.entries(data).sort((a,b) => b[1].createdAt - a[1].createdAt);
+                countEl.innerText = tasks.filter(t => !t[1].done).length;
+                
+                tasks.forEach(([key, task]) => {
+                    const checked = task.done ? 'checked' : '';
+                    const cls = task.done ? 'completed opacity-50' : '';
+                    const html = `
+                        <div class="task-item flex items-center gap-3 p-2 bg-white/50 dark:bg-slate-700/50 rounded-xl group ${cls}">
+                            <input type="checkbox" onchange="window.toggleTask('${key}', this.checked)" class="task-checkbox w-5 h-5 accent-indigo-600 rounded cursor-pointer" ${checked}>
+                            <span class="flex-1 text-sm font-semibold text-slate-800 dark:text-slate-200 truncate">${escapeHTML(task.text)}</span>
+                            <button onclick="window.deleteTask('${key}')" class="text-slate-400 hover:text-red-500 opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
+                    `;
+                    listEl.insertAdjacentHTML('beforeend', html);
+                });
+            });
+        }
+
+        // ===== END UPGRADE LOGIC =====
+
         onAuthStateChanged(auth, user => {
             currentUser = user;
             const badge = document.getElementById("roleBadge");
@@ -454,6 +616,10 @@
                 document.getElementById('userProfile').onclick = () => document.getElementById('logoutPanel').classList.toggle('hidden');
                 addDocBtn.classList.remove("hidden");
                 loadDocsFromCloud(user.uid);
+                
+                // Load Tasks for logged in user (v9.5)
+                loadTasks(user.uid);
+                
                 onValue(ref(db, 'users/' + user.uid + '/note'), (snap) => document.getElementById('quickNote').value = snap.val() || "");
 
                 onValue(ref(db, "users/" + user.uid + "/role"), snap => {
@@ -496,6 +662,10 @@
                 badge.className = "px-3 py-1 rounded-full text-[10px] font-bold bg-gray-500 text-white w-fit";
                 window.isAdmin = false;
                 list.innerHTML = "";
+                // Clear tasks view for guest
+                document.getElementById('taskList').innerHTML = '<p class="text-xs text-center text-slate-400 py-4">Đăng nhập để xem danh sách</p>';
+                document.getElementById('taskCount').innerText = '0';
+                
                 allDocs = []; distributeDocs(); renderFolders();
             }
         });
@@ -716,6 +886,18 @@
         window.toggleTool = function(id) { document.getElementById('tool-'+id).classList.toggle('open'); }
         setInterval(()=>{ const d = new Date(); document.getElementById('clock').innerText = d.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}); document.getElementById('date-display').innerText = d.toLocaleDateString('vi-VN'); },1000);
         
+        // Helper function added to prevent crash since it was missing in original snippet
+        function populateFolderSelect() {
+            const select = document.getElementById('newDocFolder');
+            select.innerHTML = '';
+            Object.keys(folders).forEach(key => {
+                const option = document.createElement('option');
+                option.value = key;
+                option.text = folders[key].name;
+                select.appendChild(option);
+            });
+        }
+
         populateFolderSelect(); distributeDocs(); renderFolders();
         if(localStorage.getItem('mdk_dark') === 'true') document.documentElement.classList.add('dark');
     </script>
