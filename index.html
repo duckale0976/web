@@ -24,8 +24,16 @@
                         'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite'
                     },
                     keyframes: {
-                        blob: { '0%': { transform: 'translate(0,0) scale(1)' }, '33%': { transform: 'translate(30px,-50px) scale(1.1)' }, '66%': { transform: 'translate(-20px,20px) scale(0.9)' }, '100%': { transform: 'translate(0,0) scale(1)' } },
-                        slideIn: { 'from': { transform: 'translateX(100%)', opacity: '0' }, 'to': { transform: 'translateX(0)', opacity: '1' } },
+                        blob: { 
+                            '0%': { transform: 'translate(0,0) scale(1)' }, 
+                            '33%': { transform: 'translate(30px,-50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px,20px) scale(0.9)' }, 
+                            '100%': { transform: 'translate(0,0) scale(1)' } 
+                        },
+                        slideIn: { 
+                            'from': { transform: 'translateX(100%)', opacity: '0' }, 
+                            'to': { transform: 'translateX(0)', opacity: '1' } 
+                        },
                         bar: { '0%, 100%': { height: '10%' }, '50%': { height: '100%' } }
                     }
                 }
@@ -37,6 +45,8 @@
         /* BASE STYLES */
         body { transition: background-color 0.5s, color 0.5s; background-color: #e0f2fe; color: #1e293b; }
         .dark body { background-color: #0f172a; color: #f1f5f9; }
+
+        /* Background Blobs */
         .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.8; z-index: -1; animation: blob 15s infinite alternate; pointer-events: none; }
         .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #93c5fd; }
         .blob-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #6ee7b7; }
@@ -45,18 +55,23 @@
         .dark .blob-2 { background: #065f46; opacity: 0.4; }
         .dark .blob-3 { background: #5b21b6; opacity: 0.4; }
         
+        /* Glassmorphism */
         .glass-panel { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); }
         .dark .glass-panel { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); }
+
         .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); transition: all 0.3s ease; }
         .dark .glass-card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); }
         .glass-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         
+        /* Inputs */
         .ios-input { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(203, 213, 225, 0.8); color: #0f172a; font-weight: 600; }
         .dark .ios-input { background: rgba(0, 0, 0, 0.5); border-color: rgba(255,255,255,0.2); color: white; }
         .ios-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3); border-color: #3b82f6; }
         
+        /* UI Components */
         .segmented-control { background: rgba(200, 200, 200, 0.4); backdrop-filter: blur(10px); padding: 4px; border-radius: 12px; display: inline-flex; }
         .dark .segmented-control { background: rgba(0,0,0,0.4); }
+
         .segment-btn { padding: 6px 24px; border-radius: 8px; font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; color: #475569; }
         .dark .segment-btn { color: #94a3b8; }
         .segment-btn.active { background: white; color: #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
@@ -194,15 +209,16 @@
                         </button>
                         <button id="addDocBtn" onclick="window.openAddDocModal()" class="hidden w-14 rounded-2xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-700 text-white flex items-center justify-center shadow-lg active:scale-95 transition"><i class="fa-solid fa-plus text-xl"></i></button>
                     </div>
+
                     <div id="breadcrumb" class="hidden flex items-center gap-2 text-sm font-extrabold text-slate-700 dark:text-slate-200 bg-white/30 w-fit px-3 py-1 rounded-lg">
                         <button onclick="window.renderFolders()" class="hover:text-blue-600"><i class="fa-solid fa-house"></i> Home</button><span class="text-slate-400">/</span><span id="currentFolderTitle" class="text-blue-700 dark:text-blue-400">Folder Name</span>
                     </div>
+
                     <div id="loadingIndicator" class="hidden text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-slate-500 font-bold">Đang đồng bộ dữ liệu...</p></div>
                     <div id="docsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </div>
 
                 <div id="view-tools" class="hidden flex-col gap-6 fade-in">
-                    
                     <div class="glass-card rounded-2xl overflow-hidden border-l-4 border-blue-600">
                         <button onclick="window.toggleTool('quiz')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition"><span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-graduation-cap text-blue-600 mr-2"></i>Trắc nghiệm Y khoa (Quiz)</span><i class="fa-solid fa-chevron-down text-slate-500"></i></button>
                         <div id="tool-quiz" class="tool-content px-4">
@@ -233,24 +249,17 @@
                             <div class="py-4 flex flex-col items-center gap-4">
                                 <div id="flashCardItem" class="flip-card w-full h-48 cursor-pointer" onclick="this.classList.toggle('flipped')">
                                     <div class="flip-card-inner shadow-inner rounded-2xl border border-slate-200 dark:border-slate-700">
-                                        <div class="flip-card-front bg-slate-50 dark:bg-slate-800">
-                                            <h4 class="font-bold text-lg mb-2 text-slate-500 uppercase">Câu hỏi</h4>
-                                            <p id="fc-q" class="text-xl font-extrabold px-4 text-slate-800 dark:text-white">Bấm 'Tải' để bắt đầu</p>
-                                            <p class="text-xs text-slate-400 absolute bottom-2">(Nhấn để lật)</p>
-                                        </div>
-                                        <div class="flip-card-back bg-emerald-600 text-white">
-                                            <h4 class="font-bold text-white/80 uppercase text-xs mb-2">Đáp án</h4>
-                                            <p id="fc-a" class="text-lg font-bold px-4">...</p>
-                                        </div>
+                                        <div class="flip-card-front"><h4 class="font-bold text-lg mb-2 text-slate-500 uppercase">Câu hỏi</h4><p id="fc-q" class="text-xl font-extrabold px-4">Bấm 'Tải' để bắt đầu</p><p class="text-xs text-slate-400 absolute bottom-2">(Nhấn để lật)</p></div>
+                                        <div class="flip-card-back"><h4 class="font-bold text-white/80 uppercase text-xs mb-2">Đáp án</h4><p id="fc-a" class="text-lg font-bold px-4">...</p></div>
                                     </div>
                                 </div>
                                 <div class="flex gap-2 w-full">
-                                    <button onclick="document.getElementById('addFlashcardModal').classList.remove('hidden')" class="w-14 py-2 bg-slate-200 dark:bg-slate-700 text-emerald-600 font-bold rounded-xl hover:bg-slate-300 hover:scale-105 transition"><i class="fa-solid fa-plus"></i></button>
-                                    <button onclick="window.loadFlashcards()" class="flex-1 py-2 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700 shadow-lg"><i class="fa-solid fa-rotate mr-1"></i> Tải bộ đề</button>
-                                    <button onclick="window.nextCard()" class="flex-1 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-white rounded-xl font-bold hover:bg-slate-300">Tiếp <i class="fa-solid fa-arrow-right ml-1"></i></button>
+                                    <button onclick="window.loadFlashcards()" class="flex-1 py-2 bg-emerald-600 text-white rounded-xl font-bold hover:bg-emerald-700"><i class="fa-solid fa-rotate mr-1"></i> Tải bộ đề</button>
+                                    <button onclick="window.nextCard()" class="flex-1 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-white rounded-xl font-bold hover:bg-slate-300">Tiếp theo <i class="fa-solid fa-arrow-right ml-1"></i></button>
                                 </div>
                             </div>
                         </div>
+                    </div>
 
                     <div class="glass-card rounded-2xl overflow-hidden border-l-4 border-cyan-500">
                         <button onclick="window.toggleTool('ivdrip')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition"><span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-droplet text-cyan-500 mr-2"></i>Tốc độ truyền dịch</span><i class="fa-solid fa-chevron-down text-slate-500"></i></button>
@@ -339,6 +348,7 @@
             </div>
 
             <div class="lg:col-span-4 flex flex-col gap-6">
+
                 <div class="glass-panel p-5 rounded-3xl shadow-lg relative overflow-hidden group border border-blue-200 dark:border-blue-900/30">
                     <div class="absolute top-2 right-2 cursor-pointer" onclick="window.togglePlaylist()"><i class="fa-solid fa-list-ul text-slate-500 hover:text-blue-600 p-2"></i></div>
                     <div class="flex items-center justify-between mb-2">
@@ -379,7 +389,7 @@
 
                 <div class="glass-card p-5 rounded-3xl relative border border-red-200 dark:border-red-900/30">
                      <div class="flex justify-between items-center mb-4"><h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-hourglass-half text-red-500"></i> Pomodoro</h3><div class="flex gap-1"><button onclick="window.setTimer(25)" class="text-[10px] bg-red-100 text-red-600 px-2 py-1 rounded font-bold hover:bg-red-200">25'</button><button onclick="window.setTimer(5)" class="text-[10px] bg-green-100 text-green-600 px-2 py-1 rounded font-bold hover:bg-green-200">5'</button></div></div>
-                    <div class="flex flex-col items-center"><div class="text-5xl font-mono font-black text-slate-800 dark:text-white mb-4 tracking-widest" id="timerDisplay">25:00</div><button id="timerBtn" onclick="window.toggleTimer()" class="w-full py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold hover:opacity-90 transition">Bắt đầu tập trung</button></div>
+                     <div class="flex flex-col items-center"><div class="text-5xl font-mono font-black text-slate-800 dark:text-white mb-4 tracking-widest" id="timerDisplay">25:00</div><button id="timerBtn" onclick="window.toggleTimer()" class="w-full py-2 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold hover:opacity-90 transition">Bắt đầu tập trung</button></div>
                 </div>
 
                 <div class="glass-card p-5 rounded-3xl flex flex-col relative group border border-yellow-200 dark:border-yellow-900/30">
@@ -400,7 +410,6 @@
                         <p class="text-xs text-center text-slate-400 py-4">Đang tải danh sách...</p>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>
@@ -417,19 +426,7 @@
             </div>
         </div>
     </div>
-<div id="addFlashcardModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-md">
-        <div class="bg-white/95 dark:bg-slate-800/95 w-[90%] md:w-[400px] p-6 rounded-3xl shadow-2xl animate-float border-2 border-emerald-500">
-            <h3 class="text-lg font-extrabold text-emerald-600 dark:text-emerald-400 mb-4">Thêm Flashcard Mới</h3>
-            <div class="space-y-4">
-                <div><label class="text-xs font-bold text-slate-500 uppercase">Câu hỏi (Mặt trước)</label><textarea id="newFcQ" class="w-full ios-input p-3 rounded-xl mt-1 h-20 bg-slate-50 dark:bg-slate-900 dark:text-white" placeholder="Nhập câu hỏi..."></textarea></div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase">Đáp án (Mặt sau)</label><textarea id="newFcA" class="w-full ios-input p-3 rounded-xl mt-1 h-20 bg-slate-50 dark:bg-slate-900 dark:text-white" placeholder="Nhập đáp án..."></textarea></div>
-                <div class="flex gap-3 pt-2">
-                    <button onclick="document.getElementById('addFlashcardModal').classList.add('hidden')" class="flex-1 py-3 rounded-xl bg-slate-200 text-slate-600 font-bold hover:bg-slate-300">Hủy</button>
-                    <button onclick="window.saveNewFlashcard()" class="flex-1 py-3 rounded-xl bg-emerald-600 text-white font-bold hover:bg-emerald-700 shadow-lg">Lưu ngay</button>
-                </div>
-            </div>
-        </div>
-    </div>
+
     <div id="aiModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/70 backdrop-blur-md">
         <div class="bg-white/95 dark:bg-slate-800/95 w-[90%] md:w-[500px] p-6 rounded-3xl shadow-2xl animate-slideIn border-2 border-indigo-500">
             <div class="flex justify-between items-center mb-4">
@@ -462,6 +459,7 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, off, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+        // FIREBASE CONFIG (Sử dụng config của bạn)
         const firebaseConfig = {
             apiKey: "AIzaSyAcfs8LFgPeAkGyaSkmJeECoRBEwtfRv8E",
             authDomain: "minhduckale1.firebaseapp.com",
@@ -478,119 +476,6 @@
         const provider = new GoogleAuthProvider();
 
         let currentUser = null;
-        // --- 1. LOGIC FLASHCARD (REALTIME DATABASE) ---
-        let realFlashcards = [];
-        let currentCardIdx = 0;
-
-        window.saveNewFlashcard = () => {
-            if(!currentUser) return window.showToast("Vui lòng đăng nhập!", "error");
-            const q = document.getElementById('newFcQ').value;
-            const a = document.getElementById('newFcA').value;
-            if(!q || !a) return window.showToast("Nhập đủ thông tin!", "error");
-
-            push(ref(db, `users/${currentUser.uid}/flashcards`), { q, a, createdAt: Date.now() })
-            .then(() => {
-                document.getElementById('addFlashcardModal').classList.add('hidden');
-                document.getElementById('newFcQ').value = ''; 
-                document.getElementById('newFcA').value = '';
-                window.showToast("✅ Đã lưu Flashcard!", "success");
-            });
-        };
-
-        window.loadFlashcards = () => {
-            if(!currentUser) return window.showToast("Cần đăng nhập để tải!", "error");
-            window.showToast("⏳ Đang tải bộ đề...", "info");
-            
-            get(ref(db, `users/${currentUser.uid}/flashcards`)).then((snapshot) => {
-                if (snapshot.exists()) {
-                    const data = snapshot.val();
-                    realFlashcards = Object.values(data).reverse(); 
-                    currentCardIdx = 0;
-                    window.renderCard();
-                    window.showToast(`✅ Đã tải ${realFlashcards.length} câu hỏi!`, "success");
-                } else {
-                    window.showToast("Bạn chưa tạo Flashcard nào!", "info");
-                    realFlashcards = [{q: "Bấm nút dấu + để tạo câu hỏi mới", a: "Đáp án sẽ hiện ở đây"}];
-                    window.renderCard();
-                }
-            });
-        };
-
-        window.renderCard = () => {
-            if(realFlashcards.length === 0) return;
-            const item = realFlashcards[currentCardIdx];
-            document.getElementById('fc-q').innerText = item.q;
-            document.getElementById('fc-a').innerText = item.a;
-            document.getElementById('flashCardItem').classList.remove('flipped');
-        };
-
-        window.nextCard = () => {
-            if(realFlashcards.length === 0) return;
-            currentCardIdx = (currentCardIdx + 1) % realFlashcards.length;
-            window.renderCard();
-        };
-
-        // --- 2. LOGIC AI PHÂN TÍCH (SMART KEYWORDS) ---
-        const medicalKeywords = {
-            "Tim mạch": ["tim", "mạch", "huyết áp", "ecg", "nhồi máu", "suy tim", "rung nhĩ"],
-            "Hô hấp": ["phổi", "hen", "copd", "hô hấp", "phế quản", "lao"],
-            "Tiêu hóa": ["dạ dày", "ruột", "gan", "mật", "tụy", "tiêu hóa", "xuất huyết"],
-            "Thần kinh": ["não", "đột quỵ", "thần kinh", "động kinh", "parkinson"],
-            "Nhi khoa": ["nhi", "trẻ", "sốt xuất huyết", "tay chân miệng", "sởi"],
-            "Sản khoa": ["thai", "sản", "đẻ", "chuyển dạ", "tử cung"]
-        };
-
-        window.openAISuggestions = () => { // Ghi đè hàm cũ
-            if(!currentUser) return window.showToast("Cần đăng nhập để AI phân tích!", "error");
-            document.getElementById('aiModal').classList.remove('hidden');
-            const content = document.getElementById('aiContent');
-            content.innerHTML = '<div class="text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-sm text-slate-500">AI đang quét kho dữ liệu của bạn...</p></div>';
-
-            setTimeout(() => {
-                const userDocs = privateDocs; 
-                const docTitles = userDocs.map(d => d.title.toLowerCase());
-                let analysisHTML = '';
-                let missingTopics = [];
-                let totalScore = 0;
-                let domainScores = {};
-
-                Object.keys(medicalKeywords).forEach(domain => {
-                    const keywords = medicalKeywords[domain];
-                    const count = docTitles.filter(t => keywords.some(k => t.includes(k))).length;
-                    domainScores[domain] = count;
-                    totalScore += count;
-                    if(count === 0) missingTopics.push(domain);
-                });
-
-                if(userDocs.length === 0) {
-                    analysisHTML += `<div class="bg-red-50 p-3 rounded-xl border border-red-200 mb-3"><p class="text-red-700 text-sm font-bold">Kho tài liệu trống!</p></div>`;
-                } else {
-                    analysisHTML += `<h4 class="font-bold text-slate-700 dark:text-white mb-2 text-sm uppercase">Phân bố kiến thức:</h4><div class="space-y-2 mb-4">`;
-                    Object.keys(domainScores).forEach(domain => {
-                        const percent = totalScore > 0 ? Math.round((domainScores[domain] / totalScore) * 100) : 0;
-                        const colorClass = percent > 0 ? 'bg-indigo-500' : 'bg-slate-200 dark:bg-slate-600';
-                        analysisHTML += `<div class="flex items-center gap-2 text-xs"><span class="w-16 font-bold text-slate-500 dark:text-slate-300">${domain}</span><div class="flex-1 h-2 rounded-full bg-slate-100 dark:bg-slate-700 overflow-hidden"><div class="${colorClass} h-full" style="width: ${percent}%"></div></div><span class="w-8 text-right font-bold text-slate-700 dark:text-white">${domainScores[domain]}</span></div>`;
-                    });
-                    analysisHTML += `</div>`;
-
-                    if(missingTopics.length > 0) {
-                        analysisHTML += `<div class="bg-orange-50 dark:bg-slate-700/50 p-3 rounded-xl border border-orange-200 dark:border-orange-900/50 mb-3"><p class="text-orange-800 dark:text-orange-300 text-sm font-bold">💡 Gợi ý bổ sung:</p><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Bạn đang thiếu tài liệu về: <b>${missingTopics.join(", ")}</b>.</p></div>`;
-                    } else {
-                        analysisHTML += `<div class="bg-green-50 dark:bg-green-900/20 p-3 rounded-xl border border-green-200 mb-3"><p class="text-green-700 dark:text-green-400 text-sm font-bold">✅ Tuyệt vời!</p><p class="text-xs text-slate-600 dark:text-slate-300 mt-1">Kiến thức của bạn phân bố khá đồng đều.</p></div>`;
-                    }
-                }
-                content.innerHTML = analysisHTML;
-            }, 1000); 
-        };
-
-        // --- 3. LOGIC NHẠC CUSTOM ---
-        window.addCustomSong = () => {
-            const url = document.getElementById('customMusicUrl').value;
-            if(!url) return window.showToast("Chưa nhập link!", "error");
-            playlist.push({t: "Bài hát của tôi", a: "Custom", u: url});
-            window.showToast("🎵 Đã thêm bài hát!", "success");
-            document.getElementById('customMusicUrl').value = '';
-        }
         window.isAdmin = false;
         let allDocs = [];
         let publicDocs = [];
@@ -598,13 +483,33 @@
         let publicListener = null;
         let privateListener = null;
 
+        // --- UTILS ---
         function escapeHTML(str) { if (!str) return ''; return str.replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])); }
-        window.showToast = function(message, type = 'info') { const container = document.getElementById('toast-container'); const toast = document.createElement('div'); toast.className = `toast ${type}`; toast.innerHTML = `<div class="toast-content">${message}</div>`; container.appendChild(toast); setTimeout(() => { toast.remove(); }, 3500); }
-        window.toggleNotify = () => document.getElementById("notifyPanel").classList.toggle("hidden");
-        window.addLog = function(text) { if (!currentUser) return; const logRef = push(ref(db, "users/" + currentUser.uid + "/logs")); set(logRef, { text, time: new Date().toLocaleString("vi-VN") }); }
 
-        window.openJsonImport = () => { if (!window.isAdmin) return alert("Chỉ ADMIN được phép!"); document.getElementById("jsonImportModal").classList.remove("hidden"); };
+        window.showToast = function(message, type = 'info') { 
+            const container = document.getElementById('toast-container'); 
+            const toast = document.createElement('div'); 
+            toast.className = `toast ${type}`; 
+            toast.innerHTML = `<div class="toast-content">${message}</div>`; 
+            container.appendChild(toast); 
+            setTimeout(() => { toast.remove(); }, 3500); 
+        }
+
+        window.toggleNotify = () => document.getElementById("notifyPanel").classList.toggle("hidden");
+
+        window.addLog = function(text) { 
+            if (!currentUser) return; 
+            const logRef = push(ref(db, "users/" + currentUser.uid + "/logs")); 
+            set(logRef, { text, time: new Date().toLocaleString("vi-VN") }); 
+        }
+
+        // --- ADMIN & IMPORT ---
+        window.openJsonImport = () => { 
+            if (!window.isAdmin) return alert("Chỉ ADMIN được phép!"); 
+            document.getElementById("jsonImportModal").classList.remove("hidden"); 
+        };
         window.closeJsonImport = () => document.getElementById("jsonImportModal").classList.add("hidden");
+        
         window.importJsonDocs = () => {
             if (!window.isAdmin) return;
             try {
@@ -612,34 +517,44 @@
                 const data = JSON.parse(raw);
                 if(!Array.isArray(data)) throw new Error("JSON phải là mảng []");
                 let count = 0;
-                data.forEach(doc => { push(ref(db, "library_public"), { title: doc.title || "Không tên", url: doc.url, folder: doc.folder || "khac", createdAt: Date.now(), addedBy: currentUser.email }); count++; });
+                data.forEach(doc => { 
+                    push(ref(db, "library_public"), { 
+                        title: doc.title || "Không tên", 
+                        url: doc.url, 
+                        folder: doc.folder || "khac", 
+                        createdAt: Date.now(), 
+                        addedBy: currentUser.email 
+                    }); 
+                    count++; 
+                });
                 window.addLog("Import JSON: " + count + " file");
                 window.showToast(`✅ Import thành công ${count} file!`, 'success');
                 window.closeJsonImport();
             } catch (e) { alert("❌ JSON lỗi: " + e.message); }
         };
 
-        window.switchMusicTab = (tab) => {
-            document.querySelectorAll('.music-tab').forEach(t => t.classList.remove('active'));
-            document.getElementById(`tab-music-${tab}`).classList.add('active');
-            if(tab === 'local') { document.getElementById('music-view-local').classList.remove('hidden'); document.getElementById('music-view-online').classList.add('hidden'); } 
-            else { document.getElementById('music-view-local').classList.add('hidden'); document.getElementById('music-view-online').classList.remove('hidden'); if(!audio.paused) window.toggleMusic(); }
-        }
-
-        window.setRole = function(role) { if (!currentUser) return; set(ref(db, "users/" + currentUser.uid + "/role"), role).then(() => window.showToast("Đã set quyền: " + role, "success")); }
-        
-        // AUTH
+        // --- AUTH ---
         window.loginGoogle = () => signInWithPopup(auth, provider).then(() => window.addLog("Đăng nhập hệ thống")).catch(e => window.showToast(e.message, 'error'));
+        
         window.switchAccount = async () => { await signOut(auth); window.loginGoogle(); };
-        window.logoutFirebase = async () => { if (currentUser) { push(ref(db, "users/" + currentUser.uid + "/logs"), { text: "Đăng xuất", time: new Date().toLocaleString("vi-VN") }); } await signOut(auth); window.showToast("Đã đăng xuất thành công", "info"); publicDocs=[]; privateDocs=[]; window.isAdmin = false; document.getElementById('logoutPanel').classList.add('hidden'); };
 
-        // ADMIN
+        window.logoutFirebase = async () => { 
+            if (currentUser) { push(ref(db, "users/" + currentUser.uid + "/logs"), { text: "Đăng xuất", time: new Date().toLocaleString("vi-VN") }); } 
+            await signOut(auth); 
+            window.showToast("Đã đăng xuất thành công", "info"); 
+            publicDocs=[]; privateDocs=[]; window.isAdmin = false; 
+            document.getElementById('logoutPanel').classList.add('hidden'); 
+        };
+
         window.changeAdminCode = () => {
             const newCode = document.getElementById('newAdminCode').value;
             if (!newCode || newCode.length < 4) return alert("Mã phải có ít nhất 4 ký tự!");
             if(!confirm("Bạn có chắc chắn muốn đổi Mã kích hoạt không?")) return;
-            set(ref(db, 'admin_settings/code'), newCode).then(() => { alert("✅ Đổi mã thành công!"); document.getElementById('newAdminCode').value = ''; window.addLog("Đã đổi mã kích hoạt Admin"); }).catch(e => alert("❌ Lỗi: Bạn không phải Admin hoặc chưa đăng nhập!"));
+            set(ref(db, 'admin_settings/code'), newCode).then(() => { 
+                alert("✅ Đổi mã thành công!"); document.getElementById('newAdminCode').value = ''; window.addLog("Đã đổi mã kích hoạt Admin"); 
+            }).catch(e => alert("❌ Lỗi: Bạn không phải Admin hoặc chưa đăng nhập!"));
         };
+
         window.claimAdmin = () => {
             if (!currentUser) return window.showToast("Vui lòng đăng nhập trước!", "error");
             const inputPass = prompt("🔐 Nhập mã kích hoạt (Mặc định: 123456):");
@@ -647,26 +562,44 @@
             get(ref(db, 'admin_settings/code')).then((snapshot) => {
                 const cloudPass = snapshot.val() || "123456"; 
                 if (inputPass === cloudPass) {
-                    set(ref(db, "users/" + currentUser.uid + "/role"), "admin").then(() => { alert("🎉 Kích hoạt quyền ADMIN thành công!"); window.location.reload(); });
+                    set(ref(db, "users/" + currentUser.uid + "/role"), "admin").then(() => { 
+                        alert("🎉 Kích hoạt quyền ADMIN thành công!"); window.location.reload(); 
+                    });
                 } else {
                     alert("❌ Sai mã kích hoạt!"); window.addLog("Thử kích hoạt Admin thất bại");
                 }
             }).catch(e => alert("Lỗi kết nối: " + e.message));
         };
 
+        // --- DOCS LOGIC ---
         function loadDocsFromCloud(uid) {
             document.getElementById('loadingIndicator').classList.remove('hidden');
             if (publicListener) off(publicListener);
-            publicListener = onValue(ref(db, 'library_public'), (snap) => { const data = snap.val(); publicDocs = []; if (data) Object.keys(data).forEach(k => publicDocs.push({ ...data[k], id: k, source: 'public' })); mergeAndRender(); });
+            publicListener = onValue(ref(db, 'library_public'), (snap) => { 
+                const data = snap.val(); 
+                publicDocs = []; 
+                if (data) Object.keys(data).forEach(k => publicDocs.push({ ...data[k], id: k, source: 'public' })); 
+                mergeAndRender(); 
+            });
+
             if (privateListener) off(privateListener);
-            privateListener = onValue(ref(db, 'users/' + uid + '/docs'), (snap) => { const data = snap.val(); privateDocs = []; if (data) Object.keys(data).forEach(k => privateDocs.push({ ...data[k], id: k, source: 'private' })); mergeAndRender(); });
+            privateListener = onValue(ref(db, 'users/' + uid + '/docs'), (snap) => { 
+                const data = snap.val(); 
+                privateDocs = []; 
+                if (data) Object.keys(data).forEach(k => privateDocs.push({ ...data[k], id: k, source: 'private' })); 
+                mergeAndRender(); 
+            });
         }
 
-        function mergeAndRender() { allDocs = [...publicDocs, ...privateDocs]; distributeDocs(); renderFolders(); if(currentViewFolder) window.openFolder(currentViewFolder); document.getElementById('loadingIndicator').classList.add('hidden'); }
+        function mergeAndRender() { 
+            allDocs = [...publicDocs, ...privateDocs]; 
+            distributeDocs(); 
+            renderFolders(); 
+            if(currentViewFolder) window.openFolder(currentViewFolder); 
+            document.getElementById('loadingIndicator').classList.add('hidden'); 
+        }
 
-        // ================= UPGRADE v10.0 FEATURES =================
-
-        // 1. BACKUP & RESTORE
+        // --- BACKUP & RESTORE ---
         window.backupData = async () => {
             if(!currentUser) return window.showToast("Cần đăng nhập!", "error");
             try {
@@ -703,10 +636,10 @@
                 } catch(err) { window.showToast("File lỗi: " + err.message, "error"); }
             };
             reader.readAsText(file);
-            input.value = ''; // reset
+            input.value = ''; 
         }
 
-        // 2. AI SUGGESTIONS (Simulated)
+        // --- AI (Simulated) ---
         window.openAISuggestions = () => {
             if(!currentUser) return window.showToast("Cần đăng nhập để AI phân tích!", "error");
             document.getElementById('aiModal').classList.remove('hidden');
@@ -714,12 +647,10 @@
             content.innerHTML = '<div class="text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-sm text-slate-500">AI đang quét kho tài liệu của bạn...</p></div>';
 
             setTimeout(() => {
-                // Analysis Logic
                 const userDocs = privateDocs;
                 const docTitles = userDocs.map(d => d.title.toLowerCase());
                 let suggestions = [];
 
-                // Basic Rule-based Analysis
                 if(userDocs.length < 5) suggestions.push({type: "info", text: "Kho tài liệu của bạn còn khá ít. Hãy thêm các phác đồ điều trị cơ bản."});
                 
                 const keywords = ["tim mạch", "tiêu hóa", "hô hấp", "nhi", "sản", "cấp cứu", "kháng sinh"];
@@ -731,7 +662,6 @@
                     suggestions.push({type: "good", text: "Tuyệt vời! Bạn có bộ tài liệu khá bao quát các chuyên khoa chính."});
                 }
 
-                // Public Doc Recommendation
                 const recommended = publicDocs.filter(p => !docTitles.includes(p.title.toLowerCase())).slice(0, 3);
                 
                 let html = `<div class="space-y-4">`;
@@ -752,7 +682,7 @@
             }, 1500);
         }
 
-        // 3. QUIZ SYSTEM
+        // --- QUIZ & FLASHCARD ---
         const quizBank = [
             {q: "Nguyên nhân hàng đầu gây xuất huyết tiêu hóa trên?", options: ["Loét dạ dày tá tràng", "Vỡ giãn tĩnh mạch thực quản", "Ung thư dạ dày", "Hội chứng Mallory-Weiss"], ans: 0, explain: "Loét dạ dày tá tràng chiếm khoảng 50% các trường hợp XHTH trên."},
             {q: "Tam chứng Charcot trong viêm đường mật?", options: ["Đau bụng, Sốt, Vàng da", "Sốt, Đau bụng, Shock", "Vàng da, Gan to, Túi mật to", "Đau hạ sườn phải, Sốt, Lách to"], ans: 0, explain: "Tam chứng kinh điển: Đau quặn gan -> Sốt rét run -> Vàng da."},
@@ -765,9 +695,8 @@
         let qScore = 0;
 
         window.startQuiz = () => {
-            currentQuiz = [...quizBank].sort(() => 0.5 - Math.random()); // Shuffle
-            qIndex = 0;
-            qScore = 0;
+            currentQuiz = [...quizBank].sort(() => 0.5 - Math.random());
+            qIndex = 0; qScore = 0;
             document.getElementById('quiz-start').classList.add('hidden');
             document.getElementById('quiz-game').classList.remove('hidden');
             document.getElementById('q-total').innerText = currentQuiz.length;
@@ -789,20 +718,16 @@
         }
 
         window.checkAnswer = (choice, el) => {
-            // Disable all options
             const opts = document.querySelectorAll('.quiz-option');
             opts.forEach(o => o.style.pointerEvents = 'none');
-            
             const q = currentQuiz[qIndex];
             if(choice === q.ans) {
-                el.classList.add('correct');
-                qScore++;
+                el.classList.add('correct'); qScore++;
                 document.getElementById('q-score').innerText = `Điểm: ${qScore}`;
             } else {
                 el.classList.add('wrong');
                 opts[q.ans].classList.add('correct');
             }
-
             const fb = document.getElementById('q-feedback');
             fb.innerHTML = `<b>Giải thích:</b> ${q.explain}`;
             fb.classList.remove('hidden');
@@ -811,22 +736,25 @@
 
         window.nextQuestion = () => {
             qIndex++;
-            if(qIndex < currentQuiz.length) {
-                loadQuestion();
-            } else {
-                // End Game
+            if(qIndex < currentQuiz.length) { loadQuestion(); } 
+            else {
                 document.getElementById('quiz-game').innerHTML = `
                     <div class="text-center py-6">
                         <div class="text-6xl mb-4">🏆</div>
                         <h3 class="text-xl font-bold text-slate-800 dark:text-white">Hoàn thành!</h3>
                         <p class="text-slate-600 dark:text-slate-300 mb-4">Bạn trả lời đúng <span class="text-blue-600 font-bold text-xl">${qScore}/${currentQuiz.length}</span> câu.</p>
                         <button onclick="window.startQuiz()" class="px-6 py-2 bg-blue-600 text-white rounded-xl font-bold hover:bg-blue-700">Thi lại</button>
-                    </div>
-                `;
+                    </div>`;
             }
         }
 
-        // ================= STANDARD FEATURES =================
+        const flashData = [{q: "Tam chứng Charcot?", a: "Đau bụng, Sốt, Vàng da"}, {q: "Vị trí tiêm tĩnh mạch?", a: "Mu bàn tay, Cổ tay, Khuỷu tay"}, {q: "HA bình thường?", a: "120/80 mmHg"}];
+        let currentCardIdx = 0;
+        window.loadFlashcards = () => { currentCardIdx = 0; window.renderCard(); window.showToast("Đã tải Flashcard!", "success"); };
+        window.renderCard = () => { const item = flashData[currentCardIdx]; document.getElementById('fc-q').innerText = item.q; document.getElementById('fc-a').innerText = item.a; document.getElementById('flashCardItem').classList.remove('flipped'); };
+        window.nextCard = () => { currentCardIdx = (currentCardIdx + 1) % flashData.length; window.renderCard(); };
+
+        // --- MEDICAL TOOLS ---
         window.calcIV = () => {
             const v = parseFloat(document.getElementById('iv-vol').value);
             const t = parseFloat(document.getElementById('iv-time').value);
@@ -837,13 +765,13 @@
             el.classList.remove('hidden');
             el.innerHTML = `<span class="text-3xl">${res}</span> <span class="text-sm">giọt/phút</span>`;
         };
+        window.calcBMI = () => { const w=parseFloat(document.getElementById('bmi-w').value), h=parseFloat(document.getElementById('bmi-h').value)/100; if(!w||!h)return; const bmi=(w/(h*h)).toFixed(1); document.getElementById('bmi-res').classList.remove('hidden'); document.getElementById('bmi-res').innerText=`BMI = ${bmi}`; }
+        window.calcMAP = () => { const s=parseFloat(document.getElementById('map-sys').value), d=parseFloat(document.getElementById('map-dia').value); if(!s||!d)return; const m=((s+2*d)/3).toFixed(1); document.getElementById('map-res').classList.remove('hidden'); document.getElementById('map-res').innerText=`MAP = ${m} mmHg`; }
+        window.calcEGFR = () => { const a=parseFloat(document.getElementById('egfr-age').value), w=parseFloat(document.getElementById('egfr-w').value), c=parseFloat(document.getElementById('egfr-cre').value), s=parseFloat(document.getElementById('egfr-sex').value); if(!a||!w||!c)return; const e=((140-a)*w*s/(72*c)).toFixed(1); document.getElementById('egfr-res').classList.remove('hidden'); document.getElementById('egfr-res').innerText=`eGFR = ${e}`; }
+        window.convertGlu = (t) => { const mg=document.getElementById('glu-mg'), mm=document.getElementById('glu-mmol'); if(t==='mg'&&mg.value) mm.value=(mg.value/18).toFixed(2); else if(t==='mmol'&&mm.value) mg.value=(mm.value*18).toFixed(0); }
+        window.convertCre = (t) => { const mg=document.getElementById('cre-mg'), um=document.getElementById('cre-umol'); if(t==='mg'&&mg.value) um.value=(mg.value*88.4).toFixed(0); else if(t==='umol'&&um.value) mg.value=(um.value/88.4).toFixed(2); }
 
-        const flashData = [{q: "Tam chứng Charcot?", a: "Đau bụng, Sốt, Vàng da"}, {q: "Vị trí tiêm tĩnh mạch?", a: "Mu bàn tay, Cổ tay, Khuỷu tay"}, {q: "HA bình thường?", a: "120/80 mmHg"}];
-        let currentCardIdx = 0;
-        window.loadFlashcards = () => { currentCardIdx = 0; window.renderCard(); window.showToast("Đã tải Flashcard!", "success"); };
-        window.renderCard = () => { const item = flashData[currentCardIdx]; document.getElementById('fc-q').innerText = item.q; document.getElementById('fc-a').innerText = item.a; document.getElementById('flashCardItem').classList.remove('flipped'); };
-        window.nextCard = () => { currentCardIdx = (currentCardIdx + 1) % flashData.length; window.renderCard(); };
-
+        // --- TASKS ---
         window.addTask = () => { const t = document.getElementById('newTaskInput').value.trim(); if(!t || !currentUser) return; push(ref(db, `users/${currentUser.uid}/tasks`), {text: t, done: false, createdAt: Date.now()}); document.getElementById('newTaskInput').value=''; };
         window.toggleTask = (k, s) => set(ref(db, `users/${currentUser.uid}/tasks/${k}/done`), s);
         window.deleteTask = (k) => remove(ref(db, `users/${currentUser.uid}/tasks/${k}`));
@@ -859,6 +787,7 @@
             });
         }
 
+        // --- AUTH STATE & DATA LOADING ---
         onAuthStateChanged(auth, user => {
             currentUser = user;
             if (user) {
@@ -875,14 +804,16 @@
                 onValue(ref(db, "users/" + user.uid + "/role"), snap => {
                     let role = snap.val() || "user";
                     if (role === "admin") {
-                        document.getElementById("roleBadge").textContent = "ADMIN"; document.getElementById("roleBadge").className = "px-3 py-1 rounded-full text-[10px] font-bold bg-red-500 text-white w-fit";
+                        document.getElementById("roleBadge").textContent = "ADMIN";
+                        document.getElementById("roleBadge").className = "px-3 py-1 rounded-full text-[10px] font-bold bg-red-500 text-white w-fit";
                         window.isAdmin = true;
                         document.getElementById("adminPanelBtn").classList.remove("hidden");
                         document.getElementById("adminToolsCard").classList.remove("hidden");
                         document.getElementById("isPublicDoc").disabled = false;
                         document.getElementById("isPublicDoc").parentElement.classList.remove("opacity-50", "pointer-events-none");
                     } else {
-                        document.getElementById("roleBadge").textContent = "USER"; document.getElementById("roleBadge").className = "px-3 py-1 rounded-full text-[10px] font-bold bg-green-500 text-white w-fit";
+                        document.getElementById("roleBadge").textContent = "USER";
+                        document.getElementById("roleBadge").className = "px-3 py-1 rounded-full text-[10px] font-bold bg-green-500 text-white w-fit";
                         window.isAdmin = false;
                         document.getElementById("adminPanelBtn").classList.add("hidden");
                         document.getElementById("adminToolsCard").classList.add("hidden");
@@ -908,15 +839,53 @@
             }
         });
 
-        const folders = { "capcuu": { name: "1. Hồi sức Cấp cứu", icon: "fa-truck-medical", color: "text-red-500", items: [] }, "noikhoa": { name: "2. Nội khoa", icon: "fa-user-doctor", color: "text-blue-500", items: [] }, "ngoaikhoa": { name: "3. Ngoại khoa", icon: "fa-scalpel", color: "text-green-600", items: [] }, "san": { name: "4. Sản phụ khoa", icon: "fa-person-pregnant", color: "text-pink-500", items: [] }, "nhi": { name: "5. Nhi khoa", icon: "fa-baby", color: "text-orange-500", items: [] }, "canlamsang": { name: "6. Cận lâm sàng", icon: "fa-microscope", color: "text-purple-500", items: [] }, "khac": { name: "7. Tài liệu khác", icon: "fa-folder-open", color: "text-slate-500", items: [] } };
+        // --- FOLDER & DOCS RENDER ---
+        const folders = { 
+            "capcuu": { name: "1. Hồi sức Cấp cứu", icon: "fa-truck-medical", color: "text-red-500", items: [] }, 
+            "noikhoa": { name: "2. Nội khoa", icon: "fa-user-doctor", color: "text-blue-500", items: [] }, 
+            "ngoaikhoa": { name: "3. Ngoại khoa", icon: "fa-scalpel", color: "text-green-600", items: [] }, 
+            "san": { name: "4. Sản phụ khoa", icon: "fa-person-pregnant", color: "text-pink-500", items: [] }, 
+            "nhi": { name: "5. Nhi khoa", icon: "fa-baby", color: "text-orange-500", items: [] }, 
+            "canlamsang": { name: "6. Cận lâm sàng", icon: "fa-microscope", color: "text-purple-500", items: [] }, 
+            "khac": { name: "7. Tài liệu khác", icon: "fa-folder-open", color: "text-slate-500", items: [] } 
+        };
+
         function distributeDocs() { Object.keys(folders).forEach(k => folders[k].items = []); allDocs.forEach(doc => { if(folders[doc.folder]) folders[doc.folder].items.push(doc); else folders['khac'].items.push(doc); }); }
+        
         const listEl = document.getElementById('docsList');
         const breadcrumb = document.getElementById('breadcrumb');
         let currentViewFolder = null;
 
-        window.renderFolders = function() { currentViewFolder = null; breadcrumb.classList.add('hidden'); listEl.innerHTML = ''; Object.keys(folders).forEach(key => { const f = folders[key]; const html = `<div onclick="window.openFolder('${key}')" class="glass-card p-5 rounded-3xl flex items-center gap-5 cursor-pointer hover:bg-white/90 dark:hover:bg-slate-700/80 transition group border-l-4 border-transparent hover:border-blue-500"><div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl ${f.color} shadow-md group-hover:scale-110 transition"><i class="fa-solid ${f.icon}"></i></div><div class="flex-1"><h3 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${f.name}</h3><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">${f.items.length} file</p></div><i class="fa-solid fa-chevron-right text-slate-300 font-bold"></i></div>`; listEl.insertAdjacentHTML('beforeend', html); }); }
-        window.openFolder = function(key) { currentViewFolder = key; const f = folders[key]; breadcrumb.classList.remove('hidden'); document.getElementById('currentFolderTitle').innerText = f.name; listEl.innerHTML = ''; if(f.items.length === 0) { listEl.innerHTML = `<div class="col-span-2 text-center py-20 opacity-60 dark:text-white font-bold">Thư mục trống</div>`; return; } f.items.forEach(doc => renderDocItem(doc)); }
-        window.filterDocs = function() { const term = document.getElementById('searchInput').value.toLowerCase(); if(!term) { window.renderFolders(); return; } breadcrumb.classList.add('hidden'); listEl.innerHTML = ''; const results = allDocs.filter(d => d.title.toLowerCase().includes(term)); if(results.length === 0) listEl.innerHTML = `<div class="col-span-2 text-center py-10 font-bold text-slate-500">Không tìm thấy kết quả</div>`; else results.forEach(doc => renderDocItem(doc)); }
+        window.renderFolders = function() { 
+            currentViewFolder = null; 
+            breadcrumb.classList.add('hidden'); 
+            listEl.innerHTML = ''; 
+            Object.keys(folders).forEach(key => { 
+                const f = folders[key]; 
+                const html = `<div onclick="window.openFolder('${key}')" class="glass-card p-5 rounded-3xl flex items-center gap-5 cursor-pointer hover:bg-white/90 dark:hover:bg-slate-700/80 transition group border-l-4 border-transparent hover:border-blue-500"><div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl ${f.color} shadow-md group-hover:scale-110 transition"><i class="fa-solid ${f.icon}"></i></div><div class="flex-1"><h3 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${f.name}</h3><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">${f.items.length} file</p></div><i class="fa-solid fa-chevron-right text-slate-300 font-bold"></i></div>`; 
+                listEl.insertAdjacentHTML('beforeend', html); 
+            }); 
+        }
+
+        window.openFolder = function(key) { 
+            currentViewFolder = key; 
+            const f = folders[key]; 
+            breadcrumb.classList.remove('hidden'); 
+            document.getElementById('currentFolderTitle').innerText = f.name; 
+            listEl.innerHTML = ''; 
+            if(f.items.length === 0) { listEl.innerHTML = `<div class="col-span-2 text-center py-20 opacity-60 dark:text-white font-bold">Thư mục trống</div>`; return; } 
+            f.items.forEach(doc => renderDocItem(doc)); 
+        }
+
+        window.filterDocs = function() { 
+            const term = document.getElementById('searchInput').value.toLowerCase(); 
+            if(!term) { window.renderFolders(); return; } 
+            breadcrumb.classList.add('hidden'); 
+            listEl.innerHTML = ''; 
+            const results = allDocs.filter(d => d.title.toLowerCase().includes(term)); 
+            if(results.length === 0) listEl.innerHTML = `<div class="col-span-2 text-center py-10 font-bold text-slate-500">Không tìm thấy kết quả</div>`; 
+            else results.forEach(doc => renderDocItem(doc)); 
+        }
 
         function renderDocItem(doc) {
             const isPublic = doc.source === 'public';
@@ -926,6 +895,7 @@
             let deleteBtn = '';
             if (!isPublic) deleteBtn = `<button onclick="window.deleteDoc('${doc.id}', false)" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-red-100 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition opacity-0 group-hover:opacity-100 shadow-sm z-10"><i class="fa-solid fa-trash-can text-sm"></i></button>`;
             else if (isPublic && window.isAdmin) deleteBtn = `<button onclick="window.deleteDoc('${doc.id}', true)" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-orange-100 hover:bg-orange-500 hover:text-white text-orange-500 flex items-center justify-center transition opacity-0 group-hover:opacity-100 shadow-sm z-10"><i class="fa-solid fa-trash-can text-sm"></i></button>`;
+
             const html = `<div class="glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm group relative pr-10"><div class="w-10 h-10 rounded-full ${iconColor} flex items-center justify-center flex-shrink-0"><i class="fa-solid ${iconClass} text-lg"></i></div><div class="flex-1 min-w-0"><div class="flex items-center"><h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${escapeHTML(doc.title)}</h4>${labelSource}</div><a href="${escapeHTML(doc.url)}" target="_blank" onclick="window.addLog('Mở tài liệu: ${escapeHTML(doc.title).replace(/'/g, "\\'")}')" class="text-xs font-bold text-blue-600 hover:underline uppercase tracking-wide">Mở tài liệu</a></div>${deleteBtn}</div>`;
             listEl.insertAdjacentHTML('beforeend', html);
         }
@@ -944,7 +914,9 @@
                 push(ref(db, 'users/' + currentUser.uid + '/docs'), { title, folder, url: link, createdAt: Date.now() }).then(() => { resetModal(); window.showToast("Đã thêm tài liệu cá nhân!", "success"); window.addLog("Thêm tài liệu: " + title); });
             }
         }
+
         function resetModal() { document.getElementById('addDocModal').classList.add('hidden'); document.getElementById('newDocTitle').value = ''; document.getElementById('newDocLink').value = ''; document.getElementById('isPublicDoc').checked = false; }
+        
         window.deleteDoc = function(key, isPublic) {
             if(isPublic) {
                 if (!window.isAdmin) return alert("Chỉ ADMIN mới có quyền xóa tài liệu chung!");
@@ -955,41 +927,72 @@
                 remove(ref(db, `users/${currentUser.uid}/docs/${key}`)).then(() => { window.showToast("Đã xóa tài liệu!", "success"); window.addLog("Xóa tài liệu cá nhân"); });
             }
         }
-        window.saveNote = function() { const content = document.getElementById('quickNote').value; if (currentUser) { set(ref(db, 'users/' + currentUser.uid + '/note'), content); document.getElementById('saveStatus').style.opacity = '1'; setTimeout(() => { document.getElementById('saveStatus').style.opacity = '0'; }, 2000); } }
 
-        const playlist = [{t:"Chill Lofi Study", a:"Lofi Girl", u:"https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"}, {t:"Rainy Night", a:"Relaxing", u:"https://cdn.pixabay.com/download/audio/2022/03/10/audio_5b8220a28f.mp3?filename=piano-moment-11153.mp3"}, {t:"Deep Focus", a:"Mindset", u:"https://cdn.pixabay.com/download/audio/2021/11/01/audio_6d6787920b.mp3?filename=chill-abstract-intention-12099.mp3"}];
+        window.saveNote = function() { 
+            const content = document.getElementById('quickNote').value; 
+            if (currentUser) { 
+                set(ref(db, 'users/' + currentUser.uid + '/note'), content); 
+                document.getElementById('saveStatus').style.opacity = '1'; 
+                setTimeout(() => { document.getElementById('saveStatus').style.opacity = '0'; }, 2000); 
+            } 
+        }
+
+        // --- MUSIC PLAYER ---
+        const playlist = [
+            {t:"Chill Lofi Study", a:"Lofi Girl", u:"https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3?filename=lofi-study-112191.mp3"},
+            {t:"Rainy Night", a:"Relaxing", u:"https://cdn.pixabay.com/download/audio/2022/03/10/audio_5b8220a28f.mp3?filename=piano-moment-11153.mp3"},
+            {t:"Deep Focus", a:"Mindset", u:"https://cdn.pixabay.com/download/audio/2021/11/01/audio_6d6787920b.mp3?filename=chill-abstract-intention-12099.mp3"}
+        ];
         let trackIdx = 0;
         const audio = document.getElementById('bgAudio');
-        const savedIdx = localStorage.getItem('mdk_music_idx'); const savedVol = localStorage.getItem('mdk_music_vol');
-        if(savedIdx) trackIdx = parseInt(savedIdx); if(savedVol) { audio.volume = parseFloat(savedVol); document.getElementById('volSlider').value = savedVol; document.getElementById('volText').innerText = Math.round(savedVol*100)+'%'; }
+        const savedIdx = localStorage.getItem('mdk_music_idx'); 
+        const savedVol = localStorage.getItem('mdk_music_vol');
+        if(savedIdx) trackIdx = parseInt(savedIdx); 
+        if(savedVol) { audio.volume = parseFloat(savedVol); document.getElementById('volSlider').value = savedVol; document.getElementById('volText').innerText = Math.round(savedVol*100)+'%'; }
+
         function loadTrack(i) { audio.src = playlist[i].u; document.getElementById('musicTitle').innerText = playlist[i].t; document.getElementById('musicArtist').innerText = playlist[i].a; renderPlaylist(); }
         
-        window.toggleMusic = function() { const disc = document.getElementById('musicDisc'); const btn = document.getElementById('playBtnIcon'); if(audio.paused) { audio.play(); disc.classList.add('animate-spin-slow'); btn.innerHTML = '<i class="fa-solid fa-pause text-2xl ml-0"></i>'; } else { audio.pause(); disc.classList.remove('animate-spin-slow'); btn.innerHTML = '<i class="fa-solid fa-play text-2xl ml-1"></i>'; } }
+        window.toggleMusic = function() { 
+            const disc = document.getElementById('musicDisc'); 
+            const btn = document.getElementById('playBtnIcon'); 
+            if(audio.paused) { audio.play(); disc.classList.add('animate-spin-slow'); btn.innerHTML = '<i class="fa-solid fa-pause text-2xl ml-0"></i>'; } 
+            else { audio.pause(); disc.classList.remove('animate-spin-slow'); btn.innerHTML = '<i class="fa-solid fa-play text-2xl ml-1"></i>'; } 
+        }
+
         window.nextSong = function() { trackIdx = (trackIdx + 1) % playlist.length; localStorage.setItem('mdk_music_idx', trackIdx); loadTrack(trackIdx); audio.play(); document.getElementById('musicDisc').classList.add('animate-spin-slow'); document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-pause text-2xl ml-0"></i>'; }
         window.prevSong = function() { trackIdx = (trackIdx - 1 + playlist.length) % playlist.length; localStorage.setItem('mdk_music_idx', trackIdx); loadTrack(trackIdx); audio.play(); document.getElementById('musicDisc').classList.add('animate-spin-slow'); document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-pause text-2xl ml-0"></i>'; }
         window.changeVolume = function(val) { audio.volume = val; localStorage.setItem('mdk_music_vol', val); document.getElementById('volText').innerText = Math.round(val * 100) + '%'; }
         window.togglePlaylist = function() { document.getElementById('playlistView').classList.toggle('hidden'); }
-        function renderPlaylist() { const list = document.getElementById('playlistItems'); list.innerHTML = ''; playlist.forEach((song, i) => { list.innerHTML += `<div onclick="selectSong(${i})" class="p-2 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-blue-100 dark:hover:bg-slate-700 ${i === trackIdx ? 'bg-blue-200 dark:bg-slate-600 font-bold' : ''}"><i class="fa-solid fa-music text-blue-500"></i><div class="flex-1"><p class="text-sm truncate">${song.t}</p><p class="text-[10px] text-slate-500">${song.a}</p></div></div>`; }); }
         window.selectSong = function(i) { trackIdx = i; localStorage.setItem('mdk_music_idx', trackIdx); loadTrack(trackIdx); audio.play(); document.getElementById('musicDisc').classList.add('animate-spin-slow'); document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-pause text-2xl ml-0"></i>'; }
+        
+        function renderPlaylist() { 
+            const list = document.getElementById('playlistItems'); list.innerHTML = ''; 
+            playlist.forEach((song, i) => { list.innerHTML += `<div onclick="selectSong(${i})" class="p-2 rounded-lg flex items-center gap-2 cursor-pointer hover:bg-blue-100 dark:hover:bg-slate-700 ${i === trackIdx ? 'bg-blue-200 dark:bg-slate-600 font-bold' : ''}"><i class="fa-solid fa-music text-blue-500"></i><div class="flex-1"><p class="text-sm truncate">${song.t}</p><p class="text-[10px] text-slate-500">${song.a}</p></div></div>`; }); 
+        }
         audio.addEventListener('ended', window.nextSong);
         loadTrack(trackIdx);
 
+        // --- POMODORO TIMER ---
         let timer = 25 * 60; let interval = null; let running = false;
         function updateTimerDisplay() { const m = String(Math.floor(timer / 60)).padStart(2, '0'); const s = String(timer % 60).padStart(2, '0'); document.getElementById('timerDisplay').innerText = `${m}:${s}`; }
         window.setTimer = function(min) { timer = min * 60; updateTimerDisplay(); if(interval) clearInterval(interval); interval = null; running = false; document.getElementById('timerBtn').innerText = "Bắt đầu tập trung"; }
-        window.toggleTimer = function() { if(!running) { interval = setInterval(() => { timer--; updateTimerDisplay(); if(timer <= 0) { clearInterval(interval); running = false; window.showToast("🎉 Hoàn thành Pomodoro!", "success"); window.addLog("Hoàn thành Pomodoro"); timer = 25 * 60; updateTimerDisplay(); document.getElementById('timerBtn').innerText = "Bắt đầu tập trung"; } }, 1000); running = true; document.getElementById('timerBtn').innerText = "Đang tập trung..."; } else { clearInterval(interval); running = false; document.getElementById('timerBtn').innerText = "Tiếp tục"; } }
+        window.toggleTimer = function() { 
+            if(!running) { 
+                interval = setInterval(() => { 
+                    timer--; updateTimerDisplay(); 
+                    if(timer <= 0) { clearInterval(interval); running = false; window.showToast("🎉 Hoàn thành Pomodoro!", "success"); window.addLog("Hoàn thành Pomodoro"); timer = 25 * 60; updateTimerDisplay(); document.getElementById('timerBtn').innerText = "Bắt đầu tập trung"; } 
+                }, 1000); 
+                running = true; document.getElementById('timerBtn').innerText = "Đang tập trung..."; 
+            } else { clearInterval(interval); running = false; document.getElementById('timerBtn').innerText = "Tiếp tục"; } 
+        }
         updateTimerDisplay();
 
-        window.calcBMI = () => { const w=parseFloat(document.getElementById('bmi-w').value), h=parseFloat(document.getElementById('bmi-h').value)/100; if(!w||!h)return; const bmi=(w/(h*h)).toFixed(1); document.getElementById('bmi-res').classList.remove('hidden'); document.getElementById('bmi-res').innerText=`BMI = ${bmi}`; }
-        window.calcMAP = () => { const s=parseFloat(document.getElementById('map-sys').value), d=parseFloat(document.getElementById('map-dia').value); if(!s||!d)return; const m=((s+2*d)/3).toFixed(1); document.getElementById('map-res').classList.remove('hidden'); document.getElementById('map-res').innerText=`MAP = ${m} mmHg`; }
-        window.calcEGFR = () => { const a=parseFloat(document.getElementById('egfr-age').value), w=parseFloat(document.getElementById('egfr-w').value), c=parseFloat(document.getElementById('egfr-cre').value), s=parseFloat(document.getElementById('egfr-sex').value); if(!a||!w||!c)return; const e=((140-a)*w*s/(72*c)).toFixed(1); document.getElementById('egfr-res').classList.remove('hidden'); document.getElementById('egfr-res').innerText=`eGFR = ${e}`; }
-        window.convertGlu = (t) => { const mg=document.getElementById('glu-mg'), mm=document.getElementById('glu-mmol'); if(t==='mg'&&mg.value) mm.value=(mg.value/18).toFixed(2); else if(t==='mmol'&&mm.value) mg.value=(mm.value*18).toFixed(0); }
-        window.convertCre = (t) => { const mg=document.getElementById('cre-mg'), um=document.getElementById('cre-umol'); if(t==='mg'&&mg.value) um.value=(mg.value*88.4).toFixed(0); else if(t==='umol'&&um.value) mg.value=(um.value/88.4).toFixed(2); }
-
+        // --- GLOBAL & INIT ---
         window.toggleDarkMode = () => { document.documentElement.classList.toggle('dark'); localStorage.setItem('mdk_dark', document.documentElement.classList.contains('dark')); }
         window.switchTab = (t, el) => { document.querySelectorAll('.segment-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active'); document.getElementById('view-docs').classList.toggle('hidden', t!=='docs'); document.getElementById('view-tools').classList.toggle('hidden', t!=='tools'); }
         window.toggleTool = (id) => { document.getElementById('tool-'+id).classList.toggle('open'); }
         setInterval(()=>{ const d=new Date(); document.getElementById('clock').innerText=d.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}); document.getElementById('date-display').innerText=d.toLocaleDateString('vi-VN'); },1000);
+        
         function populateFolderSelect() { const s = document.getElementById('newDocFolder'); s.innerHTML=''; Object.keys(folders).forEach(k => { const o=document.createElement('option'); o.value=k; o.text=folders[k].name; s.appendChild(o); }); }
 
         populateFolderSelect(); distributeDocs(); renderFolders();
@@ -997,4 +1000,3 @@
     </script>
 </body>
 </html>
-
