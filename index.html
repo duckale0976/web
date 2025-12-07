@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MinhducKale - Ultimate Study Hub v6.3</title>
+    <title>MinhducKale - Cloud Sync v6.4</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -85,7 +85,7 @@
                         <img id="userAvatar" src="" class="w-12 h-12 rounded-2xl border-2 border-white shadow-md">
                         <div class="hidden md:block">
                             <p id="userName" class="text-sm font-bold text-slate-900 dark:text-white">User</p>
-                            <p class="text-[10px] text-green-600 font-bold uppercase">Online</p>
+                            <p class="text-[10px] text-green-600 font-bold uppercase">Synced</p>
                         </div>
                     </div>
                     <div id="logoutPanel" class="hidden absolute top-14 left-0 w-40 glass-card p-2 rounded-xl">
@@ -97,7 +97,7 @@
 
                 <div>
                     <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
-                    <p class="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Ultimate Study Hub v6.3</p>
+                    <p class="text-xs text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v6.4</p>
                 </div>
             </div>
             
@@ -140,6 +140,7 @@
                         <span id="currentFolderTitle" class="text-blue-700 dark:text-blue-400">Folder Name</span>
                     </div>
 
+                    <div id="loadingIndicator" class="hidden text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-slate-500 font-bold">Đang đồng bộ dữ liệu...</p></div>
                     <div id="docsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </div>
 
@@ -154,9 +155,9 @@
                             <div class="py-4 space-y-4">
                                 <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-xl border border-blue-200 dark:border-blue-700">
                                     <p class="text-xs font-bold text-blue-600 dark:text-blue-300 uppercase mb-2">1. Nạp từ Google Drive (File JSON)</p>
-                                    <p class="text-xs text-slate-600 dark:text-slate-300 mb-2">Dùng file JSON tạo từ Apps Script để nạp 500GB tài liệu.</p>
+                                    <p class="text-xs text-slate-600 dark:text-slate-300 mb-2">Sau khi nạp, dữ liệu sẽ tự động ĐỒNG BỘ lên tài khoản của bạn.</p>
                                     <button onclick="document.getElementById('importJsonInput').click()" class="w-full py-2 bg-blue-600 text-white font-bold rounded-lg hover:bg-blue-700 transition">
-                                        <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Nạp File JSON
+                                        <i class="fa-solid fa-cloud-arrow-down mr-1"></i> Nạp File JSON & Đồng bộ
                                     </button>
                                     <input type="file" id="importJsonInput" hidden accept=".json" onchange="window.importData(this)">
                                 </div>
@@ -306,9 +307,9 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, set, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, set, push, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // CONFIG FIREBASE (User's Config)
+        // CONFIG FIREBASE
         const firebaseConfig = {
             apiKey: "AIzaSyAcfs8LFgPeAkGyaSkmJeECoRBEwtfRv8E",
             authDomain: "minhduckale1.firebaseapp.com",
@@ -328,9 +329,25 @@
         let currentUser = null;
         let allDocs = JSON.parse(localStorage.getItem('mdk_user_docs_v2') || '[]');
 
-        // --- AUTH ---
+        // --- AUTH & SYNC ---
         window.loginGoogle = () => signInWithPopup(auth, provider).catch(e => alert(e.message));
         window.logoutFirebase = () => signOut(auth);
+
+        function loadDocsFromCloud(uid) {
+            document.getElementById('loadingIndicator').classList.remove('hidden');
+            const docsRef = ref(db, 'users/' + uid + '/docs');
+            onValue(docsRef, (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    // Firebase trả về Object hoặc Array tùy cách lưu
+                    // Chúng ta chuyển về Array để xử lý
+                    allDocs = Array.isArray(data) ? data : Object.values(data);
+                    distributeDocs();
+                    renderFolders();
+                }
+                document.getElementById('loadingIndicator').classList.add('hidden');
+            });
+        }
 
         onAuthStateChanged(auth, (user) => {
             currentUser = user;
@@ -344,6 +361,9 @@
                 document.getElementById('userName').innerText = user.displayName;
                 userProfile.onclick = () => document.getElementById('logoutPanel').classList.toggle('hidden');
                 
+                // AUTO SYNC DATA DOWN
+                loadDocsFromCloud(user.uid);
+
                 // Load Cloud Note
                 onValue(ref(db, 'users/' + user.uid + '/note'), (snap) => {
                     document.getElementById('quickNote').value = snap.val() || "";
@@ -353,6 +373,10 @@
                 userProfile.classList.add('hidden');
                 userProfile.classList.remove('flex');
                 document.getElementById('logoutPanel').classList.add('hidden');
+                // Load Local if logout
+                allDocs = JSON.parse(localStorage.getItem('mdk_user_docs_v2') || '[]');
+                distributeDocs();
+                renderFolders();
             }
         });
 
@@ -428,15 +452,12 @@
             listEl.insertAdjacentHTML('beforeend', html);
         }
 
-        // --- IMPORT/EXPORT LOGIC ---
+        // --- IMPORT/EXPORT + SYNC LOGIC ---
         function saveToLocalStorage() {
-            try {
-                localStorage.setItem('mdk_user_docs_v2', JSON.stringify(allDocs));
-            } catch (e) {
-                alert("Dữ liệu quá lớn để lưu vào bộ nhớ tạm. Hãy dùng tính năng Backup File!");
-            }
+            try { localStorage.setItem('mdk_user_docs_v2', JSON.stringify(allDocs)); } catch (e) {}
         }
 
+        // MAIN IMPORT FUNCTION WITH SYNC
         window.importData = function(input) {
             const file = input.files[0];
             if (!file) return;
@@ -445,17 +466,26 @@
                 try {
                     const imported = JSON.parse(e.target.result);
                     if(Array.isArray(imported)) {
-                        if(confirm(`Tìm thấy ${imported.length} tài liệu. Bạn có muốn nạp vào không?`)) {
+                        if(confirm(`Tìm thấy ${imported.length} tài liệu. Bạn có muốn nạp và ĐỒNG BỘ lên Cloud không?`)) {
                             allDocs = imported;
-                            saveToLocalStorage();
                             distributeDocs();
                             renderFolders();
-                            alert("Đã nạp dữ liệu thành công!");
+                            
+                            // SYNC TO CLOUD
+                            if (currentUser) {
+                                set(ref(db, 'users/' + currentUser.uid + '/docs'), imported)
+                                    .then(() => alert(`✅ Đã đồng bộ ${imported.length} tài liệu lên Cloud thành công!`))
+                                    .catch(err => alert("❌ Lỗi đồng bộ: " + err.message));
+                            } else {
+                                saveToLocalStorage();
+                                alert("⚠️ Bạn chưa đăng nhập! Dữ liệu chỉ lưu trên máy này.");
+                            }
                         }
-                    } else alert("File không đúng định dạng!");
+                    } else alert("File lỗi!");
                 } catch(err) { alert("Lỗi đọc file JSON"); }
             };
             reader.readAsText(file);
+            input.value = '';
         }
 
         window.exportToExcel = () => {
@@ -482,10 +512,15 @@
                         const title = row["Tên tài liệu"]; const url = row["Link"]; const folder = row["Thư mục"] || "khac";
                         if(title && url) { allDocs.push({ id: 'u'+Date.now()+Math.random(), title, folder, url, type: 'DOC' }); count++; }
                     });
-                    saveToLocalStorage();
-                    distributeDocs();
-                    renderFolders();
-                    alert(`Đã thêm ${count} tài liệu từ Excel!`);
+                    
+                    if (currentUser) {
+                        set(ref(db, 'users/' + currentUser.uid + '/docs'), allDocs)
+                            .then(() => alert(`✅ Đã thêm ${count} tài liệu và đồng bộ!`));
+                    } else {
+                        saveToLocalStorage();
+                        alert(`Đã thêm ${count} tài liệu (Lưu cục bộ)!`);
+                    }
+                    distributeDocs(); renderFolders();
                 }
             };
             reader.readAsArrayBuffer(file);
@@ -496,8 +531,19 @@
             const folder = document.getElementById('newDocFolder').value;
             const link = document.getElementById('newDocLink').value;
             if(!title || !link) return alert("Thiếu thông tin");
-            allDocs.push({ id: 'u'+Date.now(), title, folder, url: link, type: 'DOC' });
-            saveToLocalStorage();
+            
+            const newDoc = { id: 'u'+Date.now(), title, folder, url: link, type: 'DOC' };
+            allDocs.push(newDoc);
+            
+            if (currentUser) {
+                // Push new doc to cloud list
+                // Cách an toàn là push vào array rồi set lại, hoặc dùng push() của firebase nhưng cần đổi cấu trúc allDocs
+                // Ở đây ta set lại toàn bộ mảng cho đồng bộ nhất quán với import JSON
+                set(ref(db, 'users/' + currentUser.uid + '/docs'), allDocs);
+            } else {
+                saveToLocalStorage();
+            }
+            
             document.getElementById('addDocModal').classList.add('hidden');
             distributeDocs();
             if(currentViewFolder === folder) window.openFolder(folder); else window.renderFolders();
