@@ -123,23 +123,35 @@
                     <div id="docsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </div>
 
-                <div id="view-meds" class="hidden flex-col gap-4 fade-in h-full">
-                    <div class="relative group z-20 shrink-0">
-                        <i class="fa-solid fa-pills absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-600 transition"></i>
-                        <input id="searchMedsInput" type="text" onkeyup="app.data.renderMeds()" class="w-full pl-12 pr-10 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm thuốc (Tên, hoạt chất, chỉ định)...">
-                        <button onclick="document.getElementById('searchMedsInput').value=''; app.data.renderMeds()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-                    </div>
-
-                    <div id="medFilters" class="filter-scroll shrink-0">
+                <div id="view-meds" class="hidden flex-col h-full fade-in overflow-hidden">
+                    <div class="shrink-0 flex flex-col gap-3 pb-2 z-20">
+                        <div class="relative group">
+                            <div class="absolute left-0 top-0 bottom-0 w-12 flex items-center justify-center text-slate-400 group-focus-within:text-blue-500 transition">
+                                <i class="fa-solid fa-magnifying-glass text-lg"></i>
+                            </div>
+                            <input id="searchMedsInput" type="text" onkeyup="app.data.renderMeds()" 
+                                class="w-full pl-12 pr-10 py-3.5 rounded-2xl bg-white/70 dark:bg-black/30 border border-white/50 dark:border-white/10 backdrop-blur-md text-slate-800 dark:text-white font-semibold placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500/50 transition shadow-sm" 
+                                placeholder="Tìm thuốc, hoạt chất, công dụng...">
+                            <button onclick="document.getElementById('searchMedsInput').value=''; app.data.renderMeds()" 
+                                class="absolute right-0 top-0 bottom-0 w-12 flex items-center justify-center text-slate-400 hover:text-slate-600 cursor-pointer">
+                                <i class="fa-solid fa-circle-xmark"></i>
+                            </button>
                         </div>
 
-                    <div id="loadingMeds" class="hidden text-center py-10">
-                        <div class="loader mx-auto"></div>
-                        <p class="mt-2 text-slate-500 font-bold text-sm">Đang tải danh mục thuốc...</p>
+                        <div class="relative">
+                            <div id="medFilters" class="flex gap-2 overflow-x-auto no-scrollbar py-1 px-1">
+                                </div>
+                            <div class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-[#e0f2fe] dark:from-[#0f172a] to-transparent pointer-events-none"></div>
+                        </div>
                     </div>
+
+                    <div id="medsList" class="flex-1 overflow-y-auto pb-24 custom-scrollbar space-y-3 px-1 pt-1">
+                        </div>
                     
-                    <div id="medsList" class="med-list-container flex-1 overflow-y-auto pb-20 custom-scrollbar pr-1">
-                        </div>
+                    <div id="loadingMeds" class="hidden absolute inset-0 bg-white/50 dark:bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center z-30">
+                        <div class="loader"></div>
+                        <p class="mt-2 text-xs font-bold text-slate-600">Đang tải dữ liệu...</p>
+                    </div>
                 </div>
 
 
