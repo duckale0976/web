@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MinhducKale - Cloud Sync v10.11 (Mega Update)</title>
+    <title>MinhducKale - Cloud Sync v10.12 (Mims Data)</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
@@ -143,7 +143,7 @@
 
                 <div class="text-center md:text-left">
                     <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
-                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.11</p>
+                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.12</p>
                 </div>
             </div>
             
@@ -444,7 +444,6 @@
                 {t:"Jazzy Beats", a:"Groove", u:"https://cdn.pixabay.com/download/audio/2022/05/05/audio_1385f09623.mp3?filename=jazz-hop-11442.mp3"},
                 {t:"Sleepy Cat", a:"Relax", u:"https://cdn.pixabay.com/download/audio/2021/09/06/audio_3702159043.mp3?filename=sweet-dreams-9408.mp3"}
             ],
-            // Updated to OGG links from Google Actions Sounds (Stable)
             ambience: {
                 rain: "https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg",
                 fire: "https://actions.google.com/sounds/v1/ambiences/fireplace.ogg",
@@ -1130,13 +1129,92 @@
             }
 
             seedMedsData() {
-                 if(!confirm("⚠️ Nạp dữ liệu mẫu sẽ thêm vào DB hiện tại. Tiếp tục?")) return;
-                 const sample = [
-                    { "name": "Paracetamol", "brand": "Panadol", "group": "Giảm đau", "strength": "500mg", "dosage": "1v mỗi 4-6h", "route": "Uống" },
-                    { "name": "Ibuprofen", "brand": "Gofen", "group": "NSAIDs", "strength": "400mg", "dosage": "1v sau ăn", "route": "Uống" }
+                 if(!confirm("⚠️ CẢNH BÁO: Thao tác này sẽ nạp ~100 loại thuốc thiết yếu (Mims 2024) vào Database. Bạn có chắc chắn?")) return;
+                 
+                 const meds = [
+                     // --- KHÁNG SINH (ANTIBIOTICS) ---
+                     { name: "Amoxicillin", brand: "Clamoxyl, Ospamox", group: "Kháng sinh", strength: "250mg, 500mg", dosage: "20-50 mg/kg/ngày chia 2-3 lần", route: "Uống", usage: "Viêm họng, Viêm tai giữa, Viêm phổi cộng đồng" },
+                     { name: "Amoxicillin/Clavulanate", brand: "Augmentin, Klamentin", group: "Kháng sinh", strength: "250/31.25, 500/62.5, 875/125", dosage: "25-45 mg/kg/ngày (theo Amox) chia 2 lần", route: "Uống", usage: "Nhiễm khuẩn đề kháng, viêm xoang, viêm phổi" },
+                     { name: "Cephalexin", brand: "Keflex", group: "Kháng sinh", strength: "250mg, 500mg", dosage: "25-50 mg/kg/ngày chia 2-4 lần", route: "Uống", usage: "Nhiễm khuẩn da mô mềm, tiết niệu" },
+                     { name: "Cefuroxime", brand: "Zinnat", group: "Kháng sinh", strength: "125mg, 250mg, 500mg", dosage: "20-30 mg/kg/ngày chia 2 lần", route: "Uống", usage: "Viêm tai giữa, viêm xoang, viêm phổi" },
+                     { name: "Cefixime", brand: "Suprax", group: "Kháng sinh", strength: "50mg, 100mg, 200mg", dosage: "8 mg/kg/ngày uống 1 lần hoặc chia 2", route: "Uống", usage: "Nhiễm khuẩn tiết niệu, viêm họng" },
+                     { name: "Ceftriaxone", brand: "Rocephin", group: "Kháng sinh", strength: "1g", dosage: "50-80 mg/kg/ngày (Tối đa 2g)", route: "Tiêm TM/TB", usage: "Nhiễm khuẩn nặng, viêm màng não" },
+                     { name: "Azithromycin", brand: "Zithromax", group: "Kháng sinh", strength: "200mg/5ml, 250mg, 500mg", dosage: "10 mg/kg/ngày (Ngày 1), 5mg/kg (Ngày 2-5)", route: "Uống", usage: "Viêm phổi không điển hình, viêm họng" },
+                     { name: "Clarithromycin", brand: "Klacid", group: "Kháng sinh", strength: "125mg/5ml, 250mg, 500mg", dosage: "15 mg/kg/ngày chia 2 lần", route: "Uống", usage: "Diệt HP dạ dày, viêm phổi" },
+                     { name: "Ciprofloxacin", brand: "Ciprobay", group: "Kháng sinh", strength: "500mg", dosage: "20-30 mg/kg/ngày chia 2 lần (Thận trọng trẻ em)", route: "Uống/IV", usage: "Nhiễm khuẩn tiêu hóa, tiết niệu nặng" },
+                     { name: "Levofloxacin", brand: "Tavanic", group: "Kháng sinh", strength: "500mg, 750mg", dosage: "10-20 mg/kg/ngày chia 1-2 lần (Theo CĐ)", route: "Uống/IV", usage: "Viêm phổi kháng thuốc, nhiễm khuẩn nặng" },
+                     { name: "Metronidazole", brand: "Flagyl", group: "Kháng sinh", strength: "250mg, 400mg", dosage: "30-50 mg/kg/ngày chia 3 lần", route: "Uống/IV", usage: "Lỵ Amip, nhiễm khuẩn kỵ khí" },
+                     { name: "Vancomycin", brand: "Vancocin", group: "Kháng sinh", strength: "500mg, 1g", dosage: "40-60 mg/kg/ngày chia 3-4 lần", route: "Truyền TM chậm", usage: "Nhiễm khuẩn MRSA, viêm màng não" },
+                     { name: "Gentamicin", brand: "Gentamicin", group: "Kháng sinh", strength: "80mg/2ml", dosage: "5-7.5 mg/kg/ngày dùng 1 lần", route: "Tiêm TM/TB", usage: "Nhiễm khuẩn Gram âm nặng" },
+                     
+                     // --- GIẢM ĐAU HẠ SỐT (ANALGESICS) ---
+                     { name: "Paracetamol", brand: "Panadol, Efferalgan, Hapacol", group: "Giảm đau - Hạ sốt", strength: "80mg, 150mg, 250mg, 300mg, 500mg", dosage: "10-15 mg/kg/lần (Mỗi 4-6h)", route: "Uống/Hậu môn/IV", usage: "Sốt, đau nhẹ đến vừa" },
+                     { name: "Ibuprofen", brand: "Gofen, Brufen", group: "Giảm đau - Hạ sốt", strength: "100mg/5ml, 200mg, 400mg", dosage: "5-10 mg/kg/lần (Mỗi 6-8h, sau ăn)", route: "Uống", usage: "Sốt cao khó hạ, đau viêm" },
+                     { name: "Diclofenac", brand: "Voltaren", group: "Giảm đau - Kháng viêm", strength: "50mg, 75mg, 100mg", dosage: "2-3 mg/kg/ngày chia 2-3 lần", route: "Uống/Tiêm bắp", usage: "Đau cơ xương khớp, viêm khớp" },
+                     { name: "Tramadol", brand: "Ultracet (kèm Para)", group: "Giảm đau", strength: "37.5/325mg", dosage: "1-2 mg/kg/lần (Thận trọng <12t)", route: "Uống/Tiêm", usage: "Đau vừa đến nặng" },
+                     { name: "Morphine", brand: "Morphine", group: "Giảm đau", strength: "10mg/ml", dosage: "0.1-0.2 mg/kg/lần", route: "Tiêm TM/Tiêm dưới da", usage: "Đau rất nặng, ung thư, sau phẫu thuật" },
+                     
+                     // --- HÔ HẤP & DỊ ỨNG (RESPIRATORY) ---
+                     { name: "Salbutamol", brand: "Ventolin", group: "Hô hấp", strength: "2.5mg/2.5ml, 5mg/2.5ml", dosage: "0.15 mg/kg/lần (Tối thiểu 2.5mg) x 3-4 lần/ngày", route: "Khí dung", usage: "Cắt cơn hen, co thắt phế quản" },
+                     { name: "Terbutaline", brand: "Bricanyl", group: "Hô hấp", strength: "0.5mg/ml", dosage: "5 mcg/kg/phút (Truyền TM) hoặc 0.005-0.01 mg/kg/lần (TDD)", route: "Tiêm/Truyền", usage: "Cơn hen phế quản nặng" },
+                     { name: "Budesonide", brand: "Pulmicort", group: "Hô hấp", strength: "500mcg/2ml", dosage: "0.5-1 mg/lần x 2 lần/ngày", route: "Khí dung", usage: "Dự phòng hen, viêm thanh khí phế quản" },
+                     { name: "Ipratropium", brand: "Combivent (kèm Salbu)", group: "Hô hấp", strength: "2.5ml", dosage: "1 ống/lần x 3-4 lần/ngày", route: "Khí dung", usage: "COPD, Cơn hen cấp" },
+                     { name: "N-Acetylcysteine", brand: "Acemuc, Exomuc", group: "Hô hấp", strength: "100mg, 200mg", dosage: "200mg x 2-3 lần/ngày (>7 tuổi)", route: "Uống", usage: "Tiêu nhầy, giải độc Paracetamol" },
+                     { name: "Loratadine", brand: "Clarityne", group: "Dị ứng", strength: "10mg, 5mg/5ml", dosage: "5mg (<30kg), 10mg (>30kg) uống 1 lần", route: "Uống", usage: "Viêm mũi dị ứng, mề đay" },
+                     { name: "Desloratadine", brand: "Aerius", group: "Dị ứng", strength: "0.5mg/ml, 5mg", dosage: "1.25mg (1-5t), 2.5mg (6-11t), 5mg (>12t)", route: "Uống", usage: "Dị ứng, ngứa" },
+                     { name: "Chlorpheniramine", brand: "Chlorpher", group: "Dị ứng", strength: "4mg", dosage: "0.35 mg/kg/ngày chia 3-4 lần", route: "Uống", usage: "Sổ mũi, dị ứng (gây buồn ngủ)" },
+                     
+                     // --- TIÊU HÓA (GASTROINTESTINAL) ---
+                     { name: "Omeprazole", brand: "Losec", group: "Tiêu hóa", strength: "20mg, 40mg", dosage: "0.7-1 mg/kg/ngày (1 lần sáng)", route: "Uống/Tiêm TM", usage: "Trào ngược, viêm loét dạ dày" },
+                     { name: "Esomeprazole", brand: "Nexium", group: "Tiêu hóa", strength: "10mg, 20mg, 40mg", dosage: "0.5-1 mg/kg/ngày", route: "Uống/Tiêm TM", usage: "GERD, Loét dạ dày" },
+                     { name: "Pantoprazole", brand: "Pantoloc", group: "Tiêu hóa", strength: "40mg", dosage: "40mg/ngày (Người lớn)", route: "Uống/Tiêm TM", usage: "Xuất huyết tiêu hóa, viêm loét" },
+                     { name: "Ondansetron", brand: "Zofran", group: "Tiêu hóa", strength: "4mg, 8mg", dosage: "0.15 mg/kg/lần (Tối đa 8mg)", route: "Tiêm TM/Uống", usage: "Chống nôn" },
+                     { name: "Domperidone", brand: "Motilium", group: "Tiêu hóa", strength: "10mg, 1mg/ml", dosage: "0.25-0.5 mg/kg/lần x 3 lần (Thận trọng tim mạch)", route: "Uống", usage: "Chống nôn, đầy hơi" },
+                     { name: "Loperamide", brand: "Imodium", group: "Tiêu hóa", strength: "2mg", dosage: "Không dùng cho trẻ <2t. Người lớn: 4mg khởi đầu", route: "Uống", usage: "Tiêu chảy cấp (không nhiễm trùng)" },
+                     { name: "Lactulose", brand: "Duphalac", group: "Tiêu hóa", strength: "10g/15ml", dosage: "5-10ml x 1-2 lần/ngày (Trẻ em)", route: "Uống", usage: "Táo bón, bệnh não gan" },
+                     { name: "Diosmectite", brand: "Smecta", group: "Tiêu hóa", strength: "3g", dosage: "1-2 gói/ngày (<2t: thận trọng)", route: "Uống", usage: "Tiêu chảy, bảo vệ niêm mạc ruột" },
+                     { name: "Racecadotril", brand: "Hidrasec", group: "Tiêu hóa", strength: "10mg, 30mg", dosage: "1.5 mg/kg/lần x 3 lần/ngày", route: "Uống", usage: "Tiêu chảy cấp trẻ em" },
+
+                     // --- CORTICOIDS & KHÁNG VIÊM ---
+                     { name: "Prednisolone", brand: "Prednisolon", group: "Corticoid", strength: "5mg", dosage: "1-2 mg/kg/ngày (Cơn hen cấp)", route: "Uống", usage: "Kháng viêm, ức chế miễn dịch" },
+                     { name: "Methylprednisolone", brand: "Medrol, Solu-Medrol", group: "Corticoid", strength: "4mg, 16mg, 40mg", dosage: "1-2 mg/kg/ngày chia 1-2 lần", route: "Uống/Tiêm TM", usage: "Viêm nặng, sốc phản vệ, hen" },
+                     { name: "Dexamethasone", brand: "Dexa", group: "Corticoid", strength: "4mg/ml, 0.5mg", dosage: "0.15-0.6 mg/kg/lần (Viêm thanh quản)", route: "Tiêm/Uống", usage: "Chống viêm mạnh, phù não" },
+                     { name: "Hydrocortisone", brand: "Solu-Cortef", group: "Corticoid", strength: "100mg", dosage: "4-5 mg/kg/lần (Cấp cứu)", route: "Tiêm TM", usage: "Cơn suy thượng thận cấp, sốc" },
+
+                     // --- TIM MẠCH & VẬN MẠCH (CARDIOVASCULAR) ---
+                     { name: "Adrenaline", brand: "Adrenalin", group: "Cấp cứu", strength: "1mg/1ml", dosage: "0.01 mg/kg/lần (Sốc phản vệ IM), 0.1-1 mcg/kg/phút (Truyền TM)", route: "Tiêm bắp/Truyền TM", usage: "Sốc phản vệ, ngừng tim" },
+                     { name: "Noradrenaline", brand: "Levophed", group: "Vận mạch", strength: "1mg/ml", dosage: "0.05 - 1 mcg/kg/phút", route: "Truyền TM", usage: "Sốc nhiễm khuẩn, tụt huyết áp" },
+                     { name: "Dobutamine", brand: "Dobutamin", group: "Vận mạch", strength: "250mg", dosage: "2-20 mcg/kg/phút", route: "Truyền TM", usage: "Suy tim, sốc tim" },
+                     { name: "Dopamine", brand: "Dopamin", group: "Vận mạch", strength: "200mg", dosage: "5-20 mcg/kg/phút", route: "Truyền TM", usage: "Sốc, suy tim (ít dùng hơn Norad)" },
+                     { name: "Amlodipine", brand: "Amlor", group: "Tim mạch", strength: "5mg", dosage: "0.1-0.2 mg/kg/ngày (1 lần)", route: "Uống", usage: "Tăng huyết áp" },
+                     { name: "Nifedipine", brand: "Adalat", group: "Tim mạch", strength: "10mg, 20mg, 30mg", dosage: "0.25-0.5 mg/kg/lần", route: "Uống", usage: "Cơn tăng huyết áp cấp" },
+                     { name: "Enalapril", brand: "Renitec", group: "Tim mạch", strength: "5mg, 10mg", dosage: "0.08 mg/kg/ngày (Tối đa 5mg)", route: "Uống", usage: "Tăng huyết áp, suy tim" },
+                     { name: "Losartan", brand: "Cozaar", group: "Tim mạch", strength: "25mg, 50mg", dosage: "0.7 mg/kg/ngày", route: "Uống", usage: "Tăng huyết áp" },
+                     { name: "Bisoprolol", brand: "Concor", group: "Tim mạch", strength: "2.5mg, 5mg", dosage: "1.25-5 mg/ngày (Người lớn)", route: "Uống", usage: "Suy tim, tăng huyết áp" },
+                     { name: "Furosemide", brand: "Lasix", group: "Tim mạch", strength: "20mg/2ml, 40mg", dosage: "1-2 mg/kg/lần (Tĩnh mạch) hoặc Uống", route: "Tiêm TM/Uống", usage: "Phù phổi cấp, quá tải dịch" },
+                     { name: "Amiodarone", brand: "Cordarone", group: "Tim mạch", strength: "200mg, 150mg/3ml", dosage: "5 mg/kg truyền trong 20-60p", route: "Truyền TM/Uống", usage: "Rối loạn nhịp tim" },
+                     { name: "Adenosine", brand: "Adenocor", group: "Tim mạch", strength: "6mg/2ml", dosage: "0.1 mg/kg (Bolus nhanh)", route: "Tiêm TM nhanh", usage: "Cắt cơn nhịp nhanh kịch phát trên thất" },
+
+                     // --- AN THẦN & CHỐNG CO GIẬT (SEDATIVES) ---
+                     { name: "Diazepam", brand: "Seduxen", group: "An thần", strength: "5mg, 10mg/2ml", dosage: "0.2-0.3 mg/kg/lần (Co giật)", route: "Tiêm TM chậm/Hậu môn", usage: "Cắt cơn co giật" },
+                     { name: "Midazolam", brand: "Hypnovel", group: "An thần", strength: "5mg/1ml", dosage: "0.1-0.2 mg/kg/lần", route: "Tiêm TM/Tiêm bắp", usage: "An thần thủ thuật, cắt cơn giật" },
+                     { name: "Phenobarbital", brand: "Gardenal", group: "An thần", strength: "10mg, 100mg", dosage: "15-20 mg/kg (Tấn công)", route: "Tiêm TM/Uống", usage: "Động kinh, co giật sơ sinh" },
+                     { name: "Ketamine", brand: "Ketalar", group: "Gây mê", strength: "50mg/ml", dosage: "1-2 mg/kg (IV), 4-6 mg/kg (IM)", route: "Tiêm TM/TB", usage: "Gây mê ngắn, giảm đau" },
+                     { name: "Propofol", brand: "Diprivan", group: "Gây mê", strength: "1%", dosage: "1-2 mg/kg (Khởi mê)", route: "Tiêm TM", usage: "Gây mê, an thần thở máy" },
+
+                     // --- DỊCH TRUYỀN & ĐIỆN GIẢI ---
+                     { name: "Natri Clorid 0.9%", brand: "Nước muối sinh lý", group: "Dịch truyền", strength: "0.9%", dosage: "10-20 ml/kg (Bolus chống sốc)", route: "Truyền TM", usage: "Bù dịch, chống sốc" },
+                     { name: "Ringer Lactate", brand: "Ringer", group: "Dịch truyền", strength: "Chai 500ml", dosage: "Theo tình trạng mất nước", route: "Truyền TM", usage: "Bù dịch, sốt xuất huyết" },
+                     { name: "Glucose 10%", brand: "Đường ưu trương", group: "Dịch truyền", strength: "10%", dosage: "2-5 ml/kg (Hạ đường huyết)", route: "Tiêm TM", usage: "Hạ đường huyết" },
+                     { name: "Kali Clorid 10%", brand: "Kali", group: "Điện giải", strength: "10%/10ml", dosage: "Pha loãng truyền, max 0.5mmol/kg/h", route: "Truyền TM", usage: "Hạ Kali máu" },
+                     
+                     // --- KHÁC ---
+                     { name: "Insulin Regular", brand: "Actrapid", group: "Nội tiết", strength: "100 IU/ml", dosage: "0.1 UI/kg/giờ (DKA)", route: "Truyền TM/TDD", usage: "Đái tháo đường, tăng kali máu" },
+                     { name: "Fexofenadine", brand: "Telfast", group: "Dị ứng", strength: "60mg, 180mg", dosage: "30mg (6-11t), 60mg (>12t) x 2 lần", route: "Uống", usage: "Viêm mũi dị ứng" }
                  ];
-                 sample.forEach(m => push(ref(this.db, "library_meds"), {...m, addedBy: "System"}));
-                 Utils.showToast("Đã nạp thuốc mẫu demo!", "success");
+
+                 meds.forEach(m => push(ref(this.db, "library_meds"), {...m, addedBy: "System (Mims 2024)"}));
+                 Utils.showToast(`Đã nạp ${meds.length} thuốc thành công!`, "success");
             }
 
             execImportJson() {
