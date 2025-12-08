@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MinhducKale - Cloud Sync v10.0 (Ultimate)</title>
+    <title>MinhducKale - Cloud Sync v10.5 (Youtube Search)</title>
     
-    <!-- PWA & ICONS -->
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3774/3774299.png">
     
-    <!-- LIBRARIES -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -27,7 +25,8 @@
                         'blob': 'blob 10s infinite', 
                         'spin-slow': 'spin 8s linear infinite', 
                         'slideIn': 'slideIn 0.3s ease-out forwards',
-                        'float': 'float 3s ease-in-out infinite'
+                        'float': 'float 3s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite'
                     },
                     keyframes: {
                         blob: { '0%': { transform: 'translate(0,0) scale(1)' }, '33%': { transform: 'translate(30px,-50px) scale(1.1)' }, '66%': { transform: 'translate(-20px,20px) scale(0.9)' }, '100%': { transform: 'translate(0,0) scale(1)' } },
@@ -98,26 +97,26 @@
         .music-tab { font-size: 10px; font-weight: bold; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; cursor: pointer; opacity: 0.6; transition: all 0.3s; }
         .music-tab.active { background: rgba(59, 130, 246, 0.2); color: #3b82f6; opacity: 1; }
         .dark .music-tab.active { background: rgba(255, 255, 255, 0.1); color: #fff; }
+        .ambience-btn { transition: all 0.3s; opacity: 0.6; filter: grayscale(100%); }
+        .ambience-btn.active { opacity: 1; filter: grayscale(0%); transform: scale(1.1); background-color: rgba(255,255,255,0.2); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         .fade-in { animation: slideIn 0.3s ease-out; }
     </style>
 </head>
 <body class="min-h-screen overflow-x-hidden selection:bg-blue-500 selection:text-white">
 
-    <!-- BACKGROUND -->
     <div class="bg-blob blob-1"></div>
     <div class="bg-blob blob-2"></div>
     <div class="bg-blob blob-3"></div>
 
     <div class="container mx-auto px-4 py-6 max-w-7xl min-h-screen flex flex-col">
         
-        <!-- HEADER -->
         <header class="glass-panel rounded-3xl px-6 py-4 mb-8 flex flex-col md:flex-row justify-between items-center z-20 sticky top-4 shadow-xl">
             <div class="flex items-center gap-4 mb-4 md:mb-0 w-full md:w-auto justify-between md:justify-start">
                 <div id="authContainer" class="relative group">
                     <button id="loginBtn" onclick="app.auth.login()" title="Đăng nhập Google" class="w-12 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 transition transform hover:scale-105">
                         <i class="fa-solid fa-right-to-bracket text-xl"></i>
                     </button>
-                    <div id="userProfile" class="hidden flex items-center gap-3 cursor-pointer select-none" title="Quản lý tài khoản">
+                    <div id="userProfile" class="hidden flex items-center gap-3 cursor-pointer select-none" title="Quản lý tài khoản" onclick="document.getElementById('logoutPanel').classList.toggle('hidden')">
                         <img id="userAvatar" src="" class="w-12 h-12 rounded-2xl border-2 border-white shadow-md bg-slate-200 object-cover">
                         <div class="hidden md:block">
                             <p id="userName" class="text-sm font-bold text-slate-900 dark:text-white truncate max-w-[150px]">User</p>
@@ -125,7 +124,6 @@
                         </div>
                     </div>
                     
-                    <!-- USER DROPDOWN -->
                     <div id="logoutPanel" class="hidden absolute top-14 left-0 w-60 glass-card p-3 rounded-xl flex flex-col gap-2 z-50 shadow-2xl border border-white/50 animate-slideIn backdrop-blur-xl">
                         <button onclick="app.admin.claim()" class="w-full text-left px-3 py-2.5 text-slate-700 dark:text-white hover:bg-white/40 dark:hover:bg-white/10 rounded-lg text-sm font-bold flex items-center gap-3 transition">
                             <i class="fa-solid fa-user-shield text-purple-500 w-5"></i> Kích hoạt Admin
@@ -142,7 +140,7 @@
 
                 <div class="text-center md:text-left">
                     <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
-                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.0</p>
+                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.5</p>
                 </div>
             </div>
             
@@ -155,7 +153,7 @@
 
                 <div class="flex items-center gap-3 justify-end w-full md:w-auto mt-2 md:mt-0">
                     <button id="adminPanelBtn" onclick="app.admin.scrollToTools()" class="hidden w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-pink-600 text-white font-bold items-center justify-center hover:scale-105 transition shadow-lg"><i class="fa-solid fa-shield-halved"></i></button>
-                    <button onclick="app.ui.toggleNotify()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 flex items-center justify-center hover:scale-105 transition text-slate-700 dark:text-white relative"><i class="fa-solid fa-bell"></i></button>
+                    <button id="notifyBtn" onclick="app.ui.toggleNotify()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 flex items-center justify-center hover:scale-105 transition text-slate-700 dark:text-white relative"><i class="fa-solid fa-bell"></i></button>
                     <div class="hidden lg:flex flex-col items-end mr-2 text-right">
                         <span id="clock" class="text-lg font-mono font-bold text-slate-800 dark:text-slate-200">00:00</span>
                         <span id="date-display" class="text-[10px] font-bold uppercase text-slate-500">...</span>
@@ -165,17 +163,14 @@
             </div>
         </header>
 
-        <!-- MAIN LAYOUT -->
         <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 pb-10">
-            <!-- LEFT COLUMN (CONTENT) -->
             <div class="lg:col-span-8 flex flex-col min-h-[500px]">
                 
-                <!-- TAB 1: DOCS -->
                 <div id="view-docs" class="flex flex-col gap-6 fade-in">
                     <div class="flex gap-3 relative z-10">
                         <div class="relative flex-1 group">
                             <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-600 transition"></i>
-                            <input id="searchInput" type="text" onkeyup="app.utils.debounce(app.data.filterDocs, 300)()" class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm kiếm tài liệu, sách, phác đồ...">
+                            <input id="searchInput" type="text" onkeyup="app.searchDocsDebounced()" class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm kiếm tài liệu, sách, phác đồ...">
                         </div>
                         <button id="addDocBtn" onclick="app.ui.openModal('addDocModal')" title="Thêm tài liệu mới" class="hidden w-14 rounded-2xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-700 text-white flex items-center justify-center shadow-lg active:scale-95 transition"><i class="fa-solid fa-plus text-xl"></i></button>
                     </div>
@@ -190,22 +185,19 @@
                     <div id="docsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </div>
 
-                <!-- TAB 2: MEDS -->
                 <div id="view-meds" class="hidden flex-col gap-6 fade-in">
                     <div class="flex gap-3 relative z-10">
                         <div class="relative flex-1 group">
                             <i class="fa-solid fa-pills absolute left-4 top-4 text-slate-500 group-focus-within:text-pink-600 transition"></i>
-                            <input id="searchMedsInput" type="text" onkeyup="app.utils.debounce(app.data.filterMeds, 300)()" class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm tên thuốc, biệt dược, hoạt chất...">
+                            <input id="searchMedsInput" type="text" onkeyup="app.searchMedsDebounced()" class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm tên thuốc, biệt dược, hoạt chất...">
                         </div>
                     </div>
                     <div id="loadingMeds" class="hidden text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-slate-500 font-bold text-sm">Đang tải danh mục thuốc...</p></div>
                     <div id="medsList" class="grid grid-cols-1 gap-4"></div>
                 </div>
 
-                <!-- TAB 3: TOOLS -->
                 <div id="view-tools" class="hidden flex-col gap-6 fade-in">
                     
-                    <!-- ADMIN TOOLS -->
                     <div id="adminToolsCard" class="hidden glass-card rounded-2xl overflow-hidden border-l-4 border-red-500 shadow-md">
                         <button onclick="app.ui.toggleTool('admin')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
                             <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-user-shield text-red-600 mr-2"></i>Admin Tools</span>
@@ -214,7 +206,7 @@
                         <div id="tool-admin" class="tool-content px-4">
                             <div class="py-4 space-y-4">
                                 <div class="grid grid-cols-1 gap-3">
-                                    <button onclick="app.admin.seedMeds()" class="p-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold hover:opacity-90 transition flex items-center justify-center gap-2 shadow-lg"><i class="fa-solid fa-database"></i> Nạp Dữ Liệu Mẫu (100 Thuốc)</button>
+                                    <button onclick="app.admin.seedMeds()" class="p-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold hover:opacity-90 transition flex items-center justify-center gap-2 shadow-lg"><i class="fa-solid fa-database"></i> Nạp Dữ Liệu Mẫu (Demo)</button>
                                     <div class="grid grid-cols-2 gap-3">
                                         <button onclick="app.admin.openImport('docs')" class="p-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2"><i class="fa-solid fa-file-import"></i> Import Docs</button>
                                         <button onclick="app.admin.openImport('meds')" class="p-3 rounded-xl bg-teal-600 text-white font-bold hover:bg-teal-700 transition flex items-center justify-center gap-2"><i class="fa-solid fa-capsules"></i> Import Meds</button>
@@ -225,15 +217,13 @@
                                     <input type="text" id="newAdminCode" placeholder="Mã kích hoạt mới..." class="flex-1 ios-input p-2 rounded-lg text-sm">
                                     <button onclick="app.admin.changeCode()" class="bg-slate-700 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-800">Lưu Mã</button>
                                 </div>
-                                <div id="adminUsersBox" class="p-3 bg-black/5 dark:bg-black/30 rounded-xl text-sm max-h-40 overflow-y-auto border border-black/10"></div>
+                                <div id="adminUsersBox" class="p-3 bg-black/5 dark:bg-black/30 rounded-xl text-sm max-h-40 overflow-y-auto border border-black/10 custom-scrollbar"></div>
                             </div>
                         </div>
                     </div>
 
-                    <!-- CLINICAL TOOLS -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                         <!-- BMI -->
-                        <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-indigo-500">
+                         <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-indigo-500">
                             <button onclick="app.ui.toggleTool('bmi')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
                                 <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-weight-scale text-indigo-500 mr-2"></i>Tính BMI</span>
                                 <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
@@ -247,7 +237,6 @@
                             </div>
                         </div>
                         
-                        <!-- MAP -->
                         <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-red-500">
                              <button onclick="app.ui.toggleTool('map')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
                                 <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-heart-pulse text-red-500 mr-2"></i>Huyết áp (MAP)</span>
@@ -262,7 +251,6 @@
                             </div>
                         </div>
 
-                         <!-- eGFR -->
                          <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-orange-500 md:col-span-2">
                              <button onclick="app.ui.toggleTool('egfr')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
                                 <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-kidneys text-orange-500 mr-2"></i>Độ lọc cầu thận (eGFR)</span>
@@ -288,28 +276,25 @@
                 </div>
             </div>
 
-            <!-- RIGHT COLUMN (SIDEBAR) -->
             <div class="lg:col-span-4 flex flex-col gap-6">
-                <!-- MUSIC PLAYER -->
                 <div class="glass-panel p-5 rounded-3xl shadow-lg relative overflow-hidden group border border-blue-200 dark:border-blue-900/30">
-                    <div class="absolute top-2 right-2 cursor-pointer p-2 z-10" onclick="app.music.togglePlaylist()"><i class="fa-solid fa-list-ul text-slate-500 hover:text-blue-600 transition"></i></div>
+                    <div id="playlistBtn" class="absolute top-2 right-2 cursor-pointer p-2 z-10" onclick="app.music.togglePlaylist()"><i class="fa-solid fa-list-ul text-slate-500 hover:text-blue-600 transition"></i></div>
                     <div class="flex items-center justify-between mb-2">
                         <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-headphones-simple text-pink-500"></i> Chill Zone</h3>
                         <div class="flex bg-slate-200 dark:bg-slate-700 rounded-full p-1 mr-8">
                             <div onclick="app.music.switchTab('local')" id="tab-music-local" class="music-tab active">Mp3</div>
-                            <div onclick="app.music.switchTab('online')" id="tab-music-online" class="music-tab">Radio</div>
+                            <div onclick="app.music.switchTab('online')" id="tab-music-online" class="music-tab">Youtube</div>
                         </div>
                     </div>
                     
-                    <!-- LOCAL -->
                     <div id="music-view-local">
-                        <div class="flex justify-center mb-4 relative mt-4">
-                             <div id="musicDisc" class="w-36 h-36 rounded-full bg-slate-900 border-4 border-slate-800 flex items-center justify-center overflow-hidden shadow-2xl transition-all duration-500"><img id="musicCover" src="https://img.icons8.com/color/96/vinyl-music.png" class="w-full h-full opacity-90 object-cover"></div>
+                        <div class="flex justify-center mb-4 relative mt-6">
+                             <div id="musicDisc" class="w-40 h-40 rounded-full bg-slate-900 border-4 border-slate-800 flex items-center justify-center overflow-hidden shadow-2xl transition-all duration-500"><img id="musicCover" src="https://img.icons8.com/color/144/vinyl-music.png" class="w-full h-full opacity-90 object-cover"></div>
                              <div class="absolute inset-0 flex items-center justify-center"><div class="w-8 h-8 bg-white dark:bg-slate-300 rounded-full border-2 border-slate-400 z-10"></div></div>
                         </div>
                         <div class="text-center mb-4 px-2">
-                            <p id="musicTitle" class="text-sm font-bold text-slate-900 dark:text-white truncate">Select a track...</p>
-                            <p id="musicArtist" class="text-[10px] text-slate-500 font-bold uppercase tracking-wide">Lofi Relax</p>
+                            <p id="musicTitle" class="text-base font-bold text-slate-900 dark:text-white truncate">Select a track...</p>
+                            <p id="musicArtist" class="text-xs text-slate-500 font-bold uppercase tracking-wide">Lofi Relax</p>
                         </div>
                         <div class="flex justify-center items-center gap-6 mb-5">
                             <button onclick="app.music.prev()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white hover:bg-slate-200 transition"><i class="fa-solid fa-backward-step"></i></button>
@@ -320,20 +305,36 @@
                             <i class="fa-solid fa-volume-low text-xs text-slate-500"></i>
                             <input type="range" id="volSlider" min="0" max="1" step="0.05" value="0.8" oninput="app.music.setVolume(this.value)">
                         </div>
-                        <!-- PLAYLIST -->
                         <div id="playlistView" class="hidden absolute inset-0 bg-white/95 dark:bg-slate-900/95 z-20 flex flex-col p-4 animate-slideIn">
                             <div class="flex justify-between items-center mb-4"><h4 class="font-bold text-slate-800 dark:text-white text-sm">Danh sách phát</h4><button onclick="app.music.togglePlaylist()"><i class="fa-solid fa-xmark text-lg hover:text-red-500"></i></button></div>
                             <div id="playlistItems" class="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar"></div>
                         </div>
                     </div>
-                    <!-- ONLINE -->
+                    
                     <div id="music-view-online" class="hidden mt-4 space-y-3">
-                        <div class="bg-black rounded-xl overflow-hidden shadow-lg"><iframe width="100%" height="180" src="https://www.youtube.com/embed/jfKfPfyJRdk" title="Lofi Girl Radio" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe></div>
+                         <div class="flex gap-2 mb-1">
+                             <input type="text" id="youtubeInput" placeholder="Dán Link hoặc Tìm kiếm..." class="w-full ios-input p-2 rounded-lg text-xs font-bold">
+                             <button onclick="app.music.playCustomVideo()" class="bg-red-600 hover:bg-red-700 text-white rounded-lg px-3 py-1 text-xs font-bold shadow-md"><i class="fa-solid fa-play"></i></button>
+                         </div>
+                        <div class="bg-black rounded-xl overflow-hidden shadow-lg border border-slate-700 relative pt-[56.25%]">
+                            <iframe id="radioFrame" class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/jfKfPfyJRdk" title="YouTube Radio" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                        </div>
+                        <p class="text-[10px] text-slate-400 italic text-center">Hỗ trợ tốt nhất cho video Public/Unlisted. Video Riêng tư cần quyền truy cập.</p>
                     </div>
+                    
+                    <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                        <p class="text-[10px] font-bold uppercase text-slate-500 mb-2 tracking-wider">Âm thanh nền (Ambience)</p>
+                        <div class="flex justify-between items-center px-1">
+                            <button onclick="app.music.toggleAmbience('rain', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng Mưa"><i class="fa-solid fa-cloud-rain text-xl text-blue-500"></i><span class="text-[9px] font-bold">Mưa</span></button>
+                            <button onclick="app.music.toggleAmbience('fire', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng Lửa trại"><i class="fa-solid fa-fire text-xl text-orange-500"></i><span class="text-[9px] font-bold">Lửa</span></button>
+                            <button onclick="app.music.toggleAmbience('keyboard', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng gõ phím"><i class="fa-solid fa-keyboard text-xl text-slate-500"></i><span class="text-[9px] font-bold">Phím</span></button>
+                            <button onclick="app.music.toggleAmbience('cafe', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Quán Cafe"><i class="fa-solid fa-mug-hot text-xl text-brown-500 text-yellow-700"></i><span class="text-[9px] font-bold">Cafe</span></button>
+                        </div>
+                    </div>
+
                     <audio id="bgAudio" class="hidden"></audio>
                 </div>
 
-                <!-- POMODORO -->
                 <div class="glass-card p-5 rounded-3xl relative border border-red-200 dark:border-red-900/30">
                      <div class="flex justify-between items-center mb-4">
                          <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-stopwatch text-red-500"></i> Pomodoro</h3>
@@ -348,21 +349,19 @@
                     </div>
                 </div>
 
-                <!-- CLOUD NOTES -->
                 <div class="glass-card p-5 rounded-3xl flex flex-col relative group border border-yellow-200 dark:border-yellow-900/30">
                     <div class="flex justify-between items-center mb-2">
                         <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-note-sticky text-yellow-500"></i> Ghi chú Cloud</h3>
                         <span id="saveStatus" class="text-[10px] font-bold text-green-600 opacity-0 transition"><i class="fa-solid fa-check"></i> Đã lưu</span>
                     </div>
-                    <textarea id="quickNote" oninput="app.data.saveNote()" class="w-full bg-white/50 dark:bg-slate-900/50 rounded-xl p-3 ios-input text-sm leading-relaxed shadow-inner focus:ring-2 ring-yellow-400/50 h-32 resize-none" placeholder="Viết ý tưởng nhanh..."></textarea>
+                    <textarea id="quickNote" oninput="app.saveNoteDebounced()" class="w-full bg-white/50 dark:bg-slate-900/50 rounded-xl p-3 ios-input text-sm leading-relaxed shadow-inner focus:ring-2 ring-yellow-400/50 h-32 resize-none" placeholder="Viết ý tưởng nhanh..."></textarea>
                  </div>
             </div>
         </div>
     </div>
 
-    <!-- MODAL: ADD DOC -->
-    <div id="addDocModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-md">
-        <div class="bg-white/95 dark:bg-slate-800/95 w-[90%] md:w-[400px] p-6 rounded-3xl shadow-2xl border border-white/20 animate-float">
+    <div id="addDocModal" onclick="if(event.target === this) app.ui.closeModal('addDocModal')" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-md cursor-pointer">
+        <div class="bg-white/95 dark:bg-slate-800/95 w-[90%] md:w-[400px] p-6 rounded-3xl shadow-2xl border border-white/20 animate-float cursor-default">
             <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4">Thêm Tài Liệu Mới</h3>
             <div class="space-y-4">
                 <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Tên tài liệu</label><input id="newDocTitle" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="Nhập tên..."></div>
@@ -380,9 +379,8 @@
         </div>
     </div>
 
-    <!-- MODAL: JSON IMPORT -->
-    <div id="jsonImportModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-md">
-      <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl w-full max-w-xl shadow-2xl animate-slideIn border border-white/10">
+    <div id="jsonImportModal" onclick="if(event.target === this) app.ui.closeModal('jsonImportModal')" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-md cursor-pointer">
+      <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl w-full max-w-xl shadow-2xl animate-slideIn border border-white/10 cursor-default">
         <h2 class="font-bold text-lg mb-3 text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-file-code text-blue-500"></i> Import JSON Dữ Liệu</h2>
         <p id="jsonImportHint" class="text-xs text-slate-500 mb-2 font-mono bg-slate-100 dark:bg-slate-800 p-2 rounded">Format: ...</p>
         <textarea id="jsonInput" class="w-full h-48 p-3 rounded-xl border dark:border-gray-700 dark:bg-black/50 dark:text-white ios-input font-mono text-xs" placeholder='[{"name": "Thuốc A", ...}]'></textarea>
@@ -393,7 +391,6 @@
       </div>
     </div>
 
-    <!-- PANELS -->
     <div id="notifyPanel" class="hidden fixed top-24 right-6 w-80 glass-card p-4 rounded-2xl z-50 shadow-2xl border border-white/40 backdrop-blur-xl">
         <h3 class="font-bold mb-3 text-lg flex items-center gap-2 border-b pb-2 border-slate-200 dark:border-slate-700"><i class="fa-solid fa-clock-rotate-left text-blue-500"></i> Lịch sử hoạt động</h3>
         <div id="notifyList" class="space-y-2 text-sm max-h-80 overflow-y-auto pr-1 custom-scrollbar"></div>
@@ -401,7 +398,6 @@
 
     <div id="toast-container"></div>
 
-    <!-- LOGIC MODULE -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
@@ -433,7 +429,14 @@
                 {t:"Deep Focus", a:"Mindset", u:"https://cdn.pixabay.com/download/audio/2021/11/01/audio_6d6787920b.mp3?filename=chill-abstract-intention-12099.mp3"},
                 {t:"Coffee Shop Vibes", a:"Ambience", u:"https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=loneliness-1476.mp3"},
                 {t:"Sunday Morning", a:"Happy", u:"https://cdn.pixabay.com/download/audio/2020/05/18/audio_59146522e0.mp3?filename=smooth-waters-11218.mp3"}
-            ]
+            ],
+            // NEW: Ambience Sounds (Direct URLs)
+            ambience: {
+                rain: "https://cdn.pixabay.com/download/audio/2022/07/04/audio_b952f9b8c3.mp3",
+                fire: "https://cdn.pixabay.com/download/audio/2021/08/09/audio_8ed59a8508.mp3",
+                keyboard: "https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3", // Typing sound
+                cafe: "https://cdn.pixabay.com/download/audio/2021/08/09/audio_a462828552.mp3" // Cafe crowd
+            }
         };
 
         // --- UTILITIES ---
@@ -444,7 +447,7 @@
             },
             debounce: (func, wait) => {
                 let timeout;
-                return function executedFunction(...args) {
+                return function(...args) {
                     const later = () => { clearTimeout(timeout); func(...args); };
                     clearTimeout(timeout);
                     timeout = setTimeout(later, wait);
@@ -469,8 +472,9 @@
                 this.idx = parseInt(localStorage.getItem('mdk_music_idx') || 0);
                 this.playlist = CONFIG.playlist;
                 this.isPlaying = false;
-                
-                // Load settings
+                this.ambienceAudio = {}; // Store playing ambience objects
+
+                // Load Volume
                 const savedVol = localStorage.getItem('mdk_music_vol');
                 if (savedVol) {
                     this.audio.volume = parseFloat(savedVol);
@@ -510,7 +514,7 @@
             prev() { this.loadTrack((this.idx - 1 + this.playlist.length) % this.playlist.length); if(this.isPlaying) this.audio.play(); }
             
             setVolume(val) {
-                this.audio.volume = val;
+                this.audio.volume = parseFloat(val);
                 localStorage.setItem('mdk_music_vol', val);
             }
 
@@ -519,7 +523,10 @@
                 document.getElementById(`tab-music-${tab}`).classList.add('active');
                 document.getElementById('music-view-local').classList.toggle('hidden', tab !== 'local');
                 document.getElementById('music-view-online').classList.toggle('hidden', tab !== 'online');
-                if (tab === 'online' && !this.audio.paused) this.toggle();
+                // Stop audio if switching to radio, but let Ambience keep playing
+                if (tab === 'online') {
+                    if(!this.audio.paused) this.toggle();
+                }
             }
 
             togglePlaylist() { document.getElementById('playlistView').classList.toggle('hidden'); }
@@ -535,6 +542,45 @@
             
             select(i) { this.loadTrack(i); this.toggle(); document.getElementById('playlistView').classList.add('hidden'); }
             updateUI() { this.renderPlaylist(); }
+
+            // --- NEW: YOUTUBE SEARCH & LINK LOGIC (v10.5) ---
+            playCustomVideo() {
+                const input = document.getElementById('youtubeInput').value;
+                if (!input) return Utils.showToast("Hãy nhập Link hoặc Từ khóa!", "error");
+
+                let videoId = "";
+                // Regex to find video ID from URL
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                const match = input.match(regExp);
+
+                if (match && match[2].length === 11) {
+                    // It is a valid Youtube Link
+                    videoId = match[2];
+                    document.getElementById('radioFrame').src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+                } else {
+                    // It is a Keyword -> Use ListType Search
+                    // Note: 'listType=search' is the embed search feature
+                    document.getElementById('radioFrame').src = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(input)}&autoplay=1`;
+                }
+            }
+
+            // --- AMBIENCE LOGIC ---
+            toggleAmbience(type, btn) {
+                if (this.ambienceAudio[type]) {
+                    // Stop
+                    this.ambienceAudio[type].pause();
+                    delete this.ambienceAudio[type];
+                    btn.classList.remove('active');
+                } else {
+                    // Play
+                    const audio = new Audio(CONFIG.ambience[type]);
+                    audio.loop = true;
+                    audio.volume = 0.5; // Default volume for background
+                    audio.play();
+                    this.ambienceAudio[type] = audio;
+                    btn.classList.add('active');
+                }
+            }
         }
 
         class MedicalTools {
@@ -544,7 +590,6 @@
                 this.timerRunning = false;
             }
 
-            // Pomodoro
             setTimer(min) {
                 this.timer = min * 60;
                 this.updateTimerDisplay();
@@ -578,7 +623,6 @@
 
             stopTimer() { clearInterval(this.interval); this.timerRunning = false; document.getElementById('timerBtn').innerText = "Tiếp tục"; }
 
-            // Calculators
             calcBMI() {
                 const w = parseFloat(document.getElementById('bmi-w').value);
                 const h = parseFloat(document.getElementById('bmi-h').value) / 100;
@@ -608,7 +652,6 @@
                 const sex = parseFloat(document.getElementById('egfr-sex').value);
                 if (!age || !w || !cre) return Utils.showToast("Thiếu thông tin!", "error");
                 
-                // Cockcroft-Gault formula (estimated)
                 const egfr = ((140 - age) * w * sex / (72 * cre)).toFixed(1);
                 let stage = "";
                 if (egfr >= 90) stage = "G1: Bình thường";
@@ -626,13 +669,11 @@
 
         class App {
             constructor() {
-                // Initialize Firebase
                 this.app = initializeApp(CONFIG.firebase);
                 this.authObj = getAuth(this.app);
                 this.db = getDatabase(this.app);
                 this.provider = new GoogleAuthProvider();
                 
-                // State
                 this.user = null;
                 this.isAdmin = false;
                 this.listeners = {};
@@ -642,12 +683,14 @@
                     meds: []
                 };
                 this.importType = '';
-
-                // Modules
                 this.music = new MusicPlayer();
                 this.tools = new MedicalTools();
                 
-                // Binding "this" for HTML access
+                // Initialize Debounced Functions
+                this.searchDocsDebounced = Utils.debounce(() => this.data.filterDocs(), 300);
+                this.searchMedsDebounced = Utils.debounce(() => this.data.filterMeds(), 300);
+                this.saveNoteDebounced = Utils.debounce(() => this.data.saveNote(), 1000);
+
                 this.auth = {
                     login: () => this.handleLogin(),
                     logout: () => this.handleLogout(),
@@ -675,16 +718,55 @@
                     seedMeds: () => this.seedMedsData(),
                     scrollToTools: () => this.scrollToAdmin(),
                     openImport: (t) => { this.importType = t; document.getElementById("jsonImportModal").classList.remove("hidden"); document.getElementById('jsonImportHint').innerText = t==='docs'?'Format: [{"title":"", "url":"", "folder":""}]':'Format: [{"name":"", "brand":"", "group":""}]'; },
-                    execImport: () => this.execImportJson()
-                };
-                this.utils = Utils; // Expose utils
+                    // NEW SMART IMPORT FUNCTION
+                    execImport: () => {
+                        try {
+                            const raw = document.getElementById('jsonInput').value;
+                            const data = JSON.parse(raw);
+                            if (!Array.isArray(data)) throw new Error("Dữ liệu phải là mảng JSON []");
 
-                // Initialize
+                            if (this.importType === 'docs') {
+                                data.forEach(d => push(ref(this.db, 'library_public'), {
+                                    title: d.title || d.Title || d.Ten || "No Title",
+                                    url: d.url || d.Url || d.Link || "#",
+                                    folder: d.folder || d.Folder || d.ThuMuc || "khac",
+                                    createdAt: Date.now()
+                                }));
+                                Utils.showToast(`Đã import thành công ${data.length} tài liệu!`, "success");
+                            } else {
+                                // SMART MED IMPORT
+                                let count = 0;
+                                data.forEach(m => {
+                                    const medData = {
+                                        name: m.name || m.Name || m.TenThuoc || m.ten_thuoc || "?",
+                                        brand: m.brand || m.Brand || m.BietDuoc || m.biet_duoc || "",
+                                        group: m.group || m.Group || m.Nhom || m.nhom || "Khác",
+                                        strength: m.strength || m.Strength || m.HamLuong || m.ham_luong || "",
+                                        dosage: m.dosage || m.Dosage || m.LieuDung || m.lieu_dung || "",
+                                        route: m.route || m.Route || m.DuongDung || m.duong_dung || "",
+                                        mechanism: m.mechanism || m.Mechanism || m.CoChe || "",
+                                        usage: m.usage || m.Usage || m.ChiDinh || ""
+                                    };
+                                    if(medData.name !== "?") {
+                                        push(ref(this.db, 'library_meds'), medData);
+                                        count++;
+                                    }
+                                });
+                                Utils.showToast(`Đã import thành công ${count} thuốc!`, "success");
+                            }
+                            this.ui.closeModal('jsonImportModal');
+                        } catch (e) {
+                            alert("Lỗi cấu trúc JSON: " + e.message);
+                        }
+                    },
+                    deleteMed: (id) => this.deleteMed(id) 
+                };
+                this.utils = Utils;
+
                 this.init();
             }
 
             init() {
-                // Populate Folders Select
                 const sel = document.getElementById('newDocFolder');
                 Object.entries(CONFIG.folders).forEach(([k, v]) => {
                     const opt = document.createElement('option');
@@ -692,17 +774,14 @@
                     sel.appendChild(opt);
                 });
 
-                // Clock
                 setInterval(() => {
                     const d = new Date();
                     document.getElementById('clock').innerText = d.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
                     document.getElementById('date-display').innerText = d.toLocaleDateString('vi-VN');
                 }, 1000);
 
-                // Dark Mode Check
                 if (localStorage.getItem('mdk_dark') === 'true') document.documentElement.classList.add('dark');
 
-                // Auth Listener
                 onAuthStateChanged(this.authObj, (user) => {
                     this.user = user;
                     this.updateAuthUI();
@@ -711,6 +790,23 @@
                         this.listenToData();
                     } else {
                         this.resetData();
+                    }
+                });
+
+                // --- GLOBAL CLICK LISTENER (CLICK OUTSIDE TO CLOSE) ---
+                document.addEventListener('click', (e) => {
+                    // 1. User Dropdown
+                    const userProfile = document.getElementById('userProfile');
+                    const logoutPanel = document.getElementById('logoutPanel');
+                    if (userProfile && logoutPanel && !userProfile.contains(e.target) && !logoutPanel.contains(e.target)) {
+                        logoutPanel.classList.add('hidden');
+                    }
+
+                    // 2. Notification Panel
+                    const notifyBtn = document.getElementById('notifyBtn');
+                    const notifyPanel = document.getElementById('notifyPanel');
+                    if (notifyBtn && notifyPanel && !notifyBtn.contains(e.target) && !notifyPanel.contains(e.target)) {
+                        notifyPanel.classList.add('hidden');
                     }
                 });
             }
@@ -744,7 +840,6 @@
                     els.profile.classList.add('flex');
                     els.avatar.src = this.user.photoURL;
                     els.name.innerText = this.user.displayName;
-                    els.profile.onclick = () => document.getElementById('logoutPanel').classList.toggle('hidden');
                     els.addBtn.classList.remove("hidden");
                 } else {
                     els.loginBtn.classList.remove('hidden');
@@ -758,7 +853,6 @@
             }
 
             loadUserData() {
-                // Check Role
                 onValue(ref(this.db, `users/${this.user.uid}/role`), snap => {
                     const role = snap.val() || "user";
                     const badge = document.getElementById('roleBadge');
@@ -777,10 +871,8 @@
                     }
                 });
 
-                // Load Note
                 onValue(ref(this.db, `users/${this.user.uid}/note`), snap => document.getElementById('quickNote').value = snap.val() || "");
                 
-                // Load Logs
                 onValue(ref(this.db, `users/${this.user.uid}/logs`), snap => {
                     const list = document.getElementById('notifyList');
                     list.innerHTML = "";
@@ -797,7 +889,6 @@
 
             // --- DATA LOGIC ---
             listenToData() {
-                // Public Docs
                 document.getElementById('loadingDocs').classList.remove('hidden');
                 if(this.listeners.pub) off(this.listeners.pub);
                 this.listeners.pub = ref(this.db, 'library_public');
@@ -808,7 +899,6 @@
                     document.getElementById('loadingDocs').classList.add('hidden');
                 });
 
-                // Private Docs
                 if(this.listeners.priv) off(this.listeners.priv);
                 this.listeners.priv = ref(this.db, `users/${this.user.uid}/docs`);
                 onValue(this.listeners.priv, snap => {
@@ -817,7 +907,6 @@
                     this.renderDocs();
                 });
 
-                // Meds
                 document.getElementById('loadingMeds').classList.remove('hidden');
                 if(this.listeners.meds) off(this.listeners.meds);
                 this.listeners.meds = ref(this.db, 'library_meds');
@@ -843,7 +932,6 @@
                 const term = document.getElementById('searchInput').value.toLowerCase();
                 const allDocs = [...this.dataStore.publicDocs, ...this.dataStore.privateDocs];
                 
-                // Show Folders if no search and no specific folder selected
                 if (!term && !this.currentFolder) {
                     document.getElementById('breadcrumb').classList.add('hidden');
                     let html = '';
@@ -860,7 +948,6 @@
                     return;
                 }
 
-                // Show Items
                 document.getElementById('breadcrumb').classList.remove('hidden');
                 document.getElementById('currentFolderTitle').innerText = this.currentFolder ? CONFIG.folders[this.currentFolder].name : "Kết quả tìm kiếm";
                 
@@ -873,7 +960,6 @@
                     return;
                 }
 
-                // Use Fragment for performance
                 const frag = document.createDocumentFragment();
                 filtered.forEach(doc => {
                     const isPub = doc.source === 'public';
@@ -912,7 +998,6 @@
                     return;
                 }
 
-                // Limit render to 50 items for performance if not searching
                 const displayList = term ? list : list.slice(0, 50);
 
                 const frag = document.createDocumentFragment();
@@ -960,7 +1045,6 @@
                 }).then(() => {
                     Utils.showToast("✅ Đã lưu thành công!", "success");
                     this.ui.closeModal('addDocModal');
-                    // Reset inputs
                     document.getElementById('newDocTitle').value = '';
                     document.getElementById('newDocLink').value = '';
                 }).catch(e => Utils.showToast(e.message, "error"));
@@ -1038,8 +1122,6 @@
 
             seedMedsData() {
                  if(!confirm("⚠️ Nạp dữ liệu mẫu sẽ thêm vào DB hiện tại. Tiếp tục?")) return;
-                 // (Dữ liệu thuốc mẫu đã được rút gọn ở đây để tiết kiệm dòng code, trong thực tế bạn paste mảng SAMPLE_MEDS vào)
-                 // Do giới hạn ký tự, tôi giả lập function này hoạt động
                  const sample = [
                     { "name": "Paracetamol", "brand": "Panadol", "group": "Giảm đau", "strength": "500mg", "dosage": "1v mỗi 4-6h", "route": "Uống" },
                     { "name": "Ibuprofen", "brand": "Gofen", "group": "NSAIDs", "strength": "400mg", "dosage": "1v sau ăn", "route": "Uống" }
@@ -1048,29 +1130,8 @@
                  Utils.showToast("Đã nạp thuốc mẫu demo!", "success");
             }
 
-            execImportJson() {
-                try {
-                    const raw = document.getElementById('jsonInput').value;
-                    const data = JSON.parse(raw);
-                    if(!Array.isArray(data)) throw new Error("Phải là mảng [] JSON");
-                    
-                    if(this.importType === 'docs') {
-                        data.forEach(d => push(ref(this.db, 'library_public'), {
-                            title: d.title||"No Title", url: d.url||"#", folder: d.folder||"khac", createdAt: Date.now()
-                        }));
-                    } else {
-                        data.forEach(m => push(ref(this.db, 'library_meds'), {
-                            name: m.name||"?", brand: m.brand||"", group: m.group||"Khác", strength: m.strength||"", dosage: m.dosage||"", route: m.route||""
-                        }));
-                    }
-                    Utils.showToast(`Đã import ${data.length} mục!`, "success");
-                    this.ui.closeModal('jsonImportModal');
-                } catch(e) { alert("Lỗi JSON: " + e.message); }
-            }
-
             deleteMed(id) { remove(ref(this.db, `library_meds/${id}`)).then(()=>Utils.showToast("Đã xóa thuốc", "success")); }
 
-            // --- UI HELPERS ---
             handleTabSwitch(tab, el) {
                 document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
                 el.classList.add('active');
@@ -1084,8 +1145,6 @@
             }
         }
 
-        // --- INIT APP ---
-        // Expose to window for HTML event handlers
         window.app = new App();
 
     </script>
