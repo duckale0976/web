@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MinhducKale - Cloud Sync v11.6 (Medical Pro)</title>
+    <title>MinhducKale - Cloud Sync v12.0 (Login Fix)</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
@@ -30,15 +30,13 @@
                         'slideIn': 'slideIn 0.3s ease-out forwards',
                         'float': 'float 3s ease-in-out infinite',
                         'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'progress': 'progress 1s ease-in-out infinite',
-                        'pop': 'pop 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275)'
+                        'progress': 'progress 1s ease-in-out infinite'
                     },
                     keyframes: {
                         blob: { '0%': { transform: 'translate(0,0) scale(1)' }, '33%': { transform: 'translate(30px,-50px) scale(1.1)' }, '66%': { transform: 'translate(-20px,20px) scale(0.9)' }, '100%': { transform: 'translate(0,0) scale(1)' } },
                         slideIn: { 'from': { transform: 'translateY(20px)', opacity: '0' }, 'to': { transform: 'translateY(0)', opacity: '1' } },
                         float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
-                        progress: { '0%': { width: '0%' }, '100%': { width: '100%' } },
-                        pop: { '0%': { transform: 'scale(0.9)' }, '100%': { transform: 'scale(1)' } }
+                        progress: { '0%': { width: '0%' }, '100%': { width: '100%' } }
                     }
                 }
             }
@@ -46,15 +44,10 @@
     </script>
 
     <style>
-        /* THEME VARIABLES */
         :root { --color-primary: #3b82f6; }
-        .theme-blue { --color-primary: #3b82f6; }
-        .theme-purple { --color-primary: #8b5cf6; }
-        .theme-pink { --color-primary: #ec4899; }
-        .theme-green { --color-primary: #10b981; }
+        .theme-blue { --color-primary: #3b82f6; } .theme-purple { --color-primary: #8b5cf6; } .theme-pink { --color-primary: #ec4899; } .theme-green { --color-primary: #10b981; }
 
-        /* CORE UI */
-        body { transition: background-color 0.5s, color 0.5s; background-color: #e0f2fe; color: #1e293b; -webkit-tap-highlight-color: transparent; }
+        body { background-color: #e0f2fe; color: #1e293b; transition: 0.5s; -webkit-tap-highlight-color: transparent; }
         .dark body { background-color: #0f172a; color: #f1f5f9; }
         
         .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.8; z-index: -1; animation: blob 15s infinite alternate; pointer-events: none; }
@@ -73,8 +66,6 @@
         .dark .ios-input { background: rgba(0,0,0,0.5); border-color: #475569; color: white; }
         .ios-input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(59,130,246,0.3); }
 
-        .segmented-control { background: rgba(200, 200, 200, 0.4); backdrop-filter: blur(10px); padding: 4px; border-radius: 12px; display: inline-flex; }
-        .dark .segmented-control { background: rgba(0,0,0,0.4); }
         .segment-btn { padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; color: #64748b; white-space: nowrap; }
         .segment-btn.active { background: white; color: var(--color-primary); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .dark .segment-btn { color: #94a3b8; } .dark .segment-btn.active { background: #334155; color: white; }
@@ -82,16 +73,8 @@
         .tool-content { max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1); will-change: max-height; }
         .tool-content.open { max-height: 1000px; }
 
-        .music-waves { display: flex; align-items: flex-end; justify-content: center; height: 30px; gap: 3px; display: none; margin: 10px 0; }
-        .music-waves.playing { display: flex; }
-        .bar { width: 4px; background: var(--color-primary); border-radius: 4px; animation: wave 1s ease-in-out infinite; }
-        .dark .bar { background: #60a5fa; }
-        @keyframes wave { 0%, 100% { height: 10%; } 50% { height: 100%; } }
-        .bar:nth-child(1) { animation-duration: 0.6s; } .bar:nth-child(2) { animation-duration: 0.8s; } .bar:nth-child(3) { animation-duration: 0.5s; } .bar:nth-child(4) { animation-duration: 0.7s; } .bar:nth-child(5) { animation-duration: 0.9s; }
-
         .file-upload-box { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
         .file-upload-box:hover { border-color: var(--color-primary); background: rgba(59, 130, 246, 0.05); }
-        .file-upload-box.drag-active { border-color: var(--color-primary); background: rgba(59, 130, 246, 0.2); transform: scale(1.02); }
         .dark .file-upload-box { border-color: #475569; background: rgba(255,255,255,0.05); }
         .upload-progress { height: 4px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 10px; display: none; }
         .upload-bar { height: 100%; background: var(--color-primary); width: 0%; transition: width 0.3s; }
@@ -109,6 +92,13 @@
         .ambience-btn { transition: all 0.3s; opacity: 0.6; filter: grayscale(100%); }
         .ambience-btn.active { opacity: 1; filter: grayscale(0%); transform: scale(1.1); background-color: rgba(255,255,255,0.2); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
 
+        .music-waves { display: flex; align-items: flex-end; justify-content: center; height: 30px; gap: 3px; display: none; margin: 10px 0; }
+        .music-waves.playing { display: flex; }
+        .bar { width: 4px; background: var(--color-primary); border-radius: 4px; animation: wave 1s ease-in-out infinite; }
+        .dark .bar { background: #60a5fa; }
+        @keyframes wave { 0%, 100% { height: 10%; } 50% { height: 100%; } }
+        .bar:nth-child(1) { animation-duration: 0.6s; } .bar:nth-child(2) { animation-duration: 0.8s; } .bar:nth-child(3) { animation-duration: 0.5s; } .bar:nth-child(4) { animation-duration: 0.7s; } .bar:nth-child(5) { animation-duration: 0.9s; }
+
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-track { width: 100%; height: 6px; background: rgba(0,0,0,0.1); border-radius: 10px; }
         .dark input[type=range]::-webkit-slider-track { background: rgba(255,255,255,0.1); }
@@ -121,10 +111,10 @@
         .mic-btn:hover { color: var(--color-primary); transform: translateY(-50%) scale(1.2); }
         .mic-btn.listening { color: #ef4444; animation: pulse-slow 1s infinite; }
 
-        /* CHATBOT STYLES (NEW) */
-        #chatbotContainer { position: fixed; bottom: 80px; right: 20px; width: 350px; height: 500px; z-index: 49; transform-origin: bottom right; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
+        /* CHATBOT STYLES (COMPACT) */
+        #chatbotContainer { position: fixed; bottom: 80px; right: 20px; width: 300px; height: 400px; z-index: 49; transform-origin: bottom right; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
         #chatbotContainer.hidden-chat { transform: scale(0); opacity: 0; pointer-events: none; }
-        .chat-bubble { max-width: 80%; padding: 10px 14px; border-radius: 16px; margin-bottom: 8px; font-size: 14px; line-height: 1.5; animation: slideIn 0.2s ease-out; }
+        .chat-bubble { max-width: 85%; padding: 8px 12px; border-radius: 12px; margin-bottom: 8px; font-size: 13px; line-height: 1.5; animation: slideIn 0.2s ease-out; }
         .chat-user { background: var(--color-primary); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
         .chat-bot { background: #f1f5f9; color: #1e293b; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #e2e8f0; }
         .dark .chat-bot { background: #334155; color: white; border-color: #475569; }
@@ -164,7 +154,7 @@
 
                 <div class="text-center md:text-left">
                     <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">Minhduc<span class="text-primary">Kale</span></h1>
-                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v11.6</p>
+                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v12.0</p>
                 </div>
             </div>
             
@@ -387,8 +377,6 @@
                         <p class="text-[10px] font-bold uppercase text-slate-500 mb-2 tracking-wider">Âm thanh nền (Ambience)</p>
                         <div class="flex justify-between items-center px-1">
                             <button onclick="app.music.toggleAmbience('rain', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng Mưa"><i class="fa-solid fa-cloud-rain text-xl text-blue-500"></i><span class="text-[9px] font-bold">Mưa</span></button>
-                            <button onclick="app.music.toggleAmbience('fire', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng Lửa trại"><i class="fa-solid fa-fire text-xl text-orange-500"></i><span class="text-[9px] font-bold">Lửa</span></button>
-                            <button onclick="app.music.toggleAmbience('keyboard', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng gõ phím"><i class="fa-solid fa-keyboard text-xl text-slate-500"></i><span class="text-[9px] font-bold">Phím</span></button>
                             <button onclick="app.music.toggleAmbience('cafe', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Quán Cafe"><i class="fa-solid fa-mug-hot text-xl text-brown-500 text-yellow-700"></i><span class="text-[9px] font-bold">Cafe</span></button>
                         </div>
                     </div>
@@ -517,13 +505,54 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, off, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, set, push, onValue, remove, get, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // --- UPDATED SCRIPT URL (AUTO-FIXED to /exec) ---
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyHrMTG4XxlI3ckrCK7_bTQSG-76DvGBUq6ePh_zuy9/exec"; 
-
         const AI_KEY = "AIzaSyA8x9Cgw0yscyKNPBFuByHnwqcUQuJCMVM";
+
+        const MED_LIBRARY = [
+            {name:"Paracetamol", brand:"Panadol", group:"Giảm đau, hạ sốt", strength:"500mg", dosage:"10-15mg/kg/lần", route:"Uống", usage:"Sốt, đau nhẹ"},
+            {name:"Ibuprofen", brand:"Gofen", group:"NSAID", strength:"400mg", dosage:"10mg/kg/lần", route:"Uống", usage:"Đau viêm, sốt"},
+            {name:"Amoxicillin", brand:"Clamoxyl", group:"Kháng sinh", strength:"500mg", dosage:"20-50mg/kg/ngày", route:"Uống", usage:"Nhiễm khuẩn hô hấp"},
+            {name:"Cephalexin", brand:"Keflex", group:"Kháng sinh", strength:"500mg", dosage:"25-50mg/kg/ngày", route:"Uống", usage:"Nhiễm khuẩn da, mô mềm"},
+            {name:"Azithromycin", brand:"Zithromax", group:"Kháng sinh", strength:"250mg", dosage:"10mg/kg/ngày", route:"Uống", usage:"Viêm phổi, viêm họng"},
+            {name:"Cefuroxime", brand:"Zinnat", group:"Kháng sinh", strength:"250mg", dosage:"20mg/kg/ngày", route:"Uống", usage:"Viêm tai giữa, viêm xoang"},
+            {name:"Metronidazole", brand:"Flagyl", group:"Kháng sinh/KST", strength:"250mg", dosage:"30-40mg/kg/ngày", route:"Uống", usage:"Nhiễm kỵ khí, lỵ amip"},
+            {name:"Omeprazole", brand:"Losec", group:"PPI", strength:"20mg", dosage:"20-40mg/ngày", route:"Uống", usage:"Loét dạ dày, trào ngược"},
+            {name:"Esomeprazole", brand:"Nexium", group:"PPI", strength:"40mg", dosage:"20-40mg/ngày", route:"Uống", usage:"Trào ngược dạ dày thực quản"},
+            {name:"Domperidone", brand:"Motilium", group:"Chống nôn", strength:"10mg", dosage:"0.25mg/kg/lần", route:"Uống", usage:"Buồn nôn, đầy hơi"},
+            {name:"Loperamide", brand:"Imodium", group:"Cầm tiêu chảy", strength:"2mg", dosage:"2-4mg/lần", route:"Uống", usage:"Tiêu chảy cấp (người lớn)"},
+            {name:"Salbutamol", brand:"Ventolin", group:"Giãn phế quản", strength:"2.5mg/2.5ml", dosage:"2.5-5mg/lần", route:"Khí dung", usage:"Hen phế quản"},
+            {name:"Prednisolone", brand:"Solupred", group:"Corticoid", strength:"5mg", dosage:"1-2mg/kg/ngày", route:"Uống", usage:"Kháng viêm, dị ứng"},
+            {name:"Methylprednisolone", brand:"Medrol", group:"Corticoid", strength:"16mg", dosage:"0.5-2mg/kg/ngày", route:"Uống", usage:"Kháng viêm mạnh"},
+            {name:"Loratadine", brand:"Clarityne", group:"Kháng Histamin", strength:"10mg", dosage:"10mg/ngày", route:"Uống", usage:"Viêm mũi dị ứng, mày đay"},
+            {name:"Cetirizine", brand:"Zyrtec", group:"Kháng Histamin", strength:"10mg", dosage:"10mg/ngày", route:"Uống", usage:"Dị ứng, ngứa"},
+            {name:"Fexofenadine", brand:"Telfast", group:"Kháng Histamin", strength:"180mg", dosage:"180mg/ngày", route:"Uống", usage:"Viêm mũi dị ứng"},
+            {name:"Acetylcysteine", brand:"Acemuc", group:"Tiêu đờm", strength:"200mg", dosage:"200mg x 3/ngày", route:"Uống", usage:"Ho có đờm"},
+            {name:"Bromhexine", brand:"Bisolvon", group:"Long đờm", strength:"8mg", dosage:"8-16mg x 3/ngày", route:"Uống", usage:"Viêm phế quản"},
+            {name:"Amlodipine", brand:"Amlor", group:"HA (Chẹn Canxi)", strength:"5mg", dosage:"5-10mg/ngày", route:"Uống", usage:"Tăng huyết áp"},
+            {name:"Losartan", brand:"Cozaar", group:"HA (Ức chế AT1)", strength:"50mg", dosage:"50-100mg/ngày", route:"Uống", usage:"Tăng huyết áp, suy tim"},
+            {name:"Enalapril", brand:"Renitec", group:"HA (Ức chế men chuyển)", strength:"5mg", dosage:"5-20mg/ngày", route:"Uống", usage:"Tăng huyết áp"},
+            {name:"Bisoprolol", brand:"Concor", group:"Tim mạch (Beta blocker)", strength:"2.5mg", dosage:"2.5-10mg/ngày", route:"Uống", usage:"Suy tim, tăng huyết áp"},
+            {name:"Atorvastatin", brand:"Lipitor", group:"Mỡ máu", strength:"10mg", dosage:"10-20mg/ngày", route:"Uống", usage:"Rối loạn lipid máu"},
+            {name:"Rosuvastatin", brand:"Crestor", group:"Mỡ máu", strength:"10mg", dosage:"5-20mg/ngày", route:"Uống", usage:"Tăng cholesterol"},
+            {name:"Metformin", brand:"Glucophage", group:"Tiểu đường", strength:"500mg", dosage:"500-2000mg/ngày", route:"Uống", usage:"Đái tháo đường type 2"},
+            {name:"Gliclazide", brand:"Diamicron", group:"Tiểu đường", strength:"30mg MR", dosage:"30-120mg/ngày", route:"Uống", usage:"Đái tháo đường type 2"},
+            {name:"Insulin Glargine", brand:"Lantus", group:"Insulin nền", strength:"100IU/ml", dosage:"Theo đường huyết", route:"Tiêm DD", usage:"Kiểm soát đường huyết"},
+            {name:"Furosemide", brand:"Lasix", group:"Lợi tiểu", strength:"40mg", dosage:"20-80mg/ngày", route:"Uống/Tiêm", usage:"Phù, suy tim"},
+            {name:"Spironolactone", brand:"Verospiron", group:"Lợi tiểu", strength:"25mg", dosage:"25-100mg/ngày", route:"Uống", usage:"Xơ gan, suy tim"},
+            {name:"Dexamethasone", brand:"Kavasdin", group:"Corticoid", strength:"0.5mg", dosage:"0.75-9mg/ngày", route:"Uống/Tiêm", usage:"Chống viêm, chống dị ứng"},
+            {name:"Adrenaline", brand:"Adrenalin", group:"Cấp cứu", strength:"1mg/1ml", dosage:"Theo phác đồ", route:"Tiêm bắp/TM", usage:"Sốc phản vệ, ngừng tuần hoàn"},
+            {name:"Diazepam", brand:"Seduxen", group:"An thần", strength:"5mg", dosage:"5-10mg/lần", route:"Uống/Tiêm", usage:"Co giật, lo âu"},
+            {name:"Tranexamic acid", brand:"Transamin", group:"Cầm máu", strength:"250mg", dosage:"500-1000mg/lần", route:"Uống/Tiêm", usage:"Chảy máu bất thường"},
+            {name:"Vitamin K1", brand:"Vinphacine", group:"Vitamin", strength:"10mg", dosage:"10mg/lần", route:"Tiêm bắp", usage:"Rối loạn đông máu"},
+            {name:"Oresol", brand:"Oresol", group:"Bù nước", strength:"Gói", dosage:"Pha đúng tỷ lệ", route:"Uống", usage:"Mất nước do tiêu chảy"},
+            {name:"Smecta", brand:"Diosmectite", group:"Hấp phụ", strength:"3g", dosage:"1-3 gói/ngày", route:"Uống", usage:"Tiêu chảy"},
+            {name:"Berberin", brand:"Berberin", group:"Kháng khuẩn ruột", strength:"10mg", dosage:"4-12 viên/ngày", route:"Uống", usage:"Lỵ, tiêu chảy"},
+            {name:"Ginkgo Biloba", brand:"Tanakan", group:"Tuần hoàn não", strength:"40mg", dosage:"40mg x 3/ngày", route:"Uống", usage:"Rối loạn trí nhớ"},
+            {name:"Piracetam", brand:"Nootropyl", group:"Hướng thần", strength:"800mg", dosage:"800mg x 3/ngày", route:"Uống", usage:"Chóng mặt, sa sút trí tuệ"}
+        ];
 
         const CONFIG = {
             firebase: {
@@ -770,6 +799,36 @@
                 res.innerHTML = `<span class="${color}">${egfr} mL/min</span><br><span class="text-xs text-slate-400 font-normal">(${detail})</span><br><span class="text-sm font-bold ${color}">${stage}</span>`;
                 sfx.success();
             }
+            
+            calcGCS() {
+                const e = parseInt(document.getElementById('gcs-e').value);
+                const v = parseInt(document.getElementById('gcs-v').value);
+                const m = parseInt(document.getElementById('gcs-m').value);
+                const total = e + v + m;
+                let severity = "";
+                if(total >= 13) severity = "Nhẹ";
+                else if(total >= 9) severity = "Trung bình";
+                else severity = "Nặng";
+                
+                const res = document.getElementById('gcs-res');
+                res.classList.remove('hidden');
+                res.innerText = `GCS: ${total} điểm (${severity})`;
+                sfx.success();
+            }
+
+            calcFluid() {
+                const w = parseFloat(document.getElementById('fluid-w').value);
+                if(!w) return sfx.error();
+                let fluid = 0;
+                if(w <= 10) fluid = w * 100;
+                else if(w <= 20) fluid = 1000 + (w-10)*50;
+                else fluid = 1500 + (w-20)*20;
+                
+                const res = document.getElementById('fluid-res');
+                res.classList.remove('hidden');
+                res.innerText = `Dịch duy trì: ${fluid} ml/24h`;
+                sfx.success();
+            }
         }
 
         class App {
@@ -841,7 +900,19 @@
                 if (localStorage.getItem('mdk_dark') === 'true') document.documentElement.classList.add('dark');
                 if (localStorage.getItem('mdk_theme')) document.body.className = `${localStorage.getItem('mdk_theme')} font-sans`;
 
-                onAuthStateChanged(this.authObj, (user) => { this.user = user; this.updateAuthUI(); if (user) { this.loadUserData(); this.listenToData(); } else { this.resetData(); } });
+                onAuthStateChanged(this.authObj, (user) => { 
+                    this.user = user; 
+                    this.updateAuthUI(); 
+                    if (user) { 
+                        this.loadUserData(); 
+                        this.listenToData(); // This loads the public data now!
+                    } else { 
+                        // Even if not logged in, load public data!
+                        this.listenToData();
+                        this.resetData(); 
+                    } 
+                });
+
                 document.addEventListener('click', (e) => { const userProfile = document.getElementById('userProfile'); const logoutPanel = document.getElementById('logoutPanel'); if (userProfile && logoutPanel && !userProfile.contains(e.target) && !logoutPanel.contains(e.target)) { logoutPanel.classList.add('hidden'); } const notifyBtn = document.getElementById('notifyBtn'); const notifyPanel = document.getElementById('notifyPanel'); if (notifyBtn && notifyPanel && !notifyBtn.contains(e.target) && !notifyPanel.contains(e.target)) { notifyPanel.classList.add('hidden'); } });
                 document.body.addEventListener('click', (e) => { if(e.target.closest('button') || e.target.closest('.segment-btn') || e.target.closest('a')) { sfx.click(); } });
                 document.addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); const searchInput = document.getElementById('searchInput'); searchInput.focus(); sfx.click(); searchInput.parentElement.classList.add('animate-pulse'); setTimeout(()=> searchInput.parentElement.classList.remove('animate-pulse'), 500); } });
@@ -868,18 +939,96 @@
             }
 
             // --- AUTH ---
-            handleLogin() { signInWithPopup(this.authObj, this.provider).then(() => this.logAction("Đăng nhập")).catch(e => Utils.showToast(e.message, 'error')); }
+            handleLogin() { 
+                signInWithPopup(this.authObj, this.provider)
+                .then(() => this.logAction("Đăng nhập"))
+                .catch(e => {
+                    if (e.code && e.code.includes('identity-toolkit')) {
+                        alert("LỖI: Bạn chưa bật API Authentication trong Google Console! Hãy làm theo hướng dẫn ở trên.");
+                    } else {
+                        Utils.showToast(e.message, 'error');
+                    }
+                }); 
+            }
             async handleLogout() { if(this.user) await this.logAction("Đăng xuất"); await signOut(this.authObj); Utils.showToast("Đã đăng xuất", "info"); document.getElementById('logoutPanel').classList.add('hidden'); }
             async handleSwitchAccount() { await signOut(this.authObj); this.handleLogin(); }
-            updateAuthUI() { const els = { loginBtn: document.getElementById('loginBtn'), profile: document.getElementById('userProfile'), avatar: document.getElementById('userAvatar'), name: document.getElementById('userName'), badge: document.getElementById('roleBadge'), addBtn: document.getElementById('addDocBtn'), adminBtn: document.getElementById('adminPanelBtn'), adminCard: document.getElementById('adminToolsCard'), pubCheck: document.getElementById('publicDocWrapper') }; if (this.user) { els.loginBtn.classList.add('hidden'); els.profile.classList.remove('hidden'); els.profile.classList.add('flex'); els.avatar.src = this.user.photoURL; els.name.innerText = this.user.displayName; els.addBtn.classList.remove("hidden"); } else { els.loginBtn.classList.remove('hidden'); els.profile.classList.add('hidden'); els.profile.classList.remove('flex'); els.addBtn.classList.add("hidden"); els.adminBtn.classList.add("hidden"); els.adminCard.classList.add("hidden"); els.pubCheck.classList.add("opacity-50", "pointer-events-none"); } }
+            updateAuthUI() { 
+                const els = { loginBtn: document.getElementById('loginBtn'), profile: document.getElementById('userProfile'), avatar: document.getElementById('userAvatar'), name: document.getElementById('userName'), badge: document.getElementById('roleBadge'), addBtn: document.getElementById('addDocBtn'), adminBtn: document.getElementById('adminPanelBtn'), adminCard: document.getElementById('adminToolsCard'), pubCheck: document.getElementById('publicDocWrapper') }; 
+                
+                if (this.user) { 
+                    els.loginBtn.classList.add('hidden'); 
+                    els.profile.classList.remove('hidden'); 
+                    els.profile.classList.add('flex'); 
+                    els.avatar.src = this.user.photoURL; 
+                    els.name.innerText = this.user.displayName; 
+                    els.addBtn.classList.remove("hidden"); 
+                } else { 
+                    els.loginBtn.classList.remove('hidden'); 
+                    els.profile.classList.add('hidden'); 
+                    els.profile.classList.remove('flex'); 
+                    els.addBtn.classList.add("hidden"); 
+                    els.adminBtn.classList.add("hidden"); 
+                    els.adminCard.classList.add("hidden"); 
+                    // No need to disable pubCheck as everything is public now
+                    // els.pubCheck.classList.add("opacity-50", "pointer-events-none"); 
+                } 
+            }
+
             loadUserData() { try { onValue(ref(this.db, `users/${this.user.uid}/role`), snap => { const role = snap.val() || "user"; const badge = document.getElementById('roleBadge'); this.isAdmin = (role === 'admin'); if (this.isAdmin) { badge.innerText = "ADMIN"; badge.className = "px-3 py-1 rounded-full text-[10px] font-bold bg-red-500 text-white w-fit shadow-sm"; document.getElementById('adminPanelBtn').classList.remove("hidden"); document.getElementById('adminToolsCard').classList.remove("hidden"); document.getElementById('publicDocWrapper').classList.remove("opacity-50", "pointer-events-none"); this.loadAdminData(); } else { badge.innerText = "USER"; badge.className = "px-3 py-1 rounded-full text-[10px] font-bold bg-green-500 text-white w-fit shadow-sm"; } }); } catch(e) { console.error(e); } try { onValue(ref(this.db, `users/${this.user.uid}/note`), snap => document.getElementById('quickNote').value = snap.val() || ""); } catch(e) {} try { onValue(ref(this.db, `users/${this.user.uid}/logs`), snap => { const list = document.getElementById('notifyList'); list.innerHTML = ""; const data = snap.val(); if (data) { Object.values(data).reverse().forEach(l => { list.innerHTML += `<div class="p-2 bg-white/60 dark:bg-white/10 rounded-lg border-l-2 border-blue-400 mb-1"><b class="text-[10px] text-slate-500 dark:text-slate-400">${l.time}</b><br>${Utils.escapeHTML(l.text)}</div>`; }); } else { list.innerHTML = `<p class="text-center text-slate-400 italic">Chưa có hoạt động</p>`; } }); } catch(e) {} }
 
             // --- DATA ---
-            listenToData() { document.getElementById('loadingDocs').classList.remove('hidden'); if(this.listeners.pub) off(this.listeners.pub); this.listeners.pub = ref(this.db, 'library_public'); try { onValue(this.listeners.pub, snap => { const data = snap.val(); this.dataStore.publicDocs = data ? Object.entries(data).map(([k,v]) => ({...v, id:k, source:'public'})) : []; this.renderDocs(); document.getElementById('loadingDocs').classList.add('hidden'); }); } catch(e) {} if(this.listeners.priv) off(this.listeners.priv); this.listeners.priv = ref(this.db, `users/${this.user.uid}/docs`); try { onValue(this.listeners.priv, snap => { const data = snap.val(); this.dataStore.privateDocs = data ? Object.entries(data).map(([k,v]) => ({...v, id:k, source:'private'})) : []; this.renderDocs(); }); } catch(e) {} document.getElementById('loadingMeds').classList.remove('hidden'); if(this.listeners.meds) off(this.listeners.meds); this.listeners.meds = ref(this.db, 'library_meds'); try { onValue(this.listeners.meds, snap => { const data = snap.val(); this.dataStore.meds = data ? Object.entries(data).map(([k,v]) => ({...v, id:k})) : []; this.renderMeds(); document.getElementById('loadingMeds').classList.add('hidden'); }); } catch(e) {} }
-            resetData() { this.dataStore = { publicDocs: [], privateDocs: [], meds: [] }; this.renderDocs(); this.renderMeds(); this.user = null; this.isAdmin = false; }
+            listenToData() { 
+                document.getElementById('loadingDocs').classList.remove('hidden'); 
+                
+                // Public Docs - Always Load
+                if(this.listeners.pub) off(this.listeners.pub); 
+                this.listeners.pub = ref(this.db, 'library_public'); 
+                try { 
+                    onValue(this.listeners.pub, snap => { 
+                        const data = snap.val(); 
+                        this.dataStore.publicDocs = data ? Object.entries(data).map(([k,v]) => ({...v, id:k, source:'public'})) : []; 
+                        this.renderDocs(); 
+                        document.getElementById('loadingDocs').classList.add('hidden'); 
+                    }); 
+                } catch(e) {} 
+                
+                // Private Docs - Only if Logged In (kept for backward compatibility, but new saves go to public)
+                if (this.user) {
+                    if(this.listeners.priv) off(this.listeners.priv); 
+                    this.listeners.priv = ref(this.db, `users/${this.user.uid}/docs`); 
+                    try { 
+                        onValue(this.listeners.priv, snap => { 
+                            const data = snap.val(); 
+                            this.dataStore.privateDocs = data ? Object.entries(data).map(([k,v]) => ({...v, id:k, source:'private'})) : []; 
+                            this.renderDocs(); 
+                        }); 
+                    } catch(e) {} 
+                }
+
+                // Meds - Always Load
+                document.getElementById('loadingMeds').classList.remove('hidden'); 
+                if(this.listeners.meds) off(this.listeners.meds); 
+                this.listeners.meds = ref(this.db, 'library_meds'); 
+                try { 
+                    onValue(this.listeners.meds, snap => { 
+                        const data = snap.val(); 
+                        this.dataStore.meds = data ? Object.entries(data).map(([k,v]) => ({...v, id:k})) : []; 
+                        this.renderMeds(); 
+                        document.getElementById('loadingMeds').classList.add('hidden'); 
+                    }); 
+                } catch(e) {} 
+            }
+            
+            resetData() { 
+                // Don't fully reset, keep public docs visible
+                this.dataStore.privateDocs = []; 
+                this.renderDocs(); 
+                this.user = null; 
+                this.isAdmin = false; 
+            }
 
             // --- UI RENDER ---
-            renderDocs() { const listEl = document.getElementById('docsList'); const term = document.getElementById('searchInput').value.toLowerCase(); const allDocs = [...this.dataStore.publicDocs, ...this.dataStore.privateDocs]; if (!term && !this.currentFolder) { document.getElementById('breadcrumb').classList.add('hidden'); let html = ''; Object.entries(CONFIG.folders).forEach(([key, f]) => { const count = allDocs.filter(d => d.folder === key).length; html += ` <div onclick="app.currentFolder='${key}'; app.renderDocs()" class="glass-card p-5 rounded-3xl flex items-center gap-5 cursor-pointer hover:bg-white/90 dark:hover:bg-slate-700/80 transition group border-l-4 border-transparent hover:border-blue-500"> <div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl ${f.color} shadow-md group-hover:scale-110 transition"><i class="fa-solid ${f.icon}"></i></div> <div class="flex-1"><h3 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${f.name}</h3><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">${count} file</p></div> <i class="fa-solid fa-chevron-right text-slate-300 font-bold group-hover:text-blue-500 transition"></i> </div>`; }); listEl.innerHTML = html; return; } document.getElementById('breadcrumb').classList.remove('hidden'); document.getElementById('currentFolderTitle').innerText = this.currentFolder ? CONFIG.folders[this.currentFolder].name : "Kết quả tìm kiếm"; let filtered = allDocs; if (this.currentFolder) filtered = filtered.filter(d => d.folder === this.currentFolder); if (term) filtered = filtered.filter(d => (d.title || '').toLowerCase().includes(term)); if (filtered.length === 0) { listEl.innerHTML = `<div class="col-span-2 text-center py-20 opacity-60 dark:text-white font-bold">Không tìm thấy tài liệu</div>`; return; } const frag = document.createDocumentFragment(); filtered.forEach(doc => { const isPub = doc.source === 'public'; const div = document.createElement('div'); div.className = "glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm group relative pr-10 animate-slideIn"; div.innerHTML = ` <div class="w-10 h-10 rounded-full ${isPub?'text-orange-500 bg-orange-50':'text-blue-500 bg-blue-50'} flex items-center justify-center flex-shrink-0"><i class="fa-solid ${isPub?'fa-book-open':'fa-file-lines'} text-lg"></i></div> <div class="flex-1 min-w-0"> <div class="flex items-center"><h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${Utils.escapeHTML(doc.title)}</h4>${isPub?'<span class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded ml-2 font-bold uppercase">Public</span>':''}</div> <a href="${Utils.escapeHTML(doc.url)}" target="_blank" onclick="app.logAction('Mở: ${Utils.escapeHTML(doc.title).replace(/'/g,"")}')" class="text-xs font-bold text-blue-600 hover:underline uppercase tracking-wide">Mở tài liệu</a> </div> ${(!isPub || (isPub && this.isAdmin)) ? `<button onclick="app.data.deleteDoc('${doc.id}', ${isPub})" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-red-100 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition opacity-0 group-hover:opacity-100 shadow-sm"><i class="fa-solid fa-trash-can text-sm"></i></button>` : ''} `; frag.appendChild(div); }); listEl.innerHTML = ''; listEl.appendChild(frag); }
+            renderDocs() { const listEl = document.getElementById('docsList'); const term = document.getElementById('searchInput').value.toLowerCase(); const allDocs = [...this.dataStore.publicDocs, ...this.dataStore.privateDocs]; if (!term && !this.currentFolder) { document.getElementById('breadcrumb').classList.add('hidden'); let html = ''; Object.entries(CONFIG.folders).forEach(([key, f]) => { const count = allDocs.filter(d => d.folder === key).length; html += ` <div onclick="app.currentFolder='${key}'; app.renderDocs()" class="glass-card p-5 rounded-3xl flex items-center gap-5 cursor-pointer hover:bg-white/90 dark:hover:bg-slate-700/80 transition group border-l-4 border-transparent hover:border-blue-500"> <div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl ${f.color} shadow-md group-hover:scale-110 transition"><i class="fa-solid ${f.icon}"></i></div> <div class="flex-1"><h3 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${f.name}</h3><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">${count} file</p></div> <i class="fa-solid fa-chevron-right text-slate-300 font-bold group-hover:text-blue-500 transition"></i> </div>`; }); listEl.innerHTML = html; return; } document.getElementById('breadcrumb').classList.remove('hidden'); document.getElementById('currentFolderTitle').innerText = this.currentFolder ? CONFIG.folders[this.currentFolder].name : "Kết quả tìm kiếm"; let filtered = allDocs; if (this.currentFolder) filtered = filtered.filter(d => d.folder === this.currentFolder); if (term) filtered = filtered.filter(d => (d.title || '').toLowerCase().includes(term)); if (filtered.length === 0) { listEl.innerHTML = `<div class="col-span-2 text-center py-20 opacity-60 dark:text-white font-bold">Không tìm thấy tài liệu</div>`; return; } const frag = document.createDocumentFragment(); filtered.forEach(doc => { const isPub = doc.source === 'public'; const div = document.createElement('div'); div.className = "glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm group relative pr-10 animate-slideIn"; div.innerHTML = ` <div class="w-10 h-10 rounded-full ${isPub?'text-orange-500 bg-orange-50':'text-blue-500 bg-blue-50'} flex items-center justify-center flex-shrink-0"><i class="fa-solid ${isPub?'fa-book-open':'fa-file-lines'} text-lg"></i></div> <div class="flex-1 min-w-0"> <div class="flex items-center"><h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${Utils.escapeHTML(doc.title)}</h4>${isPub?'<span class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded ml-2 font-bold uppercase">Public</span>':''}</div> <a href="${Utils.escapeHTML(doc.url)}" target="_blank" onclick="app.logAction('Mở: ${Utils.escapeHTML(doc.title).replace(/'/g,"")}')" class="text-xs font-bold text-blue-600 hover:underline uppercase tracking-wide">Mở tài liệu</a> </div> ${this.isAdmin ? `<button onclick="app.data.deleteDoc('${doc.id}', ${isPub})" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-red-100 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition opacity-0 group-hover:opacity-100 shadow-sm"><i class="fa-solid fa-trash-can text-sm"></i></button>` : ''} `; frag.appendChild(div); }); listEl.innerHTML = ''; listEl.appendChild(frag); }
             renderMeds() { const container = document.getElementById('medsList'); const term = document.getElementById('searchMedsInput').value.toLowerCase(); let list = this.dataStore.meds; if (term) { list = list.filter(m => (m.name?.toLowerCase().includes(term)) || (m.brand?.toLowerCase().includes(term)) || (m.ing?.toLowerCase().includes(term)) || (m.group?.toLowerCase().includes(term)) ); } if (list.length === 0) { container.innerHTML = '<p class="text-center text-slate-500 mt-4">Không tìm thấy thuốc phù hợp.</p>'; return; } const displayList = term ? list : list.slice(0, 50); const frag = document.createDocumentFragment(); displayList.forEach(m => { const div = document.createElement('div'); div.className = "glass-card p-4 rounded-2xl flex flex-col gap-2 border border-white/50 shadow-sm hover:border-pink-400 transition relative group animate-slideIn"; div.innerHTML = ` <div class="flex justify-between items-start"> <div> <h4 class="font-bold text-slate-900 dark:text-white text-lg">${Utils.escapeHTML(m.name)} <span class="text-xs text-slate-500 font-normal">(${Utils.escapeHTML(m.brand || "")})</span></h4> <p class="text-xs font-bold text-pink-600 bg-pink-100 px-2 py-0.5 rounded-full w-fit mt-1">${Utils.escapeHTML(m.group || "Khác")}</p> </div> ${this.isAdmin ? `<button onclick="if(confirm('Xóa thuốc này?')) app.admin.deleteMed('${m.id}')" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>` : ''} </div> <div class="text-sm text-slate-700 dark:text-slate-300 mt-2 space-y-1"> <p><i class="fa-solid fa-flask text-purple-500 mr-1 w-4"></i> <b>Hàm lượng:</b> ${Utils.escapeHTML(m.strength || m.ing || "-")}</p> <p><i class="fa-solid fa-gears text-blue-500 mr-1 w-4"></i> <b>Cơ chế/CĐ:</b> ${Utils.escapeHTML(m.mechanism || m.usage || "-")}</p> <p><i class="fa-solid fa-prescription-bottle-medical text-green-500 mr-1 w-4"></i> <b>Liều dùng:</b> ${Utils.escapeHTML(m.dosage || "-")}</p> <p><i class="fa-solid fa-route text-orange-500 mr-1 w-4"></i> <b>Đường dùng:</b> ${Utils.escapeHTML(m.route || "-")}</p> </div> `; frag.appendChild(div); }); container.innerHTML = ''; container.appendChild(frag); if (!term && list.length > 50) { container.innerHTML += `<div class="text-center text-xs text-slate-400 py-2">Hiển thị 50/${list.length} thuốc. Hãy tìm kiếm để thấy chi tiết.</div>`; } }
 
             // --- NEW: VOICE SEARCH ---
