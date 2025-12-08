@@ -3,17 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MinhducKale - Cloud Sync v12.0 (Login Fix)</title>
+    <title>MinhducKale - Cloud Sync v10.6 (Smart UX)</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3774/3774299.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/markdown-it/13.0.1/markdown-it.min.js"></script>
-    
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -23,20 +21,17 @@
             theme: {
                 extend: {
                     fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
-                    colors: { primary: 'var(--color-primary)' },
                     animation: { 
                         'blob': 'blob 10s infinite', 
                         'spin-slow': 'spin 8s linear infinite', 
                         'slideIn': 'slideIn 0.3s ease-out forwards',
                         'float': 'float 3s ease-in-out infinite',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-                        'progress': 'progress 1s ease-in-out infinite'
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite'
                     },
                     keyframes: {
                         blob: { '0%': { transform: 'translate(0,0) scale(1)' }, '33%': { transform: 'translate(30px,-50px) scale(1.1)' }, '66%': { transform: 'translate(-20px,20px) scale(0.9)' }, '100%': { transform: 'translate(0,0) scale(1)' } },
-                        slideIn: { 'from': { transform: 'translateY(20px)', opacity: '0' }, 'to': { transform: 'translateY(0)', opacity: '1' } },
-                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
-                        progress: { '0%': { width: '0%' }, '100%': { width: '100%' } }
+                        slideIn: { 'from': { transform: 'translateX(100%)', opacity: '0' }, 'to': { transform: 'translateX(0)', opacity: '1' } },
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } }
                     }
                 }
             }
@@ -44,85 +39,70 @@
     </script>
 
     <style>
-        :root { --color-primary: #3b82f6; }
-        .theme-blue { --color-primary: #3b82f6; } .theme-purple { --color-primary: #8b5cf6; } .theme-pink { --color-primary: #ec4899; } .theme-green { --color-primary: #10b981; }
-
-        body { background-color: #e0f2fe; color: #1e293b; transition: 0.5s; -webkit-tap-highlight-color: transparent; }
+        /* CORE STYLES */
+        body { transition: background-color 0.5s, color 0.5s; background-color: #e0f2fe; color: #1e293b; -webkit-tap-highlight-color: transparent; }
         .dark body { background-color: #0f172a; color: #f1f5f9; }
         
-        .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.8; z-index: -1; animation: blob 15s infinite alternate; pointer-events: none; }
-        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: var(--color-primary); opacity: 0.5; }
+        /* BACKGROUND BLOBS */
+        .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.8; z-index: -1; animation: blob 15s infinite alternate; pointer-events: none; will-change: transform; }
+        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #93c5fd; }
         .blob-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #6ee7b7; }
         .blob-3 { top: 40%; left: 40%; width: 400px; height: 400px; background: #c4b5fd; }
-        .dark .blob-1 { opacity: 0.2; } .dark .blob-2 { background: #065f46; opacity: 0.3; } .dark .blob-3 { background: #5b21b6; opacity: 0.3; }
-
-        .glass-panel { background: rgba(255,255,255,0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.7); box-shadow: 0 8px 32px rgba(31,38,135,0.1); }
-        .dark .glass-panel { background: rgba(15,23,42,0.8); border: 1px solid rgba(255,255,255,0.1); }
-        .glass-card { background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.6); transition: all 0.2s ease; will-change: transform; }
-        .dark .glass-card { background: rgba(30,41,59,0.85); border: 1px solid rgba(255,255,255,0.05); }
-        .glass-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); border-color: var(--color-primary); }
-
-        .ios-input { background: rgba(255, 255, 255, 0.8); border: 1px solid #cbd5e1; color: #0f172a; font-weight: 600; transition: 0.2s; }
-        .dark .ios-input { background: rgba(0,0,0,0.5); border-color: #475569; color: white; }
-        .ios-input:focus { outline: none; border-color: var(--color-primary); box-shadow: 0 0 0 3px rgba(59,130,246,0.3); }
-
-        .segment-btn { padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; color: #64748b; white-space: nowrap; }
-        .segment-btn.active { background: white; color: var(--color-primary); box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .dark .segment-btn { color: #94a3b8; } .dark .segment-btn.active { background: #334155; color: white; }
-
+        .dark .blob-1 { background: #1e40af; opacity: 0.3; }
+        .dark .blob-2 { background: #065f46; opacity: 0.3; }
+        .dark .blob-3 { background: #5b21b6; opacity: 0.3; }
+        
+        /* GLASSMORPHISM */
+        .glass-panel { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); }
+        .dark .glass-panel { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); }
+        
+        .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); transition: all 0.2s ease; will-change: transform; }
+        .dark .glass-card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .glass-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
+        
+        /* FORM ELEMENTS */
+        .ios-input { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(203, 213, 225, 0.8); color: #0f172a; font-weight: 600; transition: all 0.2s; }
+        .dark .ios-input { background: rgba(0, 0, 0, 0.5); border-color: rgba(255,255,255,0.2); color: white; }
+        .ios-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3); border-color: #3b82f6; }
+        
+        /* UI COMPONENTS */
+        .segmented-control { background: rgba(200, 200, 200, 0.4); backdrop-filter: blur(10px); padding: 4px; border-radius: 12px; display: inline-flex; }
+        .dark .segmented-control { background: rgba(0,0,0,0.4); }
+        .segment-btn { padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; color: #475569; white-space: nowrap; }
+        .dark .segment-btn { color: #94a3b8; }
+        .segment-btn.active { background: white; color: #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
+        .dark .segment-btn.active { background: #334155; color: white; }
+        
         .tool-content { max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1); will-change: max-height; }
-        .tool-content.open { max-height: 1000px; }
-
-        .file-upload-box { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
-        .file-upload-box:hover { border-color: var(--color-primary); background: rgba(59, 130, 246, 0.05); }
-        .dark .file-upload-box { border-color: #475569; background: rgba(255,255,255,0.05); }
-        .upload-progress { height: 4px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 10px; display: none; }
-        .upload-bar { height: 100%; background: var(--color-primary); width: 0%; transition: width 0.3s; }
-        .upload-bar.animate { animation: progress 1.5s ease-in-out infinite; }
-        @keyframes progress { 0% { width: 0%; } 100% { width: 100%; } }
-
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 10px; }
-        .toast { min-width: 280px; padding: 16px; border-radius: 12px; background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-left: 4px solid var(--color-primary); animation: slideIn 0.3s ease-out; }
-        .toast.error { border-left-color: #ef4444; } .toast.success { border-left-color: #22c55e; }
-        .dark .toast { background: #1e293b; color: white; border: 1px solid rgba(255,255,255,0.1); }
-
-        .music-tab { font-size: 10px; font-weight: bold; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; cursor: pointer; opacity: 0.6; transition: all 0.3s; }
-        .music-tab.active { background: rgba(59, 130, 246, 0.2); color: var(--color-primary); opacity: 1; }
-        .dark .music-tab.active { background: rgba(255, 255, 255, 0.1); color: #fff; }
-        .ambience-btn { transition: all 0.3s; opacity: 0.6; filter: grayscale(100%); }
-        .ambience-btn.active { opacity: 1; filter: grayscale(0%); transform: scale(1.1); background-color: rgba(255,255,255,0.2); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-
-        .music-waves { display: flex; align-items: flex-end; justify-content: center; height: 30px; gap: 3px; display: none; margin: 10px 0; }
-        .music-waves.playing { display: flex; }
-        .bar { width: 4px; background: var(--color-primary); border-radius: 4px; animation: wave 1s ease-in-out infinite; }
-        .dark .bar { background: #60a5fa; }
-        @keyframes wave { 0%, 100% { height: 10%; } 50% { height: 100%; } }
-        .bar:nth-child(1) { animation-duration: 0.6s; } .bar:nth-child(2) { animation-duration: 0.8s; } .bar:nth-child(3) { animation-duration: 0.5s; } .bar:nth-child(4) { animation-duration: 0.7s; } .bar:nth-child(5) { animation-duration: 0.9s; }
-
+        .tool-content.open { max-height: 800px; }
+        
+        /* SLIDERS & LOADERS */
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-track { width: 100%; height: 6px; background: rgba(0,0,0,0.1); border-radius: 10px; }
         .dark input[type=range]::-webkit-slider-track { background: rgba(255,255,255,0.1); }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: var(--color-primary); cursor: pointer; margin-top: -5px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: transform 0.1s; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #3b82f6; cursor: pointer; margin-top: -5px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: transform 0.1s; }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
-        .loader { border: 3px solid #f3f3f3; border-top: 3px solid var(--color-primary); border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .cursor-wait { cursor: wait; }
-        .mic-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #94a3b8; cursor: pointer; transition: 0.2s; padding: 5px; }
-        .mic-btn:hover { color: var(--color-primary); transform: translateY(-50%) scale(1.2); }
-        .mic-btn.listening { color: #ef4444; animation: pulse-slow 1s infinite; }
-
-        /* CHATBOT STYLES (COMPACT) */
-        #chatbotContainer { position: fixed; bottom: 80px; right: 20px; width: 300px; height: 400px; z-index: 49; transform-origin: bottom right; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); display: flex; flex-direction: column; }
-        #chatbotContainer.hidden-chat { transform: scale(0); opacity: 0; pointer-events: none; }
-        .chat-bubble { max-width: 85%; padding: 8px 12px; border-radius: 12px; margin-bottom: 8px; font-size: 13px; line-height: 1.5; animation: slideIn 0.2s ease-out; }
-        .chat-user { background: var(--color-primary); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .chat-bot { background: #f1f5f9; color: #1e293b; align-self: flex-start; border-bottom-left-radius: 2px; border: 1px solid #e2e8f0; }
-        .dark .chat-bot { background: #334155; color: white; border-color: #475569; }
-        #chatToggleBtn { position: fixed; bottom: 20px; right: 20px; z-index: 50; width: 50px; height: 50px; border-radius: 50%; background: var(--color-primary); color: white; display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 15px rgba(0,0,0,0.2); transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); cursor: pointer; }
-        #chatToggleBtn:hover { transform: scale(1.1); }
+        
+        /* TOAST NOTIFICATION */
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { min-width: 280px; padding: 16px; border-radius: 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; animation: slideIn 0.3s ease-out forwards; border-left: 4px solid #3b82f6; pointer-events: auto; }
+        .toast.error { border-left-color: #ef4444; }
+        .toast.success { border-left-color: #22c55e; }
+        .dark .toast { background: rgba(30, 41, 59, 0.95); color: white; border: 1px solid rgba(255,255,255,0.1); }
+        
+        /* UTILS */
+        .music-tab { font-size: 10px; font-weight: bold; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; cursor: pointer; opacity: 0.6; transition: all 0.3s; }
+        .music-tab.active { background: rgba(59, 130, 246, 0.2); color: #3b82f6; opacity: 1; }
+        .dark .music-tab.active { background: rgba(255, 255, 255, 0.1); color: #fff; }
+        .ambience-btn { transition: all 0.3s; opacity: 0.6; filter: grayscale(100%); }
+        .ambience-btn.active { opacity: 1; filter: grayscale(0%); transform: scale(1.1); background-color: rgba(255,255,255,0.2); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .fade-in { animation: slideIn 0.3s ease-out; }
     </style>
 </head>
-<body class="theme-blue font-sans">
+<body class="min-h-screen overflow-x-hidden selection:bg-blue-500 selection:text-white">
 
     <div class="bg-blob blob-1"></div>
     <div class="bg-blob blob-2"></div>
@@ -133,28 +113,31 @@
         <header class="glass-panel rounded-3xl px-6 py-4 mb-8 flex flex-col md:flex-row justify-between items-center z-20 sticky top-4 shadow-xl">
             <div class="flex items-center gap-4 mb-4 md:mb-0 w-full md:w-auto justify-between md:justify-start">
                 <div id="authContainer" class="relative group">
-                    <button id="loginBtn" onclick="app.auth.login()" title="Đăng nhập Google" class="w-12 h-12 rounded-2xl bg-primary text-white shadow-lg hover:shadow-primary/50 transition transform hover:scale-105 flex items-center justify-center">
+                    <button id="loginBtn" onclick="app.auth.login()" title="Đăng nhập Google" class="w-12 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 transition transform hover:scale-105">
                         <i class="fa-solid fa-right-to-bracket text-xl"></i>
                     </button>
                     <div id="userProfile" class="hidden flex items-center gap-3 cursor-pointer select-none" title="Quản lý tài khoản" onclick="document.getElementById('logoutPanel').classList.toggle('hidden')">
                         <img id="userAvatar" src="" class="w-12 h-12 rounded-2xl border-2 border-white shadow-md bg-slate-200 object-cover">
                         <div class="hidden md:block">
-                            <p id="greeting" class="text-[10px] text-primary font-bold uppercase tracking-wider">Xin chào</p>
                             <p id="userName" class="text-sm font-bold text-slate-900 dark:text-white truncate max-w-[150px]">User</p>
+                            <div id="roleBadge" class="px-3 py-1 rounded-full text-[10px] font-bold bg-gray-500 text-white w-fit shadow-sm">GUEST</div>
                         </div>
                     </div>
                     
                     <div id="logoutPanel" class="hidden absolute top-14 left-0 w-60 glass-card p-3 rounded-xl flex flex-col gap-2 z-50 shadow-2xl border border-white/50 animate-slideIn backdrop-blur-xl">
-                        <button onclick="app.admin.claim()" class="w-full text-left px-3 py-2.5 text-slate-700 dark:text-white hover:bg-white/40 dark:hover:bg-white/10 rounded-lg text-sm font-bold flex items-center gap-3 transition"><i class="fa-solid fa-user-shield text-purple-500 w-5"></i> Kích hoạt Admin</button>
-                        <button onclick="app.auth.switchAccount()" class="w-full text-left px-3 py-2.5 text-slate-700 dark:text-white hover:bg-white/40 dark:hover:bg-white/10 rounded-lg text-sm font-bold flex items-center gap-3 transition"><i class="fa-solid fa-repeat text-blue-500 w-5"></i> Chuyển tài khoản</button>
+                        <button onclick="app.auth.switchAccount()" class="w-full text-left px-3 py-2.5 text-slate-700 dark:text-white hover:bg-white/40 dark:hover:bg-white/10 rounded-lg text-sm font-bold flex items-center gap-3 transition">
+                            <i class="fa-solid fa-repeat text-blue-500 w-5"></i> Chuyển tài khoản
+                        </button>
                         <div class="h-px bg-slate-300 dark:bg-slate-600 my-1"></div>
-                        <button onclick="app.auth.logout()" class="w-full text-left px-3 py-2.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg text-sm font-bold flex items-center gap-3 transition"><i class="fa-solid fa-power-off w-5"></i> Đăng xuất</button>
+                        <button onclick="app.auth.logout()" class="w-full text-left px-3 py-2.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg text-sm font-bold flex items-center gap-3 transition">
+                            <i class="fa-solid fa-power-off w-5"></i> Đăng xuất
+                        </button>
                     </div>
                 </div>
 
                 <div class="text-center md:text-left">
-                    <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">Minhduc<span class="text-primary">Kale</span></h1>
-                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v12.0</p>
+                    <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
+                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.6</p>
                 </div>
             </div>
             
@@ -172,7 +155,6 @@
                         <span id="clock" class="text-lg font-mono font-bold text-slate-800 dark:text-slate-200">00:00</span>
                         <span id="date-display" class="text-[10px] font-bold uppercase text-slate-500">...</span>
                     </div>
-                    <button onclick="app.ui.openThemeModal()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white flex items-center justify-center transition text-primary shadow-sm"><i class="fa-solid fa-palette"></i></button>
                     <button onclick="app.ui.toggleDarkMode()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white flex items-center justify-center transition text-slate-700 dark:text-yellow-400 shadow-sm"><i id="darkIcon" class="fa-solid fa-moon"></i></button>
                 </div>
             </div>
@@ -181,39 +163,38 @@
         <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 pb-10">
             <div class="lg:col-span-8 flex flex-col min-h-[500px]">
                 
-                <div id="view-docs" class="flex flex-col gap-6 animate-slideIn">
+                <div id="view-docs" class="flex flex-col gap-6 fade-in">
                     <div class="flex gap-3 relative z-10">
                         <div class="relative flex-1 group">
-                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500 group-focus-within:text-primary transition"></i>
-                            <input id="searchInput" type="text" onkeyup="app.searchDocsDebounced()" class="w-full pl-12 pr-10 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm kiếm tài liệu (Ctrl+K)...">
-                            <i onclick="app.ui.voiceSearch('searchInput', this)" class="fa-solid fa-microphone mic-btn" title="Nói để tìm"></i>
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-600 transition"></i>
+                            <input id="searchInput" type="text" onkeyup="app.searchDocsDebounced()" class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm tài liệu (Tiếng Việt thông minh)...">
                         </div>
-                        <button id="addDocBtn" onclick="app.ui.openModal('addDocModal')" title="Thêm tài liệu mới" class="hidden w-14 rounded-2xl bg-primary text-white flex items-center justify-center shadow-lg active:scale-95 transition"><i class="fa-solid fa-plus text-xl"></i></button>
+                        <button id="addDocBtn" onclick="app.ui.openModal('addDocModal')" title="Thêm tài liệu mới" class="hidden w-14 rounded-2xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-700 text-white flex items-center justify-center shadow-lg active:scale-95 transition"><i class="fa-solid fa-plus text-xl"></i></button>
                     </div>
                     
                     <div id="breadcrumb" class="hidden flex items-center gap-2 text-sm font-extrabold text-slate-700 dark:text-slate-200 bg-white/40 dark:bg-white/10 w-fit px-4 py-2 rounded-xl backdrop-blur-md shadow-sm border border-white/20">
-                        <button onclick="app.data.renderFolders()" class="hover:text-primary"><i class="fa-solid fa-house"></i> Home</button>
+                        <button onclick="app.data.renderFolders()" class="hover:text-blue-600"><i class="fa-solid fa-house"></i> Home</button>
                         <span class="text-slate-400">/</span>
-                        <span id="currentFolderTitle" class="text-primary dark:text-blue-400">Folder</span>
+                        <span id="currentFolderTitle" class="text-blue-700 dark:text-blue-400">Folder</span>
                     </div>
                     
                     <div id="loadingDocs" class="hidden text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-slate-500 font-bold text-sm">Đang đồng bộ dữ liệu...</p></div>
                     <div id="docsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </div>
 
-                <div id="view-meds" class="hidden flex-col gap-6 animate-slideIn">
+                <div id="view-meds" class="hidden flex-col gap-6 fade-in">
                     <div class="flex gap-3 relative z-10">
                         <div class="relative flex-1 group">
                             <i class="fa-solid fa-pills absolute left-4 top-4 text-slate-500 group-focus-within:text-pink-600 transition"></i>
-                            <input id="searchMedsInput" type="text" onkeyup="app.searchMedsDebounced()" class="w-full pl-12 pr-10 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm tên thuốc, biệt dược, hoạt chất...">
-                            <i onclick="app.ui.voiceSearch('searchMedsInput', this)" class="fa-solid fa-microphone mic-btn" title="Nói để tìm"></i>
+                            <input id="searchMedsInput" type="text" onkeyup="app.searchMedsDebounced()" class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm thuốc (Gõ không dấu ok)...">
                         </div>
                     </div>
                     <div id="loadingMeds" class="hidden text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-slate-500 font-bold text-sm">Đang tải danh mục thuốc...</p></div>
                     <div id="medsList" class="grid grid-cols-1 gap-4"></div>
                 </div>
 
-                <div id="view-tools" class="hidden flex-col gap-6 animate-slideIn">
+                <div id="view-tools" class="hidden flex-col gap-6 fade-in">
+                    
                     <div id="adminToolsCard" class="hidden glass-card rounded-2xl overflow-hidden border-l-4 border-red-500 shadow-md">
                         <button onclick="app.ui.toggleTool('admin')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
                             <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-user-shield text-red-600 mr-2"></i>Admin Tools</span>
@@ -227,32 +208,24 @@
                                         <button onclick="app.admin.openImport('docs')" class="p-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2"><i class="fa-solid fa-file-import"></i> Import Docs</button>
                                         <button onclick="app.admin.openImport('meds')" class="p-3 rounded-xl bg-teal-600 text-white font-bold hover:bg-teal-700 transition flex items-center justify-center gap-2"><i class="fa-solid fa-capsules"></i> Import Meds</button>
                                     </div>
-                                    <div class="grid grid-cols-2 gap-3">
-                                         <button onclick="app.admin.exportData('docs')" class="p-3 rounded-xl bg-slate-700 text-white font-bold hover:bg-slate-800 transition flex items-center justify-center gap-2"><i class="fa-solid fa-download"></i> Backup Docs</button>
-                                         <button onclick="app.admin.exportData('meds')" class="p-3 rounded-xl bg-slate-700 text-white font-bold hover:bg-slate-800 transition flex items-center justify-center gap-2"><i class="fa-solid fa-download"></i> Backup Meds</button>
-                                    </div>
                                 </div>
                                 <div class="h-px bg-slate-300 dark:bg-slate-600"></div>
-                                <div class="flex gap-2 items-center">
-                                    <input type="text" id="newAdminCode" placeholder="Mã kích hoạt mới..." class="flex-1 ios-input p-2 rounded-lg text-sm">
-                                    <button onclick="app.admin.changeCode()" class="bg-slate-700 text-white px-4 py-2 rounded-lg text-xs font-bold hover:bg-slate-800">Lưu Mã</button>
-                                </div>
                                 <div id="adminUsersBox" class="p-3 bg-black/5 dark:bg-black/30 rounded-xl text-sm max-h-40 overflow-y-auto border border-black/10 custom-scrollbar"></div>
                             </div>
                         </div>
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                        <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-indigo-500">
+                         <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-indigo-500">
                             <button onclick="app.ui.toggleTool('bmi')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
-                                <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-weight-scale text-indigo-500 mr-2"></i>Chỉ số BMI</span>
+                                <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-weight-scale text-indigo-500 mr-2"></i>Tính BMI</span>
                                 <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
                             </button>
                             <div id="tool-bmi" class="tool-content px-4">
                                 <div class="py-4 space-y-3">
                                     <div class="flex gap-2"><input type="number" id="bmi-w" placeholder="Cân nặng (kg)" class="w-1/2 ios-input p-2.5 rounded-xl"><input type="number" id="bmi-h" placeholder="Chiều cao (cm)" class="w-1/2 ios-input p-2.5 rounded-xl"></div>
                                     <button onclick="app.tools.calcBMI()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition">Tính Kết Quả</button>
-                                    <div id="bmi-res" class="hidden text-center font-bold text-indigo-700 dark:text-indigo-300 mt-2 text-lg p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg"></div>
+                                    <div id="bmi-res" class="hidden text-center font-bold text-indigo-700 dark:text-indigo-300 mt-2 text-lg p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg select-all"></div>
                                 </div>
                             </div>
                         </div>
@@ -266,62 +239,29 @@
                                 <div class="py-4 space-y-3">
                                     <div class="flex gap-2"><input type="number" id="map-sys" placeholder="Tâm thu (mmHg)" class="w-1/2 ios-input p-2.5 rounded-xl"><input type="number" id="map-dia" placeholder="Tâm trương (mmHg)" class="w-1/2 ios-input p-2.5 rounded-xl"></div>
                                     <button onclick="app.tools.calcMAP()" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-md transition">Tính MAP</button>
-                                    <div id="map-res" class="hidden text-center font-bold text-red-700 dark:text-red-300 mt-2 text-lg p-2 bg-red-50 dark:bg-red-900/20 rounded-lg"></div>
+                                    <div id="map-res" class="hidden text-center font-bold text-red-700 dark:text-red-300 mt-2 text-lg p-2 bg-red-50 dark:bg-red-900/20 rounded-lg select-all"></div>
                                 </div>
                             </div>
                         </div>
 
                          <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-orange-500 md:col-span-2">
                              <button onclick="app.ui.toggleTool('egfr')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
-                                <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-kidneys text-orange-500 mr-2"></i>Độ lọc cầu thận (eGFR Pro)</span>
+                                <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-kidneys text-orange-500 mr-2"></i>Độ lọc cầu thận (eGFR)</span>
                                 <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
                             </button>
                             <div id="tool-egfr" class="tool-content px-4">
                                 <div class="py-4 space-y-3 text-sm">
                                     <div class="flex gap-2">
-                                        <select id="egfr-method" class="w-full ios-input p-2.5 rounded-xl font-bold"><option value="ckdepi">CKD-EPI 2021 (Khuyên dùng)</option><option value="cg">Cockcroft-Gault</option></select>
-                                    </div>
-                                    <div class="flex gap-2">
                                         <input type="number" id="egfr-age" placeholder="Tuổi" class="w-1/3 ios-input p-2.5 rounded-xl">
                                         <input type="number" id="egfr-w" placeholder="Cân nặng (kg)" class="w-1/3 ios-input p-2.5 rounded-xl">
-                                        <select id="egfr-sex" class="w-1/3 ios-input p-2.5 rounded-xl"><option value="1">Nam</option><option value="0.85">Nữ</option></select>
+                                        <select id="egfr-sex" class="w-1/3 ios-input p-2.5 rounded-xl text-slate-700 dark:text-white dark:bg-slate-700"><option value="1">Nam</option><option value="0.85">Nữ</option></select>
                                     </div>
                                     <div class="relative">
                                         <input type="number" id="egfr-cre" placeholder="Creatinine (mg/dL)" step="0.01" class="w-full ios-input p-2.5 rounded-xl pl-10">
                                         <span class="absolute left-3 top-2.5 text-slate-400 font-bold">Cr</span>
                                     </div>
                                     <button onclick="app.tools.calcEGFR()" class="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl shadow-md transition">Phân độ Suy thận</button>
-                                    <div id="egfr-res" class="hidden text-center font-bold text-orange-700 dark:text-orange-300 mt-2 text-lg p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-blue-500">
-                             <button onclick="app.ui.toggleTool('gcs')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
-                                <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-brain text-blue-500 mr-2"></i>Thang điểm Glasgow (GCS)</span>
-                                <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
-                            </button>
-                            <div id="tool-gcs" class="tool-content px-4">
-                                <div class="py-4 space-y-3">
-                                    <select id="gcs-e" class="w-full ios-input p-2 rounded-xl text-xs"><option value="4">E4: Mở mắt tự nhiên</option><option value="3">E3: Mở khi gọi</option><option value="2">E2: Mở khi đau</option><option value="1">E1: Không mở mắt</option></select>
-                                    <select id="gcs-v" class="w-full ios-input p-2 rounded-xl text-xs"><option value="5">V5: Trả lời đúng</option><option value="4">V4: Trả lời lộn xộn</option><option value="3">V3: Trả lời không phù hợp</option><option value="2">V2: Ú ớ</option><option value="1">V1: Im lặng</option></select>
-                                    <select id="gcs-m" class="w-full ios-input p-2 rounded-xl text-xs"><option value="6">M6: Làm đúng lệnh</option><option value="5">M5: Định khu đau</option><option value="4">M4: Co khi đau</option><option value="3">M3: Gấp cứng mất vỏ</option><option value="2">M2: Duỗi cứng mất não</option><option value="1">M1: Không đáp ứng</option></select>
-                                    <button onclick="app.tools.calcGCS()" class="w-full py-2 bg-blue-600 text-white font-bold rounded-xl shadow-md">Tính Điểm</button>
-                                    <div id="gcs-res" class="hidden text-center font-bold text-blue-700 dark:text-blue-300 mt-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-teal-500">
-                             <button onclick="app.ui.toggleTool('fluid')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
-                                <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-baby text-teal-500 mr-2"></i>Dịch duy trì (Nhi)</span>
-                                <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
-                            </button>
-                            <div id="tool-fluid" class="tool-content px-4">
-                                <div class="py-4 space-y-3">
-                                    <input type="number" id="fluid-w" placeholder="Cân nặng trẻ (kg)" class="w-full ios-input p-2.5 rounded-xl">
-                                    <button onclick="app.tools.calcFluid()" class="w-full py-2 bg-teal-600 text-white font-bold rounded-xl shadow-md">Tính Dịch</button>
-                                    <div id="fluid-res" class="hidden text-center font-bold text-teal-700 dark:text-teal-300 mt-2 p-2 bg-teal-50 dark:bg-teal-900/20 rounded-lg text-sm"></div>
+                                    <div id="egfr-res" class="hidden text-center font-bold text-orange-700 dark:text-orange-300 mt-2 text-lg p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800 select-all"></div>
                                 </div>
                             </div>
                         </div>
@@ -333,12 +273,13 @@
                 <div class="glass-panel p-5 rounded-3xl shadow-lg relative overflow-hidden group border border-blue-200 dark:border-blue-900/30">
                     <div id="playlistBtn" class="absolute top-2 right-2 cursor-pointer p-2 z-10" onclick="app.music.togglePlaylist()"><i class="fa-solid fa-list-ul text-slate-500 hover:text-blue-600 transition"></i></div>
                     <div class="flex items-center justify-between mb-2">
-                        <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-headphones-simple text-primary"></i> Chill Zone</h3>
+                        <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-headphones-simple text-pink-500"></i> Chill Zone</h3>
                         <div class="flex bg-slate-200 dark:bg-slate-700 rounded-full p-1 mr-8">
                             <div onclick="app.music.switchTab('local')" id="tab-music-local" class="music-tab active">Mp3</div>
                             <div onclick="app.music.switchTab('online')" id="tab-music-online" class="music-tab">Youtube</div>
                         </div>
                     </div>
+                    
                     <div id="music-view-local">
                         <div class="flex justify-center mb-4 relative mt-6">
                              <div id="musicDisc" class="w-40 h-40 rounded-full bg-slate-900 border-4 border-slate-800 flex items-center justify-center overflow-hidden shadow-2xl transition-all duration-500"><img id="musicCover" src="https://img.icons8.com/color/144/vinyl-music.png" class="w-full h-full opacity-90 object-cover"></div>
@@ -347,11 +288,10 @@
                         <div class="text-center mb-4 px-2">
                             <p id="musicTitle" class="text-base font-bold text-slate-900 dark:text-white truncate">Select a track...</p>
                             <p id="musicArtist" class="text-xs text-slate-500 font-bold uppercase tracking-wide">Lofi Relax</p>
-                            <div id="musicVisualizer" class="music-waves my-2"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
                         </div>
                         <div class="flex justify-center items-center gap-6 mb-5">
                             <button onclick="app.music.prev()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white hover:bg-slate-200 transition"><i class="fa-solid fa-backward-step"></i></button>
-                            <button onclick="app.music.toggle()" id="playBtnIcon" class="w-14 h-14 rounded-full bg-primary text-white flex items-center justify-center hover:scale-110 active:scale-95 transition shadow-xl shadow-blue-500/40"><i class="fa-solid fa-play text-xl ml-1"></i></button>
+                            <button onclick="app.music.toggle()" id="playBtnIcon" class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center hover:scale-110 active:scale-95 transition shadow-xl shadow-blue-500/40"><i class="fa-solid fa-play text-xl ml-1"></i></button>
                             <button onclick="app.music.next()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white hover:bg-slate-200 transition"><i class="fa-solid fa-forward-step"></i></button>
                         </div>
                         <div class="flex items-center gap-3 px-3 bg-white/40 dark:bg-black/20 rounded-xl p-2">
@@ -363,6 +303,7 @@
                             <div id="playlistItems" class="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar"></div>
                         </div>
                     </div>
+                    
                     <div id="music-view-online" class="hidden mt-4 space-y-3">
                          <div class="flex gap-2 mb-1">
                              <input type="text" id="youtubeInput" placeholder="Dán Link hoặc Tìm kiếm..." class="w-full ios-input p-2 rounded-lg text-xs font-bold">
@@ -371,26 +312,30 @@
                         <div class="bg-black rounded-xl overflow-hidden shadow-lg border border-slate-700 relative pt-[56.25%]">
                             <iframe id="radioFrame" class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/jfKfPfyJRdk" title="YouTube Radio" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
                         </div>
-                        <p class="text-[10px] text-slate-400 italic text-center">Hỗ trợ tốt nhất cho video Public/Unlisted. Video Riêng tư cần quyền truy cập.</p>
+                        <p class="text-[10px] text-slate-400 italic text-center">Tự động tắt nhạc Mp3 khi bật Youtube.</p>
                     </div>
+                    
                     <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
                         <p class="text-[10px] font-bold uppercase text-slate-500 mb-2 tracking-wider">Âm thanh nền (Ambience)</p>
                         <div class="flex justify-between items-center px-1">
                             <button onclick="app.music.toggleAmbience('rain', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng Mưa"><i class="fa-solid fa-cloud-rain text-xl text-blue-500"></i><span class="text-[9px] font-bold">Mưa</span></button>
+                            <button onclick="app.music.toggleAmbience('fire', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng Lửa trại"><i class="fa-solid fa-fire text-xl text-orange-500"></i><span class="text-[9px] font-bold">Lửa</span></button>
+                            <button onclick="app.music.toggleAmbience('keyboard', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng gõ phím"><i class="fa-solid fa-keyboard text-xl text-slate-500"></i><span class="text-[9px] font-bold">Phím</span></button>
                             <button onclick="app.music.toggleAmbience('cafe', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Quán Cafe"><i class="fa-solid fa-mug-hot text-xl text-brown-500 text-yellow-700"></i><span class="text-[9px] font-bold">Cafe</span></button>
                         </div>
                     </div>
+
                     <audio id="bgAudio" class="hidden"></audio>
                 </div>
 
                 <div class="glass-card p-5 rounded-3xl relative border border-red-200 dark:border-red-900/30">
-                      <div class="flex justify-between items-center mb-4">
-                          <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-stopwatch text-red-500"></i> Pomodoro</h3>
-                          <div class="flex gap-1">
-                              <button onclick="app.tools.setTimer(25)" class="text-[10px] bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-300 px-2.5 py-1 rounded-lg font-bold hover:bg-red-200 transition">25'</button>
-                              <button onclick="app.tools.setTimer(5)" class="text-[10px] bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-300 px-2.5 py-1 rounded-lg font-bold hover:bg-green-200 transition">5'</button>
-                          </div>
-                     </div>
+                     <div class="flex justify-between items-center mb-4">
+                         <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-stopwatch text-red-500"></i> Pomodoro</h3>
+                         <div class="flex gap-1">
+                             <button onclick="app.tools.setTimer(25)" class="text-[10px] bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-300 px-2.5 py-1 rounded-lg font-bold hover:bg-red-200 transition">25'</button>
+                             <button onclick="app.tools.setTimer(5)" class="text-[10px] bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-300 px-2.5 py-1 rounded-lg font-bold hover:bg-green-200 transition">5'</button>
+                         </div>
+                    </div>
                     <div class="flex flex-col items-center">
                         <div class="text-5xl font-mono font-black text-slate-800 dark:text-white mb-4 tracking-widest tabular-nums" id="timerDisplay">25:00</div>
                         <button id="timerBtn" onclick="app.tools.toggleTimer()" class="w-full py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold hover:opacity-90 transition shadow-lg">Bắt đầu tập trung</button>
@@ -408,77 +353,20 @@
         </div>
     </div>
 
-    <div id="chatToggleBtn" onclick="app.chat.toggle()" class="animate-blob">
-        <i class="fa-solid fa-robot text-xl"></i>
-    </div>
-    <div id="chatbotContainer" class="glass-card hidden-chat flex flex-col overflow-hidden">
-        <div class="bg-primary p-3 flex justify-between items-center text-white">
-            <h3 class="font-bold text-sm"><i class="fa-solid fa-user-doctor mr-2"></i>Trợ lý Y Khoa AI</h3>
-            <button onclick="app.chat.toggle()" class="hover:bg-white/20 rounded p-1"><i class="fa-solid fa-xmark"></i></button>
-        </div>
-        <div id="chatHistory" class="flex-1 overflow-y-auto p-3 space-y-2 bg-slate-50/50 dark:bg-black/20">
-            <div class="chat-bot chat-bubble">Xin chào! Tôi có thể giúp gì cho bạn?</div>
-        </div>
-        <div class="p-2 border-t border-slate-200 dark:border-slate-700 flex gap-2 bg-white/50 dark:bg-black/30">
-            <input id="chatInput" type="text" class="flex-1 bg-transparent text-sm outline-none px-2 text-slate-800 dark:text-white placeholder-slate-400" placeholder="Nhập câu hỏi..." onkeypress="if(event.key==='Enter') app.chat.send()">
-            <button onclick="app.chat.send()" class="text-primary hover:scale-110 transition px-2"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
-    </div>
-
-    <div id="themeModal" onclick="if(event.target === this) app.ui.modal('themeModal', false)" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-black/60 backdrop-blur-sm cursor-pointer">
-        <div class="glass-card p-6 rounded-3xl w-80 animate-pop cursor-default">
-            <h3 class="text-center font-bold text-lg mb-4 text-slate-800 dark:text-white">Chọn Màu Chủ Đạo</h3>
-            <div class="grid grid-cols-2 gap-3">
-                <button onclick="app.ui.setTheme('theme-blue')" class="p-3 rounded-xl bg-blue-500 text-white font-bold hover:scale-105 transition shadow-lg shadow-blue-500/30">Blue</button>
-                <button onclick="app.ui.setTheme('theme-purple')" class="p-3 rounded-xl bg-purple-500 text-white font-bold hover:scale-105 transition shadow-lg shadow-purple-500/30">Purple</button>
-                <button onclick="app.ui.setTheme('theme-pink')" class="p-3 rounded-xl bg-pink-500 text-white font-bold hover:scale-105 transition shadow-lg shadow-pink-500/30">Pink</button>
-                <button onclick="app.ui.setTheme('theme-green')" class="p-3 rounded-xl bg-emerald-500 text-white font-bold hover:scale-105 transition shadow-lg shadow-emerald-500/30">Green</button>
-            </div>
-        </div>
-    </div>
-
     <div id="addDocModal" onclick="if(event.target === this) app.ui.closeModal('addDocModal')" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-md cursor-pointer">
-        <div class="bg-white/95 dark:bg-slate-800/95 w-[90%] md:w-[450px] p-6 rounded-3xl shadow-2xl border border-white/20 animate-float cursor-default">
+        <div class="bg-white/95 dark:bg-slate-800/95 w-[90%] md:w-[400px] p-6 rounded-3xl shadow-2xl border border-white/20 animate-float cursor-default">
             <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4">Thêm Tài Liệu Mới</h3>
             <div class="space-y-4">
-                <div class="flex p-1 bg-slate-200 dark:bg-slate-700 rounded-xl">
-                    <button id="tabLink" onclick="app.ui.toggleUploadMode('link')" class="flex-1 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-600 shadow-sm transition">Link Web/Drive</button>
-                    <button id="tabUpload" onclick="app.ui.toggleUploadMode('upload')" class="flex-1 py-1.5 rounded-lg text-xs font-bold text-slate-500 transition">Upload File</button>
-                </div>
-
                 <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Tên tài liệu</label><input id="newDocTitle" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="Nhập tên..."></div>
-                
-                <div>
-                    <label class="text-xs font-bold text-slate-500 uppercase ml-1">Thư mục</label>
-                    <div class="flex gap-2 mt-1">
-                        <select id="newDocFolder" class="flex-1 ios-input p-3 rounded-xl font-bold text-slate-700 dark:text-slate-200 dark:bg-slate-700 transition"></select>
-                        <button onclick="app.classifier.autoClassify()" id="aiMagicBtn" title="AI Tự phân loại" class="w-12 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg hover:scale-105 active:scale-95 transition flex items-center justify-center"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
-                    </div>
-                </div>
-
-                <div id="modeLink">
-                    <label class="text-xs font-bold text-slate-500 uppercase ml-1">Link Drive/Web</label>
-                    <input id="newDocLink" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="https://...">
-                </div>
-
-                <div id="modeUpload" class="hidden">
-                    <label class="text-xs font-bold text-slate-500 uppercase ml-1">Chọn File (PDF, Doc, Excel...)</label>
-                    <div class="file-upload-box mt-1" onclick="document.getElementById('fileInput').click()">
-                        <i class="fa-solid fa-cloud-arrow-up text-3xl text-primary mb-2"></i>
-                        <p id="fileNameDisplay" class="text-sm font-bold text-slate-600 dark:text-slate-300">Nhấn hoặc Kéo thả file</p>
-                        <p class="text-[10px] text-slate-400">Tự động lưu vào Drive chung (Max 10MB)</p>
-                        <input type="file" id="fileInput" class="hidden" onchange="app.ui.handleFileSelect(this)">
-                    </div>
-                    <div id="uploadProgress" class="upload-progress"><div class="upload-bar animate"></div></div>
-                </div>
-
+                <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Thư mục</label><select id="newDocFolder" class="w-full ios-input p-3 rounded-xl mt-1 font-bold text-slate-700 dark:text-slate-200 dark:bg-slate-700"></select></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Link Drive/Web</label><input id="newDocLink" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="https://..."></div>
                 <div class="p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-xl flex items-center gap-3 opacity-50 pointer-events-none transition-all" id="publicDocWrapper">
                     <input type="checkbox" id="isPublicDoc" class="w-5 h-5 accent-orange-600 rounded cursor-pointer">
                     <label for="isPublicDoc" class="text-xs font-bold text-orange-700 dark:text-orange-400 cursor-pointer select-none">Lưu vào Kho dùng chung (Admin)</label>
                 </div>
                 <div class="flex gap-3 pt-2">
                     <button onclick="app.ui.closeModal('addDocModal')" class="flex-1 py-3 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-300 dark:hover:bg-slate-600 transition">Hủy</button>
-                    <button onclick="app.data.saveNewDoc()" id="saveBtn" class="flex-1 py-3 rounded-xl bg-primary text-white font-bold hover:bg-opacity-90 shadow-lg transition">Lưu ngay</button>
+                    <button onclick="app.data.saveNewDoc()" class="flex-1 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg transition">Lưu ngay</button>
                 </div>
             </div>
         </div>
@@ -505,58 +393,13 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, remove, get, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, set, push, onValue, off, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyHrMTG4XxlI3ckrCK7_bTQSG-76DvGBUq6ePh_zuy9/exec"; 
-        const AI_KEY = "AIzaSyA8x9Cgw0yscyKNPBFuByHnwqcUQuJCMVM";
-
-        const MED_LIBRARY = [
-            {name:"Paracetamol", brand:"Panadol", group:"Giảm đau, hạ sốt", strength:"500mg", dosage:"10-15mg/kg/lần", route:"Uống", usage:"Sốt, đau nhẹ"},
-            {name:"Ibuprofen", brand:"Gofen", group:"NSAID", strength:"400mg", dosage:"10mg/kg/lần", route:"Uống", usage:"Đau viêm, sốt"},
-            {name:"Amoxicillin", brand:"Clamoxyl", group:"Kháng sinh", strength:"500mg", dosage:"20-50mg/kg/ngày", route:"Uống", usage:"Nhiễm khuẩn hô hấp"},
-            {name:"Cephalexin", brand:"Keflex", group:"Kháng sinh", strength:"500mg", dosage:"25-50mg/kg/ngày", route:"Uống", usage:"Nhiễm khuẩn da, mô mềm"},
-            {name:"Azithromycin", brand:"Zithromax", group:"Kháng sinh", strength:"250mg", dosage:"10mg/kg/ngày", route:"Uống", usage:"Viêm phổi, viêm họng"},
-            {name:"Cefuroxime", brand:"Zinnat", group:"Kháng sinh", strength:"250mg", dosage:"20mg/kg/ngày", route:"Uống", usage:"Viêm tai giữa, viêm xoang"},
-            {name:"Metronidazole", brand:"Flagyl", group:"Kháng sinh/KST", strength:"250mg", dosage:"30-40mg/kg/ngày", route:"Uống", usage:"Nhiễm kỵ khí, lỵ amip"},
-            {name:"Omeprazole", brand:"Losec", group:"PPI", strength:"20mg", dosage:"20-40mg/ngày", route:"Uống", usage:"Loét dạ dày, trào ngược"},
-            {name:"Esomeprazole", brand:"Nexium", group:"PPI", strength:"40mg", dosage:"20-40mg/ngày", route:"Uống", usage:"Trào ngược dạ dày thực quản"},
-            {name:"Domperidone", brand:"Motilium", group:"Chống nôn", strength:"10mg", dosage:"0.25mg/kg/lần", route:"Uống", usage:"Buồn nôn, đầy hơi"},
-            {name:"Loperamide", brand:"Imodium", group:"Cầm tiêu chảy", strength:"2mg", dosage:"2-4mg/lần", route:"Uống", usage:"Tiêu chảy cấp (người lớn)"},
-            {name:"Salbutamol", brand:"Ventolin", group:"Giãn phế quản", strength:"2.5mg/2.5ml", dosage:"2.5-5mg/lần", route:"Khí dung", usage:"Hen phế quản"},
-            {name:"Prednisolone", brand:"Solupred", group:"Corticoid", strength:"5mg", dosage:"1-2mg/kg/ngày", route:"Uống", usage:"Kháng viêm, dị ứng"},
-            {name:"Methylprednisolone", brand:"Medrol", group:"Corticoid", strength:"16mg", dosage:"0.5-2mg/kg/ngày", route:"Uống", usage:"Kháng viêm mạnh"},
-            {name:"Loratadine", brand:"Clarityne", group:"Kháng Histamin", strength:"10mg", dosage:"10mg/ngày", route:"Uống", usage:"Viêm mũi dị ứng, mày đay"},
-            {name:"Cetirizine", brand:"Zyrtec", group:"Kháng Histamin", strength:"10mg", dosage:"10mg/ngày", route:"Uống", usage:"Dị ứng, ngứa"},
-            {name:"Fexofenadine", brand:"Telfast", group:"Kháng Histamin", strength:"180mg", dosage:"180mg/ngày", route:"Uống", usage:"Viêm mũi dị ứng"},
-            {name:"Acetylcysteine", brand:"Acemuc", group:"Tiêu đờm", strength:"200mg", dosage:"200mg x 3/ngày", route:"Uống", usage:"Ho có đờm"},
-            {name:"Bromhexine", brand:"Bisolvon", group:"Long đờm", strength:"8mg", dosage:"8-16mg x 3/ngày", route:"Uống", usage:"Viêm phế quản"},
-            {name:"Amlodipine", brand:"Amlor", group:"HA (Chẹn Canxi)", strength:"5mg", dosage:"5-10mg/ngày", route:"Uống", usage:"Tăng huyết áp"},
-            {name:"Losartan", brand:"Cozaar", group:"HA (Ức chế AT1)", strength:"50mg", dosage:"50-100mg/ngày", route:"Uống", usage:"Tăng huyết áp, suy tim"},
-            {name:"Enalapril", brand:"Renitec", group:"HA (Ức chế men chuyển)", strength:"5mg", dosage:"5-20mg/ngày", route:"Uống", usage:"Tăng huyết áp"},
-            {name:"Bisoprolol", brand:"Concor", group:"Tim mạch (Beta blocker)", strength:"2.5mg", dosage:"2.5-10mg/ngày", route:"Uống", usage:"Suy tim, tăng huyết áp"},
-            {name:"Atorvastatin", brand:"Lipitor", group:"Mỡ máu", strength:"10mg", dosage:"10-20mg/ngày", route:"Uống", usage:"Rối loạn lipid máu"},
-            {name:"Rosuvastatin", brand:"Crestor", group:"Mỡ máu", strength:"10mg", dosage:"5-20mg/ngày", route:"Uống", usage:"Tăng cholesterol"},
-            {name:"Metformin", brand:"Glucophage", group:"Tiểu đường", strength:"500mg", dosage:"500-2000mg/ngày", route:"Uống", usage:"Đái tháo đường type 2"},
-            {name:"Gliclazide", brand:"Diamicron", group:"Tiểu đường", strength:"30mg MR", dosage:"30-120mg/ngày", route:"Uống", usage:"Đái tháo đường type 2"},
-            {name:"Insulin Glargine", brand:"Lantus", group:"Insulin nền", strength:"100IU/ml", dosage:"Theo đường huyết", route:"Tiêm DD", usage:"Kiểm soát đường huyết"},
-            {name:"Furosemide", brand:"Lasix", group:"Lợi tiểu", strength:"40mg", dosage:"20-80mg/ngày", route:"Uống/Tiêm", usage:"Phù, suy tim"},
-            {name:"Spironolactone", brand:"Verospiron", group:"Lợi tiểu", strength:"25mg", dosage:"25-100mg/ngày", route:"Uống", usage:"Xơ gan, suy tim"},
-            {name:"Dexamethasone", brand:"Kavasdin", group:"Corticoid", strength:"0.5mg", dosage:"0.75-9mg/ngày", route:"Uống/Tiêm", usage:"Chống viêm, chống dị ứng"},
-            {name:"Adrenaline", brand:"Adrenalin", group:"Cấp cứu", strength:"1mg/1ml", dosage:"Theo phác đồ", route:"Tiêm bắp/TM", usage:"Sốc phản vệ, ngừng tuần hoàn"},
-            {name:"Diazepam", brand:"Seduxen", group:"An thần", strength:"5mg", dosage:"5-10mg/lần", route:"Uống/Tiêm", usage:"Co giật, lo âu"},
-            {name:"Tranexamic acid", brand:"Transamin", group:"Cầm máu", strength:"250mg", dosage:"500-1000mg/lần", route:"Uống/Tiêm", usage:"Chảy máu bất thường"},
-            {name:"Vitamin K1", brand:"Vinphacine", group:"Vitamin", strength:"10mg", dosage:"10mg/lần", route:"Tiêm bắp", usage:"Rối loạn đông máu"},
-            {name:"Oresol", brand:"Oresol", group:"Bù nước", strength:"Gói", dosage:"Pha đúng tỷ lệ", route:"Uống", usage:"Mất nước do tiêu chảy"},
-            {name:"Smecta", brand:"Diosmectite", group:"Hấp phụ", strength:"3g", dosage:"1-3 gói/ngày", route:"Uống", usage:"Tiêu chảy"},
-            {name:"Berberin", brand:"Berberin", group:"Kháng khuẩn ruột", strength:"10mg", dosage:"4-12 viên/ngày", route:"Uống", usage:"Lỵ, tiêu chảy"},
-            {name:"Ginkgo Biloba", brand:"Tanakan", group:"Tuần hoàn não", strength:"40mg", dosage:"40mg x 3/ngày", route:"Uống", usage:"Rối loạn trí nhớ"},
-            {name:"Piracetam", brand:"Nootropyl", group:"Hướng thần", strength:"800mg", dosage:"800mg x 3/ngày", route:"Uống", usage:"Chóng mặt, sa sút trí tuệ"}
-        ];
-
+        // --- CONSTANTS & CONFIG ---
         const CONFIG = {
             firebase: {
-                apiKey: AI_KEY,
+                apiKey: "AIzaSyAcfs8LFgPeAkGyaSkmJeECoRBEwtfRv8E",
                 authDomain: "minhduckale1.firebaseapp.com",
                 databaseURL: "https://minhduckale1-default-rtdb.asia-southeast1.firebasedatabase.app",
                 projectId: "minhduckale1",
@@ -580,254 +423,257 @@
                 {t:"Coffee Shop Vibes", a:"Ambience", u:"https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=loneliness-1476.mp3"},
                 {t:"Sunday Morning", a:"Happy", u:"https://cdn.pixabay.com/download/audio/2020/05/18/audio_59146522e0.mp3?filename=smooth-waters-11218.mp3"}
             ],
-            // --- NEW: RELIABLE GOOGLE ACTION SOUNDS ---
             ambience: {
-                rain: "https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg",
-                fire: "https://actions.google.com/sounds/v1/ambiences/fireplace.ogg",
-                keyboard: "https://actions.google.com/sounds/v1/office/typing.ogg", 
-                cafe: "https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg"
+                rain: "https://cdn.pixabay.com/download/audio/2022/07/04/audio_b952f9b8c3.mp3",
+                fire: "https://cdn.pixabay.com/download/audio/2021/08/09/audio_8ed59a8508.mp3",
+                keyboard: "https://cdn.pixabay.com/download/audio/2022/03/10/audio_c8c8a73467.mp3",
+                cafe: "https://cdn.pixabay.com/download/audio/2021/08/09/audio_a462828552.mp3"
             }
         };
 
+        // --- UTILITIES ---
         const Utils = {
-            escapeHTML: (str) => { if (!str) return ''; return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])); },
-            debounce: (func, wait) => { let timeout; return function(...args) { const later = () => { clearTimeout(timeout); func(...args); }; clearTimeout(timeout); timeout = setTimeout(later, wait); }; },
-            showToast: (msg, type = 'info') => { const container = document.getElementById('toast-container'); const toast = document.createElement('div'); toast.className = `toast ${type}`; toast.innerHTML = `<div class="toast-content font-bold text-sm">${msg}</div>`; container.appendChild(toast); setTimeout(() => toast.remove(), 3500); },
+            escapeHTML: (str) => {
+                if (!str) return '';
+                return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag]));
+            },
+            // NEW: Hàm xóa dấu Tiếng Việt
+            removeAccents: (str) => {
+                return String(str).normalize('NFD')
+                          .replace(/[\u0300-\u036f]/g, '')
+                          .replace(/đ/g, 'd').replace(/Đ/g, 'D')
+                          .toLowerCase();
+            },
+            debounce: (func, wait) => {
+                let timeout;
+                return function(...args) {
+                    const later = () => { clearTimeout(timeout); func(...args); };
+                    clearTimeout(timeout);
+                    timeout = setTimeout(later, wait);
+                };
+            },
+            showToast: (msg, type = 'info') => {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.innerHTML = `<div class="toast-content font-bold text-sm">${msg}</div>`;
+                container.appendChild(toast);
+                setTimeout(() => toast.remove(), 3500);
+            },
             formatDate: () => new Date().toLocaleString("vi-VN"),
-            isMobile: () => window.innerWidth < 768,
-            isUrl: (str) => { try { new URL(str); return true; } catch { return false; } },
-            extractYtId: (url) => {
-                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                const match = url.match(regExp);
-                return (match && match[2].length === 11) ? match[2] : null;
-            }
+            isMobile: () => window.innerWidth < 768
         };
 
-        class SoundFX {
-            constructor() { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
-            playTone(freq, type, duration) { if(this.ctx.state === 'suspended') this.ctx.resume(); const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain(); osc.type = type; osc.frequency.setValueAtTime(freq, this.ctx.currentTime); gain.gain.setValueAtTime(0.1, this.ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration); osc.connect(gain); gain.connect(this.ctx.destination); osc.start(); osc.stop(this.ctx.currentTime + duration); }
-            click() { this.playTone(600, 'sine', 0.1); }
-            hover() { this.playTone(300, 'triangle', 0.05); }
-            success() { this.playTone(500, 'sine', 0.1); setTimeout(() => this.playTone(1000, 'sine', 0.2), 100); }
-            error() { this.playTone(150, 'sawtooth', 0.2); }
-        }
-        const sfx = new SoundFX();
-
-        // --- NEW: CHATBOT ---
-        class Chatbot {
-            constructor() { this.isOpen = false; }
-            toggle() {
-                this.isOpen = !this.isOpen;
-                const c = document.getElementById('chatbotContainer');
-                if(this.isOpen) c.classList.remove('hidden-chat'); else c.classList.add('hidden-chat');
-                sfx.click();
-            }
-            async send() {
-                const input = document.getElementById('chatInput');
-                const history = document.getElementById('chatHistory');
-                const msg = input.value.trim();
-                if(!msg) return;
-
-                history.innerHTML += `<div class="chat-user chat-bubble">${Utils.escapeHTML(msg)}</div>`;
-                input.value = ''; history.scrollTop = history.scrollHeight; sfx.click();
-
-                // Loading
-                const load = document.createElement('div'); load.className="chat-bot chat-bubble animate-pulse"; load.innerText="..."; history.appendChild(load);
-
-                try {
-                    const prompt = { contents: [{ parts: [{ text: `Bạn là trợ lý y khoa ảo. Trả lời ngắn gọn: ${msg}` }] }] };
-                    const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${AI_KEY}`, {
-                        method: 'POST', headers: {'Content-Type': 'application/json'}, body: JSON.stringify(prompt)
-                    });
-                    const data = await res.json();
-                    const reply = data.candidates[0].content.parts[0].text;
-                    
-                    history.removeChild(load);
-                    // Parse MD
-                    const md = window.markdownit();
-                    history.innerHTML += `<div class="chat-bot chat-bubble">${md.render(reply)}</div>`;
-                    sfx.success();
-                } catch(e) {
-                    history.removeChild(load);
-                    history.innerHTML += `<div class="chat-bot chat-bubble text-red-500">Lỗi kết nối AI.</div>`;
-                }
-                history.scrollTop = history.scrollHeight;
-            }
-        }
-
-        class AutoClassifier {
-            constructor() { this.apiKey = AI_KEY; this.apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${this.apiKey}`; }
-            async autoClassify() {
-                const title = document.getElementById('newDocTitle').value;
-                const btn = document.getElementById('aiMagicBtn');
-                const icon = btn.querySelector('i');
-                if (!title || title.length < 3) { sfx.error(); Utils.showToast("Hãy nhập tên tài liệu trước!", "error"); return; }
-                sfx.click(); icon.className = "fa-solid fa-spinner fa-spin"; btn.classList.add("opacity-80", "cursor-wait");
-                const folders = CONFIG.folders;
-                const folderDesc = Object.entries(folders).map(([k,v]) => `${k}: ${v.name}`).join("\n");
-                const prompt = { contents: [{ parts: [{ text: `Bạn là trợ lý y khoa. Hãy phân loại tài liệu có tên: "${title}" vào MỘT trong các mã thư mục sau:\n${folderDesc}\n. Chỉ trả về đúng mã thư mục (ví dụ: noikhoa). Nếu không chắc chắn, trả về 'khac'. Không giải thích gì thêm.` }] }] };
-                try {
-                    const response = await fetch(this.apiUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(prompt) });
-                    const data = await response.json();
-                    
-                    let result = 'khac';
-                    if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
-                        const rawText = data.candidates[0].content.parts[0].text.trim().toLowerCase();
-                        const cleanText = rawText.replace(/```json/g, '').replace(/```/g, '').replace(/[^a-z0-9_]/g, '');
-                        for (const key in CONFIG.folders) {
-                            if (cleanText.includes(key)) {
-                                result = key;
-                                break;
-                            }
-                        }
-                    }
-
-                    const select = document.getElementById('newDocFolder');
-                    if (CONFIG.folders[result]) { 
-                        select.value = result; 
-                        sfx.success(); 
-                        select.classList.add('animate-pulse'); 
-                        setTimeout(() => select.classList.remove('animate-pulse'), 500); 
-                        Utils.showToast(`AI: Đã chọn mục "${CONFIG.folders[result].name}"`, "success"); 
-                    } 
-                    else { select.value = 'khac'; Utils.showToast("AI không chắc chắn, đã chọn 'Khác'", "info"); }
-                } catch (error) { console.error(error); sfx.error(); Utils.showToast("Lỗi kết nối AI.", "error"); } finally { icon.className = "fa-solid fa-wand-magic-sparkles"; btn.classList.remove("opacity-80", "cursor-wait"); }
-            }
-        }
-
+        // --- CORE CLASSES ---
         class MusicPlayer {
             constructor() {
                 this.audio = document.getElementById('bgAudio');
                 this.idx = parseInt(localStorage.getItem('mdk_music_idx') || 0);
                 this.playlist = CONFIG.playlist;
                 this.isPlaying = false;
-                this.ambienceAudio = {}; 
+                this.ambienceAudio = {};
+
                 const savedVol = localStorage.getItem('mdk_music_vol');
-                if (savedVol) { this.audio.volume = parseFloat(savedVol); document.getElementById('volSlider').value = savedVol; }
+                if (savedVol) {
+                    this.audio.volume = parseFloat(savedVol);
+                    document.getElementById('volSlider').value = savedVol;
+                }
+
                 this.audio.addEventListener('ended', () => this.next());
                 this.loadTrack(this.idx);
                 this.renderPlaylist();
             }
-            loadTrack(i) { this.idx = i; const track = this.playlist[this.idx]; this.audio.src = track.u; document.getElementById('musicTitle').innerText = track.t; document.getElementById('musicArtist').innerText = track.a; localStorage.setItem('mdk_music_idx', this.idx); this.updateUI(); }
-            toggle() { const waves = document.getElementById('musicVisualizer'); if (this.audio.paused) { this.audio.play().catch(e => console.log("Auto-play prevented")); this.isPlaying = true; document.getElementById('musicDisc').classList.add('animate-spin-slow'); document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-pause text-xl ml-0"></i>'; waves.classList.add('playing'); } else { this.audio.pause(); this.isPlaying = false; document.getElementById('musicDisc').classList.remove('animate-spin-slow'); document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-play text-xl ml-1"></i>'; waves.classList.remove('playing'); } }
+
+            loadTrack(i) {
+                this.idx = i;
+                const track = this.playlist[this.idx];
+                this.audio.src = track.u;
+                document.getElementById('musicTitle').innerText = track.t;
+                document.getElementById('musicArtist').innerText = track.a;
+                localStorage.setItem('mdk_music_idx', this.idx);
+                this.updateUI();
+            }
+
+            toggle() {
+                if (this.audio.paused) {
+                    this.audio.play().catch(e => console.log("Auto-play prevented"));
+                    this.isPlaying = true;
+                    document.getElementById('musicDisc').classList.add('animate-spin-slow');
+                    document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-pause text-xl ml-0"></i>';
+                } else {
+                    this.audio.pause();
+                    this.isPlaying = false;
+                    document.getElementById('musicDisc').classList.remove('animate-spin-slow');
+                    document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-play text-xl ml-1"></i>';
+                }
+            }
+
             next() { this.loadTrack((this.idx + 1) % this.playlist.length); if(this.isPlaying) this.audio.play(); }
             prev() { this.loadTrack((this.idx - 1 + this.playlist.length) % this.playlist.length); if(this.isPlaying) this.audio.play(); }
-            setVolume(val) { this.audio.volume = parseFloat(val); localStorage.setItem('mdk_music_vol', val); }
-            switchTab(tab) { document.querySelectorAll('.music-tab').forEach(t => t.classList.remove('active')); document.getElementById(`tab-music-${tab}`).classList.add('active'); document.getElementById('music-view-local').classList.toggle('hidden', tab !== 'local'); document.getElementById('music-view-online').classList.toggle('hidden', tab !== 'online'); if (tab === 'online') { if(!this.audio.paused) this.toggle(); } }
+            
+            setVolume(val) {
+                this.audio.volume = parseFloat(val);
+                localStorage.setItem('mdk_music_vol', val);
+            }
+
+            switchTab(tab) {
+                document.querySelectorAll('.music-tab').forEach(t => t.classList.remove('active'));
+                document.getElementById(`tab-music-${tab}`).classList.add('active');
+                document.getElementById('music-view-local').classList.toggle('hidden', tab !== 'local');
+                document.getElementById('music-view-online').classList.toggle('hidden', tab !== 'online');
+                // Tự động pause mp3 nếu chuyển sang online nhưng user chưa bấm play
+                if (tab === 'online' && !this.audio.paused) {
+                    // Optional: có thể pause luôn ở đây nếu muốn
+                }
+            }
+
             togglePlaylist() { document.getElementById('playlistView').classList.toggle('hidden'); }
-            renderPlaylist() { const list = document.getElementById('playlistItems'); list.innerHTML = this.playlist.map((s, i) => ` <div onclick="app.music.select(${i})" class="p-2 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-700 transition ${i === this.idx ? 'bg-blue-100 dark:bg-slate-600 font-bold' : ''}"> <i class="fa-solid fa-music text-blue-500 text-xs"></i> <div class="flex-1 min-w-0"><p class="text-sm truncate">${s.t}</p><p class="text-[10px] text-slate-500">${s.a}</p></div> </div>`).join(''); }
+            
+            renderPlaylist() {
+                const list = document.getElementById('playlistItems');
+                list.innerHTML = this.playlist.map((s, i) => `
+                    <div onclick="app.music.select(${i})" class="p-2 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-700 transition ${i === this.idx ? 'bg-blue-100 dark:bg-slate-600 font-bold' : ''}">
+                        <i class="fa-solid fa-music text-blue-500 text-xs"></i>
+                        <div class="flex-1 min-w-0"><p class="text-sm truncate">${s.t}</p><p class="text-[10px] text-slate-500">${s.a}</p></div>
+                    </div>`).join('');
+            }
+            
             select(i) { this.loadTrack(i); this.toggle(); document.getElementById('playlistView').classList.add('hidden'); }
             updateUI() { this.renderPlaylist(); }
-            playCustomVideo() { 
-                const input = document.getElementById('youtubeInput').value; 
-                if (!input) { sfx.error(); return Utils.showToast("Hãy nhập Link hoặc Từ khóa!", "error"); } 
-                let src = "";
-                const id = Utils.extractYtId(input);
-                if (id) { src = `https://www.youtube.com/embed/${id}?autoplay=1`; } 
-                else { src = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(input)}&autoplay=1`; }
-                document.getElementById('radioFrame').src = src;
+
+            // --- SMART AUDIO & YOUTUBE ---
+            playCustomVideo() {
+                const input = document.getElementById('youtubeInput').value;
+                if (!input) return Utils.showToast("Hãy nhập Link hoặc Từ khóa!", "error");
+
+                // NEW: Tự động tắt nhạc Local nếu đang chạy
+                if (this.isPlaying) {
+                    this.toggle(); 
+                    Utils.showToast("Đã tắt nhạc nền để phát Youtube", "info");
+                }
+
+                let videoId = "";
+                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
+                const match = input.match(regExp);
+
+                if (match && match[2].length === 11) {
+                    videoId = match[2];
+                    document.getElementById('radioFrame').src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+                } else {
+                    document.getElementById('radioFrame').src = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(input)}&autoplay=1`;
+                }
             }
-            toggleAmbience(type, btn) { 
-                if (this.ambienceAudio[type]) { 
-                    this.ambienceAudio[type].pause(); 
-                    delete this.ambienceAudio[type]; 
-                    btn.classList.remove('active'); 
-                } else { 
-                    const audio = new Audio(CONFIG.ambience[type]); 
-                    audio.loop = true; 
-                    audio.volume = 0.5; 
-                    audio.play().then(() => {
-                        this.ambienceAudio[type] = audio; 
-                        btn.classList.add('active'); 
-                    }).catch(e => {
-                        console.error("Audio play failed:", e);
-                        Utils.showToast("Trình duyệt chặn tự phát âm thanh.", "error");
-                    });
-                } 
+
+            toggleAmbience(type, btn) {
+                if (this.ambienceAudio[type]) {
+                    this.ambienceAudio[type].pause();
+                    delete this.ambienceAudio[type];
+                    btn.classList.remove('active');
+                } else {
+                    const audio = new Audio(CONFIG.ambience[type]);
+                    audio.loop = true;
+                    audio.volume = 0.5;
+                    audio.play();
+                    this.ambienceAudio[type] = audio;
+                    btn.classList.add('active');
+                }
             }
         }
 
         class MedicalTools {
-            constructor() { this.timer = 25 * 60; this.interval = null; this.timerRunning = false; }
-            setTimer(min) { this.timer = min * 60; this.updateTimerDisplay(); this.stopTimer(); document.getElementById('timerBtn').innerText = "Bắt đầu tập trung"; }
-            updateTimerDisplay() { const m = String(Math.floor(this.timer / 60)).padStart(2, '0'); const s = String(this.timer % 60).padStart(2, '0'); document.getElementById('timerDisplay').innerText = `${m}:${s}`; }
-            toggleTimer() { if (!this.timerRunning) { this.interval = setInterval(() => { this.timer--; this.updateTimerDisplay(); if (this.timer <= 0) { this.stopTimer(); sfx.success(); confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors: ['#ef4444', '#ffffff'] }); Utils.showToast("🎉 Hoàn thành Pomodoro!", "success"); this.setTimer(25); } }, 1000); this.timerRunning = true; document.getElementById('timerBtn').innerText = "Đang chạy..."; } else { this.stopTimer(); } }
+            constructor() {
+                this.timer = 25 * 60;
+                this.interval = null;
+                this.timerRunning = false;
+            }
+
+            setTimer(min) {
+                this.timer = min * 60;
+                this.updateTimerDisplay();
+                this.stopTimer();
+                document.getElementById('timerBtn').innerText = "Bắt đầu tập trung";
+            }
+
+            updateTimerDisplay() {
+                const m = String(Math.floor(this.timer / 60)).padStart(2, '0');
+                const s = String(this.timer % 60).padStart(2, '0');
+                document.getElementById('timerDisplay').innerText = `${m}:${s}`;
+            }
+
+            toggleTimer() {
+                if (!this.timerRunning) {
+                    this.interval = setInterval(() => {
+                        this.timer--;
+                        this.updateTimerDisplay();
+                        if (this.timer <= 0) {
+                            this.stopTimer();
+                            Utils.showToast("🎉 Hoàn thành Pomodoro!", "success");
+                            this.setTimer(25);
+                        }
+                    }, 1000);
+                    this.timerRunning = true;
+                    document.getElementById('timerBtn').innerText = "Đang chạy...";
+                } else {
+                    this.stopTimer();
+                }
+            }
+
             stopTimer() { clearInterval(this.interval); this.timerRunning = false; document.getElementById('timerBtn').innerText = "Tiếp tục"; }
-            calcBMI() { const w = parseFloat(document.getElementById('bmi-w').value); const h = parseFloat(document.getElementById('bmi-h').value) / 100; if (!w || !h) { sfx.error(); return Utils.showToast("Nhập đủ cân nặng và chiều cao!", "error"); } const bmi = (w / (h * h)).toFixed(1); let text = ""; if(bmi < 18.5) text = "Gầy"; else if(bmi < 23) text = "Bình thường"; else if(bmi < 25) text = "Tiền béo phì"; else text = "Béo phì"; const res = document.getElementById('bmi-res'); res.classList.remove('hidden'); res.innerHTML = `BMI: ${bmi} <br><span class="text-sm font-normal text-slate-500">(${text})</span>`; }
-            calcMAP() { const sys = parseFloat(document.getElementById('map-sys').value); const dia = parseFloat(document.getElementById('map-dia').value); if (!sys || !dia) { sfx.error(); return; } const map = ((sys + 2 * dia) / 3).toFixed(0); const res = document.getElementById('map-res'); res.classList.remove('hidden'); res.innerText = `MAP ≈ ${map} mmHg`; }
-            
+
+            // NEW: CLICK TO COPY FOR TOOLS
+            calcBMI() {
+                const w = parseFloat(document.getElementById('bmi-w').value);
+                const h = parseFloat(document.getElementById('bmi-h').value) / 100;
+                if (!w || !h) return Utils.showToast("Nhập đủ cân nặng và chiều cao!", "error");
+                const bmi = (w / (h * h)).toFixed(1);
+                let text = "";
+                if(bmi < 18.5) text = "Gầy"; else if(bmi < 23) text = "Bình thường"; else if(bmi < 25) text = "Tiền béo phì"; else text = "Béo phì";
+                const res = document.getElementById('bmi-res');
+                res.classList.remove('hidden');
+                res.innerHTML = `
+                    <div class="cursor-pointer hover:opacity-80" onclick="navigator.clipboard.writeText('BMI: ${bmi} (${text})'); app.utils.showToast('Đã copy BMI!')" title="Nhấn để copy">
+                        BMI: ${bmi} <br><span class="text-sm font-normal text-slate-500">(${text})</span>
+                        <div class="text-[10px] text-indigo-400 mt-1"><i class="fa-regular fa-copy"></i> Chạm để copy</div>
+                    </div>`;
+            }
+
+            calcMAP() {
+                const sys = parseFloat(document.getElementById('map-sys').value);
+                const dia = parseFloat(document.getElementById('map-dia').value);
+                if (!sys || !dia) return;
+                const map = ((sys + 2 * dia) / 3).toFixed(0);
+                const res = document.getElementById('map-res');
+                res.classList.remove('hidden');
+                res.innerHTML = `
+                    <div class="cursor-pointer hover:opacity-80" onclick="navigator.clipboard.writeText('MAP: ${map} mmHg'); app.utils.showToast('Đã copy MAP!')" title="Nhấn để copy">
+                        MAP ≈ ${map} mmHg
+                        <div class="text-[10px] text-red-400 mt-1"><i class="fa-regular fa-copy"></i> Chạm để copy</div>
+                    </div>`;
+            }
+
             calcEGFR() {
                 const age = parseFloat(document.getElementById('egfr-age').value);
                 const w = parseFloat(document.getElementById('egfr-w').value);
                 const cre = parseFloat(document.getElementById('egfr-cre').value);
                 const sex = parseFloat(document.getElementById('egfr-sex').value);
-                const method = document.getElementById('egfr-method').value;
-
-                if (!age || !cre) { sfx.error(); return Utils.showToast("Thiếu tuổi hoặc Creatinine!", "error"); }
+                if (!age || !w || !cre) return Utils.showToast("Thiếu thông tin!", "error");
                 
-                let egfr = 0;
-                let detail = "";
-
-                if (method === 'ckdepi') {
-                    // CKD-EPI 2021 Formula (Race-free)
-                    const k = sex === 0.85 ? 0.7 : 0.9;
-                    const a = sex === 0.85 ? -0.241 : -0.302;
-                    const min = Math.min(cre / k, 1);
-                    const max = Math.max(cre / k, 1);
-                    egfr = 142 * Math.pow(min, a) * Math.pow(max, -1.200) * Math.pow(0.9938, age) * (sex === 0.85 ? 1.012 : 1); 
-                    detail = "CKD-EPI (2021)";
-                } else {
-                    // Cockcroft-Gault
-                    if(!w) { sfx.error(); return Utils.showToast("Cần cân nặng cho C-G!", "error"); }
-                    egfr = ((140 - age) * w * sex) / (72 * cre);
-                    detail = "Cockcroft-Gault";
-                }
-
-                egfr = egfr.toFixed(1);
-                
+                const egfr = ((140 - age) * w * sex / (72 * cre)).toFixed(1);
                 let stage = "";
-                let color = "text-green-600";
                 if (egfr >= 90) stage = "G1: Bình thường";
-                else if (egfr >= 60) { stage = "G2: Giảm nhẹ"; color = "text-yellow-600"; }
-                else if (egfr >= 45) { stage = "G3a: Giảm nhẹ-vừa"; color = "text-orange-500"; }
-                else if (egfr >= 30) { stage = "G3b: Giảm vừa-nặng"; color = "text-orange-600"; }
-                else if (egfr >= 15) { stage = "G4: Giảm nặng"; color = "text-red-500"; }
-                else { stage = "G5: Suy thận"; color = "text-red-700"; }
+                else if (egfr >= 60) stage = "G2: Giảm nhẹ";
+                else if (egfr >= 45) stage = "G3a: Giảm nhẹ-vừa";
+                else if (egfr >= 30) stage = "G3b: Giảm vừa-nặng";
+                else if (egfr >= 15) stage = "G4: Giảm nặng";
+                else stage = "G5: Suy thận";
 
                 const res = document.getElementById('egfr-res');
                 res.classList.remove('hidden');
-                res.innerHTML = `<span class="${color}">${egfr} mL/min</span><br><span class="text-xs text-slate-400 font-normal">(${detail})</span><br><span class="text-sm font-bold ${color}">${stage}</span>`;
-                sfx.success();
-            }
-            
-            calcGCS() {
-                const e = parseInt(document.getElementById('gcs-e').value);
-                const v = parseInt(document.getElementById('gcs-v').value);
-                const m = parseInt(document.getElementById('gcs-m').value);
-                const total = e + v + m;
-                let severity = "";
-                if(total >= 13) severity = "Nhẹ";
-                else if(total >= 9) severity = "Trung bình";
-                else severity = "Nặng";
-                
-                const res = document.getElementById('gcs-res');
-                res.classList.remove('hidden');
-                res.innerText = `GCS: ${total} điểm (${severity})`;
-                sfx.success();
-            }
-
-            calcFluid() {
-                const w = parseFloat(document.getElementById('fluid-w').value);
-                if(!w) return sfx.error();
-                let fluid = 0;
-                if(w <= 10) fluid = w * 100;
-                else if(w <= 20) fluid = 1000 + (w-10)*50;
-                else fluid = 1500 + (w-20)*20;
-                
-                const res = document.getElementById('fluid-res');
-                res.classList.remove('hidden');
-                res.innerText = `Dịch duy trì: ${fluid} ml/24h`;
-                sfx.success();
+                res.innerHTML = `
+                    <div class="cursor-pointer hover:opacity-80" onclick="navigator.clipboard.writeText('eGFR: ${egfr} mL/min - ${stage}'); app.utils.showToast('Đã copy eGFR!')" title="Nhấn để copy">
+                        eGFR ≈ ${egfr} mL/min<br><span class="text-sm text-slate-500 font-bold">${stage}</span>
+                        <div class="text-[10px] text-orange-400 mt-1"><i class="fa-regular fa-copy"></i> Chạm để copy</div>
+                    </div>`;
             }
         }
 
@@ -841,385 +687,465 @@
                 this.user = null;
                 this.isAdmin = false;
                 this.listeners = {};
-                this.dataStore = { publicDocs: [], privateDocs: [], meds: [] };
+                this.dataStore = {
+                    publicDocs: [],
+                    privateDocs: [],
+                    meds: []
+                };
                 this.importType = '';
-                this.uploadMode = 'link'; 
-
                 this.music = new MusicPlayer();
                 this.tools = new MedicalTools();
-                this.classifier = new AutoClassifier();
-                this.chat = new Chatbot(); // NEW
-                
+                this.utils = Utils; // Expose utils for HTML onclick
+
+                // Initialize Debounced Functions
                 this.searchDocsDebounced = Utils.debounce(() => this.data.filterDocs(), 300);
                 this.searchMedsDebounced = Utils.debounce(() => this.data.filterMeds(), 300);
                 this.saveNoteDebounced = Utils.debounce(() => this.data.saveNote(), 1000);
 
-                this.auth = { login: () => this.handleLogin(), logout: () => this.handleLogout(), switchAccount: () => this.handleSwitchAccount() };
+                this.auth = {
+                    login: () => this.handleLogin(),
+                    logout: () => this.handleLogout(),
+                    switchAccount: () => this.handleSwitchAccount()
+                };
                 this.ui = {
                     switchTab: (tab, el) => this.handleTabSwitch(tab, el),
                     toggleDarkMode: () => this.toggleDarkMode(),
                     toggleNotify: () => document.getElementById("notifyPanel").classList.toggle("hidden"),
                     toggleTool: (id) => document.getElementById('tool-'+id).classList.toggle('open'),
                     openModal: (id) => document.getElementById(id).classList.remove('hidden'),
-                    closeModal: (id) => document.getElementById(id).classList.add('hidden'),
-                    toggleUploadMode: (m) => this.toggleUploadMode(m),
-                    handleFileSelect: (el) => this.handleFileSelect(el),
-                    voiceSearch: (inputId, el) => this.voiceSearch(inputId, el),
-                    // NEW THEME
-                    openThemeModal: () => document.getElementById('themeModal').classList.remove('hidden'),
-                    setTheme: (theme) => { document.body.className = `${theme} font-sans`; localStorage.setItem('mdk_theme', theme); document.getElementById('themeModal').classList.add('hidden'); sfx.success(); }
+                    closeModal: (id) => document.getElementById(id).classList.add('hidden')
                 };
-                this.data = { saveNewDoc: () => this.saveDoc(), deleteDoc: (id, pub) => this.deleteDoc(id, pub), saveNote: () => this.saveNote(), filterDocs: () => this.renderDocs(), filterMeds: () => this.renderMeds(), renderFolders: () => { this.currentFolder = null; this.renderDocs(); } };
+                this.data = {
+                    saveNewDoc: () => this.saveDoc(),
+                    deleteDoc: (id, pub) => this.deleteDoc(id, pub),
+                    saveNote: () => this.saveNote(),
+                    filterDocs: () => this.renderDocs(),
+                    filterMeds: () => this.renderMeds(),
+                    renderFolders: () => { this.currentFolder = null; this.renderDocs(); }
+                };
                 this.admin = {
-                    claim: () => this.claimAdmin(),
-                    changeCode: () => this.changeAdminCode(),
                     seedMeds: () => this.seedMedsData(),
                     scrollToTools: () => this.scrollToAdmin(),
                     openImport: (t) => { this.importType = t; document.getElementById("jsonImportModal").classList.remove("hidden"); document.getElementById('jsonImportHint').innerText = t==='docs'?'Format: [{"title":"", "url":"", "folder":""}]':'Format: [{"name":"", "brand":"", "group":""}]'; },
-                    execImport: () => { try { const raw = document.getElementById('jsonInput').value; const data = JSON.parse(raw); if (!Array.isArray(data)) throw new Error("Dữ liệu phải là mảng JSON []"); if (this.importType === 'docs') { data.forEach(d => push(ref(this.db, 'library_public'), { title: d.title || d.Title || d.Ten || "No Title", url: d.url || d.Url || d.Link || "#", folder: d.folder || d.Folder || d.ThuMuc || "khac", createdAt: Date.now() })); Utils.showToast(`Đã import thành công ${data.length} tài liệu!`, "success"); } else { let count = 0; data.forEach(m => { const medData = { name: m.name || m.Name || m.TenThuoc || m.ten_thuoc || "?", brand: m.brand || m.Brand || m.BietDuoc || m.biet_duoc || "", group: m.group || m.Group || m.Nhom || m.nhom || "Khác", strength: m.strength || m.Strength || m.HamLuong || m.ham_luong || "", dosage: m.dosage || m.Dosage || m.LieuDung || m.lieu_dung || "", route: m.route || m.Route || m.DuongDung || m.duong_dung || "", mechanism: m.mechanism || m.Mechanism || m.CoChe || "", usage: m.usage || m.Usage || m.ChiDinh || "" }; if(medData.name !== "?") { push(ref(this.db, 'library_meds'), medData); count++; } }); Utils.showToast(`Đã import thành công ${count} thuốc!`, "success"); } this.ui.closeModal('jsonImportModal'); } catch (e) { alert("Lỗi cấu trúc JSON: " + e.message); } },
-                    deleteMed: (id) => this.deleteMed(id),
-                    exportData: (type) => this.exportData(type) 
+                    execImport: () => this.execImportJson(),
+                    deleteMed: (id) => this.deleteMed(id) 
                 };
-                this.utils = Utils;
+
                 this.init();
             }
 
             init() {
                 const sel = document.getElementById('newDocFolder');
-                Object.entries(CONFIG.folders).forEach(([k, v]) => { const opt = document.createElement('option'); opt.value = k; opt.innerText = v.name; sel.appendChild(opt); });
-                setInterval(() => { 
-                    const d = new Date(); 
-                    document.getElementById('clock').innerText = d.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}); 
-                    document.getElementById('date-display').innerText = d.toLocaleDateString('vi-VN'); 
-                    // Smart Greeting
-                    const h = d.getHours();
-                    let g = "Chào buổi tối"; if(h<11) g="Chào buổi sáng"; else if(h<18) g="Chào buổi chiều";
-                    if(document.getElementById('greeting')) document.getElementById('greeting').innerText = g;
-                }, 1000);
-                
-                if (localStorage.getItem('mdk_dark') === 'true') document.documentElement.classList.add('dark');
-                if (localStorage.getItem('mdk_theme')) document.body.className = `${localStorage.getItem('mdk_theme')} font-sans`;
-
-                onAuthStateChanged(this.authObj, (user) => { 
-                    this.user = user; 
-                    this.updateAuthUI(); 
-                    if (user) { 
-                        this.loadUserData(); 
-                        this.listenToData(); // This loads the public data now!
-                    } else { 
-                        // Even if not logged in, load public data!
-                        this.listenToData();
-                        this.resetData(); 
-                    } 
+                Object.entries(CONFIG.folders).forEach(([k, v]) => {
+                    const opt = document.createElement('option');
+                    opt.value = k; opt.innerText = v.name;
+                    sel.appendChild(opt);
                 });
 
-                document.addEventListener('click', (e) => { const userProfile = document.getElementById('userProfile'); const logoutPanel = document.getElementById('logoutPanel'); if (userProfile && logoutPanel && !userProfile.contains(e.target) && !logoutPanel.contains(e.target)) { logoutPanel.classList.add('hidden'); } const notifyBtn = document.getElementById('notifyBtn'); const notifyPanel = document.getElementById('notifyPanel'); if (notifyBtn && notifyPanel && !notifyBtn.contains(e.target) && !notifyPanel.contains(e.target)) { notifyPanel.classList.add('hidden'); } });
-                document.body.addEventListener('click', (e) => { if(e.target.closest('button') || e.target.closest('.segment-btn') || e.target.closest('a')) { sfx.click(); } });
-                document.addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); const searchInput = document.getElementById('searchInput'); searchInput.focus(); sfx.click(); searchInput.parentElement.classList.add('animate-pulse'); setTimeout(()=> searchInput.parentElement.classList.remove('animate-pulse'), 500); } });
+                setInterval(() => {
+                    const d = new Date();
+                    document.getElementById('clock').innerText = d.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
+                    document.getElementById('date-display').innerText = d.toLocaleDateString('vi-VN');
+                }, 1000);
 
-                // NEW: Drag and Drop Setup
-                const dropArea = document.querySelector('.file-upload-box');
-                if(dropArea) {
-                    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
-                        dropArea.addEventListener(eventName, (e) => { e.preventDefault(); e.stopPropagation(); }, false);
-                    });
-                    ['dragenter', 'dragover'].forEach(eventName => {
-                        dropArea.addEventListener(eventName, () => dropArea.classList.add('drag-active'), false);
-                    });
-                    ['dragleave', 'drop'].forEach(eventName => {
-                        dropArea.addEventListener(eventName, () => dropArea.classList.remove('drag-active'), false);
-                    });
-                    dropArea.addEventListener('drop', (e) => {
-                        const dt = e.dataTransfer;
-                        const files = dt.files;
-                        document.getElementById('fileInput').files = files;
-                        this.ui.handleFileSelect(document.getElementById('fileInput'));
-                    }, false);
-                }
-            }
+                if (localStorage.getItem('mdk_dark') === 'true') document.documentElement.classList.add('dark');
 
-            // --- AUTH ---
-            handleLogin() { 
-                signInWithPopup(this.authObj, this.provider)
-                .then(() => this.logAction("Đăng nhập"))
-                .catch(e => {
-                    if (e.code && e.code.includes('identity-toolkit')) {
-                        alert("LỖI: Bạn chưa bật API Authentication trong Google Console! Hãy làm theo hướng dẫn ở trên.");
+                onAuthStateChanged(this.authObj, (user) => {
+                    this.user = user;
+                    this.updateAuthUI();
+                    if (user) {
+                        this.loadUserData();
+                        this.listenToData();
                     } else {
-                        Utils.showToast(e.message, 'error');
+                        this.resetData();
                     }
-                }); 
+                });
+
+                document.addEventListener('click', (e) => {
+                    const userProfile = document.getElementById('userProfile');
+                    const logoutPanel = document.getElementById('logoutPanel');
+                    if (userProfile && logoutPanel && !userProfile.contains(e.target) && !logoutPanel.contains(e.target)) {
+                        logoutPanel.classList.add('hidden');
+                    }
+                    const notifyBtn = document.getElementById('notifyBtn');
+                    const notifyPanel = document.getElementById('notifyPanel');
+                    if (notifyBtn && notifyPanel && !notifyBtn.contains(e.target) && !notifyPanel.contains(e.target)) {
+                        notifyPanel.classList.add('hidden');
+                    }
+                });
             }
-            async handleLogout() { if(this.user) await this.logAction("Đăng xuất"); await signOut(this.authObj); Utils.showToast("Đã đăng xuất", "info"); document.getElementById('logoutPanel').classList.add('hidden'); }
+
+            handleLogin() { signInWithPopup(this.authObj, this.provider).then(() => this.logAction("Đăng nhập")).catch(e => Utils.showToast(e.message, 'error')); }
+            async handleLogout() {
+                if(this.user) await this.logAction("Đăng xuất");
+                await signOut(this.authObj);
+                Utils.showToast("Đã đăng xuất", "info");
+                document.getElementById('logoutPanel').classList.add('hidden');
+            }
             async handleSwitchAccount() { await signOut(this.authObj); this.handleLogin(); }
-            updateAuthUI() { 
-                const els = { loginBtn: document.getElementById('loginBtn'), profile: document.getElementById('userProfile'), avatar: document.getElementById('userAvatar'), name: document.getElementById('userName'), badge: document.getElementById('roleBadge'), addBtn: document.getElementById('addDocBtn'), adminBtn: document.getElementById('adminPanelBtn'), adminCard: document.getElementById('adminToolsCard'), pubCheck: document.getElementById('publicDocWrapper') }; 
-                
-                if (this.user) { 
-                    els.loginBtn.classList.add('hidden'); 
-                    els.profile.classList.remove('hidden'); 
-                    els.profile.classList.add('flex'); 
-                    els.avatar.src = this.user.photoURL; 
-                    els.name.innerText = this.user.displayName; 
-                    els.addBtn.classList.remove("hidden"); 
-                } else { 
-                    els.loginBtn.classList.remove('hidden'); 
-                    els.profile.classList.add('hidden'); 
-                    els.profile.classList.remove('flex'); 
-                    els.addBtn.classList.add("hidden"); 
-                    els.adminBtn.classList.add("hidden"); 
-                    els.adminCard.classList.add("hidden"); 
-                    // No need to disable pubCheck as everything is public now
-                    // els.pubCheck.classList.add("opacity-50", "pointer-events-none"); 
-                } 
+            
+            updateAuthUI() {
+                const els = {
+                    loginBtn: document.getElementById('loginBtn'),
+                    profile: document.getElementById('userProfile'),
+                    avatar: document.getElementById('userAvatar'),
+                    name: document.getElementById('userName'),
+                    badge: document.getElementById('roleBadge'),
+                    addBtn: document.getElementById('addDocBtn'),
+                    adminBtn: document.getElementById('adminPanelBtn'),
+                    adminCard: document.getElementById('adminToolsCard'),
+                    pubCheck: document.getElementById('publicDocWrapper')
+                };
+
+                if (this.user) {
+                    els.loginBtn.classList.add('hidden');
+                    els.profile.classList.remove('hidden');
+                    els.profile.classList.add('flex');
+                    els.avatar.src = this.user.photoURL;
+                    els.name.innerText = this.user.displayName;
+                    els.addBtn.classList.remove("hidden");
+                } else {
+                    els.loginBtn.classList.remove('hidden');
+                    els.profile.classList.add('hidden');
+                    els.profile.classList.remove('flex');
+                    els.addBtn.classList.add("hidden");
+                    els.adminBtn.classList.add("hidden");
+                    els.adminCard.classList.add("hidden");
+                    els.pubCheck.classList.add("opacity-50", "pointer-events-none");
+                }
             }
 
-            loadUserData() { try { onValue(ref(this.db, `users/${this.user.uid}/role`), snap => { const role = snap.val() || "user"; const badge = document.getElementById('roleBadge'); this.isAdmin = (role === 'admin'); if (this.isAdmin) { badge.innerText = "ADMIN"; badge.className = "px-3 py-1 rounded-full text-[10px] font-bold bg-red-500 text-white w-fit shadow-sm"; document.getElementById('adminPanelBtn').classList.remove("hidden"); document.getElementById('adminToolsCard').classList.remove("hidden"); document.getElementById('publicDocWrapper').classList.remove("opacity-50", "pointer-events-none"); this.loadAdminData(); } else { badge.innerText = "USER"; badge.className = "px-3 py-1 rounded-full text-[10px] font-bold bg-green-500 text-white w-fit shadow-sm"; } }); } catch(e) { console.error(e); } try { onValue(ref(this.db, `users/${this.user.uid}/note`), snap => document.getElementById('quickNote').value = snap.val() || ""); } catch(e) {} try { onValue(ref(this.db, `users/${this.user.uid}/logs`), snap => { const list = document.getElementById('notifyList'); list.innerHTML = ""; const data = snap.val(); if (data) { Object.values(data).reverse().forEach(l => { list.innerHTML += `<div class="p-2 bg-white/60 dark:bg-white/10 rounded-lg border-l-2 border-blue-400 mb-1"><b class="text-[10px] text-slate-500 dark:text-slate-400">${l.time}</b><br>${Utils.escapeHTML(l.text)}</div>`; }); } else { list.innerHTML = `<p class="text-center text-slate-400 italic">Chưa có hoạt động</p>`; } }); } catch(e) {} }
+            loadUserData() {
+                // NEW: HARDCODED ADMIN LIST FOR FRIENDS
+                // Hãy thay email bên dưới bằng email của bạn!
+                const ADMIN_EMAILS = [
+                    "minhduc.kale@gmail.com", // Ví dụ
+                    "bancuaban@gmail.com",    // Thêm bạn bè vào đây
+                    "emailcuaban@gmail.com"   // Email của bạn
+                ];
 
-            // --- DATA ---
-            listenToData() { 
-                document.getElementById('loadingDocs').classList.remove('hidden'); 
-                
-                // Public Docs - Always Load
-                if(this.listeners.pub) off(this.listeners.pub); 
-                this.listeners.pub = ref(this.db, 'library_public'); 
-                try { 
-                    onValue(this.listeners.pub, snap => { 
-                        const data = snap.val(); 
-                        this.dataStore.publicDocs = data ? Object.entries(data).map(([k,v]) => ({...v, id:k, source:'public'})) : []; 
-                        this.renderDocs(); 
-                        document.getElementById('loadingDocs').classList.add('hidden'); 
-                    }); 
-                } catch(e) {} 
-                
-                // Private Docs - Only if Logged In (kept for backward compatibility, but new saves go to public)
-                if (this.user) {
-                    if(this.listeners.priv) off(this.listeners.priv); 
-                    this.listeners.priv = ref(this.db, `users/${this.user.uid}/docs`); 
-                    try { 
-                        onValue(this.listeners.priv, snap => { 
-                            const data = snap.val(); 
-                            this.dataStore.privateDocs = data ? Object.entries(data).map(([k,v]) => ({...v, id:k, source:'private'})) : []; 
-                            this.renderDocs(); 
-                        }); 
-                    } catch(e) {} 
+                this.isAdmin = false;
+                const badge = document.getElementById('roleBadge');
+
+                // Check Hardcoded list first
+                if (ADMIN_EMAILS.includes(this.user.email)) {
+                    this.isAdmin = true;
                 }
 
-                // Meds - Always Load
-                document.getElementById('loadingMeds').classList.remove('hidden'); 
-                if(this.listeners.meds) off(this.listeners.meds); 
-                this.listeners.meds = ref(this.db, 'library_meds'); 
-                try { 
-                    onValue(this.listeners.meds, snap => { 
-                        const data = snap.val(); 
-                        this.dataStore.meds = data ? Object.entries(data).map(([k,v]) => ({...v, id:k})) : []; 
-                        this.renderMeds(); 
-                        document.getElementById('loadingMeds').classList.add('hidden'); 
-                    }); 
-                } catch(e) {} 
-            }
-            
-            resetData() { 
-                // Don't fully reset, keep public docs visible
-                this.dataStore.privateDocs = []; 
-                this.renderDocs(); 
-                this.user = null; 
-                this.isAdmin = false; 
+                // UI Update
+                if (this.isAdmin) {
+                    badge.innerText = "ADMIN (Friend)";
+                    badge.className = "px-3 py-1 rounded-full text-[10px] font-bold bg-red-500 text-white w-fit shadow-sm";
+                    document.getElementById('adminPanelBtn').classList.remove("hidden");
+                    document.getElementById('adminToolsCard').classList.remove("hidden");
+                    document.getElementById('publicDocWrapper').classList.remove("opacity-50", "pointer-events-none");
+                    this.loadAdminData();
+                } else {
+                    // Fallback check DB (optional)
+                    onValue(ref(this.db, `users/${this.user.uid}/role`), snap => {
+                        const role = snap.val() || "user";
+                        if (role === 'admin') {
+                             this.isAdmin = true;
+                             badge.innerText = "ADMIN";
+                             badge.className = "px-3 py-1 rounded-full text-[10px] font-bold bg-red-500 text-white w-fit shadow-sm";
+                             document.getElementById('adminPanelBtn').classList.remove("hidden");
+                             document.getElementById('adminToolsCard').classList.remove("hidden");
+                             document.getElementById('publicDocWrapper').classList.remove("opacity-50", "pointer-events-none");
+                             this.loadAdminData();
+                        } else {
+                             badge.innerText = "USER";
+                             badge.className = "px-3 py-1 rounded-full text-[10px] font-bold bg-green-500 text-white w-fit shadow-sm";
+                        }
+                    });
+                }
+
+                onValue(ref(this.db, `users/${this.user.uid}/note`), snap => document.getElementById('quickNote').value = snap.val() || "");
+                
+                onValue(ref(this.db, `users/${this.user.uid}/logs`), snap => {
+                    const list = document.getElementById('notifyList');
+                    list.innerHTML = "";
+                    const data = snap.val();
+                    if (data) {
+                        Object.values(data).reverse().forEach(l => {
+                            list.innerHTML += `<div class="p-2 bg-white/60 dark:bg-white/10 rounded-lg border-l-2 border-blue-400 mb-1"><b class="text-[10px] text-slate-500 dark:text-slate-400">${l.time}</b><br>${Utils.escapeHTML(l.text)}</div>`;
+                        });
+                    } else {
+                        list.innerHTML = `<p class="text-center text-slate-400 italic">Chưa có hoạt động</p>`;
+                    }
+                });
             }
 
-            // --- UI RENDER ---
-            renderDocs() { const listEl = document.getElementById('docsList'); const term = document.getElementById('searchInput').value.toLowerCase(); const allDocs = [...this.dataStore.publicDocs, ...this.dataStore.privateDocs]; if (!term && !this.currentFolder) { document.getElementById('breadcrumb').classList.add('hidden'); let html = ''; Object.entries(CONFIG.folders).forEach(([key, f]) => { const count = allDocs.filter(d => d.folder === key).length; html += ` <div onclick="app.currentFolder='${key}'; app.renderDocs()" class="glass-card p-5 rounded-3xl flex items-center gap-5 cursor-pointer hover:bg-white/90 dark:hover:bg-slate-700/80 transition group border-l-4 border-transparent hover:border-blue-500"> <div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl ${f.color} shadow-md group-hover:scale-110 transition"><i class="fa-solid ${f.icon}"></i></div> <div class="flex-1"><h3 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${f.name}</h3><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">${count} file</p></div> <i class="fa-solid fa-chevron-right text-slate-300 font-bold group-hover:text-blue-500 transition"></i> </div>`; }); listEl.innerHTML = html; return; } document.getElementById('breadcrumb').classList.remove('hidden'); document.getElementById('currentFolderTitle').innerText = this.currentFolder ? CONFIG.folders[this.currentFolder].name : "Kết quả tìm kiếm"; let filtered = allDocs; if (this.currentFolder) filtered = filtered.filter(d => d.folder === this.currentFolder); if (term) filtered = filtered.filter(d => (d.title || '').toLowerCase().includes(term)); if (filtered.length === 0) { listEl.innerHTML = `<div class="col-span-2 text-center py-20 opacity-60 dark:text-white font-bold">Không tìm thấy tài liệu</div>`; return; } const frag = document.createDocumentFragment(); filtered.forEach(doc => { const isPub = doc.source === 'public'; const div = document.createElement('div'); div.className = "glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm group relative pr-10 animate-slideIn"; div.innerHTML = ` <div class="w-10 h-10 rounded-full ${isPub?'text-orange-500 bg-orange-50':'text-blue-500 bg-blue-50'} flex items-center justify-center flex-shrink-0"><i class="fa-solid ${isPub?'fa-book-open':'fa-file-lines'} text-lg"></i></div> <div class="flex-1 min-w-0"> <div class="flex items-center"><h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${Utils.escapeHTML(doc.title)}</h4>${isPub?'<span class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded ml-2 font-bold uppercase">Public</span>':''}</div> <a href="${Utils.escapeHTML(doc.url)}" target="_blank" onclick="app.logAction('Mở: ${Utils.escapeHTML(doc.title).replace(/'/g,"")}')" class="text-xs font-bold text-blue-600 hover:underline uppercase tracking-wide">Mở tài liệu</a> </div> ${this.isAdmin ? `<button onclick="app.data.deleteDoc('${doc.id}', ${isPub})" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-red-100 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition opacity-0 group-hover:opacity-100 shadow-sm"><i class="fa-solid fa-trash-can text-sm"></i></button>` : ''} `; frag.appendChild(div); }); listEl.innerHTML = ''; listEl.appendChild(frag); }
-            renderMeds() { const container = document.getElementById('medsList'); const term = document.getElementById('searchMedsInput').value.toLowerCase(); let list = this.dataStore.meds; if (term) { list = list.filter(m => (m.name?.toLowerCase().includes(term)) || (m.brand?.toLowerCase().includes(term)) || (m.ing?.toLowerCase().includes(term)) || (m.group?.toLowerCase().includes(term)) ); } if (list.length === 0) { container.innerHTML = '<p class="text-center text-slate-500 mt-4">Không tìm thấy thuốc phù hợp.</p>'; return; } const displayList = term ? list : list.slice(0, 50); const frag = document.createDocumentFragment(); displayList.forEach(m => { const div = document.createElement('div'); div.className = "glass-card p-4 rounded-2xl flex flex-col gap-2 border border-white/50 shadow-sm hover:border-pink-400 transition relative group animate-slideIn"; div.innerHTML = ` <div class="flex justify-between items-start"> <div> <h4 class="font-bold text-slate-900 dark:text-white text-lg">${Utils.escapeHTML(m.name)} <span class="text-xs text-slate-500 font-normal">(${Utils.escapeHTML(m.brand || "")})</span></h4> <p class="text-xs font-bold text-pink-600 bg-pink-100 px-2 py-0.5 rounded-full w-fit mt-1">${Utils.escapeHTML(m.group || "Khác")}</p> </div> ${this.isAdmin ? `<button onclick="if(confirm('Xóa thuốc này?')) app.admin.deleteMed('${m.id}')" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>` : ''} </div> <div class="text-sm text-slate-700 dark:text-slate-300 mt-2 space-y-1"> <p><i class="fa-solid fa-flask text-purple-500 mr-1 w-4"></i> <b>Hàm lượng:</b> ${Utils.escapeHTML(m.strength || m.ing || "-")}</p> <p><i class="fa-solid fa-gears text-blue-500 mr-1 w-4"></i> <b>Cơ chế/CĐ:</b> ${Utils.escapeHTML(m.mechanism || m.usage || "-")}</p> <p><i class="fa-solid fa-prescription-bottle-medical text-green-500 mr-1 w-4"></i> <b>Liều dùng:</b> ${Utils.escapeHTML(m.dosage || "-")}</p> <p><i class="fa-solid fa-route text-orange-500 mr-1 w-4"></i> <b>Đường dùng:</b> ${Utils.escapeHTML(m.route || "-")}</p> </div> `; frag.appendChild(div); }); container.innerHTML = ''; container.appendChild(frag); if (!term && list.length > 50) { container.innerHTML += `<div class="text-center text-xs text-slate-400 py-2">Hiển thị 50/${list.length} thuốc. Hãy tìm kiếm để thấy chi tiết.</div>`; } }
+            listenToData() {
+                document.getElementById('loadingDocs').classList.remove('hidden');
+                if(this.listeners.pub) off(this.listeners.pub);
+                this.listeners.pub = ref(this.db, 'library_public');
+                onValue(this.listeners.pub, snap => {
+                    const data = snap.val();
+                    this.dataStore.publicDocs = data ? Object.entries(data).map(([k,v]) => ({...v, id:k, source:'public'})) : [];
+                    this.renderDocs();
+                    document.getElementById('loadingDocs').classList.add('hidden');
+                });
 
-            // --- NEW: VOICE SEARCH ---
-            voiceSearch(inputId, iconEl) {
-                if (!('webkitSpeechRecognition' in window)) {
-                    Utils.showToast("Trình duyệt không hỗ trợ tìm kiếm bằng giọng nói", "error");
+                if(this.listeners.priv) off(this.listeners.priv);
+                this.listeners.priv = ref(this.db, `users/${this.user.uid}/docs`);
+                onValue(this.listeners.priv, snap => {
+                    const data = snap.val();
+                    this.dataStore.privateDocs = data ? Object.entries(data).map(([k,v]) => ({...v, id:k, source:'private'})) : [];
+                    this.renderDocs();
+                });
+
+                document.getElementById('loadingMeds').classList.remove('hidden');
+                if(this.listeners.meds) off(this.listeners.meds);
+                this.listeners.meds = ref(this.db, 'library_meds');
+                onValue(this.listeners.meds, snap => {
+                    const data = snap.val();
+                    this.dataStore.meds = data ? Object.entries(data).map(([k,v]) => ({...v, id:k})) : [];
+                    this.renderMeds();
+                    document.getElementById('loadingMeds').classList.add('hidden');
+                });
+            }
+
+            resetData() {
+                this.dataStore = { publicDocs: [], privateDocs: [], meds: [] };
+                this.renderDocs();
+                this.renderMeds();
+                this.user = null;
+                this.isAdmin = false;
+            }
+
+            renderDocs() {
+                const listEl = document.getElementById('docsList');
+                // NEW: Search Tiếng Việt
+                const term = Utils.removeAccents(document.getElementById('searchInput').value);
+                const allDocs = [...this.dataStore.publicDocs, ...this.dataStore.privateDocs];
+                
+                if (!term && !this.currentFolder) {
+                    document.getElementById('breadcrumb').classList.add('hidden');
+                    let html = '';
+                    Object.entries(CONFIG.folders).forEach(([key, f]) => {
+                        const count = allDocs.filter(d => d.folder === key).length;
+                        html += `
+                        <div onclick="app.currentFolder='${key}'; app.renderDocs()" class="glass-card p-5 rounded-3xl flex items-center gap-5 cursor-pointer hover:bg-white/90 dark:hover:bg-slate-700/80 transition group border-l-4 border-transparent hover:border-blue-500">
+                            <div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl ${f.color} shadow-md group-hover:scale-110 transition"><i class="fa-solid ${f.icon}"></i></div>
+                            <div class="flex-1"><h3 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${f.name}</h3><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">${count} file</p></div>
+                            <i class="fa-solid fa-chevron-right text-slate-300 font-bold group-hover:text-blue-500 transition"></i>
+                        </div>`;
+                    });
+                    listEl.innerHTML = html;
                     return;
                 }
-                const recognition = new webkitSpeechRecognition();
-                recognition.lang = 'vi-VN';
-                recognition.start();
-                iconEl.classList.add('listening');
 
-                recognition.onresult = (event) => {
-                    const transcript = event.results[0][0].transcript;
-                    document.getElementById(inputId).value = transcript;
-                    // Trigger search
-                    if(inputId === 'searchInput') this.searchDocsDebounced();
-                    if(inputId === 'searchMedsInput') this.searchMedsDebounced();
-                    iconEl.classList.remove('listening');
-                };
-                recognition.onerror = () => {
-                    iconEl.classList.remove('listening');
-                };
-                recognition.onend = () => {
-                    iconEl.classList.remove('listening');
-                };
+                document.getElementById('breadcrumb').classList.remove('hidden');
+                document.getElementById('currentFolderTitle').innerText = this.currentFolder ? CONFIG.folders[this.currentFolder].name : "Kết quả tìm kiếm";
+                
+                let filtered = allDocs;
+                if (this.currentFolder) filtered = filtered.filter(d => d.folder === this.currentFolder);
+                // NEW: Search Filter Logic
+                if (term) filtered = filtered.filter(d => Utils.removeAccents(d.title || "").includes(term));
+
+                if (filtered.length === 0) {
+                    listEl.innerHTML = `<div class="col-span-2 text-center py-20 opacity-60 dark:text-white font-bold">Không tìm thấy tài liệu</div>`;
+                    return;
+                }
+
+                const frag = document.createDocumentFragment();
+                filtered.forEach(doc => {
+                    const isPub = doc.source === 'public';
+                    const div = document.createElement('div');
+                    div.className = "glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm group relative pr-10 animate-slideIn";
+                    div.innerHTML = `
+                        <div class="w-10 h-10 rounded-full ${isPub?'text-orange-500 bg-orange-50':'text-blue-500 bg-blue-50'} flex items-center justify-center flex-shrink-0"><i class="fa-solid ${isPub?'fa-book-open':'fa-file-lines'} text-lg"></i></div>
+                        <div class="flex-1 min-w-0">
+                            <div class="flex items-center"><h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${Utils.escapeHTML(doc.title)}</h4>${isPub?'<span class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded ml-2 font-bold uppercase">Public</span>':''}</div>
+                            <a href="${Utils.escapeHTML(doc.url)}" target="_blank" onclick="app.logAction('Mở: ${Utils.escapeHTML(doc.title).replace(/'/g,"")}')" class="text-xs font-bold text-blue-600 hover:underline uppercase tracking-wide">Mở tài liệu</a>
+                        </div>
+                        ${(!isPub || (isPub && this.isAdmin)) ? `<button onclick="app.data.deleteDoc('${doc.id}', ${isPub})" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-red-100 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition opacity-0 group-hover:opacity-100 shadow-sm"><i class="fa-solid fa-trash-can text-sm"></i></button>` : ''}
+                    `;
+                    frag.appendChild(div);
+                });
+                listEl.innerHTML = '';
+                listEl.appendChild(frag);
             }
 
-            // --- ACTIONS ---
-            toggleUploadMode(mode) {
-                this.uploadMode = mode;
-                const tabLink = document.getElementById('tabLink');
-                const tabUpload = document.getElementById('tabUpload');
-                const viewLink = document.getElementById('modeLink');
-                const viewUpload = document.getElementById('modeUpload');
-                
-                if (mode === 'link') {
-                    tabLink.className = "flex-1 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-600 shadow-sm transition";
-                    tabUpload.className = "flex-1 py-1.5 rounded-lg text-xs font-bold text-slate-500 transition";
-                    viewLink.classList.remove('hidden');
-                    viewUpload.classList.add('hidden');
-                } else {
-                    tabUpload.className = "flex-1 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-600 shadow-sm transition";
-                    tabLink.className = "flex-1 py-1.5 rounded-lg text-xs font-bold text-slate-500 transition";
-                    viewLink.classList.add('hidden');
-                    viewUpload.classList.remove('hidden');
-                }
-            }
+            renderMeds() {
+                const container = document.getElementById('medsList');
+                // NEW: Search Tiếng Việt
+                const term = Utils.removeAccents(document.getElementById('searchMedsInput').value);
+                let list = this.dataStore.meds;
 
-            handleFileSelect(el) {
-                const file = el.files[0];
-                const display = document.getElementById('fileNameDisplay');
-                if (file) {
-                    display.innerText = file.name;
-                    display.className = "text-sm font-bold text-blue-600";
-                    if(document.getElementById('newDocTitle').value === '') {
-                        document.getElementById('newDocTitle').value = file.name.split('.')[0];
-                    }
-                }
-            }
+                if (term) {
+                    list = list.filter(m => 
+                        Utils.removeAccents(m.name || "").includes(term) || 
+                        Utils.removeAccents(m.brand || "").includes(term) || 
+                        Utils.removeAccents(m.group || "").includes(term)
+                    );
+                }
 
-            async saveDoc() {
-                const title = document.getElementById('newDocTitle').value;
-                const folder = document.getElementById('newDocFolder').value;
-                const isPub = document.getElementById('isPublicDoc').checked;
-                let url = "";
+                if (list.length === 0) {
+                    container.innerHTML = '<p class="text-center text-slate-500 mt-4">Không tìm thấy thuốc phù hợp.</p>';
+                    return;
+                }
 
-                if (!title) { sfx.error(); return Utils.showToast("Thiếu tên tài liệu!", "error"); }
-
-                const btn = document.getElementById('saveBtn');
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
-                btn.disabled = true;
-
-                try {
-                    // HANDLE UPLOAD (XHR PRO)
-                    if (this.uploadMode === 'upload') {
-                         const fileInput = document.getElementById('fileInput');
-                         if (fileInput.files.length === 0) throw new Error("Chưa chọn file!");
-                         
-                         const file = fileInput.files[0];
-                         if (file.size > 50 * 1024 * 1024) throw new Error("File quá lớn (>50MB)!");
-
-                         // UI Progress
-                         const progressContainer = document.getElementById('uploadProgress');
-                         const progressBar = document.querySelector('.upload-bar');
-                         progressContainer.style.display = 'block';
-                         
-                         // Fake progress simulation because GAS prevents real progress events
-                         let p = 0;
-                         const interval = setInterval(() => {
-                             p += 5; if(p > 90) p = 90;
-                             progressBar.style.width = p + '%';
-                         }, 500);
-
-                         // Convert to Base64
-                         const base64 = await new Promise((resolve, reject) => {
-                             const reader = new FileReader();
-                             reader.readAsDataURL(file);
-                             reader.onload = () => resolve(reader.result.split(',')[1]);
-                             reader.onerror = error => reject(error);
-                         });
-
-                         // Send to Apps Script with Timeout handling
-                         const controller = new AbortController();
-                         const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s Timeout
-
-                         const response = await fetch(GOOGLE_SCRIPT_URL, {
-                             method: 'POST',
-                             body: JSON.stringify({ base64: base64, mimeType: file.type, filename: file.name }),
-                             signal: controller.signal
-                         });
-                         clearTimeout(timeoutId);
-                         
-                         const result = await response.json();
-                         if(result.status !== 'success') throw new Error("Lỗi Upload: " + result.message);
-                         
-                         url = result.url; // Get Drive Link
-                         clearInterval(interval);
-                         progressBar.style.width = '100%';
-
-                    } else {
-                         url = document.getElementById('newDocLink').value;
-                         if(!url) throw new Error("Thiếu Link tài liệu!");
-                    }
-
-                    // SAVE TO FIREBASE
-                    const path = isPub ? 'library_public' : `users/${this.user.uid}/docs`;
-                    await push(ref(this.db, path), {
-                        title, folder, url,
-                        createdAt: Date.now(),
-                        addedBy: this.user.email
-                    });
-
-                    sfx.success();
-                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-                    Utils.showToast("✅ Đã lưu thành công!", "success");
-                    this.ui.closeModal('addDocModal');
-                    
-                    // Reset Form
-                    document.getElementById('newDocTitle').value = '';
-                    document.getElementById('newDocLink').value = '';
-                    document.getElementById('fileInput').value = '';
-                    document.getElementById('fileNameDisplay').innerText = "Nhấn để chọn file";
-                    document.getElementById('uploadProgress').style.display = 'none';
-
-                } catch (e) {
-                    sfx.error();
-                    Utils.showToast(e.message, "error");
-                } finally {
-                    btn.innerHTML = 'Lưu ngay';
-                    btn.disabled = false;
-                }
-            }
-
-            deleteDoc(id, isPub) { if(!confirm("Bạn chắc chắn muốn xóa?")) return; const path = isPub ? `library_public/${id}` : `users/${this.user.uid}/docs/${id}`; remove(ref(this.db, path)).then(() => Utils.showToast("Đã xóa!", "success")); }
-            saveNote() { const val = document.getElementById('quickNote').value; if(this.user) { set(ref(this.db, `users/${this.user.uid}/note`), val); const status = document.getElementById('saveStatus'); status.style.opacity = '1'; setTimeout(() => status.style.opacity = '0', 2000); if(val.length > 10) confetti({ particleCount: 30, spread: 50, origin: { y: 0.8 }, colors: ['#fbbf24'] }); } }
-            logAction(text) { if(!this.user) return; push(ref(this.db, `users/${this.user.uid}/logs`), { text, time: Utils.formatDate() }); }
-            
-            // --- ADMIN ---
-            claimAdmin() { if (!this.user) return Utils.showToast("Cần đăng nhập!", "error"); const code = prompt("Nhập mã kích hoạt:"); if (!code) return; get(ref(this.db, 'admin_settings/code')).then(snap => { const trueCode = snap.val() || "123456"; if (code === trueCode) { set(ref(this.db, `users/${this.user.uid}/role`), "admin").then(() => { alert("Kích hoạt Admin thành công! Trang sẽ tải lại."); location.reload(); }); } else { Utils.showToast("Sai mã!", "error"); } }); }
-            changeAdminCode() { const n = document.getElementById('newAdminCode').value; if(n.length < 4) return alert("Mã quá ngắn!"); set(ref(this.db, 'admin_settings/code'), n).then(() => { Utils.showToast("Đã đổi mã!", "success"); document.getElementById('newAdminCode').value = ''; }); }
-            scrollToAdmin() { this.handleTabSwitch('tools', document.querySelectorAll('.segment-btn')[2]); const el = document.getElementById('tool-admin'); el.classList.add('open'); el.scrollIntoView({ behavior: 'smooth' }); }
-            loadAdminData() { try { onValue(ref(this.db, "users"), snap => { const box = document.getElementById("adminUsersBox"); box.innerHTML = ""; snap.forEach(u => { const val = u.val(); const role = val.role || "user"; const id = u.key.substring(0,6); box.innerHTML += `<div class="flex justify-between items-center py-1 border-b border-white/10 last:border-0"><span class="truncate w-40">${val.note ? "User (Có note)" : "User "+id}</span> <span class="${role==='admin'?'text-red-500 font-bold':'text-green-500'} text-xs uppercase">${role}</span></div>`; }); }); } catch(e) {} }
-            seedMedsData() { if(!confirm("⚠️ Nạp dữ liệu mẫu sẽ thêm vào DB hiện tại. Tiếp tục?")) return; const sample = [ { "name": "Paracetamol", "brand": "Panadol", "group": "Giảm đau", "strength": "500mg", "dosage": "1v mỗi 4-6h", "route": "Uống" }, { "name": "Ibuprofen", "brand": "Gofen", "group": "NSAIDs", "strength": "400mg", "dosage": "1v sau ăn", "route": "Uống" } ]; sample.forEach(m => push(ref(this.db, "library_meds"), {...m, addedBy: "System"})); Utils.showToast("Đã nạp thuốc mẫu demo!", "success"); }
-            deleteMed(id) { remove(ref(this.db, `library_meds/${id}`)).then(()=>Utils.showToast("Đã xóa thuốc", "success")); }
-
-            // --- NEW: EXPORT DATA ---
-            exportData(type) {
-                const data = (type === 'docs') 
-                    ? [...this.dataStore.publicDocs, ...this.dataStore.privateDocs]
-                    : this.dataStore.meds;
-                
-                if(!data || data.length === 0) return Utils.showToast("Không có dữ liệu để xuất", "error");
-                
-                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
-                const downloadAnchorNode = document.createElement('a');
-                downloadAnchorNode.setAttribute("href", dataStr);
-                downloadAnchorNode.setAttribute("download", `backup_${type}_${new Date().toISOString().slice(0,10)}.json`);
-                document.body.appendChild(downloadAnchorNode);
-                downloadAnchorNode.click();
-                downloadAnchorNode.remove();
-                sfx.success();
+                const displayList = term ? list : list.slice(0, 50);
+                const frag = document.createDocumentFragment();
+                displayList.forEach(m => {
+                    const div = document.createElement('div');
+                    div.className = "glass-card p-4 rounded-2xl flex flex-col gap-2 border border-white/50 shadow-sm hover:border-pink-400 transition relative group animate-slideIn";
+                    div.innerHTML = `
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <h4 class="font-bold text-slate-900 dark:text-white text-lg">${Utils.escapeHTML(m.name)} <span class="text-xs text-slate-500 font-normal">(${Utils.escapeHTML(m.brand || "")})</span></h4>
+                                <p class="text-xs font-bold text-pink-600 bg-pink-100 px-2 py-0.5 rounded-full w-fit mt-1">${Utils.escapeHTML(m.group || "Khác")}</p>
+                            </div>
+                            ${this.isAdmin ? `<button onclick="if(confirm('Xóa thuốc này?')) app.admin.deleteMed('${m.id}')" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>` : ''}
+                        </div>
+                        <div class="text-sm text-slate-700 dark:text-slate-300 mt-2 space-y-1">
+                            <p><i class="fa-solid fa-flask text-purple-500 mr-1 w-4"></i> <b>Hàm lượng:</b> ${Utils.escapeHTML(m.strength || m.ing || "-")}</p>
+                            <p><i class="fa-solid fa-gears text-blue-500 mr-1 w-4"></i> <b>Cơ chế/CĐ:</b> ${Utils.escapeHTML(m.mechanism || m.usage || "-")}</p>
+                            <p><i class="fa-solid fa-prescription-bottle-medical text-green-500 mr-1 w-4"></i> <b>Liều dùng:</b> ${Utils.escapeHTML(m.dosage || "-")}</p>
+                            <p><i class="fa-solid fa-route text-orange-500 mr-1 w-4"></i> <b>Đường dùng:</b> ${Utils.escapeHTML(m.route || "-")}</p>
+                        </div>
+                    `;
+                    frag.appendChild(div);
+                });
+                container.innerHTML = '';
+                container.appendChild(frag);
+                if (!term && list.length > 50) {
+                    container.innerHTML += `<div class="text-center text-xs text-slate-400 py-2">Hiển thị 50/${list.length} thuốc. Hãy tìm kiếm để thấy chi tiết.</div>`;
+                }
             }
 
-            handleTabSwitch(tab, el) { document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); ['docs', 'meds', 'tools'].forEach(t => document.getElementById(`view-${t}`).classList.add('hidden')); document.getElementById(`view-${tab}`).classList.remove('hidden'); }
-            toggleDarkMode() { document.documentElement.classList.toggle('dark'); localStorage.setItem('mdk_dark', document.documentElement.classList.contains('dark')); }
-        }
+            saveDoc() {
+                const title = document.getElementById('newDocTitle').value;
+                const folder = document.getElementById('newDocFolder').value;
+                const url = document.getElementById('newDocLink').value;
+                const isPub = document.getElementById('isPublicDoc').checked;
 
-        window.app = new App();
+                if (!title || !url) return Utils.showToast("Thiếu thông tin!", "error");
+                
+                const path = isPub ? 'library_public' : `users/${this.user.uid}/docs`;
+                push(ref(this.db, path), {
+                    title, folder, url,
+                    createdAt: Date.now(),
+                    addedBy: this.user.email
+                }).then(() => {
+                    Utils.showToast("✅ Đã lưu thành công!", "success");
+                    this.ui.closeModal('addDocModal');
+                    document.getElementById('newDocTitle').value = '';
+                    document.getElementById('newDocLink').value = '';
+                }).catch(e => Utils.showToast(e.message, "error"));
+            }
 
-    </script>
+            deleteDoc(id, isPub) {
+                if(!confirm("Bạn chắc chắn muốn xóa?")) return;
+                const path = isPub ? `library_public/${id}` : `users/${this.user.uid}/docs/${id}`;
+                remove(ref(this.db, path)).then(() => Utils.showToast("Đã xóa!", "success"));
+            }
+
+            saveNote() {
+                const val = document.getElementById('quickNote').value;
+                if(this.user) {
+                    set(ref(this.db, `users/${this.user.uid}/note`), val);
+                    const status = document.getElementById('saveStatus');
+                    status.style.opacity = '1';
+                    setTimeout(() => status.style.opacity = '0', 2000);
+                }
+            }
+
+            logAction(text) {
+                if(!this.user) return;
+                push(ref(this.db, `users/${this.user.uid}/logs`), {
+                    text, time: Utils.formatDate()
+                });
+            }
+
+            scrollToAdmin() {
+                this.handleTabSwitch('tools', document.querySelectorAll('.segment-btn')[2]);
+                const el = document.getElementById('tool-admin');
+                el.classList.add('open');
+                el.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            loadAdminData() {
+                onValue(ref(this.db, "users"), snap => {
+                    const box = document.getElementById("adminUsersBox");
+                    box.innerHTML = "";
+                    snap.forEach(u => {
+                        const val = u.val();
+                        const role = val.role || "user";
+                        const id = u.key.substring(0,6);
+                        box.innerHTML += `<div class="flex justify-between items-center py-1 border-b border-white/10 last:border-0"><span class="truncate w-40">${val.note ? "User (Có note)" : "User "+id}</span> <span class="${role==='admin'?'text-red-500 font-bold':'text-green-500'} text-xs uppercase">${role}</span></div>`;
+                    });
+                });
+            }
+
+            seedMedsData() {
+                 if(!confirm("⚠️ Nạp dữ liệu mẫu sẽ thêm vào DB hiện tại. Tiếp tục?")) return;
+                 const sample = [
+                    { "name": "Paracetamol", "brand": "Panadol", "group": "Giảm đau", "strength": "500mg", "dosage": "1v mỗi 4-6h", "route": "Uống" },
+                    { "name": "Ibuprofen", "brand": "Gofen", "group": "NSAIDs", "strength": "400mg", "dosage": "1v sau ăn", "route": "Uống" }
+                 ];
+                 sample.forEach(m => push(ref(this.db, "library_meds"), {...m, addedBy: "System"}));
+                 Utils.showToast("Đã nạp thuốc mẫu demo!", "success");
+            }
+
+            execImportJson() {
+                try {
+                    const raw = document.getElementById('jsonInput').value;
+                    const data = JSON.parse(raw);
+                    if (!Array.isArray(data)) throw new Error("Dữ liệu phải là mảng JSON []");
+
+                    if (this.importType === 'docs') {
+                        data.forEach(d => push(ref(this.db, 'library_public'), {
+                            title: d.title || d.Title || d.Ten || "No Title",
+                            url: d.url || d.Url || d.Link || "#",
+                            folder: d.folder || d.Folder || d.ThuMuc || "khac",
+                            createdAt: Date.now()
+                        }));
+                        Utils.showToast(`Đã import thành công ${data.length} tài liệu!`, "success");
+                    } else {
+                        let count = 0;
+                        data.forEach(m => {
+                            const medData = {
+                                name: m.name || m.Name || m.TenThuoc || m.ten_thuoc || "?",
+                                brand: m.brand || m.Brand || m.BietDuoc || m.biet_duoc || "",
+                                group: m.group || m.Group || m.Nhom || m.nhom || "Khác",
+                                strength: m.strength || m.Strength || m.HamLuong || m.ham_luong || "",
+                                dosage: m.dosage || m.Dosage || m.LieuDung || m.lieu_dung || "",
+                                route: m.route || m.Route || m.DuongDung || m.duong_dung || "",
+                                mechanism: m.mechanism || m.Mechanism || m.CoChe || "",
+                                usage: m.usage || m.Usage || m.ChiDinh || ""
+                            };
+                            if(medData.name !== "?") {
+                                push(ref(this.db, 'library_meds'), medData);
+                                count++;
+                            }
+                        });
+                        Utils.showToast(`Đã import thành công ${count} thuốc!`, "success");
+                    }
+                    this.ui.closeModal('jsonImportModal');
+                } catch (e) {
+                    alert("Lỗi cấu trúc JSON: " + e.message);
+                }
+            }
+
+            deleteMed(id) { remove(ref(this.db, `library_meds/${id}`)).then(()=>Utils.showToast("Đã xóa thuốc", "success")); }
+
+            handleTabSwitch(tab, el) {
+                document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
+                el.classList.add('active');
+                ['docs', 'meds', 'tools'].forEach(t => document.getElementById(`view-${t}`).classList.add('hidden'));
+                document.getElementById(`view-${tab}`).classList.remove('hidden');
+            }
+
+            toggleDarkMode() {
+                document.documentElement.classList.toggle('dark');
+                localStorage.setItem('mdk_dark', document.documentElement.classList.contains('dark'));
+            }
+        }
+
+        window.app = new App();
+
+    </script>
 </body>
 </html>
