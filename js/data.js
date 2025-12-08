@@ -175,28 +175,32 @@ export class DataManager {
         const container = document.getElementById('medFilters');
         if (!container) return;
 
-        // Lấy danh sách các nhóm thuốc duy nhất
+        // Lấy danh sách nhóm duy nhất & sắp xếp
         const groups = ['All', ...new Set(this.dataStore.meds.map(m => m.group ? m.group.trim() : 'Khác'))].sort();
 
+        // Render dạng trượt ngang
         container.innerHTML = groups.map(g => 
-            `<button onclick="app.data.filterByGroup('${g}')" 
-                     class="filter-chip ${this.activeFilter === g ? 'active' : ''}">
+            `<div onclick="app.data.filterByGroup('${g}')" 
+                  class="filter-chip ${this.activeFilter === g ? 'active' : ''}">
                 ${g === 'All' ? 'Tất cả' : g}
-            </button>`
+            </div>`
         ).join('');
     }
 
     filterByGroup(group) {
         this.activeFilter = group;
-        this.renderFilters(); // Cập nhật màu nút active
-        this.renderMeds();    // Render lại danh sách
+        this.renderFilters(); 
+        this.renderMeds();
+        // Scroll nhẹ về đầu danh sách khi chọn nhóm mới
+        document.getElementById('medsList').scrollTop = 0;
     }
 
-    // --- RENDER DANH SÁCH THUỐC (LIST VIEW) ---
+    // --- RENDER DANH SÁCH THUỐC (GIAO DIỆN MỚI) ---
     renderMeds() {
         const container = document.getElementById('medsList');
         const searchInput = document.getElementById('searchMedsInput');
-        const term = Utils.removeAccents(searchInput ? searchInput.value : "");
+        // Chuẩn hóa từ khóa: bỏ dấu, viết thường
+        const term = Utils.removeAccents(searchInput ? searchInput.value.toLowerCase() : "");
         
         let list = this.dataStore.meds;
 
@@ -205,71 +209,81 @@ export class DataManager {
             list = list.filter(m => (m.group ? m.group.trim() : 'Khác') === this.activeFilter);
         }
 
-        // 2. Lọc theo Từ khóa tìm kiếm
+        // 2. TÌM KIẾM THÔNG MINH (Smart Search)
         if (term) {
-            list = list.filter(m => 
-                Utils.removeAccents(m.name || "").includes(term) || 
-                Utils.removeAccents(m.brand || "").includes(term) ||
-                Utils.removeAccents(m.indication || "").includes(term)
-            );
+            list = list.filter(m => {
+                // Gộp tất cả thông tin thành 1 chuỗi để tìm
+                const content = Utils.removeAccents(`
+                    ${m.name} 
+                    ${m.brand} 
+                    ${m.group} 
+                    ${m.indication} 
+                    ${m.ingredient}
+                `.toLowerCase());
+                return content.includes(term);
+            });
         }
 
+        // Empty State (Nếu không có kết quả)
         if (list.length === 0) {
             container.innerHTML = `
                 <div class="flex flex-col items-center justify-center py-10 opacity-60">
-                    <i class="fa-solid fa-box-open text-4xl mb-2 text-slate-400"></i>
+                    <div class="w-16 h-16 bg-slate-200 dark:bg-slate-700 rounded-full flex items-center justify-center mb-3">
+                        <i class="fa-solid fa-magnifying-glass text-2xl text-slate-400"></i>
+                    </div>
                     <p class="text-sm font-bold text-slate-500">Không tìm thấy thuốc nào</p>
                 </div>`;
             return;
         }
 
-        // 3. Tối ưu hiển thị: Chỉ render tối đa 100 kết quả đầu tiên
-        const displayList = list.slice(0, 100);
+        // 3. Render tối đa 50 kết quả (Lazy render logic đơn giản)
+        const displayList = list.slice(0, 50);
         const frag = document.createDocumentFragment();
 
         displayList.forEach(m => {
             const div = document.createElement('div');
-            div.className = "med-item animate-slideIn"; // Sử dụng class CSS
-
-            // Chuẩn bị dữ liệu hiển thị an toàn
+            // Class "med-card" đã định nghĩa ở CSS trên
+            div.className = "med-card group animate-slideIn"; 
+            
+            // Xử lý dữ liệu an toàn
             const d = {
+                id: m.id,
                 name: Utils.escapeHTML(m.name || "Không tên"),
-                brand: Utils.escapeHTML(m.brand || "Generics"),
+                brand: Utils.escapeHTML(m.brand || ""),
                 group: Utils.escapeHTML(m.group || "Khác"),
                 strength: Utils.escapeHTML(m.strength || ""),
                 dosage: Utils.escapeHTML(m.dosage || "Đang cập nhật..."),
-                indication: Utils.escapeHTML(m.indication || "Đang cập nhật..."),
-                contra: Utils.escapeHTML(m.contra || "Đang cập nhật..."),
-                caution: Utils.escapeHTML(m.caution || "Đang cập nhật..."),
-                side: Utils.escapeHTML(m.side || "Đang cập nhật..."),
-                inter: Utils.escapeHTML(m.inter || "Đang cập nhật...")
+                indication: Utils.escapeHTML(m.indication || ""),
+                ...m // Copy hết props để truyền vào modal
             };
 
-            // HTML cho từng dòng thuốc (List Item)
+            // HTML layout Card: Icon Trái | Nội dung Giữa | Nút Phải
             div.innerHTML = `
-                <div class="flex items-center gap-3 flex-1 min-w-0" onclick='app.data.showMimsDetail(${JSON.stringify(d).replace(/'/g, "&#39;")})'>
-                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0 uppercase shadow-md shadow-blue-500/30">
-                        ${d.name.substring(0, 1)}
-                    </div>
-                    
-                    <div class="flex-1 min-w-0">
-                        <div class="flex items-center gap-2">
-                            <h4 class="font-bold text-slate-900 dark:text-white truncate text-base">${d.name}</h4>
-                        </div>
-                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 truncate">
-                            <span class="text-blue-600 dark:text-blue-400">${d.brand}</span> 
-                            ${d.strength ? `<span class="mx-1 text-slate-300">|</span> ${d.strength}` : ''}
-                        </p>
-                    </div>
+                <div class="w-11 h-11 rounded-full bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 flex items-center justify-center font-extrabold text-lg shrink-0 border border-blue-200 dark:border-blue-800 shadow-sm">
+                    ${d.name.substring(0, 1).toUpperCase()}
                 </div>
                 
-                <div class="flex items-center gap-1 pl-2 border-l border-slate-100 dark:border-slate-700 ml-2">
-                     <button onclick='app.data.showMimsDetail(${JSON.stringify(d).replace(/'/g, "&#39;")})' class="w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-blue-600 transition flex items-center justify-center">
-                        <i class="fa-solid fa-circle-info"></i>
+                <div class="flex-1 min-w-0 flex flex-col justify-center" onclick='app.data.showMimsDetail(${JSON.stringify(d).replace(/'/g, "&#39;")})'>
+                    <h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-[15px] leading-tight">
+                        ${d.name} <span class="text-xs font-normal text-slate-400 ml-1 hidden sm:inline-block">(${d.strength})</span>
+                    </h4>
+                    
+                    <div class="flex items-center gap-2 mt-1">
+                         ${d.brand ? `<span class="text-xs font-bold text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 px-1.5 rounded truncate max-w-[120px]">${d.brand}</span>` : ''}
+                         <span class="text-xs text-slate-500 dark:text-slate-400 truncate">${d.group}</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-1 pl-2 border-l border-slate-200 dark:border-slate-700">
+                    <button onclick='app.data.showMimsDetail(${JSON.stringify(d).replace(/'/g, "&#39;")})' 
+                        class="w-9 h-9 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-blue-600 transition flex items-center justify-center">
+                        <i class="fa-solid fa-angle-right"></i>
                     </button>
+                    
                     ${this.app.auth.isAdmin ? `
-                    <button onclick="if(confirm('Xóa thuốc: ${d.name}?')) app.admin.deleteMed('${m.id}')" class="w-8 h-8 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-300 hover:text-red-500 transition flex items-center justify-center">
-                        <i class="fa-solid fa-trash"></i>
+                    <button onclick="event.stopPropagation(); if(confirm('Xóa thuốc: ${d.name}?')) app.admin.deleteMed('${d.id}')" 
+                        class="w-9 h-9 rounded-full hover:bg-red-50 dark:hover:bg-red-900/30 text-slate-300 hover:text-red-500 transition flex items-center justify-center">
+                        <i class="fa-solid fa-trash-can text-sm"></i>
                     </button>` : ''}
                 </div>
             `;
@@ -279,12 +293,12 @@ export class DataManager {
         container.innerHTML = '';
         container.appendChild(frag);
 
-        // Hiển thị thông báo nếu danh sách bị cắt bớt
-        if (list.length > 100) {
-            const notice = document.createElement('div');
-            notice.className = "text-center text-[10px] text-slate-400 py-3 italic font-bold uppercase tracking-wider";
-            notice.innerHTML = `Hiển thị 100 / ${list.length} kết quả`;
-            container.appendChild(notice);
+        // Hiển thị số lượng kết quả
+        if (list.length > 50) {
+            const info = document.createElement('div');
+            info.className = "text-center text-[10px] text-slate-400 py-2 italic";
+            info.innerText = `Đang hiển thị 50 trên tổng số ${list.length} thuốc`;
+            container.appendChild(info);
         }
     }
 
