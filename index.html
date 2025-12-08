@@ -3,11 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MinhducKale - Cloud Sync v11.2 (Ultimate)</title>
+    <title>MinhducKale - Cloud Sync v11.3 (Expanded)</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
-    <meta name="apple-mobile-web-app-capable" content="yes">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3774/3774299.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -72,7 +71,6 @@
         .tool-content { max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1); will-change: max-height; }
         .tool-content.open { max-height: 800px; }
 
-        /* JUICY ELEMENTS */
         .music-waves { display: flex; align-items: flex-end; justify-content: center; height: 30px; gap: 3px; display: none; margin: 10px 0; }
         .music-waves.playing { display: flex; }
         .bar { width: 4px; background: #3b82f6; border-radius: 4px; animation: wave 1s ease-in-out infinite; }
@@ -80,21 +78,19 @@
         @keyframes wave { 0%, 100% { height: 10%; } 50% { height: 100%; } }
         .bar:nth-child(1) { animation-duration: 0.6s; } .bar:nth-child(2) { animation-duration: 0.8s; } .bar:nth-child(3) { animation-duration: 0.5s; } .bar:nth-child(4) { animation-duration: 0.7s; } .bar:nth-child(5) { animation-duration: 0.9s; }
 
-        .file-upload-box { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: 0.2s; position: relative; }
+        .file-upload-box { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
         .file-upload-box:hover { border-color: #3b82f6; background: rgba(59, 130, 246, 0.05); }
+        .file-upload-box.drag-active { border-color: #3b82f6; background: rgba(59, 130, 246, 0.2); transform: scale(1.02); }
         .dark .file-upload-box { border-color: #475569; background: rgba(255,255,255,0.05); }
-        .upload-progress { height: 6px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 10px; display: none; }
+        .upload-progress { height: 4px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 10px; display: none; }
         .upload-bar { height: 100%; background: #3b82f6; width: 0%; transition: width 0.3s; }
         .upload-bar.animate { animation: progress 1.5s ease-in-out infinite; }
         @keyframes progress { 0% { width: 0%; } 100% { width: 100%; } }
 
-        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-        .toast { min-width: 280px; padding: 16px; border-radius: 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; animation: slideIn 0.3s ease-out forwards; border-left: 4px solid #3b82f6; pointer-events: auto; }
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 10px; }
+        .toast { min-width: 280px; padding: 16px; border-radius: 12px; background: white; box-shadow: 0 10px 25px rgba(0,0,0,0.1); border-left: 4px solid #3b82f6; animation: slideIn 0.3s ease-out; }
         .toast.error { border-left-color: #ef4444; } .toast.success { border-left-color: #22c55e; }
-        .dark .toast { background: rgba(30, 41, 59, 0.95); color: white; border: 1px solid rgba(255,255,255,0.1); }
+        .dark .toast { background: #1e293b; color: white; border: 1px solid rgba(255,255,255,0.1); }
 
         .music-tab { font-size: 10px; font-weight: bold; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; cursor: pointer; opacity: 0.6; transition: all 0.3s; }
         .music-tab.active { background: rgba(59, 130, 246, 0.2); color: #3b82f6; opacity: 1; }
@@ -107,7 +103,12 @@
         .dark input[type=range]::-webkit-slider-track { background: rgba(255,255,255,0.1); }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #3b82f6; cursor: pointer; margin-top: -5px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: transform 0.1s; }
 
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
         .cursor-wait { cursor: wait; }
+        .mic-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); color: #94a3b8; cursor: pointer; transition: 0.2s; padding: 5px; }
+        .mic-btn:hover { color: #3b82f6; transform: translateY(-50%) scale(1.2); }
+        .mic-btn.listening { color: #ef4444; animation: pulse-slow 1s infinite; }
     </style>
 </head>
 <body class="min-h-screen overflow-x-hidden selection:bg-blue-500 selection:text-white">
@@ -142,7 +143,7 @@
 
                 <div class="text-center md:text-left">
                     <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
-                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v11.2</p>
+                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v11.3</p>
                 </div>
             </div>
             
@@ -172,7 +173,8 @@
                     <div class="flex gap-3 relative z-10">
                         <div class="relative flex-1 group">
                             <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-600 transition"></i>
-                            <input id="searchInput" type="text" onkeyup="app.searchDocsDebounced()" class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm kiếm tài liệu (Ctrl+K)...">
+                            <input id="searchInput" type="text" onkeyup="app.searchDocsDebounced()" class="w-full pl-12 pr-10 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm kiếm tài liệu (Ctrl+K)...">
+                            <i onclick="app.ui.voiceSearch('searchInput', this)" class="fa-solid fa-microphone mic-btn" title="Nói để tìm"></i>
                         </div>
                         <button id="addDocBtn" onclick="app.ui.openModal('addDocModal')" title="Thêm tài liệu mới" class="hidden w-14 rounded-2xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-700 text-white flex items-center justify-center shadow-lg active:scale-95 transition"><i class="fa-solid fa-plus text-xl"></i></button>
                     </div>
@@ -191,7 +193,8 @@
                     <div class="flex gap-3 relative z-10">
                         <div class="relative flex-1 group">
                             <i class="fa-solid fa-pills absolute left-4 top-4 text-slate-500 group-focus-within:text-pink-600 transition"></i>
-                            <input id="searchMedsInput" type="text" onkeyup="app.searchMedsDebounced()" class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm tên thuốc, biệt dược, hoạt chất...">
+                            <input id="searchMedsInput" type="text" onkeyup="app.searchMedsDebounced()" class="w-full pl-12 pr-10 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm tên thuốc, biệt dược, hoạt chất...">
+                            <i onclick="app.ui.voiceSearch('searchMedsInput', this)" class="fa-solid fa-microphone mic-btn" title="Nói để tìm"></i>
                         </div>
                     </div>
                     <div id="loadingMeds" class="hidden text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-slate-500 font-bold text-sm">Đang tải danh mục thuốc...</p></div>
@@ -211,6 +214,10 @@
                                     <div class="grid grid-cols-2 gap-3">
                                         <button onclick="app.admin.openImport('docs')" class="p-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2"><i class="fa-solid fa-file-import"></i> Import Docs</button>
                                         <button onclick="app.admin.openImport('meds')" class="p-3 rounded-xl bg-teal-600 text-white font-bold hover:bg-teal-700 transition flex items-center justify-center gap-2"><i class="fa-solid fa-capsules"></i> Import Meds</button>
+                                    </div>
+                                    <div class="grid grid-cols-2 gap-3">
+                                         <button onclick="app.admin.exportData('docs')" class="p-3 rounded-xl bg-slate-700 text-white font-bold hover:bg-slate-800 transition flex items-center justify-center gap-2"><i class="fa-solid fa-download"></i> Backup Docs</button>
+                                         <button onclick="app.admin.exportData('meds')" class="p-3 rounded-xl bg-slate-700 text-white font-bold hover:bg-slate-800 transition flex items-center justify-center gap-2"><i class="fa-solid fa-download"></i> Backup Meds</button>
                                     </div>
                                 </div>
                                 <div class="h-px bg-slate-300 dark:bg-slate-600"></div>
@@ -384,7 +391,7 @@
                     <label class="text-xs font-bold text-slate-500 uppercase ml-1">Chọn File (PDF, Doc, Excel...)</label>
                     <div class="file-upload-box mt-1" onclick="document.getElementById('fileInput').click()">
                         <i class="fa-solid fa-cloud-arrow-up text-3xl text-blue-500 mb-2"></i>
-                        <p id="fileNameDisplay" class="text-sm font-bold text-slate-600 dark:text-slate-300">Nhấn để chọn file</p>
+                        <p id="fileNameDisplay" class="text-sm font-bold text-slate-600 dark:text-slate-300">Nhấn hoặc Kéo thả file</p>
                         <p class="text-[10px] text-slate-400">Tự động lưu vào Drive chung (Max 10MB)</p>
                         <input type="file" id="fileInput" class="hidden" onchange="app.ui.handleFileSelect(this)">
                     </div>
@@ -424,8 +431,8 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, off, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        import { getDatabase, ref, set, push, onValue, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
         // --- UPDATED SCRIPT URL (AUTO-FIXED to /exec) ---
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyHrMTG4XxlI3ckrCK7_bTQSG-76DvGBUq6ePh_zuy9/exec"; 
@@ -497,7 +504,6 @@
                     const response = await fetch(this.apiUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(prompt) });
                     const data = await response.json();
                     
-                    // --- AI FIX: Enhanced Parsing ---
                     let result = 'khac';
                     if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
                         const rawText = data.candidates[0].content.parts[0].text.trim().toLowerCase();
@@ -592,7 +598,8 @@
                     openModal: (id) => document.getElementById(id).classList.remove('hidden'),
                     closeModal: (id) => document.getElementById(id).classList.add('hidden'),
                     toggleUploadMode: (m) => this.toggleUploadMode(m),
-                    handleFileSelect: (el) => this.handleFileSelect(el)
+                    handleFileSelect: (el) => this.handleFileSelect(el),
+                    voiceSearch: (inputId, el) => this.voiceSearch(inputId, el), // NEW
                 };
                 this.data = { saveNewDoc: () => this.saveDoc(), deleteDoc: (id, pub) => this.deleteDoc(id, pub), saveNote: () => this.saveNote(), filterDocs: () => this.renderDocs(), filterMeds: () => this.renderMeds(), renderFolders: () => { this.currentFolder = null; this.renderDocs(); } };
                 this.admin = {
@@ -602,7 +609,8 @@
                     scrollToTools: () => this.scrollToAdmin(),
                     openImport: (t) => { this.importType = t; document.getElementById("jsonImportModal").classList.remove("hidden"); document.getElementById('jsonImportHint').innerText = t==='docs'?'Format: [{"title":"", "url":"", "folder":""}]':'Format: [{"name":"", "brand":"", "group":""}]'; },
                     execImport: () => { try { const raw = document.getElementById('jsonInput').value; const data = JSON.parse(raw); if (!Array.isArray(data)) throw new Error("Dữ liệu phải là mảng JSON []"); if (this.importType === 'docs') { data.forEach(d => push(ref(this.db, 'library_public'), { title: d.title || d.Title || d.Ten || "No Title", url: d.url || d.Url || d.Link || "#", folder: d.folder || d.Folder || d.ThuMuc || "khac", createdAt: Date.now() })); Utils.showToast(`Đã import thành công ${data.length} tài liệu!`, "success"); } else { let count = 0; data.forEach(m => { const medData = { name: m.name || m.Name || m.TenThuoc || m.ten_thuoc || "?", brand: m.brand || m.Brand || m.BietDuoc || m.biet_duoc || "", group: m.group || m.Group || m.Nhom || m.nhom || "Khác", strength: m.strength || m.Strength || m.HamLuong || m.ham_luong || "", dosage: m.dosage || m.Dosage || m.LieuDung || m.lieu_dung || "", route: m.route || m.Route || m.DuongDung || m.duong_dung || "", mechanism: m.mechanism || m.Mechanism || m.CoChe || "", usage: m.usage || m.Usage || m.ChiDinh || "" }; if(medData.name !== "?") { push(ref(this.db, 'library_meds'), medData); count++; } }); Utils.showToast(`Đã import thành công ${count} thuốc!`, "success"); } this.ui.closeModal('jsonImportModal'); } catch (e) { alert("Lỗi cấu trúc JSON: " + e.message); } },
-                    deleteMed: (id) => this.deleteMed(id) 
+                    deleteMed: (id) => this.deleteMed(id),
+                    exportData: (type) => this.exportData(type) // NEW
                 };
                 this.utils = Utils;
                 this.init();
@@ -617,6 +625,26 @@
                 document.addEventListener('click', (e) => { const userProfile = document.getElementById('userProfile'); const logoutPanel = document.getElementById('logoutPanel'); if (userProfile && logoutPanel && !userProfile.contains(e.target) && !logoutPanel.contains(e.target)) { logoutPanel.classList.add('hidden'); } const notifyBtn = document.getElementById('notifyBtn'); const notifyPanel = document.getElementById('notifyPanel'); if (notifyBtn && notifyPanel && !notifyBtn.contains(e.target) && !notifyPanel.contains(e.target)) { notifyPanel.classList.add('hidden'); } });
                 document.body.addEventListener('click', (e) => { if(e.target.closest('button') || e.target.closest('.segment-btn') || e.target.closest('a')) { sfx.click(); } });
                 document.addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); const searchInput = document.getElementById('searchInput'); searchInput.focus(); sfx.click(); searchInput.parentElement.classList.add('animate-pulse'); setTimeout(()=> searchInput.parentElement.classList.remove('animate-pulse'), 500); } });
+
+                // NEW: Drag and Drop Setup
+                const dropArea = document.querySelector('.file-upload-box');
+                if(dropArea) {
+                    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+                        dropArea.addEventListener(eventName, (e) => { e.preventDefault(); e.stopPropagation(); }, false);
+                    });
+                    ['dragenter', 'dragover'].forEach(eventName => {
+                        dropArea.addEventListener(eventName, () => dropArea.classList.add('drag-active'), false);
+                    });
+                    ['dragleave', 'drop'].forEach(eventName => {
+                        dropArea.addEventListener(eventName, () => dropArea.classList.remove('drag-active'), false);
+                    });
+                    dropArea.addEventListener('drop', (e) => {
+                        const dt = e.dataTransfer;
+                        const files = dt.files;
+                        document.getElementById('fileInput').files = files;
+                        this.ui.handleFileSelect(document.getElementById('fileInput'));
+                    }, false);
+                }
             }
 
             // --- AUTH ---
@@ -633,6 +661,33 @@
             // --- UI RENDER ---
             renderDocs() { const listEl = document.getElementById('docsList'); const term = document.getElementById('searchInput').value.toLowerCase(); const allDocs = [...this.dataStore.publicDocs, ...this.dataStore.privateDocs]; if (!term && !this.currentFolder) { document.getElementById('breadcrumb').classList.add('hidden'); let html = ''; Object.entries(CONFIG.folders).forEach(([key, f]) => { const count = allDocs.filter(d => d.folder === key).length; html += ` <div onclick="app.currentFolder='${key}'; app.renderDocs()" class="glass-card p-5 rounded-3xl flex items-center gap-5 cursor-pointer hover:bg-white/90 dark:hover:bg-slate-700/80 transition group border-l-4 border-transparent hover:border-blue-500"> <div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl ${f.color} shadow-md group-hover:scale-110 transition"><i class="fa-solid ${f.icon}"></i></div> <div class="flex-1"><h3 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${f.name}</h3><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">${count} file</p></div> <i class="fa-solid fa-chevron-right text-slate-300 font-bold group-hover:text-blue-500 transition"></i> </div>`; }); listEl.innerHTML = html; return; } document.getElementById('breadcrumb').classList.remove('hidden'); document.getElementById('currentFolderTitle').innerText = this.currentFolder ? CONFIG.folders[this.currentFolder].name : "Kết quả tìm kiếm"; let filtered = allDocs; if (this.currentFolder) filtered = filtered.filter(d => d.folder === this.currentFolder); if (term) filtered = filtered.filter(d => (d.title || '').toLowerCase().includes(term)); if (filtered.length === 0) { listEl.innerHTML = `<div class="col-span-2 text-center py-20 opacity-60 dark:text-white font-bold">Không tìm thấy tài liệu</div>`; return; } const frag = document.createDocumentFragment(); filtered.forEach(doc => { const isPub = doc.source === 'public'; const div = document.createElement('div'); div.className = "glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm group relative pr-10 animate-slideIn"; div.innerHTML = ` <div class="w-10 h-10 rounded-full ${isPub?'text-orange-500 bg-orange-50':'text-blue-500 bg-blue-50'} flex items-center justify-center flex-shrink-0"><i class="fa-solid ${isPub?'fa-book-open':'fa-file-lines'} text-lg"></i></div> <div class="flex-1 min-w-0"> <div class="flex items-center"><h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${Utils.escapeHTML(doc.title)}</h4>${isPub?'<span class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded ml-2 font-bold uppercase">Public</span>':''}</div> <a href="${Utils.escapeHTML(doc.url)}" target="_blank" onclick="app.logAction('Mở: ${Utils.escapeHTML(doc.title).replace(/'/g,"")}')" class="text-xs font-bold text-blue-600 hover:underline uppercase tracking-wide">Mở tài liệu</a> </div> ${(!isPub || (isPub && this.isAdmin)) ? `<button onclick="app.data.deleteDoc('${doc.id}', ${isPub})" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-red-100 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition opacity-0 group-hover:opacity-100 shadow-sm"><i class="fa-solid fa-trash-can text-sm"></i></button>` : ''} `; frag.appendChild(div); }); listEl.innerHTML = ''; listEl.appendChild(frag); }
             renderMeds() { const container = document.getElementById('medsList'); const term = document.getElementById('searchMedsInput').value.toLowerCase(); let list = this.dataStore.meds; if (term) { list = list.filter(m => (m.name?.toLowerCase().includes(term)) || (m.brand?.toLowerCase().includes(term)) || (m.ing?.toLowerCase().includes(term)) || (m.group?.toLowerCase().includes(term)) ); } if (list.length === 0) { container.innerHTML = '<p class="text-center text-slate-500 mt-4">Không tìm thấy thuốc phù hợp.</p>'; return; } const displayList = term ? list : list.slice(0, 50); const frag = document.createDocumentFragment(); displayList.forEach(m => { const div = document.createElement('div'); div.className = "glass-card p-4 rounded-2xl flex flex-col gap-2 border border-white/50 shadow-sm hover:border-pink-400 transition relative group animate-slideIn"; div.innerHTML = ` <div class="flex justify-between items-start"> <div> <h4 class="font-bold text-slate-900 dark:text-white text-lg">${Utils.escapeHTML(m.name)} <span class="text-xs text-slate-500 font-normal">(${Utils.escapeHTML(m.brand || "")})</span></h4> <p class="text-xs font-bold text-pink-600 bg-pink-100 px-2 py-0.5 rounded-full w-fit mt-1">${Utils.escapeHTML(m.group || "Khác")}</p> </div> ${this.isAdmin ? `<button onclick="if(confirm('Xóa thuốc này?')) app.admin.deleteMed('${m.id}')" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>` : ''} </div> <div class="text-sm text-slate-700 dark:text-slate-300 mt-2 space-y-1"> <p><i class="fa-solid fa-flask text-purple-500 mr-1 w-4"></i> <b>Hàm lượng:</b> ${Utils.escapeHTML(m.strength || m.ing || "-")}</p> <p><i class="fa-solid fa-gears text-blue-500 mr-1 w-4"></i> <b>Cơ chế/CĐ:</b> ${Utils.escapeHTML(m.mechanism || m.usage || "-")}</p> <p><i class="fa-solid fa-prescription-bottle-medical text-green-500 mr-1 w-4"></i> <b>Liều dùng:</b> ${Utils.escapeHTML(m.dosage || "-")}</p> <p><i class="fa-solid fa-route text-orange-500 mr-1 w-4"></i> <b>Đường dùng:</b> ${Utils.escapeHTML(m.route || "-")}</p> </div> `; frag.appendChild(div); }); container.innerHTML = ''; container.appendChild(frag); if (!term && list.length > 50) { container.innerHTML += `<div class="text-center text-xs text-slate-400 py-2">Hiển thị 50/${list.length} thuốc. Hãy tìm kiếm để thấy chi tiết.</div>`; } }
+
+            // --- NEW: VOICE SEARCH ---
+            voiceSearch(inputId, iconEl) {
+                if (!('webkitSpeechRecognition' in window)) {
+                    Utils.showToast("Trình duyệt không hỗ trợ tìm kiếm bằng giọng nói", "error");
+                    return;
+                }
+                const recognition = new webkitSpeechRecognition();
+                recognition.lang = 'vi-VN';
+                recognition.start();
+                iconEl.classList.add('listening');
+
+                recognition.onresult = (event) => {
+                    const transcript = event.results[0][0].transcript;
+                    document.getElementById(inputId).value = transcript;
+                    // Trigger search
+                    if(inputId === 'searchInput') this.searchDocsDebounced();
+                    if(inputId === 'searchMedsInput') this.searchMedsDebounced();
+                    iconEl.classList.remove('listening');
+                };
+                recognition.onerror = () => {
+                    iconEl.classList.remove('listening');
+                };
+                recognition.onend = () => {
+                    iconEl.classList.remove('listening');
+                };
+            }
 
             // --- ACTIONS ---
             toggleUploadMode(mode) {
@@ -689,8 +744,16 @@
                          if (file.size > 50 * 1024 * 1024) throw new Error("File quá lớn (>50MB)!");
 
                          // UI Progress
-                         document.getElementById('uploadProgress').style.display = 'block';
-                         document.querySelector('.upload-bar').style.width = '100%';
+                         const progressContainer = document.getElementById('uploadProgress');
+                         const progressBar = document.querySelector('.upload-bar');
+                         progressContainer.style.display = 'block';
+                         
+                         // Fake progress simulation because GAS prevents real progress events
+                         let p = 0;
+                         const interval = setInterval(() => {
+                             p += 5; if(p > 90) p = 90;
+                             progressBar.style.width = p + '%';
+                         }, 500);
 
                          // Convert to Base64
                          const base64 = await new Promise((resolve, reject) => {
@@ -715,6 +778,8 @@
                          if(result.status !== 'success') throw new Error("Lỗi Upload: " + result.message);
                          
                          url = result.url; // Get Drive Link
+                         clearInterval(interval);
+                         progressBar.style.width = '100%';
 
                     } else {
                          url = document.getElementById('newDocLink').value;
@@ -761,6 +826,24 @@
             loadAdminData() { try { onValue(ref(this.db, "users"), snap => { const box = document.getElementById("adminUsersBox"); box.innerHTML = ""; snap.forEach(u => { const val = u.val(); const role = val.role || "user"; const id = u.key.substring(0,6); box.innerHTML += `<div class="flex justify-between items-center py-1 border-b border-white/10 last:border-0"><span class="truncate w-40">${val.note ? "User (Có note)" : "User "+id}</span> <span class="${role==='admin'?'text-red-500 font-bold':'text-green-500'} text-xs uppercase">${role}</span></div>`; }); }); } catch(e) {} }
             seedMedsData() { if(!confirm("⚠️ Nạp dữ liệu mẫu sẽ thêm vào DB hiện tại. Tiếp tục?")) return; const sample = [ { "name": "Paracetamol", "brand": "Panadol", "group": "Giảm đau", "strength": "500mg", "dosage": "1v mỗi 4-6h", "route": "Uống" }, { "name": "Ibuprofen", "brand": "Gofen", "group": "NSAIDs", "strength": "400mg", "dosage": "1v sau ăn", "route": "Uống" } ]; sample.forEach(m => push(ref(this.db, "library_meds"), {...m, addedBy: "System"})); Utils.showToast("Đã nạp thuốc mẫu demo!", "success"); }
             deleteMed(id) { remove(ref(this.db, `library_meds/${id}`)).then(()=>Utils.showToast("Đã xóa thuốc", "success")); }
+
+            // --- NEW: EXPORT DATA ---
+            exportData(type) {
+                const data = (type === 'docs') 
+                    ? [...this.dataStore.publicDocs, ...this.dataStore.privateDocs]
+                    : this.dataStore.meds;
+                
+                if(!data || data.length === 0) return Utils.showToast("Không có dữ liệu để xuất", "error");
+                
+                const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(data, null, 2));
+                const downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", `backup_${type}_${new Date().toISOString().slice(0,10)}.json`);
+                document.body.appendChild(downloadAnchorNode);
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
+                sfx.success();
+            }
 
             handleTabSwitch(tab, el) { document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); ['docs', 'meds', 'tools'].forEach(t => document.getElementById(`view-${t}`).classList.add('hidden')); document.getElementById(`view-${tab}`).classList.remove('hidden'); }
             toggleDarkMode() { document.documentElement.classList.toggle('dark'); localStorage.setItem('mdk_dark', document.documentElement.classList.contains('dark')); }
