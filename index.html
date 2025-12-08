@@ -165,6 +165,148 @@
                     </div>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                         
+                         <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-indigo-500">
+                            <button onclick="app.ui.toggleTool('bmi')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
+                                <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-weight-scale text-indigo-500 mr-2"></i>Tính BMI</span>
+                                <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
+                            </button>
+                            <div id="tool-bmi" class="tool-content px-4">
+                                <div class="py-4 space-y-3">
+                                    <div class="flex gap-2"><input type="number" id="bmi-w" placeholder="Cân nặng (kg)" class="w-1/2 ios-input p-2.5 rounded-xl"><input type="number" id="bmi-h" placeholder="Chiều cao (cm)" class="w-1/2 ios-input p-2.5 rounded-xl"></div>
+                                    <button onclick="app.tools.calcBMI()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition">Tính Kết Quả</button>
+                                    <div id="bmi-res" class="hidden text-center mt-2 animate-slideIn"></div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-red-500">
+                             <button onclick="app.ui.toggleTool('map')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
+                                <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-heart-pulse text-red-500 mr-2"></i>Huyết áp (MAP)</span>
+                                <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
+                            </button>
+                            <div id="tool-map" class="tool-content px-4">
+                                <div class="py-4 space-y-3">
+                                    <div class="flex gap-2"><input type="number" id="map-sys" placeholder="Tâm thu (mmHg)" class="w-1/2 ios-input p-2.5 rounded-xl"><input type="number" id="map-dia" placeholder="Tâm trương (mmHg)" class="w-1/2 ios-input p-2.5 rounded-xl"></div>
+                                    <button onclick="app.tools.calcMAP()" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-md transition">Tính MAP</button>
+                                    <div id="map-res" class="hidden text-center mt-2 animate-slideIn"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-cyan-500">
+                            <button onclick="app.ui.toggleTool('iv')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
+                               <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-droplet text-cyan-500 mr-2"></i>Tốc độ Truyền dịch</span>
+                               <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
+                           </button>
+                           <div id="tool-iv" class="tool-content px-4">
+                               <div class="py-4 space-y-3">
+                                   <div class="flex gap-2">
+                                       <input type="number" id="iv-vol" placeholder="Tổng dịch (ml)" class="w-1/2 ios-input p-2.5 rounded-xl">
+                                       <input type="number" id="iv-time" placeholder="Số giờ (h)" class="w-1/2 ios-input p-2.5 rounded-xl">
+                                   </div>
+                                   <div class="relative">
+                                       <label class="text-[10px] uppercase font-bold text-slate-500 ml-1">Hệ số giọt (giọt/ml)</label>
+                                       <select id="iv-factor" class="w-full ios-input p-2.5 rounded-xl text-slate-800 dark:text-white dark:bg-slate-700 font-bold">
+                                           <option value="20">20 giọt/ml (Dây thường)</option>
+                                           <option value="15">15 giọt/ml (Máu/Dịch sánh)</option>
+                                           <option value="60">60 giọt/ml (Dây micro/Nhi)</option>
+                                       </select>
+                                   </div>
+                                   <button onclick="app.tools.calcIV()" class="w-full py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white font-bold rounded-xl shadow-md transition">Tính Tốc Độ</button>
+                                   <div id="iv-res" class="hidden text-center mt-2 animate-slideIn"></div>
+                               </div>
+                           </div>
+                       </div>
+
+                       <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-yellow-500">
+                            <button onclick="app.ui.toggleTool('ca')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
+                                <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-bone text-yellow-500 mr-2"></i>Canxi Hiệu chỉnh</span>
+                                <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
+                            </button>
+                            <div id="tool-ca" class="tool-content px-4">
+                                <div class="py-4 space-y-3">
+                                    <input type="number" id="ca-total" placeholder="Canxi đo được (mmol/L)" class="w-full ios-input p-2.5 rounded-xl">
+                                    <div class="flex gap-2">
+                                        <input type="number" id="ca-alb" placeholder="Albumin" class="w-2/3 ios-input p-2.5 rounded-xl">
+                                        <select id="ca-alb-unit" class="w-1/3 ios-input p-2.5 rounded-xl dark:bg-slate-700 text-xs font-bold">
+                                            <option value="10">g/L</option>
+                                            <option value="1">g/dL</option>
+                                        </select>
+                                    </div>
+                                    <button onclick="app.tools.calcCa()" class="w-full py-2.5 bg-yellow-600 hover:bg-yellow-700 text-white font-bold rounded-xl shadow-md transition">Hiệu chỉnh</button>
+                                    <div id="ca-res" class="hidden text-center mt-2 animate-slideIn"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-emerald-500 md:col-span-2">
+                            <button onclick="app.ui.toggleTool('gcs')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
+                                <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-brain text-emerald-500 mr-2"></i>Thang điểm Glasgow (GCS)</span>
+                                <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
+                            </button>
+                            <div id="tool-gcs" class="tool-content px-4">
+                                <div class="py-4 space-y-3 text-sm">
+                                    <div>
+                                        <label class="font-bold text-xs text-slate-500 uppercase">Mắt (Eye)</label>
+                                        <select id="gcs-e" class="w-full ios-input p-2 rounded-lg dark:bg-slate-700 mt-1">
+                                            <option value="4">4 - Mở mắt tự nhiên</option>
+                                            <option value="3">3 - Mở khi gọi tên</option>
+                                            <option value="2">2 - Mở khi cấu đau</option>
+                                            <option value="1">1 - Không mở mắt</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="font-bold text-xs text-slate-500 uppercase">Lời nói (Verbal)</label>
+                                        <select id="gcs-v" class="w-full ios-input p-2 rounded-lg dark:bg-slate-700 mt-1">
+                                            <option value="5">5 - Trả lời đúng, định hướng tốt</option>
+                                            <option value="4">4 - Trả lời lộn xộn</option>
+                                            <option value="3">3 - Nói từ vô nghĩa</option>
+                                            <option value="2">2 - Ú ớ, rên rỉ</option>
+                                            <option value="1">1 - Không trả lời</option>
+                                        </select>
+                                    </div>
+                                    <div>
+                                        <label class="font-bold text-xs text-slate-500 uppercase">Vận động (Motor)</label>
+                                        <select id="gcs-m" class="w-full ios-input p-2 rounded-lg dark:bg-slate-700 mt-1">
+                                            <option value="6">6 - Làm đúng theo lệnh</option>
+                                            <option value="5">5 - Định khu được nơi đau</option>
+                                            <option value="4">4 - Co tay khi cấu đau (Rụt lại)</option>
+                                            <option value="3">3 - Co cứng mất vỏ (Gấp cứng)</option>
+                                            <option value="2">2 - Duỗi cứng mất não</option>
+                                            <option value="1">1 - Không cử động</option>
+                                        </select>
+                                    </div>
+                                    <button onclick="app.tools.calcGCS()" class="w-full py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition">Đánh giá Tri giác</button>
+                                    <div id="gcs-res" class="hidden text-center mt-2 animate-slideIn"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                         <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-orange-500 md:col-span-2">
+                             <button onclick="app.ui.toggleTool('egfr')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
+                                <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-kidneys text-orange-500 mr-2"></i>Độ lọc cầu thận (eGFR)</span>
+                                <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
+                            </button>
+                            <div id="tool-egfr" class="tool-content px-4">
+                                <div class="py-4 space-y-3 text-sm">
+                                    <div class="flex gap-2">
+                                        <input type="number" id="egfr-age" placeholder="Tuổi" class="w-1/3 ios-input p-2.5 rounded-xl">
+                                        <input type="number" id="egfr-w" placeholder="Cân nặng (kg)" class="w-1/3 ios-input p-2.5 rounded-xl">
+                                        <select id="egfr-sex" class="w-1/3 ios-input p-2.5 rounded-xl text-slate-700 dark:text-white dark:bg-slate-700"><option value="1">Nam</option><option value="0.85">Nữ</option></select>
+                                    </div>
+                                    <div class="relative">
+                                        <input type="number" id="egfr-cre" placeholder="Creatinine (mg/dL)" step="0.01" class="w-full ios-input p-2.5 rounded-xl pl-10">
+                                        <span class="absolute left-3 top-2.5 text-slate-400 font-bold">Cr</span>
+                                    </div>
+                                    <button onclick="app.tools.calcEGFR()" class="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl shadow-md transition">Phân độ Suy thận</button>
+                                    <div id="egfr-res" class="hidden text-center mt-2 animate-slideIn"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                          <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-indigo-500">
                             <button onclick="app.ui.toggleTool('bmi')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
                                 <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-weight-scale text-indigo-500 mr-2"></i>Tính BMI</span>
