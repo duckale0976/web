@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MinhducKale - Cloud Sync v10.11 (Final)</title>
+    <title>MinhducKale - Cloud Sync v10.13 (Stable)</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
@@ -141,7 +141,7 @@
 
                 <div class="text-center md:text-left">
                     <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
-                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.11</p>
+                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.13</p>
                 </div>
             </div>
             
@@ -384,7 +384,7 @@
                     <div class="file-upload-box mt-1" onclick="document.getElementById('fileInput').click()">
                         <i class="fa-solid fa-cloud-arrow-up text-3xl text-blue-500 mb-2"></i>
                         <p id="fileNameDisplay" class="text-sm font-bold text-slate-600 dark:text-slate-300">Nhấn để chọn file</p>
-                        <p class="text-[10px] text-slate-400">Tự động lưu vào Drive chung (Max 50MB)</p>
+                        <p class="text-[10px] text-slate-400">Tự động lưu vào Drive chung (Max 5MB)</p>
                         <input type="file" id="fileInput" class="hidden" onchange="app.ui.handleFileSelect(this)">
                     </div>
                     <div id="uploadProgress" class="upload-progress"><div class="upload-bar animate"></div></div>
@@ -426,7 +426,7 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, off, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // --- NEW SCRIPT URL ---
+        // --- UPDATED SCRIPT URL ---
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwccngEduA7stIwsTR3zz9LlTHFQ99Gig4m-_oPyOk7ZMXrOGyFTyuPqY_xuYvTcoRxhQ/exec"; 
 
         const CONFIG = {
@@ -495,9 +495,30 @@
                 try {
                     const response = await fetch(this.apiUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(prompt) });
                     const data = await response.json();
-                    const result = data.candidates[0].content.parts[0].text.trim().toLowerCase().replace(/[^a-z0-9_]/g, ''); 
+                    
+                    // --- AI FIX: Enhanced Parsing ---
+                    let result = 'khac';
+                    if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
+                        const rawText = data.candidates[0].content.parts[0].text.trim().toLowerCase();
+                        // Clean up markdown code blocks if any
+                        const cleanText = rawText.replace(/```json/g, '').replace(/```/g, '').replace(/[^a-z0-9_]/g, '');
+                        // Match with known keys
+                        for (const key in CONFIG.folders) {
+                            if (cleanText.includes(key)) {
+                                result = key;
+                                break;
+                            }
+                        }
+                    }
+
                     const select = document.getElementById('newDocFolder');
-                    if (CONFIG.folders[result]) { select.value = result; sfx.success(); select.classList.add('ring-2', 'ring-purple-500', 'scale-105'); setTimeout(() => select.classList.remove('ring-2', 'ring-purple-500', 'scale-105'), 500); Utils.showToast(`AI: Đã chọn mục "${CONFIG.folders[result].name}"`, "success"); } 
+                    if (CONFIG.folders[result]) { 
+                        select.value = result; 
+                        sfx.success(); 
+                        select.classList.add('ring-2', 'ring-purple-500', 'scale-105'); 
+                        setTimeout(() => select.classList.remove('ring-2', 'ring-purple-500', 'scale-105'), 500); 
+                        Utils.showToast(`AI: Đã chọn mục "${CONFIG.folders[result].name}"`, "success"); 
+                    } 
                     else { select.value = 'khac'; Utils.showToast("AI không chắc chắn, đã chọn 'Khác'", "info"); }
                 } catch (error) { console.error(error); sfx.error(); Utils.showToast("Lỗi kết nối AI.", "error"); } finally { icon.className = "fa-solid fa-wand-magic-sparkles"; btn.classList.remove("opacity-80", "cursor-wait"); }
             }
@@ -553,7 +574,7 @@
                 this.listeners = {};
                 this.dataStore = { publicDocs: [], privateDocs: [], meds: [] };
                 this.importType = '';
-                this.uploadMode = 'link'; // 'link' or 'upload'
+                this.uploadMode = 'link'; 
 
                 this.music = new MusicPlayer();
                 this.tools = new MedicalTools();
@@ -660,17 +681,25 @@
                 btn.disabled = true;
 
                 try {
-                    // HANDLE UPLOAD
+                    // HANDLE UPLOAD (XHR PRO)
                     if (this.uploadMode === 'upload') {
                          const fileInput = document.getElementById('fileInput');
                          if (fileInput.files.length === 0) throw new Error("Chưa chọn file!");
                          
                          const file = fileInput.files[0];
-                         if (file.size > 50 * 1024 * 1024) throw new Error("File quá lớn (>50MB)!");
+                         if (file.size > 5 * 1024 * 1024) throw new Error("File quá lớn (>5MB)!");
 
                          // UI Progress
-                         document.getElementById('uploadProgress').style.display = 'block';
-                         document.querySelector('.upload-bar').style.width = '100%';
+                         const progressContainer = document.getElementById('uploadProgress');
+                         const progressBar = document.querySelector('.upload-bar');
+                         progressContainer.style.display = 'block';
+                         
+                         // Fake progress simulation because GAS prevents real progress events
+                         let p = 0;
+                         const interval = setInterval(() => {
+                             p += 5; if(p > 90) p = 90;
+                             progressBar.style.width = p + '%';
+                         }, 500);
 
                          // Convert to Base64
                          const base64 = await new Promise((resolve, reject) => {
@@ -680,11 +709,18 @@
                              reader.onerror = error => reject(error);
                          });
 
-                         // Send to Apps Script
+                         // Send to Apps Script with Timeout handling
+                         const controller = new AbortController();
+                         const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s Timeout
+
                          const response = await fetch(GOOGLE_SCRIPT_URL, {
                              method: 'POST',
-                             body: JSON.stringify({ base64: base64, mimeType: file.type, filename: file.name })
+                             body: JSON.stringify({ base64: base64, mimeType: file.type, filename: file.name }),
+                             signal: controller.signal
                          });
+                         clearTimeout(timeoutId);
+                         clearInterval(interval);
+                         progressBar.style.width = '100%';
                          
                          const result = await response.json();
                          if(result.status !== 'success') throw new Error("Lỗi Upload: " + result.message);
