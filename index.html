@@ -123,16 +123,19 @@
                     <div id="docsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </div>
 
-                <div id="view-meds" class="hidden flex-col gap-6 fade-in">
-                    <div class="flex gap-3 relative z-10">
-                        <div class="relative flex-1 group">
-                            <i class="fa-solid fa-pills absolute left-4 top-4 text-slate-500 group-focus-within:text-pink-600 transition"></i>
-                            <input id="searchMedsInput" type="text" onkeyup="app.searchMedsDebounced()" class="w-full pl-12 pr-10 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm thuốc (Gõ không dấu ok)...">
-                            <button onclick="document.getElementById('searchMedsInput').value=''; app.searchMedsDebounced()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-                        </div>
+<div id="view-meds" class="hidden flex-col gap-4 fade-in">
+                    <div class="relative group z-20">
+                        <i class="fa-solid fa-pills absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-600 transition"></i>
+                        <input id="searchMedsInput" type="text" onkeyup="app.searchMedsDebounced()" class="w-full pl-12 pr-10 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm thuốc (Tên, hoạt chất, nhóm)...">
+                        <button onclick="document.getElementById('searchMedsInput').value=''; app.searchMedsDebounced()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
                     </div>
+
+                    <div id="medFilters" class="filter-scroll">
+                        </div>
+
                     <div id="loadingMeds" class="hidden text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-slate-500 font-bold text-sm">Đang tải danh mục thuốc...</p></div>
-                    <div id="medsList" class="grid grid-cols-1 gap-4"></div>
+                    
+                    <div id="medsList" class="med-list-container"></div>
                 </div>
 
                 <div id="view-tools" class="hidden flex-col gap-6 fade-in">
