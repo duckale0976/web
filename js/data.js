@@ -1,4 +1,3 @@
-// js/data.js
 import { ref, push, remove, set, onValue, off } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 import { Utils } from "./utils.js";
 import { CONFIG } from "./config.js";
@@ -9,7 +8,7 @@ export class DataManager {
         this.dataStore = { publicDocs: [], privateDocs: [], meds: [] };
         this.listeners = {};
         this.currentFolder = null;
-        this.activeFilter = 'All'; // Bộ lọc thuốc đang chọn
+        this.activeFilter = 'All'; // Trạng thái bộ lọc hiện tại
     }
 
     loadUserData() {
@@ -76,7 +75,7 @@ export class DataManager {
         this.renderMeds();
     }
 
-    // --- XỬ LÝ DOCS (GIỮ NGUYÊN) ---
+    // --- XỬ LÝ DOCS ---
     saveNewDoc() {
         const title = document.getElementById('newDocTitle').value;
         const folder = document.getElementById('newDocFolder').value;
@@ -171,112 +170,130 @@ export class DataManager {
         listEl.appendChild(frag);
     }
 
-    // --- MEDS RENDERER (MỚI: LIST VIEW) ---
+    // --- RENDER BỘ LỌC (CHIPS) ---
     renderFilters() {
         const container = document.getElementById('medFilters');
         if (!container) return;
-        
-        // Lấy danh sách nhóm thuốc duy nhất
-        const groups = ['All', ...new Set(this.dataStore.meds.map(m => m.group || 'Khác'))].sort();
-        
+
+        // Lấy danh sách các nhóm thuốc duy nhất
+        const groups = ['All', ...new Set(this.dataStore.meds.map(m => m.group ? m.group.trim() : 'Khác'))].sort();
+
         container.innerHTML = groups.map(g => 
-            `<button onclick="app.data.filterByGroup('${g}')" class="filter-chip ${this.activeFilter === g ? 'active' : ''}">${g === 'All' ? 'Tất cả' : g}</button>`
+            `<button onclick="app.data.filterByGroup('${g}')" 
+                     class="filter-chip ${this.activeFilter === g ? 'active' : ''}">
+                ${g === 'All' ? 'Tất cả' : g}
+            </button>`
         ).join('');
     }
 
     filterByGroup(group) {
         this.activeFilter = group;
-        this.renderFilters(); // Update UI active state
-        this.renderMeds();
+        this.renderFilters(); // Cập nhật màu nút active
+        this.renderMeds();    // Render lại danh sách
     }
 
+    // --- RENDER DANH SÁCH THUỐC (LIST VIEW) ---
     renderMeds() {
         const container = document.getElementById('medsList');
-        const term = Utils.removeAccents(document.getElementById('searchMedsInput').value);
+        const searchInput = document.getElementById('searchMedsInput');
+        const term = Utils.removeAccents(searchInput ? searchInput.value : "");
+        
         let list = this.dataStore.meds;
 
-        // 1. Lọc theo Group trước
+        // 1. Lọc theo Nhóm (Filter Chip)
         if (this.activeFilter !== 'All') {
-            list = list.filter(m => (m.group || 'Khác') === this.activeFilter);
+            list = list.filter(m => (m.group ? m.group.trim() : 'Khác') === this.activeFilter);
         }
 
-        // 2. Lọc theo Search Term
+        // 2. Lọc theo Từ khóa tìm kiếm
         if (term) {
             list = list.filter(m => 
                 Utils.removeAccents(m.name || "").includes(term) || 
-                Utils.removeAccents(m.brand || "").includes(term) || 
-                Utils.removeAccents(m.group || "").includes(term)
+                Utils.removeAccents(m.brand || "").includes(term) ||
+                Utils.removeAccents(m.indication || "").includes(term)
             );
         }
 
         if (list.length === 0) {
-            container.innerHTML = '<p class="text-center text-slate-500 mt-10 italic">Không tìm thấy thuốc phù hợp.</p>';
+            container.innerHTML = `
+                <div class="flex flex-col items-center justify-center py-10 opacity-60">
+                    <i class="fa-solid fa-box-open text-4xl mb-2 text-slate-400"></i>
+                    <p class="text-sm font-bold text-slate-500">Không tìm thấy thuốc nào</p>
+                </div>`;
             return;
         }
 
-        // 3. Render dạng List View (Gọn gàng hơn)
-        // Hiển thị tối đa 100 kết quả để tránh lag
+        // 3. Tối ưu hiển thị: Chỉ render tối đa 100 kết quả đầu tiên
         const displayList = list.slice(0, 100);
         const frag = document.createDocumentFragment();
-        
+
         displayList.forEach(m => {
             const div = document.createElement('div');
-            div.className = "med-item animate-slideIn"; // Class mới trong CSS
-            
+            div.className = "med-item animate-slideIn"; // Sử dụng class CSS
+
+            // Chuẩn bị dữ liệu hiển thị an toàn
             const d = {
-                name: Utils.escapeHTML(m.name),
+                name: Utils.escapeHTML(m.name || "Không tên"),
                 brand: Utils.escapeHTML(m.brand || "Generics"),
                 group: Utils.escapeHTML(m.group || "Khác"),
                 strength: Utils.escapeHTML(m.strength || ""),
-                dosage: Utils.escapeHTML(m.dosage || "Chưa cập nhật"),
-                indication: Utils.escapeHTML(m.indication || "Chưa cập nhật"),
-                contra: Utils.escapeHTML(m.contra || "Chưa cập nhật"),
-                caution: Utils.escapeHTML(m.caution || "Chưa cập nhật"),
-                side: Utils.escapeHTML(m.side || "Chưa cập nhật"),
-                inter: Utils.escapeHTML(m.inter || "Chưa cập nhật")
+                dosage: Utils.escapeHTML(m.dosage || "Đang cập nhật..."),
+                indication: Utils.escapeHTML(m.indication || "Đang cập nhật..."),
+                contra: Utils.escapeHTML(m.contra || "Đang cập nhật..."),
+                caution: Utils.escapeHTML(m.caution || "Đang cập nhật..."),
+                side: Utils.escapeHTML(m.side || "Đang cập nhật..."),
+                inter: Utils.escapeHTML(m.inter || "Đang cập nhật...")
             };
 
-            // Layout 3 cột: Icon Nhóm - Tên thuốc - Hàm lượng
+            // HTML cho từng dòng thuốc (List Item)
             div.innerHTML = `
                 <div class="flex items-center gap-3 flex-1 min-w-0" onclick='app.data.showMimsDetail(${JSON.stringify(d).replace(/'/g, "&#39;")})'>
-                    <div class="w-10 h-10 rounded-full bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-xs shrink-0 uppercase border border-blue-200">
-                        ${d.name.substring(0, 2)}
+                    <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center font-bold text-sm shrink-0 uppercase shadow-md shadow-blue-500/30">
+                        ${d.name.substring(0, 1)}
                     </div>
+                    
                     <div class="flex-1 min-w-0">
                         <div class="flex items-center gap-2">
-                            <h4 class="font-bold text-slate-900 dark:text-white truncate">${d.name}</h4>
-                            <span class="text-[9px] bg-slate-100 dark:bg-slate-700 text-slate-500 px-1.5 rounded border border-slate-200 dark:border-slate-600 hidden sm:inline-block">${d.group}</span>
+                            <h4 class="font-bold text-slate-900 dark:text-white truncate text-base">${d.name}</h4>
                         </div>
-                        <p class="text-xs text-slate-500 truncate">${d.brand} <span class="mx-1 text-slate-300">|</span> ${d.strength}</p>
+                        <p class="text-xs font-semibold text-slate-500 dark:text-slate-400 truncate">
+                            <span class="text-blue-600 dark:text-blue-400">${d.brand}</span> 
+                            ${d.strength ? `<span class="mx-1 text-slate-300">|</span> ${d.strength}` : ''}
+                        </p>
                     </div>
                 </div>
                 
-                <div class="flex items-center gap-2">
-                    <button onclick='app.data.showMimsDetail(${JSON.stringify(d).replace(/'/g, "&#39;")})' class="w-8 h-8 rounded-full bg-slate-50 hover:bg-blue-100 text-blue-500 transition flex items-center justify-center">
-                        <i class="fa-solid fa-angle-right"></i>
+                <div class="flex items-center gap-1 pl-2 border-l border-slate-100 dark:border-slate-700 ml-2">
+                     <button onclick='app.data.showMimsDetail(${JSON.stringify(d).replace(/'/g, "&#39;")})' class="w-8 h-8 rounded-full hover:bg-slate-100 dark:hover:bg-slate-700 text-slate-400 hover:text-blue-600 transition flex items-center justify-center">
+                        <i class="fa-solid fa-circle-info"></i>
                     </button>
-                    ${this.app.auth.isAdmin ? `<button onclick="if(confirm('Xóa thuốc này?')) app.admin.deleteMed('${m.id}')" class="w-8 h-8 rounded-full hover:bg-red-100 text-slate-300 hover:text-red-500 transition flex items-center justify-center"><i class="fa-solid fa-trash-can text-xs"></i></button>` : ''}
+                    ${this.app.auth.isAdmin ? `
+                    <button onclick="if(confirm('Xóa thuốc: ${d.name}?')) app.admin.deleteMed('${m.id}')" class="w-8 h-8 rounded-full hover:bg-red-50 dark:hover:bg-red-900/20 text-slate-300 hover:text-red-500 transition flex items-center justify-center">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>` : ''}
                 </div>
             `;
             frag.appendChild(div);
         });
-        
+
         container.innerHTML = '';
         container.appendChild(frag);
-        
-        // Thêm thông báo nếu danh sách quá dài
+
+        // Hiển thị thông báo nếu danh sách bị cắt bớt
         if (list.length > 100) {
-            const info = document.createElement('div');
-            info.className = "text-center text-xs text-slate-400 py-2 italic";
-            info.innerText = `Hiển thị 100/${list.length} thuốc. Hãy dùng bộ lọc để tìm nhanh hơn.`;
-            container.appendChild(info);
+            const notice = document.createElement('div');
+            notice.className = "text-center text-[10px] text-slate-400 py-3 italic font-bold uppercase tracking-wider";
+            notice.innerHTML = `Hiển thị 100 / ${list.length} kết quả`;
+            container.appendChild(notice);
         }
     }
 
     showMimsDetail(d) {
         document.getElementById('mims-name').innerText = d.name;
-        document.getElementById('mims-brand').innerText = `${d.brand} (${d.strength})`;
+        document.getElementById('mims-brand').innerText = `${d.brand} ${d.strength ? '(' + d.strength + ')' : ''}`;
         document.getElementById('mims-group').innerText = d.group;
+        
+        // Cập nhật nội dung các mục chi tiết
         document.getElementById('mims-dosage').innerText = d.dosage;
         document.getElementById('mims-indication').innerText = d.indication;
         document.getElementById('mims-contra').innerText = d.contra;
