@@ -168,6 +168,7 @@ export class DataManager {
         listEl.appendChild(frag);
     }
 
+    // --- PHẦN NÂNG CẤP MỚI ĐÃ ĐƯỢC THÊM VÀO ĐÂY ---
     renderMeds() {
         const container = document.getElementById('medsList');
         const term = Utils.removeAccents(document.getElementById('searchMedsInput').value);
@@ -188,30 +189,60 @@ export class DataManager {
 
         const displayList = term ? list : list.slice(0, 50);
         const frag = document.createDocumentFragment();
+        
         displayList.forEach(m => {
             const div = document.createElement('div');
-            div.className = "glass-card p-4 rounded-2xl flex flex-col gap-2 border border-white/50 shadow-sm hover:border-pink-400 transition relative group animate-slideIn";
+            div.className = "glass-card p-4 rounded-2xl flex flex-col gap-2 border border-white/50 shadow-sm hover:border-blue-400 transition relative group animate-slideIn";
+            
+            // Chuẩn bị dữ liệu an toàn để truyền vào hàm click
+            const d = {
+                name: Utils.escapeHTML(m.name),
+                brand: Utils.escapeHTML(m.brand || "Generics"),
+                group: Utils.escapeHTML(m.group || "Khác"),
+                strength: Utils.escapeHTML(m.strength || ""),
+                dosage: Utils.escapeHTML(m.dosage || "Chưa cập nhật"),
+                indication: Utils.escapeHTML(m.indication || "Chưa cập nhật"),
+                contra: Utils.escapeHTML(m.contra || "Chưa cập nhật"),
+                caution: Utils.escapeHTML(m.caution || "Chưa cập nhật"),
+                side: Utils.escapeHTML(m.side || "Chưa cập nhật"),
+                inter: Utils.escapeHTML(m.inter || "Chưa cập nhật")
+            };
+
             div.innerHTML = `
                 <div class="flex justify-between items-start">
-                    <div>
-                        <h4 class="font-bold text-slate-900 dark:text-white text-lg">${Utils.escapeHTML(m.name)} <span class="text-xs text-slate-500 font-normal">(${Utils.escapeHTML(m.brand || "")})</span></h4>
-                        <p class="text-xs font-bold text-pink-600 bg-pink-100 px-2 py-0.5 rounded-full w-fit mt-1">${Utils.escapeHTML(m.group || "Khác")}</p>
+                    <div class="flex-1 cursor-pointer" onclick='app.data.showMimsDetail(${JSON.stringify(d).replace(/'/g, "&#39;")})'>
+                        <h4 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${d.name}</h4>
+                        <div class="text-xs font-bold text-slate-500 uppercase tracking-wide">${d.brand} <span class="mx-1">•</span> ${d.strength}</div>
+                        <div class="flex gap-2 mt-2">
+                            <span class="text-[10px] font-bold bg-blue-100 text-blue-600 px-2 py-0.5 rounded border border-blue-200">${d.group}</span>
+                        </div>
                     </div>
-                    ${this.app.auth.isAdmin ? `<button onclick="if(confirm('Xóa thuốc này?')) app.admin.deleteMed('${m.id}')" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>` : ''}
+                    ${this.app.auth.isAdmin ? `<button onclick="if(confirm('Xóa thuốc này?')) app.admin.deleteMed('${m.id}')" class="w-8 h-8 rounded-full hover:bg-red-100 text-slate-300 hover:text-red-500 transition flex items-center justify-center"><i class="fa-solid fa-trash-can"></i></button>` : ''}
                 </div>
-                <div class="text-sm text-slate-700 dark:text-slate-300 mt-2 space-y-1">
-                    <p><i class="fa-solid fa-flask text-purple-500 mr-1 w-4"></i> <b>Hàm lượng:</b> ${Utils.escapeHTML(m.strength || m.ing || "-")}</p>
-                    <p><i class="fa-solid fa-gears text-blue-500 mr-1 w-4"></i> <b>Cơ chế/CĐ:</b> ${Utils.escapeHTML(m.mechanism || m.usage || "-")}</p>
-                    <p><i class="fa-solid fa-prescription-bottle-medical text-green-500 mr-1 w-4"></i> <b>Liều dùng:</b> ${Utils.escapeHTML(m.dosage || "-")}</p>
-                    <p><i class="fa-solid fa-route text-orange-500 mr-1 w-4"></i> <b>Đường dùng:</b> ${Utils.escapeHTML(m.route || "-")}</p>
+                
+                <div class="mt-3 pt-3 border-t border-slate-100 dark:border-slate-700 flex gap-2">
+                    <button onclick='app.data.showMimsDetail(${JSON.stringify(d).replace(/'/g, "&#39;")})' class="flex-1 py-2 rounded-lg bg-slate-100 dark:bg-slate-700 text-xs font-bold text-slate-600 dark:text-slate-300 hover:bg-blue-500 hover:text-white transition flex items-center justify-center gap-2">
+                        <i class="fa-solid fa-book-medical"></i> Tra cứu Mims
+                    </button>
                 </div>
             `;
             frag.appendChild(div);
         });
         container.innerHTML = '';
         container.appendChild(frag);
-        if (!term && list.length > 50) {
-            container.innerHTML += `<div class="text-center text-xs text-slate-400 py-2">Hiển thị 50/${list.length} thuốc. Hãy tìm kiếm để thấy chi tiết.</div>`;
-        }
+    }
+
+    showMimsDetail(d) {
+        document.getElementById('mims-name').innerText = d.name;
+        document.getElementById('mims-brand').innerText = `${d.brand} (${d.strength})`;
+        document.getElementById('mims-group').innerText = d.group;
+        document.getElementById('mims-dosage').innerText = d.dosage;
+        document.getElementById('mims-indication').innerText = d.indication;
+        document.getElementById('mims-contra').innerText = d.contra;
+        document.getElementById('mims-caution').innerText = d.caution;
+        document.getElementById('mims-side').innerText = d.side;
+        document.getElementById('mims-inter').innerText = d.inter;
+        
+        this.app.ui.openModal('drugDetailModal');
     }
 }
