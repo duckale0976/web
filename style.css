@@ -99,3 +99,85 @@ input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
 
 /* Ẩn scrollbar nhưng vẫn trượt được */
 .scrollbar-hide::-webkit-scrollbar { display: none; }
+/* --- BỔ SUNG CSS CHO MIMS PRO (GIAO DIỆN MỚI) --- */
+
+/* Ẩn thanh cuộn nhưng vẫn trượt được */
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* Filter Chips (Thanh lọc trượt ngang) */
+.filter-chip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 8px 16px;
+    background: rgba(255, 255, 255, 0.6);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.5);
+    border-radius: 99px; /* Bo tròn hoàn toàn */
+    font-size: 13px;
+    font-weight: 700;
+    color: #64748b; /* Slate-500 */
+    white-space: nowrap; /* Quan trọng: Không xuống dòng */
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    cursor: pointer;
+    user-select: none;
+    flex-shrink: 0; /* Không bị co lại */
+}
+
+.dark .filter-chip { 
+    background: rgba(30, 41, 59, 0.6); 
+    border-color: rgba(255,255,255,0.1); 
+    color: #94a3b8; 
+}
+
+.filter-chip:hover {
+    background: rgba(255, 255, 255, 0.9);
+    transform: translateY(-1px);
+}
+
+.filter-chip.active {
+    background: #2563eb; /* Blue-600 */
+    color: white;
+    border-color: #2563eb;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3);
+    transform: scale(1.05);
+}
+
+/* Card Thuốc (List View Mới) */
+.med-card {
+    position: relative;
+    background: rgba(255, 255, 255, 0.7);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    border-radius: 16px;
+    padding: 12px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s ease;
+    cursor: pointer;
+    overflow: hidden;
+}
+
+.dark .med-card { 
+    background: rgba(30, 41, 59, 0.6); 
+    border-color: rgba(255,255,255,0.08); 
+}
+
+.med-card:hover {
+    background: rgba(255, 255, 255, 0.95);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.06);
+    border-color: #60a5fa; /* Blue-400 */
+}
+
+.dark .med-card:hover {
+    background: rgba(30, 41, 59, 0.9);
+    border-color: #3b82f6;
+}
+
+.med-card:active {
+    transform: scale(0.98);
+}
