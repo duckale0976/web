@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MinhducKale - Cloud Sync v10.7 (AI Magic)</title>
+    <title>MinhducKale - Cloud Sync v10.8 (Upload Drive)</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
@@ -28,12 +28,14 @@
                         'spin-slow': 'spin 8s linear infinite', 
                         'slideIn': 'slideIn 0.3s ease-out forwards',
                         'float': 'float 3s ease-in-out infinite',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite'
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'progress': 'progress 1s ease-in-out infinite'
                     },
                     keyframes: {
                         blob: { '0%': { transform: 'translate(0,0) scale(1)' }, '33%': { transform: 'translate(30px,-50px) scale(1.1)' }, '66%': { transform: 'translate(-20px,20px) scale(0.9)' }, '100%': { transform: 'translate(0,0) scale(1)' } },
                         slideIn: { 'from': { transform: 'translateX(100%)', opacity: '0' }, 'to': { transform: 'translateX(0)', opacity: '1' } },
-                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } }
+                        float: { '0%, 100%': { transform: 'translateY(0)' }, '50%': { transform: 'translateY(-10px)' } },
+                        progress: { '0%': { width: '0%' }, '100%': { width: '100%' } }
                     }
                 }
             }
@@ -116,6 +118,15 @@
         .bar:nth-child(5) { animation-duration: 0.9s; }
         
         .cursor-wait { cursor: wait; }
+
+        /* UPLOAD STYLES */
+        .file-upload-box { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
+        .dark .file-upload-box { border-color: #475569; background: rgba(255,255,255,0.05); }
+        .file-upload-box:hover { border-color: #3b82f6; background: rgba(59, 130, 246, 0.05); }
+        .upload-progress { height: 4px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 10px; display: none; }
+        .upload-bar { height: 100%; background: #3b82f6; width: 0%; transition: width 0.3s; }
+        .upload-bar.animate { animation: progress 1.5s ease-in-out infinite; }
+        @keyframes progress { 0% { width: 0%; } 100% { width: 100%; } }
     </style>
 </head>
 <body class="min-h-screen overflow-x-hidden selection:bg-blue-500 selection:text-white">
@@ -156,7 +167,7 @@
 
                 <div class="text-center md:text-left">
                     <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
-                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.7 AI</p>
+                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.8 Upload</p>
                 </div>
             </div>
             
@@ -293,7 +304,6 @@
             </div>
 
             <div class="lg:col-span-4 flex flex-col gap-6">
-                
                 <div class="glass-panel p-5 rounded-3xl shadow-lg relative overflow-hidden group border border-blue-200 dark:border-blue-900/30">
                     <div id="playlistBtn" class="absolute top-2 right-2 cursor-pointer p-2 z-10" onclick="app.music.togglePlaylist()"><i class="fa-solid fa-list-ul text-slate-500 hover:text-blue-600 transition"></i></div>
                     <div class="flex items-center justify-between mb-2">
@@ -303,7 +313,6 @@
                             <div onclick="app.music.switchTab('online')" id="tab-music-online" class="music-tab">Youtube</div>
                         </div>
                     </div>
-                    
                     <div id="music-view-local">
                         <div class="flex justify-center mb-4 relative mt-6">
                              <div id="musicDisc" class="w-40 h-40 rounded-full bg-slate-900 border-4 border-slate-800 flex items-center justify-center overflow-hidden shadow-2xl transition-all duration-500"><img id="musicCover" src="https://img.icons8.com/color/144/vinyl-music.png" class="w-full h-full opacity-90 object-cover"></div>
@@ -312,12 +321,10 @@
                         <div class="text-center mb-4 px-2">
                             <p id="musicTitle" class="text-base font-bold text-slate-900 dark:text-white truncate">Select a track...</p>
                             <p id="musicArtist" class="text-xs text-slate-500 font-bold uppercase tracking-wide">Lofi Relax</p>
-                            
                             <div id="musicVisualizer" class="music-waves my-2">
                                 <div class="bar"></div><div class="bar"></div><div class="bar"></div>
                                 <div class="bar"></div><div class="bar"></div>
                             </div>
-
                         </div>
                         <div class="flex justify-center items-center gap-6 mb-5">
                             <button onclick="app.music.prev()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white hover:bg-slate-200 transition"><i class="fa-solid fa-backward-step"></i></button>
@@ -333,7 +340,6 @@
                             <div id="playlistItems" class="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar"></div>
                         </div>
                     </div>
-                    
                     <div id="music-view-online" class="hidden mt-4 space-y-3">
                          <div class="flex gap-2 mb-1">
                              <input type="text" id="youtubeInput" placeholder="Dán Link hoặc Tìm kiếm..." class="w-full ios-input p-2 rounded-lg text-xs font-bold">
@@ -344,7 +350,6 @@
                         </div>
                         <p class="text-[10px] text-slate-400 italic text-center">Hỗ trợ tốt nhất cho video Public/Unlisted. Video Riêng tư cần quyền truy cập.</p>
                     </div>
-                    
                     <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
                         <p class="text-[10px] font-bold uppercase text-slate-500 mb-2 tracking-wider">Âm thanh nền (Ambience)</p>
                         <div class="flex justify-between items-center px-1">
@@ -354,7 +359,6 @@
                             <button onclick="app.music.toggleAmbience('cafe', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Quán Cafe"><i class="fa-solid fa-mug-hot text-xl text-brown-500 text-yellow-700"></i><span class="text-[9px] font-bold">Cafe</span></button>
                         </div>
                     </div>
-
                     <audio id="bgAudio" class="hidden"></audio>
                 </div>
 
@@ -384,29 +388,47 @@
     </div>
 
     <div id="addDocModal" onclick="if(event.target === this) app.ui.closeModal('addDocModal')" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-md cursor-pointer">
-        <div class="bg-white/95 dark:bg-slate-800/95 w-[90%] md:w-[400px] p-6 rounded-3xl shadow-2xl border border-white/20 animate-float cursor-default">
+        <div class="bg-white/95 dark:bg-slate-800/95 w-[90%] md:w-[450px] p-6 rounded-3xl shadow-2xl border border-white/20 animate-float cursor-default">
             <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4">Thêm Tài Liệu Mới</h3>
             <div class="space-y-4">
+                <div class="flex p-1 bg-slate-200 dark:bg-slate-700 rounded-xl">
+                    <button id="tabLink" onclick="app.ui.toggleUploadMode('link')" class="flex-1 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-600 shadow-sm transition">Link Web/Drive</button>
+                    <button id="tabUpload" onclick="app.ui.toggleUploadMode('upload')" class="flex-1 py-1.5 rounded-lg text-xs font-bold text-slate-500 transition">Upload File</button>
+                </div>
+
                 <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Tên tài liệu</label><input id="newDocTitle" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="Nhập tên..."></div>
                 
                 <div>
                     <label class="text-xs font-bold text-slate-500 uppercase ml-1">Thư mục</label>
                     <div class="flex gap-2 mt-1">
                         <select id="newDocFolder" class="flex-1 ios-input p-3 rounded-xl font-bold text-slate-700 dark:text-slate-200 dark:bg-slate-700 transition"></select>
-                        <button onclick="app.classifier.autoClassify()" id="aiMagicBtn" title="AI Tự phân loại" class="w-12 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg hover:scale-105 active:scale-95 transition flex items-center justify-center">
-                            <i class="fa-solid fa-wand-magic-sparkles"></i>
-                        </button>
+                        <button onclick="app.classifier.autoClassify()" id="aiMagicBtn" title="AI Tự phân loại" class="w-12 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg hover:scale-105 active:scale-95 transition flex items-center justify-center"><i class="fa-solid fa-wand-magic-sparkles"></i></button>
                     </div>
                 </div>
 
-                <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Link Drive/Web</label><input id="newDocLink" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="https://..."></div>
+                <div id="modeLink">
+                    <label class="text-xs font-bold text-slate-500 uppercase ml-1">Link Drive/Web</label>
+                    <input id="newDocLink" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="https://...">
+                </div>
+
+                <div id="modeUpload" class="hidden">
+                    <label class="text-xs font-bold text-slate-500 uppercase ml-1">Chọn File (PDF, Doc, Excel...)</label>
+                    <div class="file-upload-box mt-1" onclick="document.getElementById('fileInput').click()">
+                        <i class="fa-solid fa-cloud-arrow-up text-3xl text-blue-500 mb-2"></i>
+                        <p id="fileNameDisplay" class="text-sm font-bold text-slate-600 dark:text-slate-300">Nhấn để chọn file</p>
+                        <p class="text-[10px] text-slate-400">Tự động lưu vào Drive chung</p>
+                        <input type="file" id="fileInput" class="hidden" onchange="app.ui.handleFileSelect(this)">
+                    </div>
+                    <div id="uploadProgress" class="upload-progress"><div class="upload-bar animate"></div></div>
+                </div>
+
                 <div class="p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-xl flex items-center gap-3 opacity-50 pointer-events-none transition-all" id="publicDocWrapper">
                     <input type="checkbox" id="isPublicDoc" class="w-5 h-5 accent-orange-600 rounded cursor-pointer">
                     <label for="isPublicDoc" class="text-xs font-bold text-orange-700 dark:text-orange-400 cursor-pointer select-none">Lưu vào Kho dùng chung (Admin)</label>
                 </div>
                 <div class="flex gap-3 pt-2">
                     <button onclick="app.ui.closeModal('addDocModal')" class="flex-1 py-3 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-300 dark:hover:bg-slate-600 transition">Hủy</button>
-                    <button onclick="app.data.saveNewDoc()" class="flex-1 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg transition">Lưu ngay</button>
+                    <button onclick="app.data.saveNewDoc()" id="saveBtn" class="flex-1 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg transition">Lưu ngay</button>
                 </div>
             </div>
         </div>
@@ -436,7 +458,9 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, off, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // --- CONSTANTS & CONFIG ---
+        // --- PASTE YOUR GOOGLE SCRIPT URL HERE ---
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbws-83iUE5db09j9DigtpV0TL-vJF-tvEM2kNUlR20kUcvbxPIyO-YDKg2hI8PcSVD8Ww/exec"; 
+
         const CONFIG = {
             firebase: {
                 apiKey: "AIzaSyAcfs8LFgPeAkGyaSkmJeECoRBEwtfRv8E",
@@ -471,135 +495,46 @@
             }
         };
 
-        // --- UTILITIES ---
         const Utils = {
-            escapeHTML: (str) => {
-                if (!str) return '';
-                return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag]));
-            },
-            debounce: (func, wait) => {
-                let timeout;
-                return function(...args) {
-                    const later = () => { clearTimeout(timeout); func(...args); };
-                    clearTimeout(timeout);
-                    timeout = setTimeout(later, wait);
-                };
-            },
-            showToast: (msg, type = 'info') => {
-                const container = document.getElementById('toast-container');
-                const toast = document.createElement('div');
-                toast.className = `toast ${type}`;
-                toast.innerHTML = `<div class="toast-content font-bold text-sm">${msg}</div>`;
-                container.appendChild(toast);
-                setTimeout(() => toast.remove(), 3500);
-            },
+            escapeHTML: (str) => { if (!str) return ''; return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag])); },
+            debounce: (func, wait) => { let timeout; return function(...args) { const later = () => { clearTimeout(timeout); func(...args); }; clearTimeout(timeout); timeout = setTimeout(later, wait); }; },
+            showToast: (msg, type = 'info') => { const container = document.getElementById('toast-container'); const toast = document.createElement('div'); toast.className = `toast ${type}`; toast.innerHTML = `<div class="toast-content font-bold text-sm">${msg}</div>`; container.appendChild(toast); setTimeout(() => toast.remove(), 3500); },
             formatDate: () => new Date().toLocaleString("vi-VN"),
             isMobile: () => window.innerWidth < 768
         };
 
-        // --- SOUND GENERATOR (JUICY FX) ---
         class SoundFX {
-            constructor() {
-                this.ctx = new (window.AudioContext || window.webkitAudioContext)();
-            }
-            
-            playTone(freq, type, duration) {
-                if(this.ctx.state === 'suspended') this.ctx.resume();
-                const osc = this.ctx.createOscillator();
-                const gain = this.ctx.createGain();
-                osc.type = type;
-                osc.frequency.setValueAtTime(freq, this.ctx.currentTime);
-                gain.gain.setValueAtTime(0.1, this.ctx.currentTime);
-                gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration);
-                osc.connect(gain);
-                gain.connect(this.ctx.destination);
-                osc.start();
-                osc.stop(this.ctx.currentTime + duration);
-            }
-
+            constructor() { this.ctx = new (window.AudioContext || window.webkitAudioContext)(); }
+            playTone(freq, type, duration) { if(this.ctx.state === 'suspended') this.ctx.resume(); const osc = this.ctx.createOscillator(); const gain = this.ctx.createGain(); osc.type = type; osc.frequency.setValueAtTime(freq, this.ctx.currentTime); gain.gain.setValueAtTime(0.1, this.ctx.currentTime); gain.gain.exponentialRampToValueAtTime(0.001, this.ctx.currentTime + duration); osc.connect(gain); gain.connect(this.ctx.destination); osc.start(); osc.stop(this.ctx.currentTime + duration); }
             click() { this.playTone(600, 'sine', 0.1); }
             hover() { this.playTone(300, 'triangle', 0.05); }
-            success() { 
-                this.playTone(500, 'sine', 0.1);
-                setTimeout(() => this.playTone(1000, 'sine', 0.2), 100);
-            }
+            success() { this.playTone(500, 'sine', 0.1); setTimeout(() => this.playTone(1000, 'sine', 0.2), 100); }
             error() { this.playTone(150, 'sawtooth', 0.2); }
         }
         const sfx = new SoundFX();
 
-        // --- AI CLASSIFIER (GOOGLE GEMINI) ---
         class AutoClassifier {
-            constructor() {
-                // KEY CỦA BẠN ĐÃ ĐƯỢC TÍCH HỢP
-                this.apiKey = "AIzaSyA8x9Cgw0yscyKNPBFuByHnwqcUQuJCMVM"; 
-                this.apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${this.apiKey}`;
-            }
-
+            constructor() { this.apiKey = "AIzaSyA8x9Cgw0yscyKNPBFuByHnwqcUQuJCMVM"; this.apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${this.apiKey}`; }
             async autoClassify() {
                 const title = document.getElementById('newDocTitle').value;
                 const btn = document.getElementById('aiMagicBtn');
                 const icon = btn.querySelector('i');
-
-                if (!title || title.length < 3) {
-                    sfx.error();
-                    Utils.showToast("Hãy nhập tên tài liệu trước!", "error");
-                    return;
-                }
-
-                // Hiệu ứng đang suy nghĩ
-                sfx.click();
-                icon.className = "fa-solid fa-spinner fa-spin";
-                btn.classList.add("opacity-80", "cursor-wait");
-
-                // Cấu trúc Prompt gửi cho AI
+                if (!title || title.length < 3) { sfx.error(); Utils.showToast("Hãy nhập tên tài liệu trước!", "error"); return; }
+                sfx.click(); icon.className = "fa-solid fa-spinner fa-spin"; btn.classList.add("opacity-80", "cursor-wait");
                 const folders = CONFIG.folders;
-                const folderKeys = Object.keys(folders).join(", ");
                 const folderDesc = Object.entries(folders).map(([k,v]) => `${k}: ${v.name}`).join("\n");
-
-                const prompt = {
-                    contents: [{
-                        parts: [{
-                            text: `Bạn là trợ lý y khoa. Hãy phân loại tài liệu có tên: "${title}" vào MỘT trong các mã thư mục sau:\n${folderDesc}\n. Chỉ trả về đúng mã thư mục (ví dụ: noikhoa). Nếu không chắc chắn, trả về 'khac'. Không giải thích gì thêm.`
-                        }]
-                    }]
-                };
-
+                const prompt = { contents: [{ parts: [{ text: `Bạn là trợ lý y khoa. Hãy phân loại tài liệu có tên: "${title}" vào MỘT trong các mã thư mục sau:\n${folderDesc}\n. Chỉ trả về đúng mã thư mục (ví dụ: noikhoa). Nếu không chắc chắn, trả về 'khac'. Không giải thích gì thêm.` }] }] };
                 try {
-                    const response = await fetch(this.apiUrl, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify(prompt)
-                    });
-
+                    const response = await fetch(this.apiUrl, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(prompt) });
                     const data = await response.json();
                     const result = data.candidates[0].content.parts[0].text.trim().toLowerCase().replace(/[^a-z0-9_]/g, ''); 
-
                     const select = document.getElementById('newDocFolder');
-                    if (CONFIG.folders[result]) {
-                        select.value = result;
-                        
-                        sfx.success();
-                        select.classList.add('ring-2', 'ring-purple-500', 'scale-105'); 
-                        setTimeout(() => select.classList.remove('ring-2', 'ring-purple-500', 'scale-105'), 500);
-                        
-                        Utils.showToast(`AI: Đã chọn mục "${CONFIG.folders[result].name}"`, "success");
-                    } else {
-                        select.value = 'khac'; 
-                        Utils.showToast("AI không chắc chắn, đã chọn 'Khác'", "info");
-                    }
-
-                } catch (error) {
-                    console.error(error);
-                    sfx.error();
-                    Utils.showToast("Lỗi kết nối AI. Kiểm tra API Key!", "error");
-                } finally {
-                    icon.className = "fa-solid fa-wand-magic-sparkles";
-                    btn.classList.remove("opacity-80", "cursor-wait");
-                }
+                    if (CONFIG.folders[result]) { select.value = result; sfx.success(); select.classList.add('ring-2', 'ring-purple-500', 'scale-105'); setTimeout(() => select.classList.remove('ring-2', 'ring-purple-500', 'scale-105'), 500); Utils.showToast(`AI: Đã chọn mục "${CONFIG.folders[result].name}"`, "success"); } 
+                    else { select.value = 'khac'; Utils.showToast("AI không chắc chắn, đã chọn 'Khác'", "info"); }
+                } catch (error) { console.error(error); sfx.error(); Utils.showToast("Lỗi kết nối AI.", "error"); } finally { icon.className = "fa-solid fa-wand-magic-sparkles"; btn.classList.remove("opacity-80", "cursor-wait"); }
             }
         }
 
-        // --- CORE CLASSES ---
         class MusicPlayer {
             constructor() {
                 this.audio = document.getElementById('bgAudio');
@@ -607,193 +542,35 @@
                 this.playlist = CONFIG.playlist;
                 this.isPlaying = false;
                 this.ambienceAudio = {}; 
-
                 const savedVol = localStorage.getItem('mdk_music_vol');
-                if (savedVol) {
-                    this.audio.volume = parseFloat(savedVol);
-                    document.getElementById('volSlider').value = savedVol;
-                }
-
+                if (savedVol) { this.audio.volume = parseFloat(savedVol); document.getElementById('volSlider').value = savedVol; }
                 this.audio.addEventListener('ended', () => this.next());
                 this.loadTrack(this.idx);
                 this.renderPlaylist();
             }
-
-            loadTrack(i) {
-                this.idx = i;
-                const track = this.playlist[this.idx];
-                this.audio.src = track.u;
-                document.getElementById('musicTitle').innerText = track.t;
-                document.getElementById('musicArtist').innerText = track.a;
-                localStorage.setItem('mdk_music_idx', this.idx);
-                this.updateUI();
-            }
-
-            toggle() {
-                const waves = document.getElementById('musicVisualizer');
-                if (this.audio.paused) {
-                    this.audio.play().catch(e => console.log("Auto-play prevented"));
-                    this.isPlaying = true;
-                    document.getElementById('musicDisc').classList.add('animate-spin-slow');
-                    document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-pause text-xl ml-0"></i>';
-                    waves.classList.add('playing');
-                } else {
-                    this.audio.pause();
-                    this.isPlaying = false;
-                    document.getElementById('musicDisc').classList.remove('animate-spin-slow');
-                    document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-play text-xl ml-1"></i>';
-                    waves.classList.remove('playing');
-                }
-            }
-
+            loadTrack(i) { this.idx = i; const track = this.playlist[this.idx]; this.audio.src = track.u; document.getElementById('musicTitle').innerText = track.t; document.getElementById('musicArtist').innerText = track.a; localStorage.setItem('mdk_music_idx', this.idx); this.updateUI(); }
+            toggle() { const waves = document.getElementById('musicVisualizer'); if (this.audio.paused) { this.audio.play().catch(e => console.log("Auto-play prevented")); this.isPlaying = true; document.getElementById('musicDisc').classList.add('animate-spin-slow'); document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-pause text-xl ml-0"></i>'; waves.classList.add('playing'); } else { this.audio.pause(); this.isPlaying = false; document.getElementById('musicDisc').classList.remove('animate-spin-slow'); document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-play text-xl ml-1"></i>'; waves.classList.remove('playing'); } }
             next() { this.loadTrack((this.idx + 1) % this.playlist.length); if(this.isPlaying) this.audio.play(); }
             prev() { this.loadTrack((this.idx - 1 + this.playlist.length) % this.playlist.length); if(this.isPlaying) this.audio.play(); }
-            
-            setVolume(val) {
-                this.audio.volume = parseFloat(val);
-                localStorage.setItem('mdk_music_vol', val);
-            }
-
-            switchTab(tab) {
-                document.querySelectorAll('.music-tab').forEach(t => t.classList.remove('active'));
-                document.getElementById(`tab-music-${tab}`).classList.add('active');
-                document.getElementById('music-view-local').classList.toggle('hidden', tab !== 'local');
-                document.getElementById('music-view-online').classList.toggle('hidden', tab !== 'online');
-                if (tab === 'online') {
-                    if(!this.audio.paused) this.toggle();
-                }
-            }
-
+            setVolume(val) { this.audio.volume = parseFloat(val); localStorage.setItem('mdk_music_vol', val); }
+            switchTab(tab) { document.querySelectorAll('.music-tab').forEach(t => t.classList.remove('active')); document.getElementById(`tab-music-${tab}`).classList.add('active'); document.getElementById('music-view-local').classList.toggle('hidden', tab !== 'local'); document.getElementById('music-view-online').classList.toggle('hidden', tab !== 'online'); if (tab === 'online') { if(!this.audio.paused) this.toggle(); } }
             togglePlaylist() { document.getElementById('playlistView').classList.toggle('hidden'); }
-            
-            renderPlaylist() {
-                const list = document.getElementById('playlistItems');
-                list.innerHTML = this.playlist.map((s, i) => `
-                    <div onclick="app.music.select(${i})" class="p-2 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-700 transition ${i === this.idx ? 'bg-blue-100 dark:bg-slate-600 font-bold' : ''}">
-                        <i class="fa-solid fa-music text-blue-500 text-xs"></i>
-                        <div class="flex-1 min-w-0"><p class="text-sm truncate">${s.t}</p><p class="text-[10px] text-slate-500">${s.a}</p></div>
-                    </div>`).join('');
-            }
-            
+            renderPlaylist() { const list = document.getElementById('playlistItems'); list.innerHTML = this.playlist.map((s, i) => ` <div onclick="app.music.select(${i})" class="p-2 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-700 transition ${i === this.idx ? 'bg-blue-100 dark:bg-slate-600 font-bold' : ''}"> <i class="fa-solid fa-music text-blue-500 text-xs"></i> <div class="flex-1 min-w-0"><p class="text-sm truncate">${s.t}</p><p class="text-[10px] text-slate-500">${s.a}</p></div> </div>`).join(''); }
             select(i) { this.loadTrack(i); this.toggle(); document.getElementById('playlistView').classList.add('hidden'); }
             updateUI() { this.renderPlaylist(); }
-
-            playCustomVideo() {
-                const input = document.getElementById('youtubeInput').value;
-                if (!input) { sfx.error(); return Utils.showToast("Hãy nhập Link hoặc Từ khóa!", "error"); }
-
-                let videoId = "";
-                const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-                const match = input.match(regExp);
-
-                if (match && match[2].length === 11) {
-                    videoId = match[2];
-                    document.getElementById('radioFrame').src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-                } else {
-                    document.getElementById('radioFrame').src = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(input)}&autoplay=1`;
-                }
-            }
-
-            toggleAmbience(type, btn) {
-                if (this.ambienceAudio[type]) {
-                    this.ambienceAudio[type].pause();
-                    delete this.ambienceAudio[type];
-                    btn.classList.remove('active');
-                } else {
-                    const audio = new Audio(CONFIG.ambience[type]);
-                    audio.loop = true;
-                    audio.volume = 0.5; 
-                    audio.play();
-                    this.ambienceAudio[type] = audio;
-                    btn.classList.add('active');
-                }
-            }
+            playCustomVideo() { const input = document.getElementById('youtubeInput').value; if (!input) { sfx.error(); return Utils.showToast("Hãy nhập Link hoặc Từ khóa!", "error"); } let videoId = ""; const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/; const match = input.match(regExp); if (match && match[2].length === 11) { videoId = match[2]; document.getElementById('radioFrame').src = `https://www.youtube.com/embed/${videoId}?autoplay=1`; } else { document.getElementById('radioFrame').src = `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(input)}&autoplay=1`; } }
+            toggleAmbience(type, btn) { if (this.ambienceAudio[type]) { this.ambienceAudio[type].pause(); delete this.ambienceAudio[type]; btn.classList.remove('active'); } else { const audio = new Audio(CONFIG.ambience[type]); audio.loop = true; audio.volume = 0.5; audio.play(); this.ambienceAudio[type] = audio; btn.classList.add('active'); } }
         }
 
         class MedicalTools {
-            constructor() {
-                this.timer = 25 * 60;
-                this.interval = null;
-                this.timerRunning = false;
-            }
-
-            setTimer(min) {
-                this.timer = min * 60;
-                this.updateTimerDisplay();
-                this.stopTimer();
-                document.getElementById('timerBtn').innerText = "Bắt đầu tập trung";
-            }
-
-            updateTimerDisplay() {
-                const m = String(Math.floor(this.timer / 60)).padStart(2, '0');
-                const s = String(this.timer % 60).padStart(2, '0');
-                document.getElementById('timerDisplay').innerText = `${m}:${s}`;
-            }
-
-            toggleTimer() {
-                if (!this.timerRunning) {
-                    this.interval = setInterval(() => {
-                        this.timer--;
-                        this.updateTimerDisplay();
-                        if (this.timer <= 0) {
-                            this.stopTimer();
-                            sfx.success();
-                            confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors: ['#ef4444', '#ffffff'] });
-                            Utils.showToast("🎉 Hoàn thành Pomodoro!", "success");
-                            this.setTimer(25);
-                        }
-                    }, 1000);
-                    this.timerRunning = true;
-                    document.getElementById('timerBtn').innerText = "Đang chạy...";
-                } else {
-                    this.stopTimer();
-                }
-            }
-
+            constructor() { this.timer = 25 * 60; this.interval = null; this.timerRunning = false; }
+            setTimer(min) { this.timer = min * 60; this.updateTimerDisplay(); this.stopTimer(); document.getElementById('timerBtn').innerText = "Bắt đầu tập trung"; }
+            updateTimerDisplay() { const m = String(Math.floor(this.timer / 60)).padStart(2, '0'); const s = String(this.timer % 60).padStart(2, '0'); document.getElementById('timerDisplay').innerText = `${m}:${s}`; }
+            toggleTimer() { if (!this.timerRunning) { this.interval = setInterval(() => { this.timer--; this.updateTimerDisplay(); if (this.timer <= 0) { this.stopTimer(); sfx.success(); confetti({ particleCount: 150, spread: 100, origin: { y: 0.6 }, colors: ['#ef4444', '#ffffff'] }); Utils.showToast("🎉 Hoàn thành Pomodoro!", "success"); this.setTimer(25); } }, 1000); this.timerRunning = true; document.getElementById('timerBtn').innerText = "Đang chạy..."; } else { this.stopTimer(); } }
             stopTimer() { clearInterval(this.interval); this.timerRunning = false; document.getElementById('timerBtn').innerText = "Tiếp tục"; }
-
-            calcBMI() {
-                const w = parseFloat(document.getElementById('bmi-w').value);
-                const h = parseFloat(document.getElementById('bmi-h').value) / 100;
-                if (!w || !h) { sfx.error(); return Utils.showToast("Nhập đủ cân nặng và chiều cao!", "error"); }
-                const bmi = (w / (h * h)).toFixed(1);
-                let text = "";
-                if(bmi < 18.5) text = "Gầy"; else if(bmi < 23) text = "Bình thường"; else if(bmi < 25) text = "Tiền béo phì"; else text = "Béo phì";
-                const res = document.getElementById('bmi-res');
-                res.classList.remove('hidden');
-                res.innerHTML = `BMI: ${bmi} <br><span class="text-sm font-normal text-slate-500">(${text})</span>`;
-            }
-
-            calcMAP() {
-                const sys = parseFloat(document.getElementById('map-sys').value);
-                const dia = parseFloat(document.getElementById('map-dia').value);
-                if (!sys || !dia) { sfx.error(); return; }
-                const map = ((sys + 2 * dia) / 3).toFixed(0);
-                const res = document.getElementById('map-res');
-                res.classList.remove('hidden');
-                res.innerText = `MAP ≈ ${map} mmHg`;
-            }
-
-            calcEGFR() {
-                const age = parseFloat(document.getElementById('egfr-age').value);
-                const w = parseFloat(document.getElementById('egfr-w').value);
-                const cre = parseFloat(document.getElementById('egfr-cre').value);
-                const sex = parseFloat(document.getElementById('egfr-sex').value);
-                if (!age || !w || !cre) { sfx.error(); return Utils.showToast("Thiếu thông tin!", "error"); }
-                
-                const egfr = ((140 - age) * w * sex / (72 * cre)).toFixed(1);
-                let stage = "";
-                if (egfr >= 90) stage = "G1: Bình thường";
-                else if (egfr >= 60) stage = "G2: Giảm nhẹ";
-                else if (egfr >= 45) stage = "G3a: Giảm nhẹ-vừa";
-                else if (egfr >= 30) stage = "G3b: Giảm vừa-nặng";
-                else if (egfr >= 15) stage = "G4: Giảm nặng";
-                else stage = "G5: Suy thận";
-
-                const res = document.getElementById('egfr-res');
-                res.classList.remove('hidden');
-                res.innerHTML = `eGFR ≈ ${egfr} mL/min<br><span class="text-sm text-slate-500 font-bold">${stage}</span>`;
-            }
+            calcBMI() { const w = parseFloat(document.getElementById('bmi-w').value); const h = parseFloat(document.getElementById('bmi-h').value) / 100; if (!w || !h) { sfx.error(); return Utils.showToast("Nhập đủ cân nặng và chiều cao!", "error"); } const bmi = (w / (h * h)).toFixed(1); let text = ""; if(bmi < 18.5) text = "Gầy"; else if(bmi < 23) text = "Bình thường"; else if(bmi < 25) text = "Tiền béo phì"; else text = "Béo phì"; const res = document.getElementById('bmi-res'); res.classList.remove('hidden'); res.innerHTML = `BMI: ${bmi} <br><span class="text-sm font-normal text-slate-500">(${text})</span>`; }
+            calcMAP() { const sys = parseFloat(document.getElementById('map-sys').value); const dia = parseFloat(document.getElementById('map-dia').value); if (!sys || !dia) { sfx.error(); return; } const map = ((sys + 2 * dia) / 3).toFixed(0); const res = document.getElementById('map-res'); res.classList.remove('hidden'); res.innerText = `MAP ≈ ${map} mmHg`; }
+            calcEGFR() { const age = parseFloat(document.getElementById('egfr-age').value); const w = parseFloat(document.getElementById('egfr-w').value); const cre = parseFloat(document.getElementById('egfr-cre').value); const sex = parseFloat(document.getElementById('egfr-sex').value); if (!age || !w || !cre) { sfx.error(); return Utils.showToast("Thiếu thông tin!", "error"); } const egfr = ((140 - age) * w * sex / (72 * cre)).toFixed(1); let stage = ""; if (egfr >= 90) stage = "G1: Bình thường"; else if (egfr >= 60) stage = "G2: Giảm nhẹ"; else if (egfr >= 45) stage = "G3a: Giảm nhẹ-vừa"; else if (egfr >= 30) stage = "G3b: Giảm vừa-nặng"; else if (egfr >= 15) stage = "G4: Giảm nặng"; else stage = "G5: Suy thận"; const res = document.getElementById('egfr-res'); res.classList.remove('hidden'); res.innerHTML = `eGFR ≈ ${egfr} mL/min<br><span class="text-sm text-slate-500 font-bold">${stage}</span>`; }
         }
 
         class App {
@@ -806,488 +583,194 @@
                 this.user = null;
                 this.isAdmin = false;
                 this.listeners = {};
-                this.dataStore = {
-                    publicDocs: [],
-                    privateDocs: [],
-                    meds: []
-                };
+                this.dataStore = { publicDocs: [], privateDocs: [], meds: [] };
                 this.importType = '';
+                this.uploadMode = 'link'; // 'link' or 'upload'
+
                 this.music = new MusicPlayer();
                 this.tools = new MedicalTools();
-                this.classifier = new AutoClassifier(); // INIT AI
+                this.classifier = new AutoClassifier();
                 
                 this.searchDocsDebounced = Utils.debounce(() => this.data.filterDocs(), 300);
                 this.searchMedsDebounced = Utils.debounce(() => this.data.filterMeds(), 300);
                 this.saveNoteDebounced = Utils.debounce(() => this.data.saveNote(), 1000);
 
-                this.auth = {
-                    login: () => this.handleLogin(),
-                    logout: () => this.handleLogout(),
-                    switchAccount: () => this.handleSwitchAccount()
-                };
+                this.auth = { login: () => this.handleLogin(), logout: () => this.handleLogout(), switchAccount: () => this.handleSwitchAccount() };
                 this.ui = {
                     switchTab: (tab, el) => this.handleTabSwitch(tab, el),
                     toggleDarkMode: () => this.toggleDarkMode(),
                     toggleNotify: () => document.getElementById("notifyPanel").classList.toggle("hidden"),
                     toggleTool: (id) => document.getElementById('tool-'+id).classList.toggle('open'),
                     openModal: (id) => document.getElementById(id).classList.remove('hidden'),
-                    closeModal: (id) => document.getElementById(id).classList.add('hidden')
+                    closeModal: (id) => document.getElementById(id).classList.add('hidden'),
+                    toggleUploadMode: (m) => this.toggleUploadMode(m),
+                    handleFileSelect: (el) => this.handleFileSelect(el)
                 };
-                this.data = {
-                    saveNewDoc: () => this.saveDoc(),
-                    deleteDoc: (id, pub) => this.deleteDoc(id, pub),
-                    saveNote: () => this.saveNote(),
-                    filterDocs: () => this.renderDocs(),
-                    filterMeds: () => this.renderMeds(),
-                    renderFolders: () => { this.currentFolder = null; this.renderDocs(); }
-                };
+                this.data = { saveNewDoc: () => this.saveDoc(), deleteDoc: (id, pub) => this.deleteDoc(id, pub), saveNote: () => this.saveNote(), filterDocs: () => this.renderDocs(), filterMeds: () => this.renderMeds(), renderFolders: () => { this.currentFolder = null; this.renderDocs(); } };
                 this.admin = {
                     claim: () => this.claimAdmin(),
                     changeCode: () => this.changeAdminCode(),
                     seedMeds: () => this.seedMedsData(),
                     scrollToTools: () => this.scrollToAdmin(),
                     openImport: (t) => { this.importType = t; document.getElementById("jsonImportModal").classList.remove("hidden"); document.getElementById('jsonImportHint').innerText = t==='docs'?'Format: [{"title":"", "url":"", "folder":""}]':'Format: [{"name":"", "brand":"", "group":""}]'; },
-                    execImport: () => {
-                        try {
-                            const raw = document.getElementById('jsonInput').value;
-                            const data = JSON.parse(raw);
-                            if (!Array.isArray(data)) throw new Error("Dữ liệu phải là mảng JSON []");
-
-                            if (this.importType === 'docs') {
-                                data.forEach(d => push(ref(this.db, 'library_public'), {
-                                    title: d.title || d.Title || d.Ten || "No Title",
-                                    url: d.url || d.Url || d.Link || "#",
-                                    folder: d.folder || d.Folder || d.ThuMuc || "khac",
-                                    createdAt: Date.now()
-                                }));
-                                Utils.showToast(`Đã import thành công ${data.length} tài liệu!`, "success");
-                            } else {
-                                let count = 0;
-                                data.forEach(m => {
-                                    const medData = {
-                                        name: m.name || m.Name || m.TenThuoc || m.ten_thuoc || "?",
-                                        brand: m.brand || m.Brand || m.BietDuoc || m.biet_duoc || "",
-                                        group: m.group || m.Group || m.Nhom || m.nhom || "Khác",
-                                        strength: m.strength || m.Strength || m.HamLuong || m.ham_luong || "",
-                                        dosage: m.dosage || m.Dosage || m.LieuDung || m.lieu_dung || "",
-                                        route: m.route || m.Route || m.DuongDung || m.duong_dung || "",
-                                        mechanism: m.mechanism || m.Mechanism || m.CoChe || "",
-                                        usage: m.usage || m.Usage || m.ChiDinh || ""
-                                    };
-                                    if(medData.name !== "?") {
-                                        push(ref(this.db, 'library_meds'), medData);
-                                        count++;
-                                    }
-                                });
-                                Utils.showToast(`Đã import thành công ${count} thuốc!`, "success");
-                            }
-                            this.ui.closeModal('jsonImportModal');
-                        } catch (e) {
-                            alert("Lỗi cấu trúc JSON: " + e.message);
-                        }
-                    },
+                    execImport: () => { try { const raw = document.getElementById('jsonInput').value; const data = JSON.parse(raw); if (!Array.isArray(data)) throw new Error("Dữ liệu phải là mảng JSON []"); if (this.importType === 'docs') { data.forEach(d => push(ref(this.db, 'library_public'), { title: d.title || d.Title || d.Ten || "No Title", url: d.url || d.Url || d.Link || "#", folder: d.folder || d.Folder || d.ThuMuc || "khac", createdAt: Date.now() })); Utils.showToast(`Đã import thành công ${data.length} tài liệu!`, "success"); } else { let count = 0; data.forEach(m => { const medData = { name: m.name || m.Name || m.TenThuoc || m.ten_thuoc || "?", brand: m.brand || m.Brand || m.BietDuoc || m.biet_duoc || "", group: m.group || m.Group || m.Nhom || m.nhom || "Khác", strength: m.strength || m.Strength || m.HamLuong || m.ham_luong || "", dosage: m.dosage || m.Dosage || m.LieuDung || m.lieu_dung || "", route: m.route || m.Route || m.DuongDung || m.duong_dung || "", mechanism: m.mechanism || m.Mechanism || m.CoChe || "", usage: m.usage || m.Usage || m.ChiDinh || "" }; if(medData.name !== "?") { push(ref(this.db, 'library_meds'), medData); count++; } }); Utils.showToast(`Đã import thành công ${count} thuốc!`, "success"); } this.ui.closeModal('jsonImportModal'); } catch (e) { alert("Lỗi cấu trúc JSON: " + e.message); } },
                     deleteMed: (id) => this.deleteMed(id) 
                 };
                 this.utils = Utils;
-
                 this.init();
             }
 
             init() {
                 const sel = document.getElementById('newDocFolder');
-                Object.entries(CONFIG.folders).forEach(([k, v]) => {
-                    const opt = document.createElement('option');
-                    opt.value = k; opt.innerText = v.name;
-                    sel.appendChild(opt);
-                });
-
-                setInterval(() => {
-                    const d = new Date();
-                    document.getElementById('clock').innerText = d.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'});
-                    document.getElementById('date-display').innerText = d.toLocaleDateString('vi-VN');
-                }, 1000);
-
+                Object.entries(CONFIG.folders).forEach(([k, v]) => { const opt = document.createElement('option'); opt.value = k; opt.innerText = v.name; sel.appendChild(opt); });
+                setInterval(() => { const d = new Date(); document.getElementById('clock').innerText = d.toLocaleTimeString('vi-VN', {hour:'2-digit', minute:'2-digit'}); document.getElementById('date-display').innerText = d.toLocaleDateString('vi-VN'); }, 1000);
                 if (localStorage.getItem('mdk_dark') === 'true') document.documentElement.classList.add('dark');
-
-                onAuthStateChanged(this.authObj, (user) => {
-                    this.user = user;
-                    this.updateAuthUI();
-                    if (user) {
-                        this.loadUserData();
-                        this.listenToData();
-                    } else {
-                        this.resetData();
-                    }
-                });
-
-                document.addEventListener('click', (e) => {
-                    const userProfile = document.getElementById('userProfile');
-                    const logoutPanel = document.getElementById('logoutPanel');
-                    if (userProfile && logoutPanel && !userProfile.contains(e.target) && !logoutPanel.contains(e.target)) {
-                        logoutPanel.classList.add('hidden');
-                    }
-                    const notifyBtn = document.getElementById('notifyBtn');
-                    const notifyPanel = document.getElementById('notifyPanel');
-                    if (notifyBtn && notifyPanel && !notifyBtn.contains(e.target) && !notifyPanel.contains(e.target)) {
-                        notifyPanel.classList.add('hidden');
-                    }
-                });
-
-                // AUTO-BIND SOUNDS (Juicy Mode)
-                document.body.addEventListener('click', (e) => {
-                    if(e.target.closest('button') || e.target.closest('.segment-btn') || e.target.closest('a')) {
-                        sfx.click();
-                    }
-                });
-                
-                // GLOBAL HOTKEYS (Ctrl + K)
-                document.addEventListener('keydown', (e) => {
-                    if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
-                        e.preventDefault();
-                        const searchInput = document.getElementById('searchInput');
-                        searchInput.focus();
-                        sfx.click();
-                        searchInput.parentElement.classList.add('animate-pulse');
-                        setTimeout(()=> searchInput.parentElement.classList.remove('animate-pulse'), 500);
-                    }
-                });
+                onAuthStateChanged(this.authObj, (user) => { this.user = user; this.updateAuthUI(); if (user) { this.loadUserData(); this.listenToData(); } else { this.resetData(); } });
+                document.addEventListener('click', (e) => { const userProfile = document.getElementById('userProfile'); const logoutPanel = document.getElementById('logoutPanel'); if (userProfile && logoutPanel && !userProfile.contains(e.target) && !logoutPanel.contains(e.target)) { logoutPanel.classList.add('hidden'); } const notifyBtn = document.getElementById('notifyBtn'); const notifyPanel = document.getElementById('notifyPanel'); if (notifyBtn && notifyPanel && !notifyBtn.contains(e.target) && !notifyPanel.contains(e.target)) { notifyPanel.classList.add('hidden'); } });
+                document.body.addEventListener('click', (e) => { if(e.target.closest('button') || e.target.closest('.segment-btn') || e.target.closest('a')) { sfx.click(); } });
+                document.addEventListener('keydown', (e) => { if ((e.metaKey || e.ctrlKey) && e.key === 'k') { e.preventDefault(); const searchInput = document.getElementById('searchInput'); searchInput.focus(); sfx.click(); searchInput.parentElement.classList.add('animate-pulse'); setTimeout(()=> searchInput.parentElement.classList.remove('animate-pulse'), 500); } });
             }
 
-            // --- AUTH LOGIC ---
+            // --- AUTH ---
             handleLogin() { signInWithPopup(this.authObj, this.provider).then(() => this.logAction("Đăng nhập")).catch(e => Utils.showToast(e.message, 'error')); }
-            async handleLogout() {
-                if(this.user) await this.logAction("Đăng xuất");
-                await signOut(this.authObj);
-                Utils.showToast("Đã đăng xuất", "info");
-                document.getElementById('logoutPanel').classList.add('hidden');
-            }
+            async handleLogout() { if(this.user) await this.logAction("Đăng xuất"); await signOut(this.authObj); Utils.showToast("Đã đăng xuất", "info"); document.getElementById('logoutPanel').classList.add('hidden'); }
             async handleSwitchAccount() { await signOut(this.authObj); this.handleLogin(); }
-            
-            updateAuthUI() {
-                const els = {
-                    loginBtn: document.getElementById('loginBtn'),
-                    profile: document.getElementById('userProfile'),
-                    avatar: document.getElementById('userAvatar'),
-                    name: document.getElementById('userName'),
-                    badge: document.getElementById('roleBadge'),
-                    addBtn: document.getElementById('addDocBtn'),
-                    adminBtn: document.getElementById('adminPanelBtn'),
-                    adminCard: document.getElementById('adminToolsCard'),
-                    pubCheck: document.getElementById('publicDocWrapper')
-                };
+            updateAuthUI() { const els = { loginBtn: document.getElementById('loginBtn'), profile: document.getElementById('userProfile'), avatar: document.getElementById('userAvatar'), name: document.getElementById('userName'), badge: document.getElementById('roleBadge'), addBtn: document.getElementById('addDocBtn'), adminBtn: document.getElementById('adminPanelBtn'), adminCard: document.getElementById('adminToolsCard'), pubCheck: document.getElementById('publicDocWrapper') }; if (this.user) { els.loginBtn.classList.add('hidden'); els.profile.classList.remove('hidden'); els.profile.classList.add('flex'); els.avatar.src = this.user.photoURL; els.name.innerText = this.user.displayName; els.addBtn.classList.remove("hidden"); } else { els.loginBtn.classList.remove('hidden'); els.profile.classList.add('hidden'); els.profile.classList.remove('flex'); els.addBtn.classList.add("hidden"); els.adminBtn.classList.add("hidden"); els.adminCard.classList.add("hidden"); els.pubCheck.classList.add("opacity-50", "pointer-events-none"); } }
+            loadUserData() { try { onValue(ref(this.db, `users/${this.user.uid}/role`), snap => { const role = snap.val() || "user"; const badge = document.getElementById('roleBadge'); this.isAdmin = (role === 'admin'); if (this.isAdmin) { badge.innerText = "ADMIN"; badge.className = "px-3 py-1 rounded-full text-[10px] font-bold bg-red-500 text-white w-fit shadow-sm"; document.getElementById('adminPanelBtn').classList.remove("hidden"); document.getElementById('adminToolsCard').classList.remove("hidden"); document.getElementById('publicDocWrapper').classList.remove("opacity-50", "pointer-events-none"); this.loadAdminData(); } else { badge.innerText = "USER"; badge.className = "px-3 py-1 rounded-full text-[10px] font-bold bg-green-500 text-white w-fit shadow-sm"; } }); } catch(e) { console.error(e); } try { onValue(ref(this.db, `users/${this.user.uid}/note`), snap => document.getElementById('quickNote').value = snap.val() || ""); } catch(e) {} try { onValue(ref(this.db, `users/${this.user.uid}/logs`), snap => { const list = document.getElementById('notifyList'); list.innerHTML = ""; const data = snap.val(); if (data) { Object.values(data).reverse().forEach(l => { list.innerHTML += `<div class="p-2 bg-white/60 dark:bg-white/10 rounded-lg border-l-2 border-blue-400 mb-1"><b class="text-[10px] text-slate-500 dark:text-slate-400">${l.time}</b><br>${Utils.escapeHTML(l.text)}</div>`; }); } else { list.innerHTML = `<p class="text-center text-slate-400 italic">Chưa có hoạt động</p>`; } }); } catch(e) {} }
 
-                if (this.user) {
-                    els.loginBtn.classList.add('hidden');
-                    els.profile.classList.remove('hidden');
-                    els.profile.classList.add('flex');
-                    els.avatar.src = this.user.photoURL;
-                    els.name.innerText = this.user.displayName;
-                    els.addBtn.classList.remove("hidden");
-                } else {
-                    els.loginBtn.classList.remove('hidden');
-                    els.profile.classList.add('hidden');
-                    els.profile.classList.remove('flex');
-                    els.addBtn.classList.add("hidden");
-                    els.adminBtn.classList.add("hidden");
-                    els.adminCard.classList.add("hidden");
-                    els.pubCheck.classList.add("opacity-50", "pointer-events-none");
-                }
-            }
+            // --- DATA ---
+            listenToData() { document.getElementById('loadingDocs').classList.remove('hidden'); if(this.listeners.pub) off(this.listeners.pub); this.listeners.pub = ref(this.db, 'library_public'); try { onValue(this.listeners.pub, snap => { const data = snap.val(); this.dataStore.publicDocs = data ? Object.entries(data).map(([k,v]) => ({...v, id:k, source:'public'})) : []; this.renderDocs(); document.getElementById('loadingDocs').classList.add('hidden'); }); } catch(e) {} if(this.listeners.priv) off(this.listeners.priv); this.listeners.priv = ref(this.db, `users/${this.user.uid}/docs`); try { onValue(this.listeners.priv, snap => { const data = snap.val(); this.dataStore.privateDocs = data ? Object.entries(data).map(([k,v]) => ({...v, id:k, source:'private'})) : []; this.renderDocs(); }); } catch(e) {} document.getElementById('loadingMeds').classList.remove('hidden'); if(this.listeners.meds) off(this.listeners.meds); this.listeners.meds = ref(this.db, 'library_meds'); try { onValue(this.listeners.meds, snap => { const data = snap.val(); this.dataStore.meds = data ? Object.entries(data).map(([k,v]) => ({...v, id:k})) : []; this.renderMeds(); document.getElementById('loadingMeds').classList.add('hidden'); }); } catch(e) {} }
+            resetData() { this.dataStore = { publicDocs: [], privateDocs: [], meds: [] }; this.renderDocs(); this.renderMeds(); this.user = null; this.isAdmin = false; }
 
-            loadUserData() {
-                try { onValue(ref(this.db, `users/${this.user.uid}/role`), snap => {
-                    const role = snap.val() || "user";
-                    const badge = document.getElementById('roleBadge');
-                    this.isAdmin = (role === 'admin');
-                    
-                    if (this.isAdmin) {
-                        badge.innerText = "ADMIN";
-                        badge.className = "px-3 py-1 rounded-full text-[10px] font-bold bg-red-500 text-white w-fit shadow-sm";
-                        document.getElementById('adminPanelBtn').classList.remove("hidden");
-                        document.getElementById('adminToolsCard').classList.remove("hidden");
-                        document.getElementById('publicDocWrapper').classList.remove("opacity-50", "pointer-events-none");
-                        this.loadAdminData();
-                    } else {
-                        badge.innerText = "USER";
-                        badge.className = "px-3 py-1 rounded-full text-[10px] font-bold bg-green-500 text-white w-fit shadow-sm";
-                    }
-                }); } catch(e) { console.error('Firebase listener error:', e); }
-
-                try { onValue(ref(this.db, `users/${this.user.uid}/note`), snap => document.getElementById('quickNote').value = snap.val() || ""); } catch(e) { console.error('Firebase listener error:', e); }
-                
-                try { onValue(ref(this.db, `users/${this.user.uid}/logs`), snap => {
-                    const list = document.getElementById('notifyList');
-                    list.innerHTML = "";
-                    const data = snap.val();
-                    if (data) {
-                        Object.values(data).reverse().forEach(l => {
-                            list.innerHTML += `<div class="p-2 bg-white/60 dark:bg-white/10 rounded-lg border-l-2 border-blue-400 mb-1"><b class="text-[10px] text-slate-500 dark:text-slate-400">${l.time}</b><br>${Utils.escapeHTML(l.text)}</div>`;
-                        });
-                    } else {
-                        list.innerHTML = `<p class="text-center text-slate-400 italic">Chưa có hoạt động</p>`;
-                    }
-                }); } catch(e) { console.error('Firebase listener error:', e); }
-            }
-
-            // --- DATA LOGIC ---
-            listenToData() {
-                document.getElementById('loadingDocs').classList.remove('hidden');
-                if(this.listeners.pub) off(this.listeners.pub);
-                this.listeners.pub = ref(this.db, 'library_public');
-                try { onValue(this.listeners.pub, snap => {
-                    const data = snap.val();
-                    this.dataStore.publicDocs = data ? Object.entries(data).map(([k,v]) => ({...v, id:k, source:'public'})) : [];
-                    this.renderDocs();
-                    document.getElementById('loadingDocs').classList.add('hidden');
-                }); } catch(e) { console.error('Firebase listener error:', e); }
-
-                if(this.listeners.priv) off(this.listeners.priv);
-                this.listeners.priv = ref(this.db, `users/${this.user.uid}/docs`);
-                try { onValue(this.listeners.priv, snap => {
-                    const data = snap.val();
-                    this.dataStore.privateDocs = data ? Object.entries(data).map(([k,v]) => ({...v, id:k, source:'private'})) : [];
-                    this.renderDocs();
-                }); } catch(e) { console.error('Firebase listener error:', e); }
-
-                document.getElementById('loadingMeds').classList.remove('hidden');
-                if(this.listeners.meds) off(this.listeners.meds);
-                this.listeners.meds = ref(this.db, 'library_meds');
-                try { onValue(this.listeners.meds, snap => {
-                    const data = snap.val();
-                    this.dataStore.meds = data ? Object.entries(data).map(([k,v]) => ({...v, id:k})) : [];
-                    this.renderMeds();
-                    document.getElementById('loadingMeds').classList.add('hidden');
-                }); } catch(e) { console.error('Firebase listener error:', e); }
-            }
-
-            resetData() {
-                this.dataStore = { publicDocs: [], privateDocs: [], meds: [] };
-                this.renderDocs();
-                this.renderMeds();
-                this.user = null;
-                this.isAdmin = false;
-            }
-
-            // --- UI RENDERING ---
-            renderDocs() {
-                const listEl = document.getElementById('docsList');
-                const term = document.getElementById('searchInput').value.toLowerCase();
-                const allDocs = [...this.dataStore.publicDocs, ...this.dataStore.privateDocs];
-                
-                if (!term && !this.currentFolder) {
-                    document.getElementById('breadcrumb').classList.add('hidden');
-                    let html = '';
-                    Object.entries(CONFIG.folders).forEach(([key, f]) => {
-                        const count = allDocs.filter(d => d.folder === key).length;
-                        html += `
-                        <div onclick="app.currentFolder='${key}'; app.renderDocs()" class="glass-card p-5 rounded-3xl flex items-center gap-5 cursor-pointer hover:bg-white/90 dark:hover:bg-slate-700/80 transition group border-l-4 border-transparent hover:border-blue-500">
-                            <div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl ${f.color} shadow-md group-hover:scale-110 transition"><i class="fa-solid ${f.icon}"></i></div>
-                            <div class="flex-1"><h3 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${f.name}</h3><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">${count} file</p></div>
-                            <i class="fa-solid fa-chevron-right text-slate-300 font-bold group-hover:text-blue-500 transition"></i>
-                        </div>`;
-                    });
-                    listEl.innerHTML = html;
-                    return;
-                }
-
-                document.getElementById('breadcrumb').classList.remove('hidden');
-                document.getElementById('currentFolderTitle').innerText = this.currentFolder ? CONFIG.folders[this.currentFolder].name : "Kết quả tìm kiếm";
-                
-                let filtered = allDocs;
-                if (this.currentFolder) filtered = filtered.filter(d => d.folder === this.currentFolder);
-                if (term) filtered = filtered.filter(d => (d.title || '').toLowerCase().includes(term));
-
-                if (filtered.length === 0) {
-                    listEl.innerHTML = `<div class="col-span-2 text-center py-20 opacity-60 dark:text-white font-bold">Không tìm thấy tài liệu</div>`;
-                    return;
-                }
-
-                const frag = document.createDocumentFragment();
-                filtered.forEach(doc => {
-                    const isPub = doc.source === 'public';
-                    const div = document.createElement('div');
-                    div.className = "glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm group relative pr-10 animate-slideIn";
-                    div.innerHTML = `
-                        <div class="w-10 h-10 rounded-full ${isPub?'text-orange-500 bg-orange-50':'text-blue-500 bg-blue-50'} flex items-center justify-center flex-shrink-0"><i class="fa-solid ${isPub?'fa-book-open':'fa-file-lines'} text-lg"></i></div>
-                        <div class="flex-1 min-w-0">
-                            <div class="flex items-center"><h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${Utils.escapeHTML(doc.title)}</h4>${isPub?'<span class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded ml-2 font-bold uppercase">Public</span>':''}</div>
-                            <a href="${Utils.escapeHTML(doc.url)}" target="_blank" onclick="app.logAction('Mở: ${Utils.escapeHTML(doc.title).replace(/'/g,"")}')" class="text-xs font-bold text-blue-600 hover:underline uppercase tracking-wide">Mở tài liệu</a>
-                        </div>
-                        ${(!isPub || (isPub && this.isAdmin)) ? `<button onclick="app.data.deleteDoc('${doc.id}', ${isPub})" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-red-100 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition opacity-0 group-hover:opacity-100 shadow-sm"><i class="fa-solid fa-trash-can text-sm"></i></button>` : ''}
-                    `;
-                    frag.appendChild(div);
-                });
-                listEl.innerHTML = '';
-                listEl.appendChild(frag);
-            }
-
-            renderMeds() {
-                const container = document.getElementById('medsList');
-                const term = document.getElementById('searchMedsInput').value.toLowerCase();
-                let list = this.dataStore.meds;
-
-                if (term) {
-                    list = list.filter(m => 
-                        (m.name?.toLowerCase().includes(term)) || 
-                        (m.brand?.toLowerCase().includes(term)) || 
-                        (m.ing?.toLowerCase().includes(term)) || 
-                        (m.group?.toLowerCase().includes(term))
-                    );
-                }
-
-                if (list.length === 0) {
-                    container.innerHTML = '<p class="text-center text-slate-500 mt-4">Không tìm thấy thuốc phù hợp.</p>';
-                    return;
-                }
-
-                const displayList = term ? list : list.slice(0, 50);
-
-                const frag = document.createDocumentFragment();
-                displayList.forEach(m => {
-                    const div = document.createElement('div');
-                    div.className = "glass-card p-4 rounded-2xl flex flex-col gap-2 border border-white/50 shadow-sm hover:border-pink-400 transition relative group animate-slideIn";
-                    div.innerHTML = `
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <h4 class="font-bold text-slate-900 dark:text-white text-lg">${Utils.escapeHTML(m.name)} <span class="text-xs text-slate-500 font-normal">(${Utils.escapeHTML(m.brand || "")})</span></h4>
-                                <p class="text-xs font-bold text-pink-600 bg-pink-100 px-2 py-0.5 rounded-full w-fit mt-1">${Utils.escapeHTML(m.group || "Khác")}</p>
-                            </div>
-                            ${this.isAdmin ? `<button onclick="if(confirm('Xóa thuốc này?')) app.admin.deleteMed('${m.id}')" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>` : ''}
-                        </div>
-                        <div class="text-sm text-slate-700 dark:text-slate-300 mt-2 space-y-1">
-                            <p><i class="fa-solid fa-flask text-purple-500 mr-1 w-4"></i> <b>Hàm lượng:</b> ${Utils.escapeHTML(m.strength || m.ing || "-")}</p>
-                            <p><i class="fa-solid fa-gears text-blue-500 mr-1 w-4"></i> <b>Cơ chế/CĐ:</b> ${Utils.escapeHTML(m.mechanism || m.usage || "-")}</p>
-                            <p><i class="fa-solid fa-prescription-bottle-medical text-green-500 mr-1 w-4"></i> <b>Liều dùng:</b> ${Utils.escapeHTML(m.dosage || "-")}</p>
-                            <p><i class="fa-solid fa-route text-orange-500 mr-1 w-4"></i> <b>Đường dùng:</b> ${Utils.escapeHTML(m.route || "-")}</p>
-                        </div>
-                    `;
-                    frag.appendChild(div);
-                });
-                container.innerHTML = '';
-                container.appendChild(frag);
-                if (!term && list.length > 50) {
-                    container.innerHTML += `<div class="text-center text-xs text-slate-400 py-2">Hiển thị 50/${list.length} thuốc. Hãy tìm kiếm để thấy chi tiết.</div>`;
-                }
-            }
+            // --- UI RENDER ---
+            renderDocs() { const listEl = document.getElementById('docsList'); const term = document.getElementById('searchInput').value.toLowerCase(); const allDocs = [...this.dataStore.publicDocs, ...this.dataStore.privateDocs]; if (!term && !this.currentFolder) { document.getElementById('breadcrumb').classList.add('hidden'); let html = ''; Object.entries(CONFIG.folders).forEach(([key, f]) => { const count = allDocs.filter(d => d.folder === key).length; html += ` <div onclick="app.currentFolder='${key}'; app.renderDocs()" class="glass-card p-5 rounded-3xl flex items-center gap-5 cursor-pointer hover:bg-white/90 dark:hover:bg-slate-700/80 transition group border-l-4 border-transparent hover:border-blue-500"> <div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl ${f.color} shadow-md group-hover:scale-110 transition"><i class="fa-solid ${f.icon}"></i></div> <div class="flex-1"><h3 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${f.name}</h3><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">${count} file</p></div> <i class="fa-solid fa-chevron-right text-slate-300 font-bold group-hover:text-blue-500 transition"></i> </div>`; }); listEl.innerHTML = html; return; } document.getElementById('breadcrumb').classList.remove('hidden'); document.getElementById('currentFolderTitle').innerText = this.currentFolder ? CONFIG.folders[this.currentFolder].name : "Kết quả tìm kiếm"; let filtered = allDocs; if (this.currentFolder) filtered = filtered.filter(d => d.folder === this.currentFolder); if (term) filtered = filtered.filter(d => (d.title || '').toLowerCase().includes(term)); if (filtered.length === 0) { listEl.innerHTML = `<div class="col-span-2 text-center py-20 opacity-60 dark:text-white font-bold">Không tìm thấy tài liệu</div>`; return; } const frag = document.createDocumentFragment(); filtered.forEach(doc => { const isPub = doc.source === 'public'; const div = document.createElement('div'); div.className = "glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm group relative pr-10 animate-slideIn"; div.innerHTML = ` <div class="w-10 h-10 rounded-full ${isPub?'text-orange-500 bg-orange-50':'text-blue-500 bg-blue-50'} flex items-center justify-center flex-shrink-0"><i class="fa-solid ${isPub?'fa-book-open':'fa-file-lines'} text-lg"></i></div> <div class="flex-1 min-w-0"> <div class="flex items-center"><h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${Utils.escapeHTML(doc.title)}</h4>${isPub?'<span class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded ml-2 font-bold uppercase">Public</span>':''}</div> <a href="${Utils.escapeHTML(doc.url)}" target="_blank" onclick="app.logAction('Mở: ${Utils.escapeHTML(doc.title).replace(/'/g,"")}')" class="text-xs font-bold text-blue-600 hover:underline uppercase tracking-wide">Mở tài liệu</a> </div> ${(!isPub || (isPub && this.isAdmin)) ? `<button onclick="app.data.deleteDoc('${doc.id}', ${isPub})" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-red-100 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition opacity-0 group-hover:opacity-100 shadow-sm"><i class="fa-solid fa-trash-can text-sm"></i></button>` : ''} `; frag.appendChild(div); }); listEl.innerHTML = ''; listEl.appendChild(frag); }
+            renderMeds() { const container = document.getElementById('medsList'); const term = document.getElementById('searchMedsInput').value.toLowerCase(); let list = this.dataStore.meds; if (term) { list = list.filter(m => (m.name?.toLowerCase().includes(term)) || (m.brand?.toLowerCase().includes(term)) || (m.ing?.toLowerCase().includes(term)) || (m.group?.toLowerCase().includes(term)) ); } if (list.length === 0) { container.innerHTML = '<p class="text-center text-slate-500 mt-4">Không tìm thấy thuốc phù hợp.</p>'; return; } const displayList = term ? list : list.slice(0, 50); const frag = document.createDocumentFragment(); displayList.forEach(m => { const div = document.createElement('div'); div.className = "glass-card p-4 rounded-2xl flex flex-col gap-2 border border-white/50 shadow-sm hover:border-pink-400 transition relative group animate-slideIn"; div.innerHTML = ` <div class="flex justify-between items-start"> <div> <h4 class="font-bold text-slate-900 dark:text-white text-lg">${Utils.escapeHTML(m.name)} <span class="text-xs text-slate-500 font-normal">(${Utils.escapeHTML(m.brand || "")})</span></h4> <p class="text-xs font-bold text-pink-600 bg-pink-100 px-2 py-0.5 rounded-full w-fit mt-1">${Utils.escapeHTML(m.group || "Khác")}</p> </div> ${this.isAdmin ? `<button onclick="if(confirm('Xóa thuốc này?')) app.admin.deleteMed('${m.id}')" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>` : ''} </div> <div class="text-sm text-slate-700 dark:text-slate-300 mt-2 space-y-1"> <p><i class="fa-solid fa-flask text-purple-500 mr-1 w-4"></i> <b>Hàm lượng:</b> ${Utils.escapeHTML(m.strength || m.ing || "-")}</p> <p><i class="fa-solid fa-gears text-blue-500 mr-1 w-4"></i> <b>Cơ chế/CĐ:</b> ${Utils.escapeHTML(m.mechanism || m.usage || "-")}</p> <p><i class="fa-solid fa-prescription-bottle-medical text-green-500 mr-1 w-4"></i> <b>Liều dùng:</b> ${Utils.escapeHTML(m.dosage || "-")}</p> <p><i class="fa-solid fa-route text-orange-500 mr-1 w-4"></i> <b>Đường dùng:</b> ${Utils.escapeHTML(m.route || "-")}</p> </div> `; frag.appendChild(div); }); container.innerHTML = ''; container.appendChild(frag); if (!term && list.length > 50) { container.innerHTML += `<div class="text-center text-xs text-slate-400 py-2">Hiển thị 50/${list.length} thuốc. Hãy tìm kiếm để thấy chi tiết.</div>`; } }
 
             // --- ACTIONS ---
-            saveDoc() {
+            toggleUploadMode(mode) {
+                this.uploadMode = mode;
+                const tabLink = document.getElementById('tabLink');
+                const tabUpload = document.getElementById('tabUpload');
+                const viewLink = document.getElementById('modeLink');
+                const viewUpload = document.getElementById('modeUpload');
+                
+                if (mode === 'link') {
+                    tabLink.className = "flex-1 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-600 shadow-sm transition";
+                    tabUpload.className = "flex-1 py-1.5 rounded-lg text-xs font-bold text-slate-500 transition";
+                    viewLink.classList.remove('hidden');
+                    viewUpload.classList.add('hidden');
+                } else {
+                    tabUpload.className = "flex-1 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-600 shadow-sm transition";
+                    tabLink.className = "flex-1 py-1.5 rounded-lg text-xs font-bold text-slate-500 transition";
+                    viewLink.classList.add('hidden');
+                    viewUpload.classList.remove('hidden');
+                }
+            }
+
+            handleFileSelect(el) {
+                const file = el.files[0];
+                const display = document.getElementById('fileNameDisplay');
+                if (file) {
+                    display.innerText = file.name;
+                    display.className = "text-sm font-bold text-blue-600";
+                    if(document.getElementById('newDocTitle').value === '') {
+                        document.getElementById('newDocTitle').value = file.name.split('.')[0];
+                    }
+                }
+            }
+
+            async saveDoc() {
                 const title = document.getElementById('newDocTitle').value;
                 const folder = document.getElementById('newDocFolder').value;
-                const url = document.getElementById('newDocLink').value;
                 const isPub = document.getElementById('isPublicDoc').checked;
+                let url = "";
 
-                if (!title || !url) { sfx.error(); return Utils.showToast("Thiếu thông tin!", "error"); }
-                
-                const path = isPub ? 'library_public' : `users/${this.user.uid}/docs`;
-                push(ref(this.db, path), {
-                    title, folder, url,
-                    createdAt: Date.now(),
-                    addedBy: this.user.email
-                }).then(() => {
+                if (!title) { sfx.error(); return Utils.showToast("Thiếu tên tài liệu!", "error"); }
+
+                const btn = document.getElementById('saveBtn');
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
+                btn.disabled = true;
+
+                try {
+                    // HANDLE UPLOAD
+                    if (this.uploadMode === 'upload') {
+                         const fileInput = document.getElementById('fileInput');
+                         if (fileInput.files.length === 0) throw new Error("Chưa chọn file!");
+                         
+                         const file = fileInput.files[0];
+                         if (file.size > 50 * 1024 * 1024) throw new Error("File quá lớn (>50MB)!");
+
+                         // UI Progress
+                         document.getElementById('uploadProgress').style.display = 'block';
+                         document.querySelector('.upload-bar').style.width = '100%';
+
+                         // Convert to Base64
+                         const base64 = await new Promise((resolve, reject) => {
+                             const reader = new FileReader();
+                             reader.readAsDataURL(file);
+                             reader.onload = () => resolve(reader.result.split(',')[1]);
+                             reader.onerror = error => reject(error);
+                         });
+
+                         // Send to Apps Script
+                         const response = await fetch(GOOGLE_SCRIPT_URL, {
+                             method: 'POST',
+                             body: JSON.stringify({ base64: base64, mimeType: file.type, filename: file.name })
+                         });
+                         
+                         const result = await response.json();
+                         if(result.status !== 'success') throw new Error("Lỗi Upload: " + result.message);
+                         
+                         url = result.url; // Get Drive Link
+
+                    } else {
+                         url = document.getElementById('newDocLink').value;
+                         if(!url) throw new Error("Thiếu Link tài liệu!");
+                    }
+
+                    // SAVE TO FIREBASE
+                    const path = isPub ? 'library_public' : `users/${this.user.uid}/docs`;
+                    await push(ref(this.db, path), {
+                        title, folder, url,
+                        createdAt: Date.now(),
+                        addedBy: this.user.email
+                    });
+
                     sfx.success();
                     confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
                     Utils.showToast("✅ Đã lưu thành công!", "success");
                     this.ui.closeModal('addDocModal');
+                    
+                    // Reset Form
                     document.getElementById('newDocTitle').value = '';
                     document.getElementById('newDocLink').value = '';
-                }).catch(e => Utils.showToast(e.message, "error"));
-            }
+                    document.getElementById('fileInput').value = '';
+                    document.getElementById('fileNameDisplay').innerText = "Nhấn để chọn file";
+                    document.getElementById('uploadProgress').style.display = 'none';
 
-            deleteDoc(id, isPub) {
-                if(!confirm("Bạn chắc chắn muốn xóa?")) return;
-                const path = isPub ? `library_public/${id}` : `users/${this.user.uid}/docs/${id}`;
-                remove(ref(this.db, path)).then(() => Utils.showToast("Đã xóa!", "success"));
-            }
-
-            saveNote() {
-                const val = document.getElementById('quickNote').value;
-                if(this.user) {
-                    set(ref(this.db, `users/${this.user.uid}/note`), val);
-                    const status = document.getElementById('saveStatus');
-                    status.style.opacity = '1';
-                    setTimeout(() => status.style.opacity = '0', 2000);
-                    if(val.length > 10) confetti({ particleCount: 30, spread: 50, origin: { y: 0.8 }, colors: ['#fbbf24'] });
+                } catch (e) {
+                    sfx.error();
+                    Utils.showToast(e.message, "error");
+                } finally {
+                    btn.innerHTML = 'Lưu ngay';
+                    btn.disabled = false;
                 }
             }
 
-            logAction(text) {
-                if(!this.user) return;
-                push(ref(this.db, `users/${this.user.uid}/logs`), {
-                    text, time: Utils.formatDate()
-                });
-            }
-
+            deleteDoc(id, isPub) { if(!confirm("Bạn chắc chắn muốn xóa?")) return; const path = isPub ? `library_public/${id}` : `users/${this.user.uid}/docs/${id}`; remove(ref(this.db, path)).then(() => Utils.showToast("Đã xóa!", "success")); }
+            saveNote() { const val = document.getElementById('quickNote').value; if(this.user) { set(ref(this.db, `users/${this.user.uid}/note`), val); const status = document.getElementById('saveStatus'); status.style.opacity = '1'; setTimeout(() => status.style.opacity = '0', 2000); if(val.length > 10) confetti({ particleCount: 30, spread: 50, origin: { y: 0.8 }, colors: ['#fbbf24'] }); } }
+            logAction(text) { if(!this.user) return; push(ref(this.db, `users/${this.user.uid}/logs`), { text, time: Utils.formatDate() }); }
+            
             // --- ADMIN ---
-            claimAdmin() {
-                if (!this.user) return Utils.showToast("Cần đăng nhập!", "error");
-                const code = prompt("Nhập mã kích hoạt:");
-                if (!code) return;
-                get(ref(this.db, 'admin_settings/code')).then(snap => {
-                    const trueCode = snap.val() || "123456";
-                    if (code === trueCode) {
-                        set(ref(this.db, `users/${this.user.uid}/role`), "admin").then(() => {
-                            alert("Kích hoạt Admin thành công! Trang sẽ tải lại.");
-                            location.reload();
-                        });
-                    } else {
-                        Utils.showToast("Sai mã!", "error");
-                    }
-                });
-            }
-
-            changeAdminCode() {
-                const n = document.getElementById('newAdminCode').value;
-                if(n.length < 4) return alert("Mã quá ngắn!");
-                set(ref(this.db, 'admin_settings/code'), n).then(() => {
-                    Utils.showToast("Đã đổi mã!", "success");
-                    document.getElementById('newAdminCode').value = '';
-                });
-            }
-
-            scrollToAdmin() {
-                this.handleTabSwitch('tools', document.querySelectorAll('.segment-btn')[2]);
-                const el = document.getElementById('tool-admin');
-                el.classList.add('open');
-                el.scrollIntoView({ behavior: 'smooth' });
-            }
-
-            loadAdminData() {
-                try { onValue(ref(this.db, "users"), snap => {
-                    const box = document.getElementById("adminUsersBox");
-                    box.innerHTML = "";
-                    snap.forEach(u => {
-                        const val = u.val();
-                        const role = val.role || "user";
-                        const id = u.key.substring(0,6);
-                        box.innerHTML += `<div class="flex justify-between items-center py-1 border-b border-white/10 last:border-0"><span class="truncate w-40">${val.note ? "User (Có note)" : "User "+id}</span> <span class="${role==='admin'?'text-red-500 font-bold':'text-green-500'} text-xs uppercase">${role}</span></div>`;
-                    });
-                }); } catch(e) { console.error('Firebase listener error:', e); }
-            }
-
-            seedMedsData() {
-                 if(!confirm("⚠️ Nạp dữ liệu mẫu sẽ thêm vào DB hiện tại. Tiếp tục?")) return;
-                 const sample = [
-                    { "name": "Paracetamol", "brand": "Panadol", "group": "Giảm đau", "strength": "500mg", "dosage": "1v mỗi 4-6h", "route": "Uống" },
-                    { "name": "Ibuprofen", "brand": "Gofen", "group": "NSAIDs", "strength": "400mg", "dosage": "1v sau ăn", "route": "Uống" }
-                 ];
-                 sample.forEach(m => push(ref(this.db, "library_meds"), {...m, addedBy: "System"}));
-                 Utils.showToast("Đã nạp thuốc mẫu demo!", "success");
-            }
-
+            claimAdmin() { if (!this.user) return Utils.showToast("Cần đăng nhập!", "error"); const code = prompt("Nhập mã kích hoạt:"); if (!code) return; get(ref(this.db, 'admin_settings/code')).then(snap => { const trueCode = snap.val() || "123456"; if (code === trueCode) { set(ref(this.db, `users/${this.user.uid}/role`), "admin").then(() => { alert("Kích hoạt Admin thành công! Trang sẽ tải lại."); location.reload(); }); } else { Utils.showToast("Sai mã!", "error"); } }); }
+            changeAdminCode() { const n = document.getElementById('newAdminCode').value; if(n.length < 4) return alert("Mã quá ngắn!"); set(ref(this.db, 'admin_settings/code'), n).then(() => { Utils.showToast("Đã đổi mã!", "success"); document.getElementById('newAdminCode').value = ''; }); }
+            scrollToAdmin() { this.handleTabSwitch('tools', document.querySelectorAll('.segment-btn')[2]); const el = document.getElementById('tool-admin'); el.classList.add('open'); el.scrollIntoView({ behavior: 'smooth' }); }
+            loadAdminData() { try { onValue(ref(this.db, "users"), snap => { const box = document.getElementById("adminUsersBox"); box.innerHTML = ""; snap.forEach(u => { const val = u.val(); const role = val.role || "user"; const id = u.key.substring(0,6); box.innerHTML += `<div class="flex justify-between items-center py-1 border-b border-white/10 last:border-0"><span class="truncate w-40">${val.note ? "User (Có note)" : "User "+id}</span> <span class="${role==='admin'?'text-red-500 font-bold':'text-green-500'} text-xs uppercase">${role}</span></div>`; }); }); } catch(e) {} }
+            seedMedsData() { if(!confirm("⚠️ Nạp dữ liệu mẫu sẽ thêm vào DB hiện tại. Tiếp tục?")) return; const sample = [ { "name": "Paracetamol", "brand": "Panadol", "group": "Giảm đau", "strength": "500mg", "dosage": "1v mỗi 4-6h", "route": "Uống" }, { "name": "Ibuprofen", "brand": "Gofen", "group": "NSAIDs", "strength": "400mg", "dosage": "1v sau ăn", "route": "Uống" } ]; sample.forEach(m => push(ref(this.db, "library_meds"), {...m, addedBy: "System"})); Utils.showToast("Đã nạp thuốc mẫu demo!", "success"); }
             deleteMed(id) { remove(ref(this.db, `library_meds/${id}`)).then(()=>Utils.showToast("Đã xóa thuốc", "success")); }
 
-            handleTabSwitch(tab, el) {
-                document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active'));
-                el.classList.add('active');
-                ['docs', 'meds', 'tools'].forEach(t => document.getElementById(`view-${t}`).classList.add('hidden'));
-                document.getElementById(`view-${tab}`).classList.remove('hidden');
-            }
-
-            toggleDarkMode() {
-                document.documentElement.classList.toggle('dark');
-                localStorage.setItem('mdk_dark', document.documentElement.classList.contains('dark'));
-            }
+            handleTabSwitch(tab, el) { document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); ['docs', 'meds', 'tools'].forEach(t => document.getElementById(`view-${t}`).classList.add('hidden')); document.getElementById(`view-${tab}`).classList.remove('hidden'); }
+            toggleDarkMode() { document.documentElement.classList.toggle('dark'); localStorage.setItem('mdk_dark', document.documentElement.classList.contains('dark')); }
         }
 
         window.app = new App();
