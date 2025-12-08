@@ -3,11 +3,12 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MinhducKale - Cloud Sync v10.6 (Smart UX)</title>
+    <title>MinhducKale - Cloud Sync v10.10 (OGG Source)</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
     <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3774/3774299.png">
     
     <script src="https://cdn.tailwindcss.com"></script>
@@ -43,6 +44,9 @@
         body { transition: background-color 0.5s, color 0.5s; background-color: #e0f2fe; color: #1e293b; -webkit-tap-highlight-color: transparent; }
         .dark body { background-color: #0f172a; color: #f1f5f9; }
         
+        /* Fix mobile height viewport issues */
+        .min-h-screen-ios { min-height: 100vh; min-height: 100dvh; }
+
         /* BACKGROUND BLOBS */
         .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.8; z-index: -1; animation: blob 15s infinite alternate; pointer-events: none; will-change: transform; }
         .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #93c5fd; }
@@ -100,15 +104,17 @@
         .ambience-btn { transition: all 0.3s; opacity: 0.6; filter: grayscale(100%); }
         .ambience-btn.active { opacity: 1; filter: grayscale(0%); transform: scale(1.1); background-color: rgba(255,255,255,0.2); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
         .fade-in { animation: slideIn 0.3s ease-out; }
+        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: rgba(100,100,100,0.3); border-radius: 10px; }
     </style>
 </head>
-<body class="min-h-screen overflow-x-hidden selection:bg-blue-500 selection:text-white">
+<body class="min-h-screen-ios overflow-x-hidden selection:bg-blue-500 selection:text-white">
 
     <div class="bg-blob blob-1"></div>
     <div class="bg-blob blob-2"></div>
     <div class="bg-blob blob-3"></div>
 
-    <div class="container mx-auto px-4 py-6 max-w-7xl min-h-screen flex flex-col">
+    <div class="container mx-auto px-4 py-6 max-w-7xl min-h-screen-ios flex flex-col">
         
         <header class="glass-panel rounded-3xl px-6 py-4 mb-8 flex flex-col md:flex-row justify-between items-center z-20 sticky top-4 shadow-xl">
             <div class="flex items-center gap-4 mb-4 md:mb-0 w-full md:w-auto justify-between md:justify-start">
@@ -137,7 +143,7 @@
 
                 <div class="text-center md:text-left">
                     <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
-                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.6</p>
+                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.10</p>
                 </div>
             </div>
             
@@ -167,7 +173,8 @@
                     <div class="flex gap-3 relative z-10">
                         <div class="relative flex-1 group">
                             <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-600 transition"></i>
-                            <input id="searchInput" type="text" onkeyup="app.searchDocsDebounced()" class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm tài liệu (Tiếng Việt thông minh)...">
+                            <input id="searchInput" type="text" onkeyup="app.searchDocsDebounced()" class="w-full pl-12 pr-10 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm tài liệu (Tiếng Việt thông minh)...">
+                            <button onclick="document.getElementById('searchInput').value=''; app.searchDocsDebounced()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
                         </div>
                         <button id="addDocBtn" onclick="app.ui.openModal('addDocModal')" title="Thêm tài liệu mới" class="hidden w-14 rounded-2xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-700 text-white flex items-center justify-center shadow-lg active:scale-95 transition"><i class="fa-solid fa-plus text-xl"></i></button>
                     </div>
@@ -186,7 +193,8 @@
                     <div class="flex gap-3 relative z-10">
                         <div class="relative flex-1 group">
                             <i class="fa-solid fa-pills absolute left-4 top-4 text-slate-500 group-focus-within:text-pink-600 transition"></i>
-                            <input id="searchMedsInput" type="text" onkeyup="app.searchMedsDebounced()" class="w-full pl-12 pr-4 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm thuốc (Gõ không dấu ok)...">
+                            <input id="searchMedsInput" type="text" onkeyup="app.searchMedsDebounced()" class="w-full pl-12 pr-10 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm thuốc (Gõ không dấu ok)...">
+                            <button onclick="document.getElementById('searchMedsInput').value=''; app.searchMedsDebounced()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
                         </div>
                     </div>
                     <div id="loadingMeds" class="hidden text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-slate-500 font-bold text-sm">Đang tải danh mục thuốc...</p></div>
@@ -310,17 +318,17 @@
                              <button onclick="app.music.playCustomVideo()" class="bg-red-600 hover:bg-red-700 text-white rounded-lg px-3 py-1 text-xs font-bold shadow-md"><i class="fa-solid fa-play"></i></button>
                           </div>
                         <div class="bg-black rounded-xl overflow-hidden shadow-lg border border-slate-700 relative pt-[56.25%]">
-                            <iframe id="radioFrame" class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/jfKfPfyJRdk" title="YouTube Radio" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <iframe id="radioFrame" class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/jfKfPfyJRdk" title="YouTube Radio" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" playsinline allowfullscreen></iframe>
                         </div>
                         <p class="text-[10px] text-slate-400 italic text-center">Tự động tắt nhạc Mp3 khi bật Youtube.</p>
                     </div>
                     
                     <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-                        <p class="text-[10px] font-bold uppercase text-slate-500 mb-2 tracking-wider">Âm thanh nền (Ambience)</p>
+                        <p class="text-[10px] font-bold uppercase text-slate-500 mb-2 tracking-wider">Âm thanh nền (Ambience) - OGG</p>
                         <div class="flex justify-between items-center px-1">
                             <button onclick="app.music.toggleAmbience('rain', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng Mưa"><i class="fa-solid fa-cloud-rain text-xl text-blue-500"></i><span class="text-[9px] font-bold">Mưa</span></button>
                             <button onclick="app.music.toggleAmbience('fire', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng Lửa trại"><i class="fa-solid fa-fire text-xl text-orange-500"></i><span class="text-[9px] font-bold">Lửa</span></button>
-                            <button onclick="app.music.toggleAmbience('keyboard', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng gõ phím"><i class="fa-solid fa-keyboard text-xl text-slate-500"></i><span class="text-[9px] font-bold">Phím</span></button>
+                            <button onclick="app.music.toggleAmbience('forest', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng Rừng cây"><i class="fa-solid fa-tree text-xl text-green-500"></i><span class="text-[9px] font-bold">Rừng</span></button>
                             <button onclick="app.music.toggleAmbience('cafe', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Quán Cafe"><i class="fa-solid fa-mug-hot text-xl text-brown-500 text-yellow-700"></i><span class="text-[9px] font-bold">Cafe</span></button>
                         </div>
                     </div>
@@ -423,10 +431,11 @@
                 {t:"Coffee Shop Vibes", a:"Ambience", u:"https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3?filename=loneliness-1476.mp3"},
                 {t:"Sunday Morning", a:"Happy", u:"https://cdn.pixabay.com/download/audio/2020/05/18/audio_59146522e0.mp3?filename=smooth-waters-11218.mp3"}
             ],
+            // NEW: Updated to OGG links from Google Actions Sounds (as requested)
             ambience: {
                 rain: "https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg",
                 fire: "https://actions.google.com/sounds/v1/ambiences/fireplace.ogg",
-                keyboard: "https://actions.google.com/sounds/v1/office/typing_on_computer_keyboard.ogg",
+                forest: "https://actions.google.com/sounds/v1/nature/forest_atmosphere.ogg", 
                 cafe: "https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg"
             }
         };
@@ -437,7 +446,6 @@
                 if (!str) return '';
                 return String(str).replace(/[&<>'"]/g, tag => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', "'": '&#39;', '"': '&quot;' }[tag]));
             },
-            // NEW: Hàm xóa dấu Tiếng Việt
             removeAccents: (str) => {
                 return String(str).normalize('NFD')
                           .replace(/[\u0300-\u036f]/g, '')
@@ -496,10 +504,16 @@
 
             toggle() {
                 if (this.audio.paused) {
-                    this.audio.play().catch(e => console.log("Auto-play prevented"));
-                    this.isPlaying = true;
-                    document.getElementById('musicDisc').classList.add('animate-spin-slow');
-                    document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-pause text-xl ml-0"></i>';
+                    const playPromise = this.audio.play();
+                    if (playPromise !== undefined) {
+                        playPromise.then(_ => {
+                            this.isPlaying = true;
+                            document.getElementById('musicDisc').classList.add('animate-spin-slow');
+                            document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-pause text-xl ml-0"></i>';
+                        }).catch(error => {
+                            Utils.showToast("Chưa thể phát nhạc tự động. Hãy tương tác!", "error");
+                        });
+                    }
                 } else {
                     this.audio.pause();
                     this.isPlaying = false;
@@ -523,7 +537,7 @@
                 document.getElementById('music-view-online').classList.toggle('hidden', tab !== 'online');
                 // Tự động pause mp3 nếu chuyển sang online nhưng user chưa bấm play
                 if (tab === 'online' && !this.audio.paused) {
-                    // Optional: có thể pause luôn ở đây nếu muốn
+                    this.toggle(); // Auto pause local music
                 }
             }
 
@@ -546,7 +560,6 @@
                 const input = document.getElementById('youtubeInput').value;
                 if (!input) return Utils.showToast("Hãy nhập Link hoặc Từ khóa!", "error");
 
-                // NEW: Tự động tắt nhạc Local nếu đang chạy
                 if (this.isPlaying) {
                     this.toggle(); 
                     Utils.showToast("Đã tắt nhạc nền để phát Youtube", "info");
@@ -570,10 +583,22 @@
                     delete this.ambienceAudio[type];
                     btn.classList.remove('active');
                 } else {
+                    // Use new Audio() with preload auto
                     const audio = new Audio(CONFIG.ambience[type]);
                     audio.loop = true;
                     audio.volume = 0.5;
-                    audio.play();
+                    audio.preload = 'auto'; 
+                    
+                    const playPromise = audio.play();
+                    
+                    if (playPromise !== undefined) {
+                        playPromise.catch(error => {
+                            console.error("Audio error:", error);
+                            // Error handling for potential playback issues
+                            Utils.showToast("Không thể phát (Lỗi trình duyệt chặn)", "error");
+                        });
+                    }
+                    
                     this.ambienceAudio[type] = audio;
                     btn.classList.add('active');
                 }
