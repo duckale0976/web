@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MinhducKale - Cloud Sync v10.8 (Upload Drive)</title>
+    <title>MinhducKale - Cloud Sync v10.11 (Final)</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
@@ -43,83 +43,42 @@
     </script>
 
     <style>
-        /* CORE STYLES */
+        /* CORE UI */
         body { transition: background-color 0.5s, color 0.5s; background-color: #e0f2fe; color: #1e293b; -webkit-tap-highlight-color: transparent; }
         .dark body { background-color: #0f172a; color: #f1f5f9; }
-        
-        /* BACKGROUND BLOBS */
-        .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.8; z-index: -1; animation: blob 15s infinite alternate; pointer-events: none; will-change: transform; }
+        .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.8; z-index: -1; animation: blob 15s infinite alternate; pointer-events: none; }
         .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #93c5fd; }
         .blob-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #6ee7b7; }
         .blob-3 { top: 40%; left: 40%; width: 400px; height: 400px; background: #c4b5fd; }
-        .dark .blob-1 { background: #1e40af; opacity: 0.3; }
-        .dark .blob-2 { background: #065f46; opacity: 0.3; }
-        .dark .blob-3 { background: #5b21b6; opacity: 0.3; }
+        .dark .blob-1 { background: #1e40af; opacity: 0.3; } .dark .blob-2 { background: #065f46; opacity: 0.3; } .dark .blob-3 { background: #5b21b6; opacity: 0.3; }
         
-        /* GLASSMORPHISM */
         .glass-panel { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); }
         .dark .glass-panel { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); }
-        
         .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); transition: all 0.2s ease; will-change: transform; }
         .dark .glass-card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); }
         .glass-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
         
-        /* FORM ELEMENTS */
         .ios-input { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(203, 213, 225, 0.8); color: #0f172a; font-weight: 600; transition: all 0.2s; }
         .dark .ios-input { background: rgba(0, 0, 0, 0.5); border-color: rgba(255,255,255,0.2); color: white; }
         .ios-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3); border-color: #3b82f6; }
         
-        /* UI COMPONENTS */
         .segmented-control { background: rgba(200, 200, 200, 0.4); backdrop-filter: blur(10px); padding: 4px; border-radius: 12px; display: inline-flex; }
         .dark .segmented-control { background: rgba(0,0,0,0.4); }
         .segment-btn { padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; color: #475569; white-space: nowrap; }
-        .dark .segment-btn { color: #94a3b8; }
         .segment-btn.active { background: white; color: #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .dark .segment-btn.active { background: #334155; color: white; }
+        .dark .segment-btn { color: #94a3b8; } .dark .segment-btn.active { background: #334155; color: white; }
         
         .tool-content { max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1); will-change: max-height; }
         .tool-content.open { max-height: 800px; }
         
-        /* SLIDERS & LOADERS */
-        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
-        input[type=range]::-webkit-slider-track { width: 100%; height: 6px; background: rgba(0,0,0,0.1); border-radius: 10px; }
-        .dark input[type=range]::-webkit-slider-track { background: rgba(255,255,255,0.1); }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #3b82f6; cursor: pointer; margin-top: -5px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: transform 0.1s; }
-        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
-
-        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
-        /* TOAST NOTIFICATION */
-        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
-        .toast { min-width: 280px; padding: 16px; border-radius: 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; animation: slideIn 0.3s ease-out forwards; border-left: 4px solid #3b82f6; pointer-events: auto; }
-        .toast.error { border-left-color: #ef4444; }
-        .toast.success { border-left-color: #22c55e; }
-        .dark .toast { background: rgba(30, 41, 59, 0.95); color: white; border: 1px solid rgba(255,255,255,0.1); }
-        
-        /* UTILS */
-        .music-tab { font-size: 10px; font-weight: bold; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; cursor: pointer; opacity: 0.6; transition: all 0.3s; }
-        .music-tab.active { background: rgba(59, 130, 246, 0.2); color: #3b82f6; opacity: 1; }
-        .dark .music-tab.active { background: rgba(255, 255, 255, 0.1); color: #fff; }
-        .ambience-btn { transition: all 0.3s; opacity: 0.6; filter: grayscale(100%); }
-        .ambience-btn.active { opacity: 1; filter: grayscale(0%); transform: scale(1.1); background-color: rgba(255,255,255,0.2); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .fade-in { animation: slideIn 0.3s ease-out; }
-
-        /* --- NEW: MUSIC WAVE VISUALIZER --- */
-        .music-waves { display: flex; align-items: flex-end; justify-content: center; height: 30px; gap: 3px; display: none; margin-top: 10px; margin-bottom: 10px;}
+        /* JUICY ELEMENTS */
+        .music-waves { display: flex; align-items: flex-end; justify-content: center; height: 30px; gap: 3px; display: none; margin: 10px 0; }
         .music-waves.playing { display: flex; }
         .bar { width: 4px; background: #3b82f6; border-radius: 4px; animation: wave 1s ease-in-out infinite; }
         .dark .bar { background: #60a5fa; }
         @keyframes wave { 0%, 100% { height: 10%; } 50% { height: 100%; } }
-        .bar:nth-child(1) { animation-duration: 0.6s; }
-        .bar:nth-child(2) { animation-duration: 0.8s; }
-        .bar:nth-child(3) { animation-duration: 0.5s; }
-        .bar:nth-child(4) { animation-duration: 0.7s; }
-        .bar:nth-child(5) { animation-duration: 0.9s; }
+        .bar:nth-child(1) { animation-duration: 0.6s; } .bar:nth-child(2) { animation-duration: 0.8s; } .bar:nth-child(3) { animation-duration: 0.5s; } .bar:nth-child(4) { animation-duration: 0.7s; } .bar:nth-child(5) { animation-duration: 0.9s; }
         
-        .cursor-wait { cursor: wait; }
-
-        /* UPLOAD STYLES */
         .file-upload-box { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
         .dark .file-upload-box { border-color: #475569; background: rgba(255,255,255,0.05); }
         .file-upload-box:hover { border-color: #3b82f6; background: rgba(59, 130, 246, 0.05); }
@@ -127,6 +86,27 @@
         .upload-bar { height: 100%; background: #3b82f6; width: 0%; transition: width 0.3s; }
         .upload-bar.animate { animation: progress 1.5s ease-in-out infinite; }
         @keyframes progress { 0% { width: 0%; } 100% { width: 100%; } }
+        
+        .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        
+        #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
+        .toast { min-width: 280px; padding: 16px; border-radius: 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; animation: slideIn 0.3s ease-out forwards; border-left: 4px solid #3b82f6; pointer-events: auto; }
+        .toast.error { border-left-color: #ef4444; } .toast.success { border-left-color: #22c55e; }
+        .dark .toast { background: rgba(30, 41, 59, 0.95); color: white; border: 1px solid rgba(255,255,255,0.1); }
+        
+        .music-tab { font-size: 10px; font-weight: bold; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; cursor: pointer; opacity: 0.6; transition: all 0.3s; }
+        .music-tab.active { background: rgba(59, 130, 246, 0.2); color: #3b82f6; opacity: 1; }
+        .dark .music-tab.active { background: rgba(255, 255, 255, 0.1); color: #fff; }
+        .ambience-btn { transition: all 0.3s; opacity: 0.6; filter: grayscale(100%); }
+        .ambience-btn.active { opacity: 1; filter: grayscale(0%); transform: scale(1.1); background-color: rgba(255,255,255,0.2); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-track { width: 100%; height: 6px; background: rgba(0,0,0,0.1); border-radius: 10px; }
+        .dark input[type=range]::-webkit-slider-track { background: rgba(255,255,255,0.1); }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #3b82f6; cursor: pointer; margin-top: -5px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: transform 0.1s; }
+        
+        .cursor-wait { cursor: wait; }
     </style>
 </head>
 <body class="min-h-screen overflow-x-hidden selection:bg-blue-500 selection:text-white">
@@ -152,22 +132,16 @@
                     </div>
                     
                     <div id="logoutPanel" class="hidden absolute top-14 left-0 w-60 glass-card p-3 rounded-xl flex flex-col gap-2 z-50 shadow-2xl border border-white/50 animate-slideIn backdrop-blur-xl">
-                        <button onclick="app.admin.claim()" class="w-full text-left px-3 py-2.5 text-slate-700 dark:text-white hover:bg-white/40 dark:hover:bg-white/10 rounded-lg text-sm font-bold flex items-center gap-3 transition">
-                            <i class="fa-solid fa-user-shield text-purple-500 w-5"></i> Kích hoạt Admin
-                        </button>
-                        <button onclick="app.auth.switchAccount()" class="w-full text-left px-3 py-2.5 text-slate-700 dark:text-white hover:bg-white/40 dark:hover:bg-white/10 rounded-lg text-sm font-bold flex items-center gap-3 transition">
-                            <i class="fa-solid fa-repeat text-blue-500 w-5"></i> Chuyển tài khoản
-                        </button>
+                        <button onclick="app.admin.claim()" class="w-full text-left px-3 py-2.5 text-slate-700 dark:text-white hover:bg-white/40 dark:hover:bg-white/10 rounded-lg text-sm font-bold flex items-center gap-3 transition"><i class="fa-solid fa-user-shield text-purple-500 w-5"></i> Kích hoạt Admin</button>
+                        <button onclick="app.auth.switchAccount()" class="w-full text-left px-3 py-2.5 text-slate-700 dark:text-white hover:bg-white/40 dark:hover:bg-white/10 rounded-lg text-sm font-bold flex items-center gap-3 transition"><i class="fa-solid fa-repeat text-blue-500 w-5"></i> Chuyển tài khoản</button>
                         <div class="h-px bg-slate-300 dark:bg-slate-600 my-1"></div>
-                        <button onclick="app.auth.logout()" class="w-full text-left px-3 py-2.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg text-sm font-bold flex items-center gap-3 transition">
-                            <i class="fa-solid fa-power-off w-5"></i> Đăng xuất
-                        </button>
+                        <button onclick="app.auth.logout()" class="w-full text-left px-3 py-2.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg text-sm font-bold flex items-center gap-3 transition"><i class="fa-solid fa-power-off w-5"></i> Đăng xuất</button>
                     </div>
                 </div>
 
                 <div class="text-center md:text-left">
                     <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
-                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.8 Upload</p>
+                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.11</p>
                 </div>
             </div>
             
@@ -224,7 +198,6 @@
                 </div>
 
                 <div id="view-tools" class="hidden flex-col gap-6 fade-in">
-                    
                     <div id="adminToolsCard" class="hidden glass-card rounded-2xl overflow-hidden border-l-4 border-red-500 shadow-md">
                         <button onclick="app.ui.toggleTool('admin')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
                             <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-user-shield text-red-600 mr-2"></i>Admin Tools</span>
@@ -263,7 +236,6 @@
                                 </div>
                             </div>
                         </div>
-                        
                         <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-red-500">
                              <button onclick="app.ui.toggleTool('map')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
                                 <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-heart-pulse text-red-500 mr-2"></i>Huyết áp (MAP)</span>
@@ -277,7 +249,6 @@
                                 </div>
                             </div>
                         </div>
-
                          <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-orange-500 md:col-span-2">
                              <button onclick="app.ui.toggleTool('egfr')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
                                 <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-kidneys text-orange-500 mr-2"></i>Độ lọc cầu thận (eGFR)</span>
@@ -321,10 +292,7 @@
                         <div class="text-center mb-4 px-2">
                             <p id="musicTitle" class="text-base font-bold text-slate-900 dark:text-white truncate">Select a track...</p>
                             <p id="musicArtist" class="text-xs text-slate-500 font-bold uppercase tracking-wide">Lofi Relax</p>
-                            <div id="musicVisualizer" class="music-waves my-2">
-                                <div class="bar"></div><div class="bar"></div><div class="bar"></div>
-                                <div class="bar"></div><div class="bar"></div>
-                            </div>
+                            <div id="musicVisualizer" class="music-waves my-2"><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div><div class="bar"></div></div>
                         </div>
                         <div class="flex justify-center items-center gap-6 mb-5">
                             <button onclick="app.music.prev()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white hover:bg-slate-200 transition"><i class="fa-solid fa-backward-step"></i></button>
@@ -416,7 +384,7 @@
                     <div class="file-upload-box mt-1" onclick="document.getElementById('fileInput').click()">
                         <i class="fa-solid fa-cloud-arrow-up text-3xl text-blue-500 mb-2"></i>
                         <p id="fileNameDisplay" class="text-sm font-bold text-slate-600 dark:text-slate-300">Nhấn để chọn file</p>
-                        <p class="text-[10px] text-slate-400">Tự động lưu vào Drive chung</p>
+                        <p class="text-[10px] text-slate-400">Tự động lưu vào Drive chung (Max 50MB)</p>
                         <input type="file" id="fileInput" class="hidden" onchange="app.ui.handleFileSelect(this)">
                     </div>
                     <div id="uploadProgress" class="upload-progress"><div class="upload-bar animate"></div></div>
@@ -458,8 +426,8 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, off, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // --- PASTE YOUR GOOGLE SCRIPT URL HERE ---
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbws-83iUE5db09j9DigtpV0TL-vJF-tvEM2kNUlR20kUcvbxPIyO-YDKg2hI8PcSVD8Ww/exec"; 
+        // --- NEW SCRIPT URL ---
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwccngEduA7stIwsTR3zz9LlTHFQ99Gig4m-_oPyOk7ZMXrOGyFTyuPqY_xuYvTcoRxhQ/exec"; 
 
         const CONFIG = {
             firebase: {
