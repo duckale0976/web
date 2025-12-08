@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MinhducKale - Cloud Sync v10.6 (Juicy Mode)</title>
+    <title>MinhducKale - Cloud Sync v10.7 (AI Magic)</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
@@ -114,6 +114,8 @@
         .bar:nth-child(3) { animation-duration: 0.5s; }
         .bar:nth-child(4) { animation-duration: 0.7s; }
         .bar:nth-child(5) { animation-duration: 0.9s; }
+        
+        .cursor-wait { cursor: wait; }
     </style>
 </head>
 <body class="min-h-screen overflow-x-hidden selection:bg-blue-500 selection:text-white">
@@ -154,7 +156,7 @@
 
                 <div class="text-center md:text-left">
                     <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
-                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.6 Juicy</p>
+                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.7 AI</p>
                 </div>
             </div>
             
@@ -386,7 +388,17 @@
             <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4">Thêm Tài Liệu Mới</h3>
             <div class="space-y-4">
                 <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Tên tài liệu</label><input id="newDocTitle" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="Nhập tên..."></div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Thư mục</label><select id="newDocFolder" class="w-full ios-input p-3 rounded-xl mt-1 font-bold text-slate-700 dark:text-slate-200 dark:bg-slate-700"></select></div>
+                
+                <div>
+                    <label class="text-xs font-bold text-slate-500 uppercase ml-1">Thư mục</label>
+                    <div class="flex gap-2 mt-1">
+                        <select id="newDocFolder" class="flex-1 ios-input p-3 rounded-xl font-bold text-slate-700 dark:text-slate-200 dark:bg-slate-700 transition"></select>
+                        <button onclick="app.classifier.autoClassify()" id="aiMagicBtn" title="AI Tự phân loại" class="w-12 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-600 text-white shadow-lg hover:scale-105 active:scale-95 transition flex items-center justify-center">
+                            <i class="fa-solid fa-wand-magic-sparkles"></i>
+                        </button>
+                    </div>
+                </div>
+
                 <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Link Drive/Web</label><input id="newDocLink" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="https://..."></div>
                 <div class="p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-xl flex items-center gap-3 opacity-50 pointer-events-none transition-all" id="publicDocWrapper">
                     <input type="checkbox" id="isPublicDoc" class="w-5 h-5 accent-orange-600 rounded cursor-pointer">
@@ -514,6 +526,78 @@
             error() { this.playTone(150, 'sawtooth', 0.2); }
         }
         const sfx = new SoundFX();
+
+        // --- AI CLASSIFIER (GOOGLE GEMINI) ---
+        class AutoClassifier {
+            constructor() {
+                // KEY CỦA BẠN ĐÃ ĐƯỢC TÍCH HỢP
+                this.apiKey = "AIzaSyA8x9Cgw0yscyKNPBFuByHnwqcUQuJCMVM"; 
+                this.apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${this.apiKey}`;
+            }
+
+            async autoClassify() {
+                const title = document.getElementById('newDocTitle').value;
+                const btn = document.getElementById('aiMagicBtn');
+                const icon = btn.querySelector('i');
+
+                if (!title || title.length < 3) {
+                    sfx.error();
+                    Utils.showToast("Hãy nhập tên tài liệu trước!", "error");
+                    return;
+                }
+
+                // Hiệu ứng đang suy nghĩ
+                sfx.click();
+                icon.className = "fa-solid fa-spinner fa-spin";
+                btn.classList.add("opacity-80", "cursor-wait");
+
+                // Cấu trúc Prompt gửi cho AI
+                const folders = CONFIG.folders;
+                const folderKeys = Object.keys(folders).join(", ");
+                const folderDesc = Object.entries(folders).map(([k,v]) => `${k}: ${v.name}`).join("\n");
+
+                const prompt = {
+                    contents: [{
+                        parts: [{
+                            text: `Bạn là trợ lý y khoa. Hãy phân loại tài liệu có tên: "${title}" vào MỘT trong các mã thư mục sau:\n${folderDesc}\n. Chỉ trả về đúng mã thư mục (ví dụ: noikhoa). Nếu không chắc chắn, trả về 'khac'. Không giải thích gì thêm.`
+                        }]
+                    }]
+                };
+
+                try {
+                    const response = await fetch(this.apiUrl, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify(prompt)
+                    });
+
+                    const data = await response.json();
+                    const result = data.candidates[0].content.parts[0].text.trim().toLowerCase().replace(/[^a-z0-9_]/g, ''); 
+
+                    const select = document.getElementById('newDocFolder');
+                    if (CONFIG.folders[result]) {
+                        select.value = result;
+                        
+                        sfx.success();
+                        select.classList.add('ring-2', 'ring-purple-500', 'scale-105'); 
+                        setTimeout(() => select.classList.remove('ring-2', 'ring-purple-500', 'scale-105'), 500);
+                        
+                        Utils.showToast(`AI: Đã chọn mục "${CONFIG.folders[result].name}"`, "success");
+                    } else {
+                        select.value = 'khac'; 
+                        Utils.showToast("AI không chắc chắn, đã chọn 'Khác'", "info");
+                    }
+
+                } catch (error) {
+                    console.error(error);
+                    sfx.error();
+                    Utils.showToast("Lỗi kết nối AI. Kiểm tra API Key!", "error");
+                } finally {
+                    icon.className = "fa-solid fa-wand-magic-sparkles";
+                    btn.classList.remove("opacity-80", "cursor-wait");
+                }
+            }
+        }
 
         // --- CORE CLASSES ---
         class MusicPlayer {
@@ -730,6 +814,7 @@
                 this.importType = '';
                 this.music = new MusicPlayer();
                 this.tools = new MedicalTools();
+                this.classifier = new AutoClassifier(); // INIT AI
                 
                 this.searchDocsDebounced = Utils.debounce(() => this.data.filterDocs(), 300);
                 this.searchMedsDebounced = Utils.debounce(() => this.data.filterMeds(), 300);
@@ -1122,7 +1207,6 @@
                     const status = document.getElementById('saveStatus');
                     status.style.opacity = '1';
                     setTimeout(() => status.style.opacity = '0', 2000);
-                    // Lưu note thành công cũng bắn pháo hoa nhẹ cho sướng
                     if(val.length > 10) confetti({ particleCount: 30, spread: 50, origin: { y: 0.8 }, colors: ['#fbbf24'] });
                 }
             }
