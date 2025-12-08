@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MinhducKale - Cloud Sync v10.13 (Stable)</title>
+    <title>MinhducKale - Cloud Sync v11.2 (Ultimate)</title>
     
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#0f172a">
@@ -46,31 +46,32 @@
         /* CORE UI */
         body { transition: background-color 0.5s, color 0.5s; background-color: #e0f2fe; color: #1e293b; -webkit-tap-highlight-color: transparent; }
         .dark body { background-color: #0f172a; color: #f1f5f9; }
+        
         .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.8; z-index: -1; animation: blob 15s infinite alternate; pointer-events: none; }
         .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #93c5fd; }
         .blob-2 { bottom: -10%; right: -10%; width: 500px; height: 500px; background: #6ee7b7; }
         .blob-3 { top: 40%; left: 40%; width: 400px; height: 400px; background: #c4b5fd; }
         .dark .blob-1 { background: #1e40af; opacity: 0.3; } .dark .blob-2 { background: #065f46; opacity: 0.3; } .dark .blob-3 { background: #5b21b6; opacity: 0.3; }
-        
-        .glass-panel { background: rgba(255, 255, 255, 0.65); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.7); box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); }
-        .dark .glass-panel { background: rgba(15, 23, 42, 0.75); border: 1px solid rgba(255, 255, 255, 0.1); }
-        .glass-card { background: rgba(255, 255, 255, 0.75); backdrop-filter: blur(15px); border: 1px solid rgba(255, 255, 255, 0.6); transition: all 0.2s ease; will-change: transform; }
-        .dark .glass-card { background: rgba(30, 41, 59, 0.8); border: 1px solid rgba(255, 255, 255, 0.05); }
+
+        .glass-panel { background: rgba(255,255,255,0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.7); box-shadow: 0 8px 32px rgba(31,38,135,0.1); }
+        .dark .glass-panel { background: rgba(15,23,42,0.8); border: 1px solid rgba(255,255,255,0.1); }
+        .glass-card { background: rgba(255,255,255,0.8); backdrop-filter: blur(12px); border: 1px solid rgba(255,255,255,0.6); transition: all 0.2s ease; will-change: transform; }
+        .dark .glass-card { background: rgba(30,41,59,0.85); border: 1px solid rgba(255,255,255,0.05); }
         .glass-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        
-        .ios-input { background: rgba(255, 255, 255, 0.8); border: 1px solid rgba(203, 213, 225, 0.8); color: #0f172a; font-weight: 600; transition: all 0.2s; }
-        .dark .ios-input { background: rgba(0, 0, 0, 0.5); border-color: rgba(255,255,255,0.2); color: white; }
-        .ios-input:focus { outline: none; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.3); border-color: #3b82f6; }
-        
+
+        .ios-input { background: rgba(255, 255, 255, 0.8); border: 1px solid #cbd5e1; color: #0f172a; font-weight: 600; transition: 0.2s; }
+        .dark .ios-input { background: rgba(0,0,0,0.5); border-color: #475569; color: white; }
+        .ios-input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,0.3); }
+
         .segmented-control { background: rgba(200, 200, 200, 0.4); backdrop-filter: blur(10px); padding: 4px; border-radius: 12px; display: inline-flex; }
         .dark .segmented-control { background: rgba(0,0,0,0.4); }
-        .segment-btn { padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: all 0.2s ease; color: #475569; white-space: nowrap; }
+        .segment-btn { padding: 6px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; transition: 0.2s; color: #64748b; white-space: nowrap; }
         .segment-btn.active { background: white; color: #0f172a; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
         .dark .segment-btn { color: #94a3b8; } .dark .segment-btn.active { background: #334155; color: white; }
-        
+
         .tool-content { max-height: 0; overflow: hidden; transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1); will-change: max-height; }
         .tool-content.open { max-height: 800px; }
-        
+
         /* JUICY ELEMENTS */
         .music-waves { display: flex; align-items: flex-end; justify-content: center; height: 30px; gap: 3px; display: none; margin: 10px 0; }
         .music-waves.playing { display: flex; }
@@ -78,34 +79,34 @@
         .dark .bar { background: #60a5fa; }
         @keyframes wave { 0%, 100% { height: 10%; } 50% { height: 100%; } }
         .bar:nth-child(1) { animation-duration: 0.6s; } .bar:nth-child(2) { animation-duration: 0.8s; } .bar:nth-child(3) { animation-duration: 0.5s; } .bar:nth-child(4) { animation-duration: 0.7s; } .bar:nth-child(5) { animation-duration: 0.9s; }
-        
-        .file-upload-box { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: all 0.2s; position: relative; }
-        .dark .file-upload-box { border-color: #475569; background: rgba(255,255,255,0.05); }
+
+        .file-upload-box { border: 2px dashed #cbd5e1; border-radius: 12px; padding: 20px; text-align: center; cursor: pointer; transition: 0.2s; position: relative; }
         .file-upload-box:hover { border-color: #3b82f6; background: rgba(59, 130, 246, 0.05); }
-        .upload-progress { height: 4px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 10px; display: none; }
+        .dark .file-upload-box { border-color: #475569; background: rgba(255,255,255,0.05); }
+        .upload-progress { height: 6px; background: #e2e8f0; border-radius: 4px; overflow: hidden; margin-top: 10px; display: none; }
         .upload-bar { height: 100%; background: #3b82f6; width: 0%; transition: width 0.3s; }
         .upload-bar.animate { animation: progress 1.5s ease-in-out infinite; }
         @keyframes progress { 0% { width: 0%; } 100% { width: 100%; } }
-        
+
         .loader { border: 3px solid #f3f3f3; border-top: 3px solid #3b82f6; border-radius: 50%; width: 24px; height: 24px; animation: spin 1s linear infinite; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        
+
         #toast-container { position: fixed; bottom: 20px; right: 20px; z-index: 100; display: flex; flex-direction: column; gap: 10px; pointer-events: none; }
         .toast { min-width: 280px; padding: 16px; border-radius: 12px; background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); display: flex; align-items: center; justify-content: space-between; animation: slideIn 0.3s ease-out forwards; border-left: 4px solid #3b82f6; pointer-events: auto; }
         .toast.error { border-left-color: #ef4444; } .toast.success { border-left-color: #22c55e; }
         .dark .toast { background: rgba(30, 41, 59, 0.95); color: white; border: 1px solid rgba(255,255,255,0.1); }
-        
+
         .music-tab { font-size: 10px; font-weight: bold; text-transform: uppercase; padding: 4px 12px; border-radius: 20px; cursor: pointer; opacity: 0.6; transition: all 0.3s; }
         .music-tab.active { background: rgba(59, 130, 246, 0.2); color: #3b82f6; opacity: 1; }
         .dark .music-tab.active { background: rgba(255, 255, 255, 0.1); color: #fff; }
         .ambience-btn { transition: all 0.3s; opacity: 0.6; filter: grayscale(100%); }
         .ambience-btn.active { opacity: 1; filter: grayscale(0%); transform: scale(1.1); background-color: rgba(255,255,255,0.2); border-radius: 12px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        
+
         input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
         input[type=range]::-webkit-slider-track { width: 100%; height: 6px; background: rgba(0,0,0,0.1); border-radius: 10px; }
         .dark input[type=range]::-webkit-slider-track { background: rgba(255,255,255,0.1); }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #3b82f6; cursor: pointer; margin-top: -5px; box-shadow: 0 2px 5px rgba(0,0,0,0.3); transition: transform 0.1s; }
-        
+
         .cursor-wait { cursor: wait; }
     </style>
 </head>
@@ -141,7 +142,7 @@
 
                 <div class="text-center md:text-left">
                     <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
-                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.13</p>
+                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v11.2</p>
                 </div>
             </div>
             
@@ -384,7 +385,7 @@
                     <div class="file-upload-box mt-1" onclick="document.getElementById('fileInput').click()">
                         <i class="fa-solid fa-cloud-arrow-up text-3xl text-blue-500 mb-2"></i>
                         <p id="fileNameDisplay" class="text-sm font-bold text-slate-600 dark:text-slate-300">Nhấn để chọn file</p>
-                        <p class="text-[10px] text-slate-400">Tự động lưu vào Drive chung (Max 5MB)</p>
+                        <p class="text-[10px] text-slate-400">Tự động lưu vào Drive chung (Max 10MB)</p>
                         <input type="file" id="fileInput" class="hidden" onchange="app.ui.handleFileSelect(this)">
                     </div>
                     <div id="uploadProgress" class="upload-progress"><div class="upload-bar animate"></div></div>
@@ -426,8 +427,8 @@
         import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
         import { getDatabase, ref, set, push, onValue, off, remove, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // --- UPDATED SCRIPT URL ---
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwccngEduA7stIwsTR3zz9LlTHFQ99Gig4m-_oPyOk7ZMXrOGyFTyuPqY_xuYvTcoRxhQ/exec"; 
+        // --- UPDATED SCRIPT URL (AUTO-FIXED to /exec) ---
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyHrMTG4XxlI3ckrCK7_bTQSG-76DvGBUq6ePh_zuy9/exec"; 
 
         const CONFIG = {
             firebase: {
@@ -500,9 +501,7 @@
                     let result = 'khac';
                     if (data.candidates && data.candidates[0].content && data.candidates[0].content.parts[0].text) {
                         const rawText = data.candidates[0].content.parts[0].text.trim().toLowerCase();
-                        // Clean up markdown code blocks if any
                         const cleanText = rawText.replace(/```json/g, '').replace(/```/g, '').replace(/[^a-z0-9_]/g, '');
-                        // Match with known keys
                         for (const key in CONFIG.folders) {
                             if (cleanText.includes(key)) {
                                 result = key;
@@ -633,152 +632,142 @@
 
             // --- UI RENDER ---
             renderDocs() { const listEl = document.getElementById('docsList'); const term = document.getElementById('searchInput').value.toLowerCase(); const allDocs = [...this.dataStore.publicDocs, ...this.dataStore.privateDocs]; if (!term && !this.currentFolder) { document.getElementById('breadcrumb').classList.add('hidden'); let html = ''; Object.entries(CONFIG.folders).forEach(([key, f]) => { const count = allDocs.filter(d => d.folder === key).length; html += ` <div onclick="app.currentFolder='${key}'; app.renderDocs()" class="glass-card p-5 rounded-3xl flex items-center gap-5 cursor-pointer hover:bg-white/90 dark:hover:bg-slate-700/80 transition group border-l-4 border-transparent hover:border-blue-500"> <div class="w-16 h-16 rounded-2xl bg-white dark:bg-slate-800 flex items-center justify-center text-3xl ${f.color} shadow-md group-hover:scale-110 transition"><i class="fa-solid ${f.icon}"></i></div> <div class="flex-1"><h3 class="font-extrabold text-slate-900 dark:text-white text-lg group-hover:text-blue-600 transition">${f.name}</h3><p class="text-xs font-bold text-slate-500 dark:text-slate-400 mt-1">${count} file</p></div> <i class="fa-solid fa-chevron-right text-slate-300 font-bold group-hover:text-blue-500 transition"></i> </div>`; }); listEl.innerHTML = html; return; } document.getElementById('breadcrumb').classList.remove('hidden'); document.getElementById('currentFolderTitle').innerText = this.currentFolder ? CONFIG.folders[this.currentFolder].name : "Kết quả tìm kiếm"; let filtered = allDocs; if (this.currentFolder) filtered = filtered.filter(d => d.folder === this.currentFolder); if (term) filtered = filtered.filter(d => (d.title || '').toLowerCase().includes(term)); if (filtered.length === 0) { listEl.innerHTML = `<div class="col-span-2 text-center py-20 opacity-60 dark:text-white font-bold">Không tìm thấy tài liệu</div>`; return; } const frag = document.createDocumentFragment(); filtered.forEach(doc => { const isPub = doc.source === 'public'; const div = document.createElement('div'); div.className = "glass-card p-4 rounded-2xl flex items-center gap-4 hover:border-blue-400 border border-white/50 transition shadow-sm group relative pr-10 animate-slideIn"; div.innerHTML = ` <div class="w-10 h-10 rounded-full ${isPub?'text-orange-500 bg-orange-50':'text-blue-500 bg-blue-50'} flex items-center justify-center flex-shrink-0"><i class="fa-solid ${isPub?'fa-book-open':'fa-file-lines'} text-lg"></i></div> <div class="flex-1 min-w-0"> <div class="flex items-center"><h4 class="font-bold text-slate-800 dark:text-slate-100 truncate text-base">${Utils.escapeHTML(doc.title)}</h4>${isPub?'<span class="text-[9px] bg-orange-100 text-orange-600 px-1.5 py-0.5 rounded ml-2 font-bold uppercase">Public</span>':''}</div> <a href="${Utils.escapeHTML(doc.url)}" target="_blank" onclick="app.logAction('Mở: ${Utils.escapeHTML(doc.title).replace(/'/g,"")}')" class="text-xs font-bold text-blue-600 hover:underline uppercase tracking-wide">Mở tài liệu</a> </div> ${(!isPub || (isPub && this.isAdmin)) ? `<button onclick="app.data.deleteDoc('${doc.id}', ${isPub})" class="absolute right-3 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-red-100 hover:bg-red-500 hover:text-white text-red-500 flex items-center justify-center transition opacity-0 group-hover:opacity-100 shadow-sm"><i class="fa-solid fa-trash-can text-sm"></i></button>` : ''} `; frag.appendChild(div); }); listEl.innerHTML = ''; listEl.appendChild(frag); }
-            renderMeds() { const container = document.getElementById('medsList'); const term = document.getElementById('searchMedsInput').value.toLowerCase(); let list = this.dataStore.meds; if (term) { list = list.filter(m => (m.name?.toLowerCase().includes(term)) || (m.brand?.toLowerCase().includes(term)) || (m.ing?.toLowerCase().includes(term)) || (m.group?.toLowerCase().includes(term)) ); } if (list.length === 0) { container.innerHTML = '<p class="text-center text-slate-500 mt-4">Không tìm thấy thuốc phù hợp.</p>'; return; } const displayList = term ? list : list.slice(0, 50); const frag = document.createDocumentFragment(); displayList.forEach(m => { const div = document.createElement('div'); div.className = "glass-card p-4 rounded-2xl flex flex-col gap-2 border border-white/50 shadow-sm hover:border-pink-400 transition relative group animate-slideIn"; div.innerHTML = ` <div class="flex justify-between items-start"> <div> <h4 class="font-bold text-slate-900 dark:text-white text-lg">${Utils.escapeHTML(m.name)} <span class="text-xs text-slate-500 font-normal">(${Utils.escapeHTML(m.brand || "")})</span></h4> <p class="text-xs font-bold text-pink-600 bg-pink-100 px-2 py-0.5 rounded-full w-fit mt-1">${Utils.escapeHTML(m.group || "Khác")}</p> </div> ${this.isAdmin ? `<button onclick="if(confirm('Xóa thuốc này?')) app.admin.deleteMed('${m.id}')" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>` : ''} </div> <div class="text-sm text-slate-700 dark:text-slate-300 mt-2 space-y-1"> <p><i class="fa-solid fa-flask text-purple-500 mr-1 w-4"></i> <b>Hàm lượng:</b> ${Utils.escapeHTML(m.strength || m.ing || "-")}</p> <p><i class="fa-solid fa-gears text-blue-500 mr-1 w-4"></i> <b>Cơ chế/CĐ:</b> ${Utils.escapeHTML(m.mechanism || m.usage || "-")}</p> <p><i class="fa-solid fa-prescription-bottle-medical text-green-500 mr-1 w-4"></i> <b>Liều dùng:</b> ${Utils.escapeHTML(m.dosage || "-")}</p> <p><i class="fa-solid fa-route text-orange-500 mr-1 w-4"></i> <b>Đường dùng:</b> ${Utils.escapeHTML(m.route || "-")}</p> </div> `; frag.appendChild(div); }); container.innerHTML = ''; container.appendChild(frag); if (!term && list.length > 50) { container.innerHTML += `<div class="text-center text-xs text-slate-400 py-2">Hiển thị 50/${list.length} thuốc. Hãy tìm kiếm để thấy chi tiết.</div>`; } }
+            renderMeds() { const container = document.getElementById('medsList'); const term = document.getElementById('searchMedsInput').value.toLowerCase(); let list = this.dataStore.meds; if (term) { list = list.filter(m => (m.name?.toLowerCase().includes(term)) || (m.brand?.toLowerCase().includes(term)) || (m.ing?.toLowerCase().includes(term)) || (m.group?.toLowerCase().includes(term)) ); } if (list.length === 0) { container.innerHTML = '<p class="text-center text-slate-500 mt-4">Không tìm thấy thuốc phù hợp.</p>'; return; } const displayList = term ? list : list.slice(0, 50); const frag = document.createDocumentFragment(); displayList.forEach(m => { const div = document.createElement('div'); div.className = "glass-card p-4 rounded-2xl flex flex-col gap-2 border border-white/50 shadow-sm hover:border-pink-400 transition relative group animate-slideIn"; div.innerHTML = ` <div class="flex justify-between items-start"> <div> <h4 class="font-bold text-slate-900 dark:text-white text-lg">${Utils.escapeHTML(m.name)} <span class="text-xs text-slate-500 font-normal">(${Utils.escapeHTML(m.brand || "")})</span></h4> <p class="text-xs font-bold text-pink-600 bg-pink-100 px-2 py-0.5 rounded-full w-fit mt-1">${Utils.escapeHTML(m.group || "Khác")}</p> </div> ${this.isAdmin ? `<button onclick="if(confirm('Xóa thuốc này?')) app.admin.deleteMed('${m.id}')" class="text-slate-400 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>` : ''} </div> <div class="text-sm text-slate-700 dark:text-slate-300 mt-2 space-y-1"> <p><i class="fa-solid fa-flask text-purple-500 mr-1 w-4"></i> <b>Hàm lượng:</b> ${Utils.escapeHTML(m.strength || m.ing || "-")}</p> <p><i class="fa-solid fa-gears text-blue-500 mr-1 w-4"></i> <b>Cơ chế/CĐ:</b> ${Utils.escapeHTML(m.mechanism || m.usage || "-")}</p> <p><i class="fa-solid fa-prescription-bottle-medical text-green-500 mr-1 w-4"></i> <b>Liều dùng:</b> ${Utils.escapeHTML(m.dosage || "-")}</p> <p><i class="fa-solid fa-route text-orange-500 mr-1 w-4"></i> <b>Đường dùng:</b> ${Utils.escapeHTML(m.route || "-")}</p> </div> `; frag.appendChild(div); }); container.innerHTML = ''; container.appendChild(frag); if (!term && list.length > 50) { container.innerHTML += `<div class="text-center text-xs text-slate-400 py-2">Hiển thị 50/${list.length} thuốc. Hãy tìm kiếm để thấy chi tiết.</div>`; } }
 
-            // --- ACTIONS ---
-            toggleUploadMode(mode) {
-                this.uploadMode = mode;
-                const tabLink = document.getElementById('tabLink');
-                const tabUpload = document.getElementById('tabUpload');
-                const viewLink = document.getElementById('modeLink');
-                const viewUpload = document.getElementById('modeUpload');
-                
-                if (mode === 'link') {
-                    tabLink.className = "flex-1 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-600 shadow-sm transition";
-                    tabUpload.className = "flex-1 py-1.5 rounded-lg text-xs font-bold text-slate-500 transition";
-                    viewLink.classList.remove('hidden');
-                    viewUpload.classList.add('hidden');
-                } else {
-                    tabUpload.className = "flex-1 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-600 shadow-sm transition";
-                    tabLink.className = "flex-1 py-1.5 rounded-lg text-xs font-bold text-slate-500 transition";
-                    viewLink.classList.add('hidden');
-                    viewUpload.classList.remove('hidden');
-                }
-            }
+            // --- ACTIONS ---
+            toggleUploadMode(mode) {
+                this.uploadMode = mode;
+                const tabLink = document.getElementById('tabLink');
+                const tabUpload = document.getElementById('tabUpload');
+                const viewLink = document.getElementById('modeLink');
+                const viewUpload = document.getElementById('modeUpload');
+                
+                if (mode === 'link') {
+                    tabLink.className = "flex-1 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-600 shadow-sm transition";
+                    tabUpload.className = "flex-1 py-1.5 rounded-lg text-xs font-bold text-slate-500 transition";
+                    viewLink.classList.remove('hidden');
+                    viewUpload.classList.add('hidden');
+                } else {
+                    tabUpload.className = "flex-1 py-1.5 rounded-lg text-xs font-bold bg-white dark:bg-slate-600 shadow-sm transition";
+                    tabLink.className = "flex-1 py-1.5 rounded-lg text-xs font-bold text-slate-500 transition";
+                    viewLink.classList.add('hidden');
+                    viewUpload.classList.remove('hidden');
+                }
+            }
 
-            handleFileSelect(el) {
-                const file = el.files[0];
-                const display = document.getElementById('fileNameDisplay');
-                if (file) {
-                    display.innerText = file.name;
-                    display.className = "text-sm font-bold text-blue-600";
-                    if(document.getElementById('newDocTitle').value === '') {
-                        document.getElementById('newDocTitle').value = file.name.split('.')[0];
-                    }
-                }
-            }
+            handleFileSelect(el) {
+                const file = el.files[0];
+                const display = document.getElementById('fileNameDisplay');
+                if (file) {
+                    display.innerText = file.name;
+                    display.className = "text-sm font-bold text-blue-600";
+                    if(document.getElementById('newDocTitle').value === '') {
+                        document.getElementById('newDocTitle').value = file.name.split('.')[0];
+                    }
+                }
+            }
 
-            async saveDoc() {
-                const title = document.getElementById('newDocTitle').value;
-                const folder = document.getElementById('newDocFolder').value;
-                const isPub = document.getElementById('isPublicDoc').checked;
-                let url = "";
+            async saveDoc() {
+                const title = document.getElementById('newDocTitle').value;
+                const folder = document.getElementById('newDocFolder').value;
+                const isPub = document.getElementById('isPublicDoc').checked;
+                let url = "";
 
-                if (!title) { sfx.error(); return Utils.showToast("Thiếu tên tài liệu!", "error"); }
+                if (!title) { sfx.error(); return Utils.showToast("Thiếu tên tài liệu!", "error"); }
 
-                const btn = document.getElementById('saveBtn');
-                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
-                btn.disabled = true;
+                const btn = document.getElementById('saveBtn');
+                btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý...';
+                btn.disabled = true;
 
-                try {
-                    // HANDLE UPLOAD (XHR PRO)
-                    if (this.uploadMode === 'upload') {
-                         const fileInput = document.getElementById('fileInput');
-                         if (fileInput.files.length === 0) throw new Error("Chưa chọn file!");
-                         
-                         const file = fileInput.files[0];
-                         if (file.size > 5 * 1024 * 1024) throw new Error("File quá lớn (>5MB)!");
+                try {
+                    // HANDLE UPLOAD (XHR PRO)
+                    if (this.uploadMode === 'upload') {
+                         const fileInput = document.getElementById('fileInput');
+                         if (fileInput.files.length === 0) throw new Error("Chưa chọn file!");
+                         
+                         const file = fileInput.files[0];
+                         if (file.size > 50 * 1024 * 1024) throw new Error("File quá lớn (>50MB)!");
 
-                         // UI Progress
-                         const progressContainer = document.getElementById('uploadProgress');
-                         const progressBar = document.querySelector('.upload-bar');
-                         progressContainer.style.display = 'block';
-                         
-                         // Fake progress simulation because GAS prevents real progress events
-                         let p = 0;
-                         const interval = setInterval(() => {
-                             p += 5; if(p > 90) p = 90;
-                             progressBar.style.width = p + '%';
-                         }, 500);
+                         // UI Progress
+                         document.getElementById('uploadProgress').style.display = 'block';
+                         document.querySelector('.upload-bar').style.width = '100%';
 
-                         // Convert to Base64
-                         const base64 = await new Promise((resolve, reject) => {
-                             const reader = new FileReader();
-                             reader.readAsDataURL(file);
-                             reader.onload = () => resolve(reader.result.split(',')[1]);
-                             reader.onerror = error => reject(error);
-                         });
+                         // Convert to Base64
+                         const base64 = await new Promise((resolve, reject) => {
+                             const reader = new FileReader();
+                             reader.readAsDataURL(file);
+                             reader.onload = () => resolve(reader.result.split(',')[1]);
+                             reader.onerror = error => reject(error);
+                         });
 
-                         // Send to Apps Script with Timeout handling
-                         const controller = new AbortController();
-                         const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s Timeout
+                         // Send to Apps Script with Timeout handling
+                         const controller = new AbortController();
+                         const timeoutId = setTimeout(() => controller.abort(), 60000); // 60s Timeout
 
-                         const response = await fetch(GOOGLE_SCRIPT_URL, {
-                             method: 'POST',
-                             body: JSON.stringify({ base64: base64, mimeType: file.type, filename: file.name }),
-                             signal: controller.signal
-                         });
-                         clearTimeout(timeoutId);
-                         clearInterval(interval);
-                         progressBar.style.width = '100%';
-                         
-                         const result = await response.json();
-                         if(result.status !== 'success') throw new Error("Lỗi Upload: " + result.message);
-                         
-                         url = result.url; // Get Drive Link
+                         const response = await fetch(GOOGLE_SCRIPT_URL, {
+                             method: 'POST',
+                             body: JSON.stringify({ base64: base64, mimeType: file.type, filename: file.name }),
+                             signal: controller.signal
+                         });
+                         clearTimeout(timeoutId);
+                         
+                         const result = await response.json();
+                         if(result.status !== 'success') throw new Error("Lỗi Upload: " + result.message);
+                         
+                         url = result.url; // Get Drive Link
 
-                    } else {
-                         url = document.getElementById('newDocLink').value;
-                         if(!url) throw new Error("Thiếu Link tài liệu!");
-                    }
+                    } else {
+                         url = document.getElementById('newDocLink').value;
+                         if(!url) throw new Error("Thiếu Link tài liệu!");
+                    }
 
-                    // SAVE TO FIREBASE
-                    const path = isPub ? 'library_public' : `users/${this.user.uid}/docs`;
-                    await push(ref(this.db, path), {
-                        title, folder, url,
-                        createdAt: Date.now(),
-                        addedBy: this.user.email
-                    });
+                    // SAVE TO FIREBASE
+                    const path = isPub ? 'library_public' : `users/${this.user.uid}/docs`;
+                    await push(ref(this.db, path), {
+                        title, folder, url,
+                        createdAt: Date.now(),
+                        addedBy: this.user.email
+                    });
 
-                    sfx.success();
-                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-                    Utils.showToast("✅ Đã lưu thành công!", "success");
-                    this.ui.closeModal('addDocModal');
-                    
-                    // Reset Form
-                    document.getElementById('newDocTitle').value = '';
-                    document.getElementById('newDocLink').value = '';
-                    document.getElementById('fileInput').value = '';
-                    document.getElementById('fileNameDisplay').innerText = "Nhấn để chọn file";
-                    document.getElementById('uploadProgress').style.display = 'none';
+                    sfx.success();
+                    confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
+                    Utils.showToast("✅ Đã lưu thành công!", "success");
+                    this.ui.closeModal('addDocModal');
+                    
+                    // Reset Form
+                    document.getElementById('newDocTitle').value = '';
+                    document.getElementById('newDocLink').value = '';
+                    document.getElementById('fileInput').value = '';
+                    document.getElementById('fileNameDisplay').innerText = "Nhấn để chọn file";
+                    document.getElementById('uploadProgress').style.display = 'none';
 
-                } catch (e) {
-                    sfx.error();
-                    Utils.showToast(e.message, "error");
-                } finally {
-                    btn.innerHTML = 'Lưu ngay';
-                    btn.disabled = false;
-                }
-            }
+                } catch (e) {
+                    sfx.error();
+                    Utils.showToast(e.message, "error");
+                } finally {
+                    btn.innerHTML = 'Lưu ngay';
+                    btn.disabled = false;
+                }
+            }
 
-            deleteDoc(id, isPub) { if(!confirm("Bạn chắc chắn muốn xóa?")) return; const path = isPub ? `library_public/${id}` : `users/${this.user.uid}/docs/${id}`; remove(ref(this.db, path)).then(() => Utils.showToast("Đã xóa!", "success")); }
-            saveNote() { const val = document.getElementById('quickNote').value; if(this.user) { set(ref(this.db, `users/${this.user.uid}/note`), val); const status = document.getElementById('saveStatus'); status.style.opacity = '1'; setTimeout(() => status.style.opacity = '0', 2000); if(val.length > 10) confetti({ particleCount: 30, spread: 50, origin: { y: 0.8 }, colors: ['#fbbf24'] }); } }
-            logAction(text) { if(!this.user) return; push(ref(this.db, `users/${this.user.uid}/logs`), { text, time: Utils.formatDate() }); }
-            
-            // --- ADMIN ---
-            claimAdmin() { if (!this.user) return Utils.showToast("Cần đăng nhập!", "error"); const code = prompt("Nhập mã kích hoạt:"); if (!code) return; get(ref(this.db, 'admin_settings/code')).then(snap => { const trueCode = snap.val() || "123456"; if (code === trueCode) { set(ref(this.db, `users/${this.user.uid}/role`), "admin").then(() => { alert("Kích hoạt Admin thành công! Trang sẽ tải lại."); location.reload(); }); } else { Utils.showToast("Sai mã!", "error"); } }); }
-            changeAdminCode() { const n = document.getElementById('newAdminCode').value; if(n.length < 4) return alert("Mã quá ngắn!"); set(ref(this.db, 'admin_settings/code'), n).then(() => { Utils.showToast("Đã đổi mã!", "success"); document.getElementById('newAdminCode').value = ''; }); }
-            scrollToAdmin() { this.handleTabSwitch('tools', document.querySelectorAll('.segment-btn')[2]); const el = document.getElementById('tool-admin'); el.classList.add('open'); el.scrollIntoView({ behavior: 'smooth' }); }
-            loadAdminData() { try { onValue(ref(this.db, "users"), snap => { const box = document.getElementById("adminUsersBox"); box.innerHTML = ""; snap.forEach(u => { const val = u.val(); const role = val.role || "user"; const id = u.key.substring(0,6); box.innerHTML += `<div class="flex justify-between items-center py-1 border-b border-white/10 last:border-0"><span class="truncate w-40">${val.note ? "User (Có note)" : "User "+id}</span> <span class="${role==='admin'?'text-red-500 font-bold':'text-green-500'} text-xs uppercase">${role}</span></div>`; }); }); } catch(e) {} }
-            seedMedsData() { if(!confirm("⚠️ Nạp dữ liệu mẫu sẽ thêm vào DB hiện tại. Tiếp tục?")) return; const sample = [ { "name": "Paracetamol", "brand": "Panadol", "group": "Giảm đau", "strength": "500mg", "dosage": "1v mỗi 4-6h", "route": "Uống" }, { "name": "Ibuprofen", "brand": "Gofen", "group": "NSAIDs", "strength": "400mg", "dosage": "1v sau ăn", "route": "Uống" } ]; sample.forEach(m => push(ref(this.db, "library_meds"), {...m, addedBy: "System"})); Utils.showToast("Đã nạp thuốc mẫu demo!", "success"); }
-            deleteMed(id) { remove(ref(this.db, `library_meds/${id}`)).then(()=>Utils.showToast("Đã xóa thuốc", "success")); }
+            deleteDoc(id, isPub) { if(!confirm("Bạn chắc chắn muốn xóa?")) return; const path = isPub ? `library_public/${id}` : `users/${this.user.uid}/docs/${id}`; remove(ref(this.db, path)).then(() => Utils.showToast("Đã xóa!", "success")); }
+            saveNote() { const val = document.getElementById('quickNote').value; if(this.user) { set(ref(this.db, `users/${this.user.uid}/note`), val); const status = document.getElementById('saveStatus'); status.style.opacity = '1'; setTimeout(() => status.style.opacity = '0', 2000); if(val.length > 10) confetti({ particleCount: 30, spread: 50, origin: { y: 0.8 }, colors: ['#fbbf24'] }); } }
+            logAction(text) { if(!this.user) return; push(ref(this.db, `users/${this.user.uid}/logs`), { text, time: Utils.formatDate() }); }
+            
+            // --- ADMIN ---
+            claimAdmin() { if (!this.user) return Utils.showToast("Cần đăng nhập!", "error"); const code = prompt("Nhập mã kích hoạt:"); if (!code) return; get(ref(this.db, 'admin_settings/code')).then(snap => { const trueCode = snap.val() || "123456"; if (code === trueCode) { set(ref(this.db, `users/${this.user.uid}/role`), "admin").then(() => { alert("Kích hoạt Admin thành công! Trang sẽ tải lại."); location.reload(); }); } else { Utils.showToast("Sai mã!", "error"); } }); }
+            changeAdminCode() { const n = document.getElementById('newAdminCode').value; if(n.length < 4) return alert("Mã quá ngắn!"); set(ref(this.db, 'admin_settings/code'), n).then(() => { Utils.showToast("Đã đổi mã!", "success"); document.getElementById('newAdminCode').value = ''; }); }
+            scrollToAdmin() { this.handleTabSwitch('tools', document.querySelectorAll('.segment-btn')[2]); const el = document.getElementById('tool-admin'); el.classList.add('open'); el.scrollIntoView({ behavior: 'smooth' }); }
+            loadAdminData() { try { onValue(ref(this.db, "users"), snap => { const box = document.getElementById("adminUsersBox"); box.innerHTML = ""; snap.forEach(u => { const val = u.val(); const role = val.role || "user"; const id = u.key.substring(0,6); box.innerHTML += `<div class="flex justify-between items-center py-1 border-b border-white/10 last:border-0"><span class="truncate w-40">${val.note ? "User (Có note)" : "User "+id}</span> <span class="${role==='admin'?'text-red-500 font-bold':'text-green-500'} text-xs uppercase">${role}</span></div>`; }); }); } catch(e) {} }
+            seedMedsData() { if(!confirm("⚠️ Nạp dữ liệu mẫu sẽ thêm vào DB hiện tại. Tiếp tục?")) return; const sample = [ { "name": "Paracetamol", "brand": "Panadol", "group": "Giảm đau", "strength": "500mg", "dosage": "1v mỗi 4-6h", "route": "Uống" }, { "name": "Ibuprofen", "brand": "Gofen", "group": "NSAIDs", "strength": "400mg", "dosage": "1v sau ăn", "route": "Uống" } ]; sample.forEach(m => push(ref(this.db, "library_meds"), {...m, addedBy: "System"})); Utils.showToast("Đã nạp thuốc mẫu demo!", "success"); }
+            deleteMed(id) { remove(ref(this.db, `library_meds/${id}`)).then(()=>Utils.showToast("Đã xóa thuốc", "success")); }
 
-            handleTabSwitch(tab, el) { document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); ['docs', 'meds', 'tools'].forEach(t => document.getElementById(`view-${t}`).classList.add('hidden')); document.getElementById(`view-${tab}`).classList.remove('hidden'); }
-            toggleDarkMode() { document.documentElement.classList.toggle('dark'); localStorage.setItem('mdk_dark', document.documentElement.classList.contains('dark')); }
-        }
+            handleTabSwitch(tab, el) { document.querySelectorAll('.segment-btn').forEach(b => b.classList.remove('active')); el.classList.add('active'); ['docs', 'meds', 'tools'].forEach(t => document.getElementById(`view-${t}`).classList.add('hidden')); document.getElementById(`view-${tab}`).classList.remove('hidden'); }
+            toggleDarkMode() { document.documentElement.classList.toggle('dark'); localStorage.setItem('mdk_dark', document.documentElement.classList.contains('dark')); }
+        }
 
-        window.app = new App();
+        window.app = new App();
 
-    </script>
+    </script>
 </body>
 </html>
