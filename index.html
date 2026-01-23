@@ -79,31 +79,40 @@
         .tool-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
         .tool-content.open { max-height: 500px; transition: max-height 0.5s ease-in; }
         .open .tool-arrow { transform: rotate(180deg); }
+        
+        /* Exam Filter Button Specific */
+        .exam-filter.active { background-color: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border-color: #60a5fa; }
+        .dark .exam-filter.active { background-color: #334155; border-color: #60a5fa; }
     </style>
 </head>
 
-<body class="min-h-screen text-slate-800 dark:text-slate-200 selection:bg-blue-500 selection:text-white">
+<body class="min-h-screen-ios overflow-x-hidden selection:bg-blue-500 selection:text-white">
 
     <div class="bg-blob blob-1"></div>
     <div class="bg-blob blob-2"></div>
     <div class="bg-blob blob-3"></div>
 
-    <div class="container mx-auto px-4 py-6 max-w-7xl min-h-screen flex flex-col">
+    <div class="container mx-auto px-4 py-6 max-w-7xl min-h-screen-ios flex flex-col">
         
         <header class="glass-panel rounded-3xl px-6 py-4 mb-8 flex flex-col md:flex-row justify-between items-center z-20 sticky top-4 shadow-xl">
-            <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-start mb-4 md:mb-0">
-                <div id="authContainer" class="relative group z-30">
-                    <button id="loginBtn" onclick="app.auth.login()" class="w-12 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 flex items-center justify-center text-white shadow-lg transition transform hover:scale-105">
+            <div class="flex items-center gap-4 mb-4 md:mb-0 w-full md:w-auto justify-between md:justify-start">
+                <div id="authContainer" class="relative group">
+                    <button id="loginBtn" onclick="app.auth.login()" title="Đăng nhập Google" class="w-12 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 transition transform hover:scale-105">
                         <i class="fa-solid fa-right-to-bracket text-xl"></i>
                     </button>
-                    <div id="userProfile" class="hidden flex items-center gap-3 cursor-pointer select-none" onclick="document.getElementById('logoutPanel').classList.toggle('hidden')">
+                    <div id="userProfile" class="hidden flex items-center gap-3 cursor-pointer select-none" title="Quản lý tài khoản" onclick="document.getElementById('logoutPanel').classList.toggle('hidden')">
                         <img id="userAvatar" src="" class="w-12 h-12 rounded-2xl border-2 border-white shadow-md bg-slate-200 object-cover">
                         <div class="hidden md:block">
                             <p id="userName" class="text-sm font-bold text-slate-900 dark:text-white truncate max-w-[150px]">User</p>
                             <div id="roleBadge" class="px-3 py-1 rounded-full text-[10px] font-bold bg-gray-500 text-white w-fit shadow-sm">GUEST</div>
                         </div>
                     </div>
-                    <div id="logoutPanel" class="hidden absolute top-14 left-0 w-60 glass-card p-3 rounded-xl flex flex-col gap-2 shadow-2xl border border-white/50 animate-slideIn backdrop-blur-xl">
+                    
+                    <div id="logoutPanel" class="hidden absolute top-14 left-0 w-60 glass-card p-3 rounded-xl flex flex-col gap-2 z-50 shadow-2xl border border-white/50 animate-slideIn backdrop-blur-xl">
+                        <button onclick="app.auth.switchAccount()" class="w-full text-left px-3 py-2.5 text-slate-700 dark:text-white hover:bg-white/40 dark:hover:bg-white/10 rounded-lg text-sm font-bold flex items-center gap-3 transition">
+                            <i class="fa-solid fa-repeat text-blue-500 w-5"></i> Chuyển tài khoản
+                        </button>
+                        <div class="h-px bg-slate-300 dark:bg-slate-600 my-1"></div>
                         <button onclick="app.auth.logout()" class="w-full text-left px-3 py-2.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg text-sm font-bold flex items-center gap-3 transition">
                             <i class="fa-solid fa-power-off w-5"></i> Đăng xuất
                         </button>
@@ -111,142 +120,162 @@
                 </div>
 
                 <div class="text-center md:text-left">
-                    <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
+                    <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
                     <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.13</p>
                 </div>
             </div>
             
             <div class="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
                 <div class="segmented-control overflow-x-auto w-full md:w-auto flex justify-center no-scrollbar">
-                    <div class="segment-btn active" onclick="app.ui.switchTab('docs', this)"><i class="fa-solid fa-folder-open mr-1"></i>Tài liệu</div>
-                    <div class="segment-btn" onclick="app.ui.switchTab('meds', this)"><i class="fa-solid fa-pills mr-1"></i>Thuốc</div>
-                    <div class="segment-btn" onclick="app.ui.switchTab('tools', this)"><i class="fa-solid fa-kit-medical mr-1"></i>Công cụ</div>
-                    <div class="segment-btn" onclick="app.ui.switchTab('exam', this)"><i class="fa-solid fa-graduation-cap mr-1"></i>Ôn thi</div>
+                    <div class="segment-btn active" onclick="app.ui.switchTab('docs', this)" title="Kho tài liệu"><i class="fa-solid fa-folder-open mr-1"></i>Tài liệu</div>
+                    <div class="segment-btn" onclick="app.ui.switchTab('meds', this)" title="Tra cứu thuốc"><i class="fa-solid fa-pills mr-1"></i>Thuốc</div>
+                    <div class="segment-btn" onclick="app.ui.switchTab('tools', this)" title="Công cụ Y khoa"><i class="fa-solid fa-kit-medical mr-1"></i>Công cụ</div>
+                    <div class="segment-btn" onclick="app.ui.switchTab('exam', this)" title="Luyện thi Quốc gia"><i class="fa-solid fa-graduation-cap mr-1"></i>Ôn thi</div>
                 </div>
 
                 <div class="flex items-center gap-3 justify-end w-full md:w-auto mt-2 md:mt-0">
-                    <button id="notifyBtn" onclick="app.ui.toggleNotify()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 hover:scale-105 transition flex items-center justify-center relative"><i class="fa-solid fa-bell"></i></button>
+                    <button id="adminPanelBtn" onclick="app.admin.scrollToTools()" class="hidden w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-pink-600 text-white font-bold items-center justify-center hover:scale-105 transition shadow-lg"><i class="fa-solid fa-shield-halved"></i></button>
+                    <button id="notifyBtn" onclick="app.ui.toggleNotify()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 flex items-center justify-center hover:scale-105 transition text-slate-700 dark:text-white relative"><i class="fa-solid fa-bell"></i></button>
                     <div class="hidden lg:flex flex-col items-end mr-2 text-right">
-                        <span id="clock" class="text-lg font-mono font-bold">00:00</span>
+                        <span id="clock" class="text-lg font-mono font-bold text-slate-800 dark:text-slate-200">00:00</span>
                         <span id="date-display" class="text-[10px] font-bold uppercase text-slate-500">...</span>
                     </div>
-                    <button onclick="app.ui.toggleDarkMode()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white flex items-center justify-center transition text-slate-700 dark:text-yellow-400 shadow-sm"><i class="fa-solid fa-moon"></i></button>
+                    <button onclick="app.ui.toggleDarkMode()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white flex items-center justify-center transition text-slate-700 dark:text-yellow-400 shadow-sm"><i id="darkIcon" class="fa-solid fa-moon"></i></button>
                 </div>
             </div>
         </header>
 
         <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 pb-10">
-            
             <div class="lg:col-span-8 flex flex-col min-h-[500px]">
                 
                 <div id="view-docs" class="flex flex-col gap-6 fade-in">
                     <div class="flex gap-3 relative z-10">
                         <div class="relative flex-1 group">
-                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500"></i>
-                            <input id="searchInput" type="text" onkeyup="app.searchDocsDebounced()" class="w-full pl-12 pr-10 py-3.5 rounded-2xl ios-input text-lg shadow-sm" placeholder="Tìm tài liệu...">
-                            <button onclick="document.getElementById('searchInput').value=''; app.searchDocsDebounced()" class="absolute right-4 top-4 text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark"></i></button>
+                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-600 transition"></i>
+                            <input id="searchInput" type="text" onkeyup="app.searchDocsDebounced()" class="w-full pl-12 pr-10 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm tài liệu (Tiếng Việt thông minh)...">
+                            <button onclick="document.getElementById('searchInput').value=''; app.searchDocsDebounced()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
                         </div>
-                        <button id="addDocBtn" onclick="app.ui.openModal('addDocModal')" class="hidden w-14 rounded-2xl bg-blue-600 hover:bg-blue-700 text-white flex items-center justify-center shadow-lg transition"><i class="fa-solid fa-plus text-xl"></i></button>
+                        <button id="addDocBtn" onclick="app.ui.openModal('addDocModal')" title="Thêm tài liệu mới" class="hidden w-14 rounded-2xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-700 text-white flex items-center justify-center shadow-lg active:scale-95 transition"><i class="fa-solid fa-plus text-xl"></i></button>
                     </div>
                     
-                    <div id="breadcrumb" class="hidden flex items-center gap-2 text-sm font-bold bg-white/40 dark:bg-white/10 w-fit px-4 py-2 rounded-xl backdrop-blur-md">
-                        <button onclick="app.data.renderFolders()" class="hover:text-blue-500"><i class="fa-solid fa-house"></i> Home</button>
+                    <div id="breadcrumb" class="hidden flex items-center gap-2 text-sm font-extrabold text-slate-700 dark:text-slate-200 bg-white/40 dark:bg-white/10 w-fit px-4 py-2 rounded-xl backdrop-blur-md shadow-sm border border-white/20">
+                        <button onclick="app.data.renderFolders()" class="hover:text-blue-600"><i class="fa-solid fa-house"></i> Home</button>
                         <span class="text-slate-400">/</span>
-                        <span id="currentFolderTitle" class="text-blue-600 dark:text-blue-400">Folder</span>
+                        <span id="currentFolderTitle" class="text-blue-700 dark:text-blue-400">Folder</span>
                     </div>
                     
-                    <div id="loadingDocs" class="hidden text-center py-10"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-blue-500"></i><p class="mt-2 text-sm font-bold text-slate-500">Đang tải...</p></div>
+                    <div id="loadingDocs" class="hidden text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-slate-500 font-bold text-sm">Đang đồng bộ dữ liệu...</p></div>
                     <div id="docsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
                 </div>
 
                 <div id="view-meds" class="hidden flex-col gap-6 fade-in">
-                    <div class="relative flex-1 group z-10">
-                        <i class="fa-solid fa-pills absolute left-4 top-4 text-slate-500"></i>
-                        <input id="searchMedsInput" type="text" onkeyup="app.searchMedsDebounced()" class="w-full pl-12 pr-10 py-3.5 rounded-2xl ios-input text-lg shadow-sm" placeholder="Tra cứu thuốc (Tên, hoạt chất)...">
-                        <button onclick="document.getElementById('searchMedsInput').value=''; app.searchMedsDebounced()" class="absolute right-4 top-4 text-slate-400 hover:text-red-500"><i class="fa-solid fa-xmark"></i></button>
+                    <div class="flex gap-3 relative z-10">
+                        <div class="relative flex-1 group">
+                            <i class="fa-solid fa-pills absolute left-4 top-4 text-slate-500 group-focus-within:text-pink-600 transition"></i>
+                            <input id="searchMedsInput" type="text" onkeyup="app.searchMedsDebounced()" class="w-full pl-12 pr-10 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm thuốc (Gõ không dấu ok)...">
+                            <button onclick="document.getElementById('searchMedsInput').value=''; app.searchMedsDebounced()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
+                        </div>
                     </div>
-                    <div id="loadingMeds" class="hidden text-center py-10"><i class="fa-solid fa-circle-notch fa-spin text-2xl text-pink-500"></i><p class="mt-2 text-sm font-bold text-slate-500">Đang tải thuốc...</p></div>
+                    <div id="loadingMeds" class="hidden text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-slate-500 font-bold text-sm">Đang tải danh mục thuốc...</p></div>
                     <div id="medsList" class="grid grid-cols-1 gap-4"></div>
                 </div>
 
                 <div id="view-tools" class="hidden flex-col gap-6 fade-in">
+                    
                     <div id="adminToolsCard" class="hidden glass-card rounded-2xl overflow-hidden border-l-4 border-red-500 shadow-md">
                         <button onclick="app.ui.toggleTool('admin')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
-                            <span class="font-bold"><i class="fa-solid fa-user-shield text-red-600 mr-2"></i>Admin Tools</span>
+                            <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-user-shield text-red-600 mr-2"></i>Admin Tools</span>
                             <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
                         </button>
                         <div id="tool-admin" class="tool-content px-4">
                             <div class="py-4 space-y-4">
-                                <button onclick="app.admin.seedMeds()" class="w-full p-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold shadow-lg"><i class="fa-solid fa-database mr-2"></i> Nạp Dữ Liệu Thuốc Mẫu</button>
-                                <div class="grid grid-cols-2 gap-3">
-                                    <button onclick="app.admin.openImport('docs')" class="p-3 rounded-xl bg-blue-600 text-white font-bold"><i class="fa-solid fa-file-import"></i> Import Docs</button>
-                                    <button onclick="app.admin.openImport('meds')" class="p-3 rounded-xl bg-teal-600 text-white font-bold"><i class="fa-solid fa-capsules"></i> Import Meds</button>
+                                <div class="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+                                     <h4 class="font-bold text-blue-700 dark:text-blue-300 text-xs uppercase mb-2">Google Drive Auto-Sync</h4>
+                                     <div class="flex gap-2">
+                                         <input id="driveFolderId" type="text" placeholder="ID thư mục Drive gốc..." class="flex-1 ios-input p-2 rounded-lg text-xs">
+                                         <button onclick="app.admin.saveDriveConfig()" class="bg-blue-600 text-white px-3 rounded-lg text-xs font-bold hover:bg-blue-700 transition">Lưu</button>
+                                     </div>
+                                     <button onclick="app.admin.triggerSync()" class="w-full mt-2 py-2 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-lg text-xs font-bold shadow-md hover:scale-[1.02] transition"><i class="fa-solid fa-rotate mr-1"></i> Quét & Đồng bộ ngay</button>
                                 </div>
+                                <div class="grid grid-cols-1 gap-3">
+                                    <button onclick="app.admin.seedMeds()" class="p-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold hover:opacity-90 transition flex items-center justify-center gap-2 shadow-lg"><i class="fa-solid fa-database"></i> Nạp Dữ Liệu Mẫu (Demo)</button>
+                                    <div class="grid grid-cols-2 gap-3">
+                                        <button onclick="app.admin.openImport('docs')" class="p-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2"><i class="fa-solid fa-file-import"></i> Import Docs</button>
+                                        <button onclick="app.admin.openImport('meds')" class="p-3 rounded-xl bg-teal-600 text-white font-bold hover:bg-teal-700 transition flex items-center justify-center gap-2"><i class="fa-solid fa-capsules"></i> Import Meds</button>
+                                    </div>
+                                </div>
+                                <div class="h-px bg-slate-300 dark:bg-slate-600"></div>
                                 <div id="adminUsersBox" class="p-3 bg-black/5 dark:bg-black/30 rounded-xl text-sm max-h-40 overflow-y-auto border border-black/10 custom-scrollbar"></div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-indigo-500">
-                        <button onclick="app.ui.toggleTool('bmi')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
-                            <span class="font-bold flex items-center"><i class="fa-solid fa-weight-scale text-indigo-500 mr-2"></i>Tính BMI</span>
-                            <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
-                        </button>
-                        <div id="tool-bmi" class="tool-content px-4">
-                            <div class="py-4 space-y-3">
-                                <div class="flex gap-2"><input type="number" id="bmi-w" placeholder="Cân nặng (kg)" class="w-1/2 ios-input p-3 rounded-xl"><input type="number" id="bmi-h" placeholder="Chiều cao (cm)" class="w-1/2 ios-input p-3 rounded-xl"></div>
-                                <button onclick="app.tools.calcBMI()" class="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition">Tính Kết Quả</button>
-                                <div id="bmi-res" class="hidden text-center font-bold text-indigo-700 dark:text-indigo-300 mt-2 text-lg p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg"></div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                         <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-indigo-500">
+                            <button onclick="app.ui.toggleTool('bmi')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
+                                <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-weight-scale text-indigo-500 mr-2"></i>Tính BMI</span>
+                                <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
+                            </button>
+                            <div id="tool-bmi" class="tool-content px-4">
+                                <div class="py-4 space-y-3">
+                                    <div class="flex gap-2"><input type="number" id="bmi-w" placeholder="Cân nặng (kg)" class="w-1/2 ios-input p-2.5 rounded-xl"><input type="number" id="bmi-h" placeholder="Chiều cao (cm)" class="w-1/2 ios-input p-2.5 rounded-xl"></div>
+                                    <button onclick="app.tools.calcBMI()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition">Tính Kết Quả</button>
+                                    <div id="bmi-res" class="hidden text-center font-bold text-indigo-700 dark:text-indigo-300 mt-2 text-lg p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg select-all"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-
-                    <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-red-500">
-                         <button onclick="app.ui.toggleTool('map')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
-                            <span class="font-bold flex items-center"><i class="fa-solid fa-heart-pulse text-red-500 mr-2"></i>Huyết áp trung bình (MAP)</span>
-                            <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
-                        </button>
-                        <div id="tool-map" class="tool-content px-4">
-                            <div class="py-4 space-y-3">
-                                <div class="flex gap-2"><input type="number" id="map-sys" placeholder="Tâm thu (mmHg)" class="w-1/2 ios-input p-3 rounded-xl"><input type="number" id="map-dia" placeholder="Tâm trương (mmHg)" class="w-1/2 ios-input p-3 rounded-xl"></div>
-                                <button onclick="app.tools.calcMAP()" class="w-full py-3 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-md transition">Tính MAP</button>
-                                <div id="map-res" class="hidden text-center font-bold text-red-700 dark:text-red-300 mt-2 text-lg p-2 bg-red-50 dark:bg-red-900/20 rounded-lg"></div>
+                        
+                        <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-red-500">
+                             <button onclick="app.ui.toggleTool('map')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
+                                <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-heart-pulse text-red-500 mr-2"></i>Huyết áp (MAP)</span>
+                                <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
+                            </button>
+                            <div id="tool-map" class="tool-content px-4">
+                                <div class="py-4 space-y-3">
+                                    <div class="flex gap-2"><input type="number" id="map-sys" placeholder="Tâm thu (mmHg)" class="w-1/2 ios-input p-2.5 rounded-xl"><input type="number" id="map-dia" placeholder="Tâm trương (mmHg)" class="w-1/2 ios-input p-2.5 rounded-xl"></div>
+                                    <button onclick="app.tools.calcMAP()" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-md transition">Tính MAP</button>
+                                    <div id="map-res" class="hidden text-center font-bold text-red-700 dark:text-red-300 mt-2 text-lg p-2 bg-red-50 dark:bg-red-900/20 rounded-lg select-all"></div>
+                                </div>
                             </div>
                         </div>
-                    </div>
 
-                    <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-orange-500">
-                         <button onclick="app.ui.toggleTool('egfr')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
-                            <span class="font-bold flex items-center"><i class="fa-solid fa-kidneys text-orange-500 mr-2"></i>Độ lọc cầu thận (eGFR)</span>
-                            <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
-                        </button>
-                        <div id="tool-egfr" class="tool-content px-4">
-                            <div class="py-4 space-y-3 text-sm">
-                                <div class="flex gap-2">
-                                    <input type="number" id="egfr-age" placeholder="Tuổi" class="w-1/3 ios-input p-3 rounded-xl">
-                                    <input type="number" id="egfr-w" placeholder="Cân nặng (kg)" class="w-1/3 ios-input p-3 rounded-xl">
-                                    <select id="egfr-sex" class="w-1/3 ios-input p-3 rounded-xl dark:bg-slate-700"><option value="1">Nam</option><option value="0.85">Nữ</option></select>
+                         <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-orange-500 md:col-span-2">
+                             <button onclick="app.ui.toggleTool('egfr')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
+                                <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-kidneys text-orange-500 mr-2"></i>Độ lọc cầu thận (eGFR)</span>
+                                <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
+                            </button>
+                            <div id="tool-egfr" class="tool-content px-4">
+                                <div class="py-4 space-y-3 text-sm">
+                                    <div class="flex gap-2">
+                                        <input type="number" id="egfr-age" placeholder="Tuổi" class="w-1/3 ios-input p-2.5 rounded-xl">
+                                        <input type="number" id="egfr-w" placeholder="Cân nặng (kg)" class="w-1/3 ios-input p-2.5 rounded-xl">
+                                        <select id="egfr-sex" class="w-1/3 ios-input p-2.5 rounded-xl text-slate-700 dark:text-white dark:bg-slate-700"><option value="1">Nam</option><option value="0.85">Nữ</option></select>
+                                    </div>
+                                    <div class="relative">
+                                        <input type="number" id="egfr-cre" placeholder="Creatinine (mg/dL)" step="0.01" class="w-full ios-input p-2.5 rounded-xl pl-10">
+                                        <span class="absolute left-3 top-2.5 text-slate-400 font-bold">Cr</span>
+                                    </div>
+                                    <button onclick="app.tools.calcEGFR()" class="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl shadow-md transition">Phân độ Suy thận</button>
+                                    <div id="egfr-res" class="hidden text-center font-bold text-orange-700 dark:text-orange-300 mt-2 text-lg p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800 select-all"></div>
                                 </div>
-                                <div class="relative">
-                                    <input type="number" id="egfr-cre" placeholder="Creatinine (mg/dL)" step="0.01" class="w-full ios-input p-3 rounded-xl pl-10">
-                                    <span class="absolute left-3 top-3 text-slate-400 font-bold">Cr</span>
-                                </div>
-                                <button onclick="app.tools.calcEGFR()" class="w-full py-3 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl shadow-md transition">Phân độ Suy thận</button>
-                                <div id="egfr-res" class="hidden text-center font-bold text-orange-700 dark:text-orange-300 mt-2 text-lg p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800"></div>
                             </div>
                         </div>
                     </div>
                 </div>
 
                 <div id="view-exam" class="hidden flex-col gap-6 fade-in">
+                    
                     <div class="glass-card p-6 rounded-3xl relative overflow-hidden group">
                         <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-purple-500/30 to-blue-500/30 rounded-full blur-3xl -mr-16 -mt-16 animate-pulse-slow"></div>
+                        
                         <div class="relative z-10 flex flex-col md:flex-row justify-between items-end gap-4">
                             <div>
                                 <h2 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
                                     <i class="fa-solid fa-graduation-cap mr-2"></i>Lộ trình Đánh giá Năng lực
                                 </h2>
-                                <p class="text-slate-500 dark:text-slate-400 text-sm font-bold mt-1">Chuẩn đầu ra Bác sĩ Đa khoa (Y6 & CKI)</p>
+                                <p class="text-slate-500 dark:text-slate-400 text-sm font-bold mt-1">
+                                    128 Vấn đề Lâm sàng Thiết yếu (Y6 & CKI)
+                                </p>
                             </div>
                             <div class="text-right flex items-center gap-3 bg-white/40 dark:bg-black/20 px-4 py-2 rounded-xl backdrop-blur-md">
                                 <div class="text-right">
@@ -261,6 +290,7 @@
                                 </div>
                             </div>
                         </div>
+
                         <div class="mt-6 h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner relative">
                             <div id="examProgressBar" class="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-0 transition-all duration-1000 ease-out relative">
                                 <div class="absolute inset-0 bg-white/30 w-full h-full animate-pulse"></div>
@@ -274,6 +304,7 @@
                              <input type="text" id="examSearch" onkeyup="app.exam.render()" placeholder="Tìm vấn đề (VD: Sốt, Phù, 23.2...)" class="w-full pl-12 pr-4 py-3 rounded-2xl ios-input shadow-sm font-medium">
                              <button onclick="document.getElementById('examSearch').value=''; app.exam.render()" class="absolute right-4 top-3.5 text-slate-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark"></i></button>
                         </div>
+                        
                         <div class="flex gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar" id="examFilters">
                             <button onclick="app.exam.filter('all')" class="exam-filter active whitespace-nowrap px-4 py-3 rounded-xl bg-white/50 dark:bg-white/10 text-xs font-bold hover:bg-slate-800 hover:text-white transition shadow-sm border border-white/20">Tất cả</button>
                             <button onclick="app.exam.filter('Nhi')" class="exam-filter whitespace-nowrap px-4 py-3 rounded-xl bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 text-xs font-bold hover:bg-orange-500 hover:text-white transition border border-orange-200 dark:border-orange-800"><i class="fa-solid fa-baby mr-1"></i>Nhi khoa</button>
@@ -289,7 +320,6 @@
             </div>
 
             <div class="lg:col-span-4 flex flex-col gap-6">
-                
                 <div class="glass-panel p-5 rounded-3xl shadow-lg relative overflow-hidden group border border-blue-200 dark:border-blue-900/30">
                     <div id="playlistBtn" class="absolute top-2 right-2 cursor-pointer p-2 z-10" onclick="app.music.togglePlaylist()"><i class="fa-solid fa-list-ul text-slate-500 hover:text-blue-600 transition"></i></div>
                     <div class="flex items-center justify-between mb-2">
@@ -302,66 +332,69 @@
                     
                     <div id="music-view-local">
                         <div class="flex justify-center mb-4 relative mt-6">
-                             <div id="musicDisc" class="w-40 h-40 rounded-full bg-slate-900 border-4 border-slate-800 flex items-center justify-center overflow-hidden shadow-2xl transition-all duration-500"><img src="https://img.icons8.com/color/144/vinyl-music.png" class="w-full h-full opacity-90 object-cover"></div>
+                             <div id="musicDisc" class="w-40 h-40 rounded-full bg-slate-900 border-4 border-slate-800 flex items-center justify-center overflow-hidden shadow-2xl transition-all duration-500"><img id="musicCover" src="https://img.icons8.com/color/144/vinyl-music.png" class="w-full h-full opacity-90 object-cover"></div>
                              <div class="absolute inset-0 flex items-center justify-center"><div class="w-8 h-8 bg-white dark:bg-slate-300 rounded-full border-2 border-slate-400 z-10"></div></div>
                         </div>
                         <div class="text-center mb-4 px-2">
-                            <p id="musicTitle" class="text-base font-bold truncate">Select a track...</p>
+                            <p id="musicTitle" class="text-base font-bold text-slate-900 dark:text-white truncate">Select a track...</p>
                             <p id="musicArtist" class="text-xs text-slate-500 font-bold uppercase tracking-wide">Lofi Relax</p>
                         </div>
                         <div class="flex justify-center items-center gap-6 mb-5">
-                            <button onclick="app.music.prev()"><i class="fa-solid fa-backward-step text-xl"></i></button>
-                            <button onclick="app.music.toggle()" id="playBtnIcon" class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center hover:scale-110 active:scale-95 transition shadow-xl"><i class="fa-solid fa-play text-xl ml-1"></i></button>
-                            <button onclick="app.music.next()"><i class="fa-solid fa-forward-step text-xl"></i></button>
+                            <button onclick="app.music.prev()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white hover:bg-slate-200 transition"><i class="fa-solid fa-backward-step"></i></button>
+                            <button onclick="app.music.toggle()" id="playBtnIcon" class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center hover:scale-110 active:scale-95 transition shadow-xl shadow-blue-500/40"><i class="fa-solid fa-play text-xl ml-1"></i></button>
+                            <button onclick="app.music.next()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white hover:bg-slate-200 transition"><i class="fa-solid fa-forward-step"></i></button>
                         </div>
                         <div class="flex items-center gap-3 px-3 bg-white/40 dark:bg-black/20 rounded-xl p-2">
                             <i class="fa-solid fa-volume-low text-xs text-slate-500"></i>
-                            <input type="range" id="volSlider" min="0" max="1" step="0.05" value="0.8" oninput="app.music.setVolume(this.value)" class="w-full accent-blue-600">
+                            <input type="range" id="volSlider" min="0" max="1" step="0.05" value="0.8" oninput="app.music.setVolume(this.value)" class="w-full h-1 bg-slate-300 rounded-lg appearance-none cursor-pointer">
                         </div>
                         <div id="playlistView" class="hidden absolute inset-0 bg-white/95 dark:bg-slate-900/95 z-20 flex flex-col p-4 animate-slideIn">
-                            <div class="flex justify-between items-center mb-4"><h4 class="font-bold text-sm">Danh sách phát</h4><button onclick="app.music.togglePlaylist()"><i class="fa-solid fa-xmark"></i></button></div>
+                            <div class="flex justify-between items-center mb-4"><h4 class="font-bold text-slate-800 dark:text-white text-sm">Danh sách phát</h4><button onclick="app.music.togglePlaylist()"><i class="fa-solid fa-xmark text-lg hover:text-red-500"></i></button></div>
                             <div id="playlistItems" class="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar"></div>
                         </div>
                     </div>
                     
                     <div id="music-view-online" class="hidden mt-4 space-y-3">
                          <div class="flex gap-2 mb-1">
-                             <input type="text" id="youtubeInput" placeholder="Link hoặc Từ khóa..." class="w-full ios-input p-2 rounded-lg text-xs font-bold">
+                             <input type="text" id="youtubeInput" placeholder="Dán Link hoặc Tìm kiếm..." class="w-full ios-input p-2 rounded-lg text-xs font-bold">
                              <button onclick="app.music.playCustomVideo()" class="bg-red-600 hover:bg-red-700 text-white rounded-lg px-3 py-1 text-xs font-bold shadow-md"><i class="fa-solid fa-play"></i></button>
                           </div>
                         <div class="bg-black rounded-xl overflow-hidden shadow-lg border border-slate-700 relative pt-[56.25%]">
-                            <iframe id="radioFrame" class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/jfKfPfyJRdk" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                            <iframe id="radioFrame" class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/jfKfPfyJRdk" title="YouTube Radio" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" playsinline allowfullscreen></iframe>
                         </div>
+                        <p class="text-[10px] text-slate-400 italic text-center">Tự động tắt nhạc Mp3 khi bật Youtube.</p>
                     </div>
                     
                     <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
+                        <p class="text-[10px] font-bold uppercase text-slate-500 mb-2 tracking-wider">Âm thanh nền (Ambience) - OGG</p>
                         <div class="flex justify-between items-center px-1">
-                            <button onclick="app.music.toggleAmbience('rain', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16 hover:bg-white/20 rounded-lg"><i class="fa-solid fa-cloud-rain text-xl text-blue-500"></i><span class="text-[9px] font-bold">Mưa</span></button>
-                            <button onclick="app.music.toggleAmbience('fire', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16 hover:bg-white/20 rounded-lg"><i class="fa-solid fa-fire text-xl text-orange-500"></i><span class="text-[9px] font-bold">Lửa</span></button>
-                            <button onclick="app.music.toggleAmbience('forest', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16 hover:bg-white/20 rounded-lg"><i class="fa-solid fa-tree text-xl text-green-500"></i><span class="text-[9px] font-bold">Rừng</span></button>
-                            <button onclick="app.music.toggleAmbience('cafe', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16 hover:bg-white/20 rounded-lg"><i class="fa-solid fa-mug-hot text-xl text-yellow-700"></i><span class="text-[9px] font-bold">Cafe</span></button>
+                            <button onclick="app.music.toggleAmbience('rain', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng Mưa"><i class="fa-solid fa-cloud-rain text-xl text-blue-500"></i><span class="text-[9px] font-bold">Mưa</span></button>
+                            <button onclick="app.music.toggleAmbience('fire', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng Lửa trại"><i class="fa-solid fa-fire text-xl text-orange-500"></i><span class="text-[9px] font-bold">Lửa</span></button>
+                            <button onclick="app.music.toggleAmbience('forest', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng Rừng cây"><i class="fa-solid fa-tree text-xl text-green-500"></i><span class="text-[9px] font-bold">Rừng</span></button>
+                            <button onclick="app.music.toggleAmbience('cafe', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Quán Cafe"><i class="fa-solid fa-mug-hot text-xl text-brown-500 text-yellow-700"></i><span class="text-[9px] font-bold">Cafe</span></button>
                         </div>
                     </div>
+
                     <audio id="bgAudio" class="hidden"></audio>
                 </div>
 
                 <div class="glass-card p-5 rounded-3xl relative border border-red-200 dark:border-red-900/30">
                       <div class="flex justify-between items-center mb-4">
-                          <h3 class="font-bold flex items-center gap-2"><i class="fa-solid fa-stopwatch text-red-500"></i> Pomodoro</h3>
+                          <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-stopwatch text-red-500"></i> Pomodoro</h3>
                           <div class="flex gap-1">
-                              <button onclick="app.tools.setTimer(25)" class="text-[10px] bg-red-100 text-red-600 px-2.5 py-1 rounded-lg font-bold">25'</button>
-                              <button onclick="app.tools.setTimer(5)" class="text-[10px] bg-green-100 text-green-600 px-2.5 py-1 rounded-lg font-bold">5'</button>
+                              <button onclick="app.tools.setTimer(25)" class="text-[10px] bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-300 px-2.5 py-1 rounded-lg font-bold hover:bg-red-200 transition">25'</button>
+                              <button onclick="app.tools.setTimer(5)" class="text-[10px] bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-300 px-2.5 py-1 rounded-lg font-bold hover:bg-green-200 transition">5'</button>
                           </div>
                       </div>
                     <div class="flex flex-col items-center">
-                        <div class="text-5xl font-mono font-black mb-4 tracking-widest tabular-nums" id="timerDisplay">25:00</div>
+                        <div class="text-5xl font-mono font-black text-slate-800 dark:text-white mb-4 tracking-widest tabular-nums" id="timerDisplay">25:00</div>
                         <button id="timerBtn" onclick="app.tools.toggleTimer()" class="w-full py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold hover:opacity-90 transition shadow-lg">Bắt đầu tập trung</button>
                     </div>
                 </div>
 
                 <div class="glass-card p-5 rounded-3xl flex flex-col relative group border border-yellow-200 dark:border-yellow-900/30">
                     <div class="flex justify-between items-center mb-2">
-                        <h3 class="font-bold flex items-center gap-2"><i class="fa-solid fa-note-sticky text-yellow-500"></i> Ghi chú Cloud</h3>
+                        <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-note-sticky text-yellow-500"></i> Ghi chú Cloud</h3>
                         <span id="saveStatus" class="text-[10px] font-bold text-green-600 opacity-0 transition"><i class="fa-solid fa-check"></i> Đã lưu</span>
                     </div>
                     <textarea id="quickNote" oninput="app.saveNoteDebounced()" class="w-full bg-white/50 dark:bg-slate-900/50 rounded-xl p-3 ios-input text-sm leading-relaxed shadow-inner focus:ring-2 ring-yellow-400/50 h-32 resize-none" placeholder="Viết ý tưởng nhanh..."></textarea>
@@ -370,33 +403,33 @@
         </div>
     </div>
 
-    <div id="addDocModal" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-md" onclick="if(event.target === this) app.ui.closeModal('addDocModal')">
-        <div class="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-2xl border border-white/20 w-[90%] md:w-[400px]">
-            <h3 class="text-lg font-extrabold mb-4">Thêm Tài Liệu Mới</h3>
+    <div id="addDocModal" onclick="if(event.target === this) app.ui.closeModal('addDocModal')" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-md cursor-pointer">
+        <div class="bg-white/95 dark:bg-slate-800/95 w-[90%] md:w-[400px] p-6 rounded-3xl shadow-2xl border border-white/20 animate-float cursor-default">
+            <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4">Thêm Tài Liệu Mới</h3>
             <div class="space-y-4">
-                <input id="newDocTitle" type="text" class="w-full ios-input p-3 rounded-xl" placeholder="Tên tài liệu...">
-                <select id="newDocFolder" class="w-full ios-input p-3 rounded-xl dark:bg-slate-700"></select>
-                <input id="newDocLink" type="text" class="w-full ios-input p-3 rounded-xl" placeholder="Link (Drive/Web)...">
-                <div class="p-3 bg-orange-50 dark:bg-orange-900/20 rounded-xl flex items-center gap-3 opacity-50 pointer-events-none" id="publicDocWrapper">
-                    <input type="checkbox" id="isPublicDoc" class="w-5 h-5 accent-orange-600 rounded">
-                    <label for="isPublicDoc" class="text-xs font-bold text-orange-700 dark:text-orange-400">Lưu vào Kho dùng chung (Admin)</label>
+                <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Tên tài liệu</label><input id="newDocTitle" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="Nhập tên..."></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Thư mục</label><select id="newDocFolder" class="w-full ios-input p-3 rounded-xl mt-1 font-bold text-slate-700 dark:text-slate-200 dark:bg-slate-700"></select></div>
+                <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Link Drive/Web</label><input id="newDocLink" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="https://..."></div>
+                <div class="p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-xl flex items-center gap-3 opacity-50 pointer-events-none transition-all" id="publicDocWrapper">
+                    <input type="checkbox" id="isPublicDoc" class="w-5 h-5 accent-orange-600 rounded cursor-pointer">
+                    <label for="isPublicDoc" class="text-xs font-bold text-orange-700 dark:text-orange-400 cursor-pointer select-none">Lưu vào Kho dùng chung (Admin)</label>
                 </div>
                 <div class="flex gap-3 pt-2">
-                    <button onclick="app.ui.closeModal('addDocModal')" class="flex-1 py-3 rounded-xl bg-slate-200 dark:bg-slate-700 font-bold">Hủy</button>
-                    <button onclick="app.data.saveNewDoc()" class="flex-1 py-3 rounded-xl bg-blue-600 text-white font-bold">Lưu ngay</button>
+                    <button onclick="app.ui.closeModal('addDocModal')" class="flex-1 py-3 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-300 dark:hover:bg-slate-600 transition">Hủy</button>
+                    <button onclick="app.data.saveNewDoc()" class="flex-1 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg transition">Lưu ngay</button>
                 </div>
             </div>
         </div>
     </div>
-    
-    <div id="jsonImportModal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-md" onclick="if(event.target === this) app.ui.closeModal('jsonImportModal')">
-      <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl w-full max-w-xl shadow-2xl border border-white/10">
-        <h2 class="font-bold text-lg mb-3 flex items-center gap-2"><i class="fa-solid fa-file-code text-blue-500"></i> Import JSON Dữ Liệu</h2>
+
+    <div id="jsonImportModal" onclick="if(event.target === this) app.ui.closeModal('jsonImportModal')" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-md cursor-pointer">
+      <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl w-full max-w-xl shadow-2xl animate-slideIn border border-white/10 cursor-default">
+        <h2 class="font-bold text-lg mb-3 text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-file-code text-blue-500"></i> Import JSON Dữ Liệu</h2>
         <p id="jsonImportHint" class="text-xs text-slate-500 mb-2 font-mono bg-slate-100 dark:bg-slate-800 p-2 rounded">Format: ...</p>
-        <textarea id="jsonInput" class="w-full h-48 p-3 rounded-xl border dark:border-gray-700 dark:bg-black/50 dark:text-white ios-input font-mono text-xs" placeholder='[{"name": "...", ...}]'></textarea>
+        <textarea id="jsonInput" class="w-full h-48 p-3 rounded-xl border dark:border-gray-700 dark:bg-black/50 dark:text-white ios-input font-mono text-xs" placeholder='[{"name": "Thuốc A", ...}]'></textarea>
         <div class="flex gap-3 mt-4">
-            <button onclick="app.admin.execImport()" class="flex-1 bg-green-600 hover:bg-green-700 text-white p-3 rounded-xl font-bold">Xác nhận</button>
-            <button onclick="app.ui.closeModal('jsonImportModal')" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white p-3 rounded-xl font-bold">Hủy bỏ</button>
+            <button onclick="app.admin.execImport()" class="flex-1 bg-green-600 hover:bg-green-700 text-white p-3 rounded-xl font-bold transition shadow-lg">Xác nhận Import</button>
+            <button onclick="app.ui.closeModal('jsonImportModal')" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white p-3 rounded-xl font-bold transition">Hủy bỏ</button>
         </div>
       </div>
     </div>
@@ -408,354 +441,6 @@
 
     <div id="toast-container"></div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getAuth, GoogleAuthProvider, signInWithPopup, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-        import { getDatabase, ref, set, push, onValue, off, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-        const CONFIG = {
-            firebase: {
-                apiKey: "AIzaSyAcfs8LFgPeAkGyaSkmJeECoRBEwtfRv8E",
-                authDomain: "minhduckale1.firebaseapp.com",
-                databaseURL: "https://minhduckale1-default-rtdb.asia-southeast1.firebasedatabase.app",
-                projectId: "minhduckale1",
-                storageBucket: "minhduckale1.firebasestorage.app",
-                messagingSenderId: "479002042854",
-                appId: "1:479002042854:web:c9e4b614ad48fefd10f627"
-            },
-            folders: {
-                "capcuu": { name: "1. Hồi sức Cấp cứu", icon: "fa-truck-medical", color: "text-red-500" },
-                "noikhoa": { name: "2. Nội khoa", icon: "fa-user-doctor", color: "text-blue-500" },
-                "ngoaikhoa": { name: "3. Ngoại khoa", icon: "fa-scalpel", color: "text-green-600" },
-                "san": { name: "4. Sản phụ khoa", icon: "fa-person-pregnant", color: "text-pink-500" },
-                "nhi": { name: "5. Nhi khoa", icon: "fa-baby", color: "text-orange-500" },
-                "canlamsang": { name: "6. Cận lâm sàng", icon: "fa-microscope", color: "text-purple-500" },
-                "khac": { name: "7. Tài liệu khác", icon: "fa-folder-open", color: "text-slate-500" }
-            },
-            playlist: [
-                {t:"Lofi Study", a:"Lofi Girl", u:"https://cdn.pixabay.com/download/audio/2022/05/27/audio_1808fbf07a.mp3"},
-                {t:"Deep Focus", a:"Mindset", u:"https://cdn.pixabay.com/download/audio/2021/11/01/audio_6d6787920b.mp3"},
-                {t:"Coffee Shop", a:"Ambience", u:"https://cdn.pixabay.com/download/audio/2022/01/18/audio_d0a13f69d2.mp3"},
-                {t:"Late Night", a:"Lofi", u:"https://cdn.pixabay.com/download/audio/2022/10/25/audio_1d9e25d204.mp3"}
-            ],
-            ambience: {
-                rain: "https://actions.google.com/sounds/v1/weather/rain_heavy_loud.ogg",
-                fire: "https://actions.google.com/sounds/v1/ambiences/fireplace.ogg",
-                forest: "https://actions.google.com/sounds/v1/nature/forest_atmosphere.ogg", 
-                cafe: "https://actions.google.com/sounds/v1/ambiences/coffee_shop.ogg"
-            }
-        };
-
-        const DATA_128_EXAM = [
-            {id: "1", topic: "Đau ngực", spec: "Nội", group: "Tim mạch"},
-            {id: "2", topic: "Tiếng tim và âm thổi bất thường", spec: "Nội", group: "Tim mạch"},
-            {id: "3", topic: "Hồi hộp / Rối loạn nhịp", spec: "Nội", group: "Tim mạch"},
-            {id: "4", topic: "Tăng huyết áp", spec: "Nội", group: "Tim mạch"},
-            {id: "5.1", topic: "Ho đàm - ho khan (Người lớn)", spec: "Nội", group: "Hô hấp"},
-            {id: "5.2", topic: "Ho đàm - ho khan (Trẻ em)", spec: "Nhi", group: "Hô hấp"},
-            {id: "6", topic: "Ho ra máu", spec: "Nội", group: "Hô hấp"},
-            {id: "7.1", topic: "Khò khè (Người lớn)", spec: "Nội", group: "Hô hấp"},
-            {id: "7.2", topic: "Khò khè (Trẻ em)", spec: "Nhi", group: "Hô hấp"},
-            {id: "9.1", topic: "Khó thở cấp (Người lớn)", spec: "Nội", group: "Hô hấp"},
-            {id: "9.2", topic: "Khó thở cấp (Trẻ em)", spec: "Nhi", group: "Hô hấp"},
-            {id: "11", topic: "Tràn dịch màng phổi", spec: "Nội", group: "Hô hấp"},
-            {id: "12.1", topic: "Buồn nôn/nôn (Người lớn)", spec: "Nội", group: "Tiêu hóa"},
-            {id: "12.2", topic: "Buồn nôn/nôn (Trẻ em)", spec: "Nhi", group: "Tiêu hóa"},
-            {id: "13.1", topic: "Đau bụng cấp (Nội khoa)", spec: "Nội", group: "Tiêu hóa"},
-            {id: "13.2", topic: "Đau bụng cấp (Ngoại khoa)", spec: "Ngoại", group: "Tiêu hóa"},
-            {id: "17", topic: "Xuất huyết tiêu hóa trên", spec: "Nội", group: "Tiêu hóa"},
-            {id: "19.1", topic: "Tiêu chảy cấp (Người lớn)", spec: "Nội", group: "Tiêu hóa"},
-            {id: "19.2", topic: "Tiêu chảy cấp (Trẻ em)", spec: "Nhi", group: "Tiêu hóa"},
-            {id: "21", topic: "Vàng da", spec: "Nội", group: "Tiêu hóa"},
-            {id: "23.1", topic: "Tiểu máu (Người lớn)", spec: "Nội", group: "Thận"},
-            {id: "23.2", topic: "Tiểu máu (Trẻ em)", spec: "Nhi", group: "Thận"},
-            {id: "24.1", topic: "Tiểu đạm (Người lớn)", spec: "Nội", group: "Thận"},
-            {id: "24.2", topic: "Tiểu đạm (Trẻ em)", spec: "Nhi", group: "Thận"},
-            {id: "25.1", topic: "Phù (Người lớn)", spec: "Nội", group: "Thận"},
-            {id: "25.2", topic: "Phù (Trẻ em)", spec: "Nhi", group: "Thận"},
-            {id: "26", topic: "Tổn thương thận cấp (AKI)", spec: "Nội", group: "Thận"},
-            {id: "27", topic: "Bệnh thận mạn (CKD)", spec: "Nội", group: "Thận"},
-            {id: "29", topic: "Hội chứng màng não", spec: "Nội", group: "Nhiễm"},
-            {id: "30.2", topic: "Sốt (Trẻ em)", spec: "Nhi", group: "Nhiễm"},
-            {id: "34.2", topic: "Co giật - Động kinh (Trẻ em)", spec: "Nhi", group: "Thần kinh"},
-            {id: "42", topic: "Đột quỵ não", spec: "Nội", group: "Thần kinh"},
-            {id: "47", topic: "Rối loạn đường huyết", spec: "Nội", group: "Nội tiết"},
-            {id: "60.1", topic: "Sốc (Người lớn)", spec: "Nội", group: "ICU"},
-            {id: "60.2", topic: "Sốc (Trẻ em)", spec: "Nhi", group: "ICU"},
-            {id: "61", topic: "Phản vệ", spec: "Nội", group: "ICU"},
-            {id: "69", topic: "Sốt / Hạ thân nhiệt sơ sinh", spec: "Nhi", group: "Sơ sinh"},
-            {id: "70", topic: "Vàng da sơ sinh", spec: "Nhi", group: "Sơ sinh"},
-            {id: "73", topic: "Khối ở bụng", spec: "Ngoại", group: "Tiêu hóa"},
-            {id: "76", topic: "Chấn thương bụng", spec: "Ngoại", group: "Tiêu hóa"},
-            {id: "85", topic: "Gãy xương", spec: "Ngoại", group: "Chấn thương"},
-            {id: "88", topic: "Chấn thương sọ não", spec: "Ngoại", group: "Thần kinh"},
-            {id: "90", topic: "Vô kinh / RL phóng noãn", spec: "Sản", group: "Phụ khoa"},
-            {id: "91", topic: "Xuất huyết tử cung (AUB)", spec: "Sản", group: "Phụ khoa"},
-            {id: "98", topic: "Khám thai 3 tháng đầu", spec: "Sản", group: "Sản khoa"},
-            {id: "104", topic: "THA thai kỳ / Tiền sản giật", spec: "Sản", group: "Sản khoa"},
-            {id: "106", topic: "Cuộc chuyển dạ bình thường", spec: "Sản", group: "Sản khoa"},
-            {id: "128", topic: "Tiêm chủng", spec: "Khác", group: "Dự phòng"}
-        ];
-
-        const Utils = {
-            removeAccents: (str) => String(str).normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/đ/g, 'd').replace(/Đ/g, 'D').toLowerCase(),
-            debounce: (func, wait) => { let timeout; return function(...args) { clearTimeout(timeout); timeout = setTimeout(() => func(...args), wait); }; },
-            showToast: (msg, type = 'info') => {
-                const container = document.getElementById('toast-container');
-                const toast = document.createElement('div');
-                toast.className = `toast ${type}`;
-                toast.innerHTML = `<div class="font-bold text-sm">${msg}</div>`;
-                container.appendChild(toast);
-                setTimeout(() => toast.remove(), 3500);
-            },
-            formatDate: () => new Date().toLocaleString("vi-VN"),
-            escapeHTML: (str) => String(str).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#39;'}[m]))
-        };
-
-        class MusicPlayer {
-            constructor() {
-                this.audio = document.getElementById('bgAudio');
-                this.idx = parseInt(localStorage.getItem('mdk_music_idx') || 0);
-                this.playlist = CONFIG.playlist;
-                this.isPlaying = false;
-                this.ambienceAudio = {};
-                if (localStorage.getItem('mdk_music_vol')) {
-                    this.audio.volume = parseFloat(localStorage.getItem('mdk_music_vol'));
-                    document.getElementById('volSlider').value = this.audio.volume;
-                }
-                this.audio.addEventListener('ended', () => this.next());
-                this.loadTrack(this.idx);
-                this.renderPlaylist();
-            }
-            loadTrack(i) {
-                this.idx = i;
-                const track = this.playlist[this.idx];
-                this.audio.src = track.u;
-                document.getElementById('musicTitle').innerText = track.t;
-                document.getElementById('musicArtist').innerText = track.a;
-                localStorage.setItem('mdk_music_idx', this.idx);
-                this.renderPlaylist();
-            }
-            toggle() {
-                if (this.audio.paused) {
-                    this.audio.play().then(() => {
-                        this.isPlaying = true;
-                        document.getElementById('musicDisc').classList.add('animate-spin-slow');
-                        document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-pause text-xl ml-0"></i>';
-                    });
-                } else {
-                    this.audio.pause();
-                    this.isPlaying = false;
-                    document.getElementById('musicDisc').classList.remove('animate-spin-slow');
-                    document.getElementById('playBtnIcon').innerHTML = '<i class="fa-solid fa-play text-xl ml-1"></i>';
-                }
-            }
-            next() { this.loadTrack((this.idx + 1) % this.playlist.length); if(this.isPlaying) this.audio.play(); }
-            prev() { this.loadTrack((this.idx - 1 + this.playlist.length) % this.playlist.length); if(this.isPlaying) this.audio.play(); }
-            setVolume(val) { this.audio.volume = val; localStorage.setItem('mdk_music_vol', val); }
-            togglePlaylist() { document.getElementById('playlistView').classList.toggle('hidden'); }
-            renderPlaylist() {
-                document.getElementById('playlistItems').innerHTML = this.playlist.map((s, i) => `
-                    <div onclick="app.music.select(${i})" class="p-2 rounded-lg flex items-center gap-3 cursor-pointer hover:bg-blue-50 dark:hover:bg-slate-700 transition ${i === this.idx ? 'bg-blue-100 dark:bg-slate-600 font-bold' : ''}">
-                        <i class="fa-solid fa-music text-blue-500 text-xs"></i><div class="flex-1 truncate"><p class="text-sm">${s.t}</p></div>
-                    </div>`).join('');
-            }
-            select(i) { this.loadTrack(i); this.toggle(); this.togglePlaylist(); }
-            switchTab(tab) {
-                document.querySelectorAll('.music-tab').forEach(t => t.classList.remove('active'));
-                document.getElementById(`tab-music-${tab}`).classList.add('active');
-                document.getElementById('music-view-local').classList.toggle('hidden', tab !== 'local');
-                document.getElementById('music-view-online').classList.toggle('hidden', tab !== 'online');
-                if (tab === 'online' && !this.audio.paused) this.toggle();
-            }
-            playCustomVideo() {
-                const input = document.getElementById('youtubeInput').value;
-                if (!input) return Utils.showToast("Nhập link!", "error");
-                const match = input.match(/^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/);
-                const vid = (match && match[2].length === 11) ? match[2] : "";
-                document.getElementById('radioFrame').src = vid ? `https://www.youtube.com/embed/${vid}?autoplay=1` : `https://www.youtube.com/embed?listType=search&list=${encodeURIComponent(input)}&autoplay=1`;
-                if (this.isPlaying) this.toggle();
-            }
-            toggleAmbience(type, btn) {
-                if (this.ambienceAudio[type]) {
-                    this.ambienceAudio[type].pause(); delete this.ambienceAudio[type]; btn.classList.remove('bg-white/40');
-                } else {
-                    const audio = new Audio(CONFIG.ambience[type]); audio.loop = true; audio.volume = 0.5; audio.play();
-                    this.ambienceAudio[type] = audio; btn.classList.add('bg-white/40');
-                }
-            }
-        }
-
-        class ExamManager {
-            constructor(parentApp) {
-                this.app = parentApp; this.data = DATA_128_EXAM; this.progress = []; this.currentFilter = 'all';
-            }
-            init() {
-                if(this.app.user) onValue(ref(this.app.db, `users/${this.app.user.uid}/exam_progress`), snap => { this.progress = snap.val() || []; this.render(); });
-            }
-            toggleStatus(id) {
-                if(!this.app.user) return Utils.showToast("Đăng nhập để lưu!", "error");
-                this.progress = this.progress.includes(id) ? this.progress.filter(i => i !== id) : [...this.progress, id];
-                if(this.progress.includes(id)) Utils.showToast("🎉 Hoàn thành!", "success");
-                set(ref(this.app.db, `users/${this.app.user.uid}/exam_progress`), this.progress);
-            }
-            filter(type) {
-                this.currentFilter = type;
-                document.querySelectorAll('.exam-filter').forEach(b => { b.classList.remove('active', 'ring-2', 'ring-blue-400'); b.classList.add('bg-white/50'); });
-                event.target.classList.remove('bg-white/50'); event.target.classList.add('active', 'ring-2', 'ring-blue-400');
-                this.render();
-            }
-            render() {
-                const search = Utils.removeAccents(document.getElementById('examSearch').value);
-                let filtered = this.data;
-                if (this.currentFilter !== 'all') filtered = filtered.filter(i => i.spec === this.currentFilter);
-                if (search) filtered = filtered.filter(i => Utils.removeAccents(i.topic).includes(search) || i.id.includes(search));
-                
-                filtered.sort((a, b) => { const aD = this.progress.includes(a.id), bD = this.progress.includes(b.id); return aD === bD ? 0 : aD ? 1 : -1; });
-                
-                document.getElementById('examList').innerHTML = filtered.map(item => {
-                    const isDone = this.progress.includes(item.id);
-                    let color = item.spec === 'Nhi' ? 'text-orange-600 bg-orange-100' : item.spec === 'Ngoại' ? 'text-green-600 bg-green-100' : item.spec === 'Sản' ? 'text-pink-600 bg-pink-100' : 'text-blue-600 bg-blue-100';
-                    const style = isDone ? 'opacity-60 bg-green-50/50 border-green-200' : 'bg-white/40 border-white/50 hover:border-blue-400';
-                    return `
-                    <div onclick="app.exam.toggleStatus('${item.id}')" class="cursor-pointer p-4 rounded-2xl flex items-center gap-4 border transition-all ${style} animate-slideIn">
-                        <div class="w-10 h-10 rounded-xl ${color} flex items-center justify-center font-bold text-sm shadow-sm">${item.id}</div>
-                        <div class="flex-1"><h4 class="font-bold text-sm ${isDone?'line-through text-slate-400':''}">${item.topic}</h4><p class="text-[10px] font-bold text-slate-500 uppercase">${item.group}</p></div>
-                        ${isDone ? '<i class="fa-solid fa-check-circle text-green-500 text-xl"></i>' : ''}
-                    </div>`;
-                }).join('') || '<div class="col-span-2 text-center py-10 opacity-50 font-bold">Không tìm thấy</div>';
-                
-                const pct = Math.round((this.progress.length / this.data.length) * 100) || 0;
-                document.getElementById('examProgressBar').style.width = `${pct}%`;
-                document.getElementById('examProgressText').innerText = `${pct}%`;
-                document.getElementById('examCirclePath').setAttribute('stroke-dasharray', `${pct}, 100`);
-            }
-        }
-
-        class App {
-            constructor() {
-                this.app = initializeApp(CONFIG.firebase);
-                this.authObj = getAuth(this.app);
-                this.db = getDatabase(this.app);
-                this.provider = new GoogleAuthProvider();
-                this.user = null; this.isAdmin = false;
-                this.music = new MusicPlayer();
-                this.exam = new ExamManager(this);
-                this.tools = {
-                    calcBMI: () => {
-                        const w = parseFloat(document.getElementById('bmi-w').value), h = parseFloat(document.getElementById('bmi-h').value)/100;
-                        if(w&&h) { const bmi=(w/(h*h)).toFixed(1); document.getElementById('bmi-res').classList.remove('hidden'); document.getElementById('bmi-res').innerText = `BMI: ${bmi}`; }
-                    },
-                    calcMAP: () => {
-                        const s = parseFloat(document.getElementById('map-sys').value), d = parseFloat(document.getElementById('map-dia').value);
-                        if(s&&d) { const map=((s+2*d)/3).toFixed(0); document.getElementById('map-res').classList.remove('hidden'); document.getElementById('map-res').innerText = `MAP: ${map} mmHg`; }
-                    },
-                    calcEGFR: () => {
-                        const a=parseFloat(document.getElementById('egfr-age').value), w=parseFloat(document.getElementById('egfr-w').value), c=parseFloat(document.getElementById('egfr-cre').value), s=parseFloat(document.getElementById('egfr-sex').value);
-                        if(a&&w&&c) { const e=((140-a)*w*s/(72*c)).toFixed(1); document.getElementById('egfr-res').classList.remove('hidden'); document.getElementById('egfr-res').innerText = `eGFR: ${e}`; }
-                    },
-                    setTimer: (m) => { this.timer=m*60; this.updateTimer(); clearInterval(this.timerInt); document.getElementById('timerBtn').innerText="Bắt đầu"; },
-                    toggleTimer: () => {
-                        if(this.timerInt) { clearInterval(this.timerInt); this.timerInt=null; document.getElementById('timerBtn').innerText="Tiếp tục"; }
-                        else { this.timerInt=setInterval(()=>{this.timer--;this.updateTimer();if(this.timer<=0){clearInterval(this.timerInt);Utils.showToast("Hết giờ!");}},1000); document.getElementById('timerBtn').innerText="Dừng"; }
-                    }
-                };
-                this.timer=1500; this.updateTimer=()=>{const m=String(Math.floor(this.timer/60)).padStart(2,'0'),s=String(this.timer%60).padStart(2,'0');document.getElementById('timerDisplay').innerText=`${m}:${s}`;};
-                
-                this.searchDocsDebounced = Utils.debounce(() => this.renderDocs(), 300);
-                this.searchMedsDebounced = Utils.debounce(() => this.renderMeds(), 300);
-                this.saveNoteDebounced = Utils.debounce(() => { if(this.user) set(ref(this.db, `users/${this.user.uid}/note`), document.getElementById('quickNote').value); document.getElementById('saveStatus').style.opacity='1'; setTimeout(()=>document.getElementById('saveStatus').style.opacity='0',2000); }, 1000);
-
-                this.auth = {
-                    login: () => signInWithPopup(this.authObj, this.provider).catch(e=>Utils.showToast(e.message,'error')),
-                    logout: () => signOut(this.authObj).then(()=>document.getElementById('logoutPanel').classList.add('hidden'))
-                };
-                this.ui = {
-                    switchTab: (t, el) => {
-                        document.querySelectorAll('.segment-btn').forEach(b=>b.classList.remove('active')); el.classList.add('active');
-                        ['docs','meds','tools','exam'].forEach(id=>document.getElementById(`view-${id}`).classList.add('hidden'));
-                        document.getElementById(`view-${t}`).classList.remove('hidden');
-                        if(t==='exam') this.exam.render();
-                    },
-                    toggleDarkMode: () => { document.documentElement.classList.toggle('dark'); localStorage.setItem('mdk_dark', document.documentElement.classList.contains('dark')); },
-                    toggleNotify: () => document.getElementById('notifyPanel').classList.toggle('hidden'),
-                    toggleTool: (id) => document.getElementById(`tool-${id}`).classList.toggle('open'),
-                    openModal: (id) => document.getElementById(id).classList.remove('hidden'),
-                    closeModal: (id) => document.getElementById(id).classList.add('hidden')
-                };
-                this.data = {
-                    renderFolders: () => { this.currentFolder=null; this.renderDocs(); },
-                    saveNewDoc: () => {
-                        const t=document.getElementById('newDocTitle').value, u=document.getElementById('newDocLink').value, f=document.getElementById('newDocFolder').value, pub=document.getElementById('isPublicDoc').checked;
-                        if(t&&u) push(ref(this.db, pub?'library_public':`users/${this.user.uid}/docs`), {title:t, url:u, folder:f, createdAt:Date.now()}).then(()=>{Utils.showToast("Đã lưu!"); this.ui.closeModal('addDocModal');});
-                    },
-                    deleteDoc: (id, pub) => { if(confirm("Xóa?")) remove(ref(this.db, pub?`library_public/${id}`:`users/${this.user.uid}/docs/${id}`)); }
-                };
-                this.admin = {
-                    seedMeds: () => { if(confirm("Nạp dữ liệu mẫu?")) [{name:"Paracetamol",brand:"Panadol",group:"Giảm đau"},{name:"Ibuprofen",brand:"Gofen",group:"NSAID"}].forEach(m=>push(ref(this.db,"library_meds"),m)); },
-                    openImport: (t) => { this.importType=t; this.ui.openModal('jsonImportModal'); },
-                    execImport: () => { try { JSON.parse(document.getElementById('jsonInput').value).forEach(d=>push(ref(this.db, this.importType==='docs'?'library_public':'library_meds'), d)); Utils.showToast("Import xong!"); this.ui.closeModal('jsonImportModal'); } catch(e){alert("Lỗi JSON");} }
-                };
-                
-                this.init();
-            }
-            init() {
-                const sel = document.getElementById('newDocFolder');
-                Object.entries(CONFIG.folders).forEach(([k,v])=>{const o=document.createElement('option');o.value=k;o.innerText=v.name;sel.appendChild(o);});
-                if(localStorage.getItem('mdk_dark')==='true') document.documentElement.classList.add('dark');
-                setInterval(() => { const d=new Date(); document.getElementById('clock').innerText=d.toLocaleTimeString('vi-VN',{hour:'2-digit',minute:'2-digit'}); document.getElementById('date-display').innerText=d.toLocaleDateString('vi-VN'); }, 1000);
-
-                onAuthStateChanged(this.authObj, u => {
-                    this.user = u;
-                    const els = { login:document.getElementById('loginBtn'), prof:document.getElementById('userProfile'), ava:document.getElementById('userAvatar'), name:document.getElementById('userName'), add:document.getElementById('addDocBtn'), adm:document.getElementById('adminToolsCard') };
-                    if(u) {
-                        els.login.classList.add('hidden'); els.prof.classList.remove('hidden'); els.prof.classList.add('flex'); els.ava.src=u.photoURL; els.name.innerText=u.displayName; els.add.classList.remove('hidden');
-                        if(["minhduc.kale@gmail.com"].includes(u.email)) { this.isAdmin=true; document.getElementById('roleBadge').innerText="ADMIN"; document.getElementById('roleBadge').classList.replace('bg-gray-500','bg-red-500'); els.adm.classList.remove('hidden'); document.getElementById('publicDocWrapper').classList.remove('opacity-50','pointer-events-none'); }
-                        onValue(ref(this.db, `users/${u.uid}/note`), s => document.getElementById('quickNote').value = s.val() || "");
-                        onValue(ref(this.db, `users/${u.uid}/docs`), s => { this.privDocs = s.val() ? Object.entries(s.val()).map(([k,v])=>({...v,id:k,src:'priv'})) : []; this.renderDocs(); });
-                        this.exam.init();
-                    } else {
-                        els.login.classList.remove('hidden'); els.prof.classList.add('hidden'); els.prof.classList.remove('flex'); els.add.classList.add('hidden'); els.adm.classList.add('hidden'); this.privDocs=[]; this.renderDocs();
-                    }
-                });
-                onValue(ref(this.db, 'library_public'), s => { this.pubDocs = s.val() ? Object.entries(s.val()).map(([k,v])=>({...v,id:k,src:'pub'})) : []; this.renderDocs(); });
-                onValue(ref(this.db, 'library_meds'), s => { this.meds = s.val() ? Object.entries(s.val()).map(([k,v])=>({...v,id:k})) : []; this.renderMeds(); });
-            }
-            renderDocs() {
-                const term = Utils.removeAccents(document.getElementById('searchInput').value);
-                const all = [...(this.pubDocs||[]), ...(this.privDocs||[])];
-                const list = document.getElementById('docsList');
-                if(!term && !this.currentFolder) {
-                    document.getElementById('breadcrumb').classList.add('hidden');
-                    list.innerHTML = Object.entries(CONFIG.folders).map(([k,v])=>`
-                        <div onclick="app.currentFolder='${k}'; app.renderDocs()" class="glass-card p-5 rounded-3xl flex items-center gap-4 cursor-pointer hover:bg-white/90 transition border-l-4 border-transparent hover:border-blue-500">
-                            <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center text-2xl ${v.color} shadow-sm"><i class="fa-solid ${v.icon}"></i></div>
-                            <div><h3 class="font-bold text-lg">${v.name}</h3><p class="text-xs text-slate-500">${all.filter(d=>d.folder===k).length} file</p></div>
-                        </div>`).join('');
-                } else {
-                    document.getElementById('breadcrumb').classList.remove('hidden'); document.getElementById('currentFolderTitle').innerText = this.currentFolder ? CONFIG.folders[this.currentFolder].name : "Tìm kiếm";
-                    let f = all; if(this.currentFolder) f=f.filter(d=>d.folder===this.currentFolder); if(term) f=f.filter(d=>Utils.removeAccents(d.title).includes(term));
-                    list.innerHTML = f.map(d=>`
-                        <div class="glass-card p-4 rounded-2xl flex items-center gap-3 relative group animate-slideIn">
-                            <div class="w-10 h-10 rounded-full ${d.src==='pub'?'bg-orange-100 text-orange-500':'bg-blue-100 text-blue-500'} flex items-center justify-center flex-shrink-0"><i class="fa-solid ${d.src==='pub'?'fa-book-open':'fa-file'}"></i></div>
-                            <div class="flex-1 min-w-0"><h4 class="font-bold truncate">${Utils.escapeHTML(d.title)}</h4><a href="${d.url}" target="_blank" class="text-xs font-bold text-blue-600 hover:underline uppercase">Mở tài liệu</a></div>
-                            ${(!d.src==='pub'||this.isAdmin)?`<button onclick="app.data.deleteDoc('${d.id}',${d.src==='pub'})" class="w-8 h-8 rounded-full bg-red-100 text-red-500 flex items-center justify-center opacity-0 group-hover:opacity-100 transition"><i class="fa-solid fa-trash text-xs"></i></button>`:''}
-                        </div>`).join('') || '<div class="col-span-2 text-center py-10 opacity-50">Trống</div>';
-                }
-            }
-            renderMeds() {
-                const term = Utils.removeAccents(document.getElementById('searchMedsInput').value);
-                const list = (this.meds||[]).filter(m => !term || Utils.removeAccents(m.name+m.brand).includes(term)).slice(0,50);
-                document.getElementById('medsList').innerHTML = list.map(m => `
-                    <div class="glass-card p-4 rounded-2xl border border-white/50 hover:border-pink-400 transition animate-slideIn">
-                        <div class="flex justify-between">
-                            <div><h4 class="font-bold text-lg">${m.name} <span class="text-xs font-normal text-slate-500">(${m.brand||''})</span></h4><span class="text-[10px] font-bold bg-pink-100 text-pink-600 px-2 py-0.5 rounded-full">${m.group||'Khác'}</span></div>
-                            ${this.isAdmin?`<button onclick="if(confirm('Xóa?')) remove(ref(app.db,'library_meds/${m.id}'))" class="text-slate-300 hover:text-red-500"><i class="fa-solid fa-trash"></i></button>`:''}
-                        </div>
-                    </div>`).join('') || '<div class="text-center py-10 opacity-50">Không tìm thấy</div>';
-            }
-        }
-        window.app = new App();
-    </script>
+    <script type="module" src="script.js"></script>
 </body>
 </html>
