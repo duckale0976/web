@@ -1,446 +1,336 @@
-<!DOCTYPE html>
-<html lang="vi">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MinhducKale - Medical Super App</title>
-    
-    <meta name="theme-color" content="#0f172a">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/3774/3774299.png">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: { sans: ['"Plus Jakarta Sans"', 'sans-serif'] },
-                    animation: { 
-                        'blob': 'blob 10s infinite', 
-                        'spin-slow': 'spin 8s linear infinite', 
-                        'slideIn': 'slideIn 0.3s ease-out forwards',
-                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite'
-                    },
-                    keyframes: {
-                        blob: { '0%': { transform: 'translate(0,0) scale(1)' }, '33%': { transform: 'translate(30px,-50px) scale(1.1)' }, '66%': { transform: 'translate(-20px,20px) scale(0.9)' }, '100%': { transform: 'translate(0,0) scale(1)' } },
-                        slideIn: { 'from': { transform: 'translateY(10px)', opacity: '0' }, 'to': { transform: 'translateY(0)', opacity: '1' } }
-                    }
-                }
-            }
-        }
-    </script>
+import React, { useState, useEffect, useRef } from 'react';
+import { Play, CheckCircle2, XCircle, Trophy, HelpCircle, RotateCcw } from 'lucide-react';
 
-    <style>
-        /* CSS TÙY CHỈNH CHO GIAO DIỆN GLASS */
-        body { font-family: 'Plus Jakarta Sans', sans-serif; background-color: #0f172a; overflow-x: hidden; }
+// Cấu hình dữ liệu game
+const CROSSWORDS = [
+  { answer: 'CONGNHAN', clue: 'Lực lượng lao động chính, trực tiếp hoặc gián tiếp vận hành máy móc trong các nhà máy, xí nghiệp.', keywordPos: 2 },
+  { answer: 'DANGVIEN', clue: 'Danh xưng dành cho những người đã chính thức đứng trong hàng ngũ của tổ chức Đảng.', keywordPos: 3 },
+  { answer: 'HAIBATRUNG', clue: 'Tên gọi chung của hai vị nữ anh hùng dân tộc đã phất cờ khởi nghĩa chống quân Đông Hán.', keywordPos: 1 },
+  { answer: 'YDUC', clue: 'Phẩm chất tốt đẹp, đạo đức nghề nghiệp cốt lõi của người làm công tác y tế.', keywordPos: 0 },
+  { answer: 'CACHMANG', clue: 'Cuộc biến đổi lớn lao, căn bản trên các lĩnh vực đời sống, thay thế cái cũ bằng cái mới tiến bộ hơn.', keywordPos: 0 },
+  { answer: 'SUSONG', clue: 'Trạng thái duy trì sự tồn tại và phát triển của mọi sinh vật trên Trái Đất.', keywordPos: 3 },
+  { answer: 'DANGTHUYTRAM', clue: 'Nữ bác sĩ, liệt sĩ quê ở Hà Nội, tác giả của cuốn nhật ký thời chiến làm lay động hàng triệu trái tim.', keywordPos: 5 },
+  { answer: 'COPENHAGEN', clue: 'Thủ đô và cũng là thành phố lớn nhất của vương quốc Đan Mạch.', keywordPos: 1 },
+  { answer: 'LAMSANG', clue: 'Hoạt động thăm khám, theo dõi và chữa bệnh trực tiếp trên người bệnh.', keywordPos: 1 },
+];
+
+const VERTICAL_KEYWORD = 'NGAYCOHOA';
+
+// Hàm loại bỏ dấu tiếng Việt để so sánh đáp án
+const removeVietnameseTones = (str) => {
+  let result = str;
+  result = result.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
+  result = result.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
+  result = result.replace(/ì|í|ị|ỉ|ĩ/g, "i");
+  result = result.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
+  result = result.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
+  result = result.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
+  result = result.replace(/đ/g, "d");
+  result = result.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
+  result = result.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
+  result = result.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
+  result = result.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|MỠ/g, "O");
+  result = result.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
+  result = result.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
+  result = result.replace(/Đ/g, "D");
+  return result;
+};
+
+export default function App() {
+  const maxKeywordIndex = Math.max(...CROSSWORDS.map(w => w.keywordPos));
+  const maxCols = Math.max(...CROSSWORDS.map(w => (maxKeywordIndex - w.keywordPos) + w.answer.length));
+
+  const [rowStatus, setRowStatus] = useState(Array(CROSSWORDS.length).fill('hidden'));
+  const [selectedRow, setSelectedRow] = useState(null);
+  const [rowInput, setRowInput] = useState('');
+  const [keywordInput, setKeywordInput] = useState('');
+  const [gameWon, setGameWon] = useState(false);
+  const [toast, setToast] = useState(null);
+  
+  const inputRef = useRef(null);
+
+  // Hiển thị thông báo
+  const showToast = (msg, type) => {
+    setToast({ msg, type });
+    setTimeout(() => setToast(null), 3000);
+  };
+
+  // Focus input mỗi khi chọn hàng mới
+  useEffect(() => {
+    if (selectedRow !== null && inputRef.current) {
+      inputRef.current.focus();
+    }
+  }, [selectedRow]);
+
+  const handleRowSubmit = (e) => {
+    e.preventDefault();
+    if (selectedRow === null) return;
+
+    const normalizedInput = removeVietnameseTones(rowInput).replace(/\s/g, '').toUpperCase();
+    const correctAnswer = CROSSWORDS[selectedRow].answer;
+
+    if (normalizedInput === correctAnswer) {
+      const newStatus = [...rowStatus];
+      newStatus[selectedRow] = 'revealed';
+      setRowStatus(newStatus);
+      showToast('Chính xác!', 'success');
+      setRowInput('');
+      
+      // Auto chọn hàng tiếp theo chưa mở
+      const nextUnrevealed = newStatus.findIndex(status => status === 'hidden');
+      if (nextUnrevealed !== -1) {
+        setSelectedRow(nextUnrevealed);
+      } else {
+        setSelectedRow(null);
+      }
+    } else {
+      showToast('Sai rồi, hãy thử lại nhé!', 'error');
+    }
+  };
+
+  const handleKeywordSubmit = (e) => {
+    e.preventDefault();
+    const normalizedInput = removeVietnameseTones(keywordInput).replace(/\s/g, '').toUpperCase();
+    if (normalizedInput === VERTICAL_KEYWORD) {
+      setGameWon(true);
+      setRowStatus(Array(CROSSWORDS.length).fill('revealed'));
+      setSelectedRow(null);
+      showToast('Tuyệt vời! Bạn đã tìm ra từ khóa chính!', 'success');
+    } else {
+      showToast('Từ khóa chưa chính xác!', 'error');
+    }
+  };
+
+  const resetGame = () => {
+    setRowStatus(Array(CROSSWORDS.length).fill('hidden'));
+    setSelectedRow(null);
+    setRowInput('');
+    setKeywordInput('');
+    setGameWon(false);
+    setToast(null);
+  };
+
+  return (
+    <div className="min-h-screen bg-slate-100 p-4 md:p-8 font-sans text-slate-800">
+      <div className="max-w-6xl mx-auto space-y-6">
         
-        .bg-blob { position: fixed; border-radius: 50%; filter: blur(80px); opacity: 0.6; z-index: -1; }
-        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #4f46e5; animation-delay: 0s; }
-        .blob-2 { top: 40%; right: -10%; width: 400px; height: 400px; background: #ec4899; animation-delay: 2s; }
-        .blob-3 { bottom: -10%; left: 20%; width: 600px; height: 600px; background: #06b6d4; animation-delay: 4s; }
+        {/* Header */}
+        <div className="text-center space-y-2">
+          <h1 className="text-3xl md:text-5xl font-extrabold text-blue-800 uppercase tracking-wider drop-shadow-sm">
+            Giải Mã Ô Chữ
+          </h1>
+          <p className="text-slate-600 font-medium text-sm md:text-base">
+            Tìm ra 9 từ hàng ngang để giải mã từ khóa dọc bí ẩn!
+          </p>
+        </div>
 
-        .glass-panel { background: rgba(255, 255, 255, 0.7); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.3); }
-        .dark .glass-panel { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); }
-
-        .glass-card { background: rgba(255, 255, 255, 0.5); backdrop-filter: blur(12px); border: 1px solid rgba(255, 255, 255, 0.5); }
-        .dark .glass-card { background: rgba(30, 41, 59, 0.4); border: 1px solid rgba(255, 255, 255, 0.05); }
-
-        .ios-input { background: rgba(255, 255, 255, 0.5); border: 1px solid rgba(0, 0, 0, 0.05); transition: all 0.2s; }
-        .dark .ios-input { background: rgba(0, 0, 0, 0.2); border: 1px solid rgba(255, 255, 255, 0.1); color: white; }
-        .ios-input:focus { outline: none; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); background: rgba(255, 255, 255, 0.8); }
-        .dark .ios-input:focus { background: rgba(0, 0, 0, 0.4); }
-
-        .segment-btn { padding: 0.5rem 1rem; border-radius: 0.75rem; cursor: pointer; font-weight: 700; font-size: 0.875rem; color: #64748b; transition: all 0.3s; white-space: nowrap; }
-        .dark .segment-btn { color: #94a3b8; }
-        .segment-btn:hover { background: rgba(255,255,255,0.5); }
-        .dark .segment-btn:hover { background: rgba(255,255,255,0.05); }
-        .segment-btn.active { background: white; color: #2563eb; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-        .dark .segment-btn.active { background: #1e293b; color: #60a5fa; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3); }
-
-        /* Custom Scrollbar */
-        .custom-scrollbar::-webkit-scrollbar { width: 4px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: transparent; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        .dark .custom-scrollbar::-webkit-scrollbar-thumb { background: #475569; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-
-        .toast { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(15, 23, 42, 0.9); color: white; padding: 12px 24px; border-radius: 16px; backdrop-filter: blur(10px); z-index: 100; animation: slideUp 0.3s ease-out; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); border: 1px solid rgba(255,255,255,0.1); }
-        .toast.success { border-left: 4px solid #22c55e; }
-        .toast.error { border-left: 4px solid #ef4444; }
-        @keyframes slideUp { from { transform: translate(-50%, 20px); opacity: 0; } to { transform: translate(-50%, 0); opacity: 1; } }
-        
-        /* Tool Accordion Animation */
-        .tool-content { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
-        .tool-content.open { max-height: 500px; transition: max-height 0.5s ease-in; }
-        .open .tool-arrow { transform: rotate(180deg); }
-        
-        /* Exam Filter Button Specific */
-        .exam-filter.active { background-color: white; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); border-color: #60a5fa; }
-        .dark .exam-filter.active { background-color: #334155; border-color: #60a5fa; }
-    </style>
-</head>
-
-<body class="min-h-screen-ios overflow-x-hidden selection:bg-blue-500 selection:text-white">
-
-    <div class="bg-blob blob-1"></div>
-    <div class="bg-blob blob-2"></div>
-    <div class="bg-blob blob-3"></div>
-
-    <div class="container mx-auto px-4 py-6 max-w-7xl min-h-screen-ios flex flex-col">
-        
-        <header class="glass-panel rounded-3xl px-6 py-4 mb-8 flex flex-col md:flex-row justify-between items-center z-20 sticky top-4 shadow-xl">
-            <div class="flex items-center gap-4 mb-4 md:mb-0 w-full md:w-auto justify-between md:justify-start">
-                <div id="authContainer" class="relative group">
-                    <button id="loginBtn" onclick="app.auth.login()" title="Đăng nhập Google" class="w-12 h-12 rounded-2xl bg-blue-600 hover:bg-blue-700 flex items-center justify-center text-white shadow-lg shadow-blue-500/30 transition transform hover:scale-105">
-                        <i class="fa-solid fa-right-to-bracket text-xl"></i>
-                    </button>
-                    <div id="userProfile" class="hidden flex items-center gap-3 cursor-pointer select-none" title="Quản lý tài khoản" onclick="document.getElementById('logoutPanel').classList.toggle('hidden')">
-                        <img id="userAvatar" src="" class="w-12 h-12 rounded-2xl border-2 border-white shadow-md bg-slate-200 object-cover">
-                        <div class="hidden md:block">
-                            <p id="userName" class="text-sm font-bold text-slate-900 dark:text-white truncate max-w-[150px]">User</p>
-                            <div id="roleBadge" class="px-3 py-1 rounded-full text-[10px] font-bold bg-gray-500 text-white w-fit shadow-sm">GUEST</div>
-                        </div>
-                    </div>
-                    
-                    <div id="logoutPanel" class="hidden absolute top-14 left-0 w-60 glass-card p-3 rounded-xl flex flex-col gap-2 z-50 shadow-2xl border border-white/50 animate-slideIn backdrop-blur-xl">
-                        <button onclick="app.auth.switchAccount()" class="w-full text-left px-3 py-2.5 text-slate-700 dark:text-white hover:bg-white/40 dark:hover:bg-white/10 rounded-lg text-sm font-bold flex items-center gap-3 transition">
-                            <i class="fa-solid fa-repeat text-blue-500 w-5"></i> Chuyển tài khoản
-                        </button>
-                        <div class="h-px bg-slate-300 dark:bg-slate-600 my-1"></div>
-                        <button onclick="app.auth.logout()" class="w-full text-left px-3 py-2.5 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/30 rounded-lg text-sm font-bold flex items-center gap-3 transition">
-                            <i class="fa-solid fa-power-off w-5"></i> Đăng xuất
-                        </button>
-                    </div>
-                </div>
-
-                <div class="text-center md:text-left">
-                    <h1 class="text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight leading-tight">Minhduc<span class="text-blue-600">Kale</span></h1>
-                    <p class="text-[10px] text-slate-600 dark:text-slate-400 font-bold uppercase tracking-wider">Cloud Sync v10.13</p>
-                </div>
-            </div>
-            
-            <div class="flex flex-col md:flex-row items-center gap-4 w-full md:w-auto">
-                <div class="segmented-control overflow-x-auto w-full md:w-auto flex justify-center no-scrollbar">
-                    <div class="segment-btn active" onclick="app.ui.switchTab('docs', this)" title="Kho tài liệu"><i class="fa-solid fa-folder-open mr-1"></i>Tài liệu</div>
-                    <div class="segment-btn" onclick="app.ui.switchTab('meds', this)" title="Tra cứu thuốc"><i class="fa-solid fa-pills mr-1"></i>Thuốc</div>
-                    <div class="segment-btn" onclick="app.ui.switchTab('tools', this)" title="Công cụ Y khoa"><i class="fa-solid fa-kit-medical mr-1"></i>Công cụ</div>
-                    <div class="segment-btn" onclick="app.ui.switchTab('exam', this)" title="Luyện thi Quốc gia"><i class="fa-solid fa-graduation-cap mr-1"></i>Ôn thi</div>
-                </div>
-
-                <div class="flex items-center gap-3 justify-end w-full md:w-auto mt-2 md:mt-0">
-                    <button id="adminPanelBtn" onclick="app.admin.scrollToTools()" class="hidden w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-pink-600 text-white font-bold items-center justify-center hover:scale-105 transition shadow-lg"><i class="fa-solid fa-shield-halved"></i></button>
-                    <button id="notifyBtn" onclick="app.ui.toggleNotify()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 flex items-center justify-center hover:scale-105 transition text-slate-700 dark:text-white relative"><i class="fa-solid fa-bell"></i></button>
-                    <div class="hidden lg:flex flex-col items-end mr-2 text-right">
-                        <span id="clock" class="text-lg font-mono font-bold text-slate-800 dark:text-slate-200">00:00</span>
-                        <span id="date-display" class="text-[10px] font-bold uppercase text-slate-500">...</span>
-                    </div>
-                    <button onclick="app.ui.toggleDarkMode()" class="w-10 h-10 rounded-xl bg-white/60 dark:bg-white/10 hover:bg-white flex items-center justify-center transition text-slate-700 dark:text-yellow-400 shadow-sm"><i id="darkIcon" class="fa-solid fa-moon"></i></button>
-                </div>
-            </div>
-        </header>
-
-        <div class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-8 pb-10">
-            <div class="lg:col-span-8 flex flex-col min-h-[500px]">
-                
-                <div id="view-docs" class="flex flex-col gap-6 fade-in">
-                    <div class="flex gap-3 relative z-10">
-                        <div class="relative flex-1 group">
-                            <i class="fa-solid fa-magnifying-glass absolute left-4 top-4 text-slate-500 group-focus-within:text-blue-600 transition"></i>
-                            <input id="searchInput" type="text" onkeyup="app.searchDocsDebounced()" class="w-full pl-12 pr-10 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm tài liệu (Tiếng Việt thông minh)...">
-                            <button onclick="document.getElementById('searchInput').value=''; app.searchDocsDebounced()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-                        </div>
-                        <button id="addDocBtn" onclick="app.ui.openModal('addDocModal')" title="Thêm tài liệu mới" class="hidden w-14 rounded-2xl bg-slate-900 dark:bg-blue-600 hover:bg-slate-700 text-white flex items-center justify-center shadow-lg active:scale-95 transition"><i class="fa-solid fa-plus text-xl"></i></button>
-                    </div>
-                    
-                    <div id="breadcrumb" class="hidden flex items-center gap-2 text-sm font-extrabold text-slate-700 dark:text-slate-200 bg-white/40 dark:bg-white/10 w-fit px-4 py-2 rounded-xl backdrop-blur-md shadow-sm border border-white/20">
-                        <button onclick="app.data.renderFolders()" class="hover:text-blue-600"><i class="fa-solid fa-house"></i> Home</button>
-                        <span class="text-slate-400">/</span>
-                        <span id="currentFolderTitle" class="text-blue-700 dark:text-blue-400">Folder</span>
-                    </div>
-                    
-                    <div id="loadingDocs" class="hidden text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-slate-500 font-bold text-sm">Đang đồng bộ dữ liệu...</p></div>
-                    <div id="docsList" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
-                </div>
-
-                <div id="view-meds" class="hidden flex-col gap-6 fade-in">
-                    <div class="flex gap-3 relative z-10">
-                        <div class="relative flex-1 group">
-                            <i class="fa-solid fa-pills absolute left-4 top-4 text-slate-500 group-focus-within:text-pink-600 transition"></i>
-                            <input id="searchMedsInput" type="text" onkeyup="app.searchMedsDebounced()" class="w-full pl-12 pr-10 py-3.5 rounded-2xl ios-input text-lg placeholder-slate-500 shadow-sm" placeholder="Tìm thuốc (Gõ không dấu ok)...">
-                            <button onclick="document.getElementById('searchMedsInput').value=''; app.searchMedsDebounced()" class="absolute right-4 top-4 text-slate-400 hover:text-slate-600"><i class="fa-solid fa-xmark"></i></button>
-                        </div>
-                    </div>
-                    <div id="loadingMeds" class="hidden text-center py-10"><div class="loader mx-auto"></div><p class="mt-2 text-slate-500 font-bold text-sm">Đang tải danh mục thuốc...</p></div>
-                    <div id="medsList" class="grid grid-cols-1 gap-4"></div>
-                </div>
-
-                <div id="view-tools" class="hidden flex-col gap-6 fade-in">
-                    
-                    <div id="adminToolsCard" class="hidden glass-card rounded-2xl overflow-hidden border-l-4 border-red-500 shadow-md">
-                        <button onclick="app.ui.toggleTool('admin')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
-                            <span class="font-bold text-slate-900 dark:text-white"><i class="fa-solid fa-user-shield text-red-600 mr-2"></i>Admin Tools</span>
-                            <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
-                        </button>
-                        <div id="tool-admin" class="tool-content px-4">
-                            <div class="py-4 space-y-4">
-                                <div class="mt-2 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
-                                     <h4 class="font-bold text-blue-700 dark:text-blue-300 text-xs uppercase mb-2">Google Drive Auto-Sync</h4>
-                                     <div class="flex gap-2">
-                                         <input id="driveFolderId" type="text" placeholder="ID thư mục Drive gốc..." class="flex-1 ios-input p-2 rounded-lg text-xs">
-                                         <button onclick="app.admin.saveDriveConfig()" class="bg-blue-600 text-white px-3 rounded-lg text-xs font-bold hover:bg-blue-700 transition">Lưu</button>
-                                     </div>
-                                     <button onclick="app.admin.triggerSync()" class="w-full mt-2 py-2 bg-gradient-to-r from-green-500 to-teal-500 text-white rounded-lg text-xs font-bold shadow-md hover:scale-[1.02] transition"><i class="fa-solid fa-rotate mr-1"></i> Quét & Đồng bộ ngay</button>
-                                </div>
-                                <div class="grid grid-cols-1 gap-3">
-                                    <button onclick="app.admin.seedMeds()" class="p-3 rounded-xl bg-gradient-to-r from-pink-600 to-purple-600 text-white font-bold hover:opacity-90 transition flex items-center justify-center gap-2 shadow-lg"><i class="fa-solid fa-database"></i> Nạp Dữ Liệu Mẫu (Demo)</button>
-                                    <div class="grid grid-cols-2 gap-3">
-                                        <button onclick="app.admin.openImport('docs')" class="p-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 transition flex items-center justify-center gap-2"><i class="fa-solid fa-file-import"></i> Import Docs</button>
-                                        <button onclick="app.admin.openImport('meds')" class="p-3 rounded-xl bg-teal-600 text-white font-bold hover:bg-teal-700 transition flex items-center justify-center gap-2"><i class="fa-solid fa-capsules"></i> Import Meds</button>
-                                    </div>
-                                </div>
-                                <div class="h-px bg-slate-300 dark:bg-slate-600"></div>
-                                <div id="adminUsersBox" class="p-3 bg-black/5 dark:bg-black/30 rounded-xl text-sm max-h-40 overflow-y-auto border border-black/10 custom-scrollbar"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                         <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-indigo-500">
-                            <button onclick="app.ui.toggleTool('bmi')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
-                                <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-weight-scale text-indigo-500 mr-2"></i>Tính BMI</span>
-                                <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
-                            </button>
-                            <div id="tool-bmi" class="tool-content px-4">
-                                <div class="py-4 space-y-3">
-                                    <div class="flex gap-2"><input type="number" id="bmi-w" placeholder="Cân nặng (kg)" class="w-1/2 ios-input p-2.5 rounded-xl"><input type="number" id="bmi-h" placeholder="Chiều cao (cm)" class="w-1/2 ios-input p-2.5 rounded-xl"></div>
-                                    <button onclick="app.tools.calcBMI()" class="w-full py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl shadow-md transition">Tính Kết Quả</button>
-                                    <div id="bmi-res" class="hidden text-center font-bold text-indigo-700 dark:text-indigo-300 mt-2 text-lg p-2 bg-indigo-50 dark:bg-indigo-900/20 rounded-lg select-all"></div>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-red-500">
-                             <button onclick="app.ui.toggleTool('map')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
-                                <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-heart-pulse text-red-500 mr-2"></i>Huyết áp (MAP)</span>
-                                <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
-                            </button>
-                            <div id="tool-map" class="tool-content px-4">
-                                <div class="py-4 space-y-3">
-                                    <div class="flex gap-2"><input type="number" id="map-sys" placeholder="Tâm thu (mmHg)" class="w-1/2 ios-input p-2.5 rounded-xl"><input type="number" id="map-dia" placeholder="Tâm trương (mmHg)" class="w-1/2 ios-input p-2.5 rounded-xl"></div>
-                                    <button onclick="app.tools.calcMAP()" class="w-full py-2.5 bg-red-600 hover:bg-red-700 text-white font-bold rounded-xl shadow-md transition">Tính MAP</button>
-                                    <div id="map-res" class="hidden text-center font-bold text-red-700 dark:text-red-300 mt-2 text-lg p-2 bg-red-50 dark:bg-red-900/20 rounded-lg select-all"></div>
-                                </div>
-                            </div>
-                        </div>
-
-                         <div class="glass-card rounded-2xl overflow-hidden border-t-4 border-orange-500 md:col-span-2">
-                             <button onclick="app.ui.toggleTool('egfr')" class="w-full p-4 flex justify-between items-center bg-white/40 hover:bg-white/60 dark:hover:bg-white/5 transition">
-                                <span class="font-bold text-slate-900 dark:text-white flex items-center"><i class="fa-solid fa-kidneys text-orange-500 mr-2"></i>Độ lọc cầu thận (eGFR)</span>
-                                <i class="fa-solid fa-chevron-down text-slate-500 transition-transform duration-300 tool-arrow"></i>
-                            </button>
-                            <div id="tool-egfr" class="tool-content px-4">
-                                <div class="py-4 space-y-3 text-sm">
-                                    <div class="flex gap-2">
-                                        <input type="number" id="egfr-age" placeholder="Tuổi" class="w-1/3 ios-input p-2.5 rounded-xl">
-                                        <input type="number" id="egfr-w" placeholder="Cân nặng (kg)" class="w-1/3 ios-input p-2.5 rounded-xl">
-                                        <select id="egfr-sex" class="w-1/3 ios-input p-2.5 rounded-xl text-slate-700 dark:text-white dark:bg-slate-700"><option value="1">Nam</option><option value="0.85">Nữ</option></select>
-                                    </div>
-                                    <div class="relative">
-                                        <input type="number" id="egfr-cre" placeholder="Creatinine (mg/dL)" step="0.01" class="w-full ios-input p-2.5 rounded-xl pl-10">
-                                        <span class="absolute left-3 top-2.5 text-slate-400 font-bold">Cr</span>
-                                    </div>
-                                    <button onclick="app.tools.calcEGFR()" class="w-full py-2.5 bg-orange-600 hover:bg-orange-700 text-white font-bold rounded-xl shadow-md transition">Phân độ Suy thận</button>
-                                    <div id="egfr-res" class="hidden text-center font-bold text-orange-700 dark:text-orange-300 mt-2 text-lg p-3 bg-orange-50 dark:bg-orange-900/20 rounded-lg border border-orange-200 dark:border-orange-800 select-all"></div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div id="view-exam" class="hidden flex-col gap-6 fade-in">
-                    
-                    <div class="glass-card p-6 rounded-3xl relative overflow-hidden group">
-                        <div class="absolute top-0 right-0 w-64 h-64 bg-gradient-to-br from-purple-500/30 to-blue-500/30 rounded-full blur-3xl -mr-16 -mt-16 animate-pulse-slow"></div>
-                        
-                        <div class="relative z-10 flex flex-col md:flex-row justify-between items-end gap-4">
-                            <div>
-                                <h2 class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600 dark:from-blue-400 dark:to-purple-400">
-                                    <i class="fa-solid fa-graduation-cap mr-2"></i>Lộ trình Đánh giá Năng lực
-                                </h2>
-                                <p class="text-slate-500 dark:text-slate-400 text-sm font-bold mt-1">
-                                    128 Vấn đề Lâm sàng Thiết yếu (Y6 & CKI)
-                                </p>
-                            </div>
-                            <div class="text-right flex items-center gap-3 bg-white/40 dark:bg-black/20 px-4 py-2 rounded-xl backdrop-blur-md">
-                                <div class="text-right">
-                                    <div class="text-3xl font-black text-slate-800 dark:text-white leading-none" id="examProgressText">0%</div>
-                                    <div class="text-[10px] font-bold text-slate-500 uppercase tracking-wider">Hoàn thành</div>
-                                </div>
-                                <div class="h-10 w-10 relative">
-                                    <svg class="h-full w-full transform -rotate-90" viewBox="0 0 36 36">
-                                        <path class="text-gray-200 dark:text-gray-700" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                        <path id="examCirclePath" class="text-blue-600 transition-all duration-1000 ease-out" stroke-dasharray="0, 100" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                                    </svg>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="mt-6 h-3 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden shadow-inner relative">
-                            <div id="examProgressBar" class="h-full bg-gradient-to-r from-blue-500 via-purple-500 to-pink-500 w-0 transition-all duration-1000 ease-out relative">
-                                <div class="absolute inset-0 bg-white/30 w-full h-full animate-pulse"></div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="flex flex-col md:flex-row gap-4">
-                        <div class="relative flex-1 group">
-                             <i class="fa-solid fa-magnifying-glass absolute left-4 top-3.5 text-slate-500 group-focus-within:text-blue-500 transition"></i>
-                             <input type="text" id="examSearch" onkeyup="app.exam.render()" placeholder="Tìm vấn đề (VD: Sốt, Phù, 23.2...)" class="w-full pl-12 pr-4 py-3 rounded-2xl ios-input shadow-sm font-medium">
-                             <button onclick="document.getElementById('examSearch').value=''; app.exam.render()" class="absolute right-4 top-3.5 text-slate-400 hover:text-red-500 transition"><i class="fa-solid fa-xmark"></i></button>
-                        </div>
-                        
-                        <div class="flex gap-2 overflow-x-auto pb-2 md:pb-0 no-scrollbar" id="examFilters">
-                            <button onclick="app.exam.filter('all')" class="exam-filter active whitespace-nowrap px-4 py-3 rounded-xl bg-white/50 dark:bg-white/10 text-xs font-bold hover:bg-slate-800 hover:text-white transition shadow-sm border border-white/20">Tất cả</button>
-                            <button onclick="app.exam.filter('Nhi')" class="exam-filter whitespace-nowrap px-4 py-3 rounded-xl bg-orange-50 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400 text-xs font-bold hover:bg-orange-500 hover:text-white transition border border-orange-200 dark:border-orange-800"><i class="fa-solid fa-baby mr-1"></i>Nhi khoa</button>
-                            <button onclick="app.exam.filter('Nội')" class="exam-filter whitespace-nowrap px-4 py-3 rounded-xl bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 text-xs font-bold hover:bg-blue-500 hover:text-white transition border border-blue-200 dark:border-blue-800"><i class="fa-solid fa-user-doctor mr-1"></i>Nội khoa</button>
-                            <button onclick="app.exam.filter('Ngoại')" class="exam-filter whitespace-nowrap px-4 py-3 rounded-xl bg-green-50 dark:bg-green-900/20 text-green-600 dark:text-green-400 text-xs font-bold hover:bg-green-500 hover:text-white transition border border-green-200 dark:border-green-800"><i class="fa-solid fa-scalpel mr-1"></i>Ngoại khoa</button>
-                            <button onclick="app.exam.filter('Sản')" class="exam-filter whitespace-nowrap px-4 py-3 rounded-xl bg-pink-50 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400 text-xs font-bold hover:bg-pink-500 hover:text-white transition border border-pink-200 dark:border-pink-800"><i class="fa-solid fa-person-pregnant mr-1"></i>Sản phụ</button>
-                        </div>
-                    </div>
-
-                    <div id="examList" class="grid grid-cols-1 md:grid-cols-2 gap-4 pb-20"></div>
-                </div>
-
-            </div>
-
-            <div class="lg:col-span-4 flex flex-col gap-6">
-                <div class="glass-panel p-5 rounded-3xl shadow-lg relative overflow-hidden group border border-blue-200 dark:border-blue-900/30">
-                    <div id="playlistBtn" class="absolute top-2 right-2 cursor-pointer p-2 z-10" onclick="app.music.togglePlaylist()"><i class="fa-solid fa-list-ul text-slate-500 hover:text-blue-600 transition"></i></div>
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-headphones-simple text-pink-500"></i> Chill Zone</h3>
-                        <div class="flex bg-slate-200 dark:bg-slate-700 rounded-full p-1 mr-8">
-                            <div onclick="app.music.switchTab('local')" id="tab-music-local" class="music-tab active text-[10px] px-2 py-1 rounded-full cursor-pointer bg-white dark:bg-slate-600 shadow-sm transition">Mp3</div>
-                            <div onclick="app.music.switchTab('online')" id="tab-music-online" class="music-tab text-[10px] px-2 py-1 rounded-full cursor-pointer transition">Youtube</div>
-                        </div>
-                    </div>
-                    
-                    <div id="music-view-local">
-                        <div class="flex justify-center mb-4 relative mt-6">
-                             <div id="musicDisc" class="w-40 h-40 rounded-full bg-slate-900 border-4 border-slate-800 flex items-center justify-center overflow-hidden shadow-2xl transition-all duration-500"><img id="musicCover" src="https://img.icons8.com/color/144/vinyl-music.png" class="w-full h-full opacity-90 object-cover"></div>
-                             <div class="absolute inset-0 flex items-center justify-center"><div class="w-8 h-8 bg-white dark:bg-slate-300 rounded-full border-2 border-slate-400 z-10"></div></div>
-                        </div>
-                        <div class="text-center mb-4 px-2">
-                            <p id="musicTitle" class="text-base font-bold text-slate-900 dark:text-white truncate">Select a track...</p>
-                            <p id="musicArtist" class="text-xs text-slate-500 font-bold uppercase tracking-wide">Lofi Relax</p>
-                        </div>
-                        <div class="flex justify-center items-center gap-6 mb-5">
-                            <button onclick="app.music.prev()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white hover:bg-slate-200 transition"><i class="fa-solid fa-backward-step"></i></button>
-                            <button onclick="app.music.toggle()" id="playBtnIcon" class="w-14 h-14 rounded-full bg-gradient-to-br from-blue-600 to-indigo-600 text-white flex items-center justify-center hover:scale-110 active:scale-95 transition shadow-xl shadow-blue-500/40"><i class="fa-solid fa-play text-xl ml-1"></i></button>
-                            <button onclick="app.music.next()" class="w-10 h-10 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-white hover:bg-slate-200 transition"><i class="fa-solid fa-forward-step"></i></button>
-                        </div>
-                        <div class="flex items-center gap-3 px-3 bg-white/40 dark:bg-black/20 rounded-xl p-2">
-                            <i class="fa-solid fa-volume-low text-xs text-slate-500"></i>
-                            <input type="range" id="volSlider" min="0" max="1" step="0.05" value="0.8" oninput="app.music.setVolume(this.value)" class="w-full h-1 bg-slate-300 rounded-lg appearance-none cursor-pointer">
-                        </div>
-                        <div id="playlistView" class="hidden absolute inset-0 bg-white/95 dark:bg-slate-900/95 z-20 flex flex-col p-4 animate-slideIn">
-                            <div class="flex justify-between items-center mb-4"><h4 class="font-bold text-slate-800 dark:text-white text-sm">Danh sách phát</h4><button onclick="app.music.togglePlaylist()"><i class="fa-solid fa-xmark text-lg hover:text-red-500"></i></button></div>
-                            <div id="playlistItems" class="flex-1 overflow-y-auto space-y-2 pr-1 custom-scrollbar"></div>
-                        </div>
-                    </div>
-                    
-                    <div id="music-view-online" class="hidden mt-4 space-y-3">
-                         <div class="flex gap-2 mb-1">
-                             <input type="text" id="youtubeInput" placeholder="Dán Link hoặc Tìm kiếm..." class="w-full ios-input p-2 rounded-lg text-xs font-bold">
-                             <button onclick="app.music.playCustomVideo()" class="bg-red-600 hover:bg-red-700 text-white rounded-lg px-3 py-1 text-xs font-bold shadow-md"><i class="fa-solid fa-play"></i></button>
-                          </div>
-                        <div class="bg-black rounded-xl overflow-hidden shadow-lg border border-slate-700 relative pt-[56.25%]">
-                            <iframe id="radioFrame" class="absolute inset-0 w-full h-full" src="https://www.youtube.com/embed/jfKfPfyJRdk" title="YouTube Radio" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" playsinline allowfullscreen></iframe>
-                        </div>
-                        <p class="text-[10px] text-slate-400 italic text-center">Tự động tắt nhạc Mp3 khi bật Youtube.</p>
-                    </div>
-                    
-                    <div class="mt-4 pt-4 border-t border-slate-200 dark:border-slate-700">
-                        <p class="text-[10px] font-bold uppercase text-slate-500 mb-2 tracking-wider">Âm thanh nền (Ambience) - OGG</p>
-                        <div class="flex justify-between items-center px-1">
-                            <button onclick="app.music.toggleAmbience('rain', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng Mưa"><i class="fa-solid fa-cloud-rain text-xl text-blue-500"></i><span class="text-[9px] font-bold">Mưa</span></button>
-                            <button onclick="app.music.toggleAmbience('fire', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng Lửa trại"><i class="fa-solid fa-fire text-xl text-orange-500"></i><span class="text-[9px] font-bold">Lửa</span></button>
-                            <button onclick="app.music.toggleAmbience('forest', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Tiếng Rừng cây"><i class="fa-solid fa-tree text-xl text-green-500"></i><span class="text-[9px] font-bold">Rừng</span></button>
-                            <button onclick="app.music.toggleAmbience('cafe', this)" class="ambience-btn flex flex-col items-center gap-1 p-2 w-16" title="Quán Cafe"><i class="fa-solid fa-mug-hot text-xl text-brown-500 text-yellow-700"></i><span class="text-[9px] font-bold">Cafe</span></button>
-                        </div>
-                    </div>
-
-                    <audio id="bgAudio" class="hidden"></audio>
-                </div>
-
-                <div class="glass-card p-5 rounded-3xl relative border border-red-200 dark:border-red-900/30">
-                      <div class="flex justify-between items-center mb-4">
-                          <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-stopwatch text-red-500"></i> Pomodoro</h3>
-                          <div class="flex gap-1">
-                              <button onclick="app.tools.setTimer(25)" class="text-[10px] bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-300 px-2.5 py-1 rounded-lg font-bold hover:bg-red-200 transition">25'</button>
-                              <button onclick="app.tools.setTimer(5)" class="text-[10px] bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-300 px-2.5 py-1 rounded-lg font-bold hover:bg-green-200 transition">5'</button>
-                          </div>
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+          
+          {/* Cột trái: Bảng Ô Chữ */}
+          <div className="lg:col-span-2 bg-white rounded-2xl shadow-xl p-4 md:p-6 overflow-hidden">
+            <div className="overflow-x-auto pb-4 custom-scrollbar">
+              <div className="flex flex-col gap-1.5 md:gap-2 min-w-max mx-auto px-4">
+                {CROSSWORDS.map((row, i) => {
+                  const offset = maxKeywordIndex - row.keywordPos;
+                  const isSelected = selectedRow === i;
+                  const isRevealed = rowStatus[i] === 'revealed' || gameWon;
+                  
+                  return (
+                    <div 
+                      key={i} 
+                      className="flex items-center gap-1.5 md:gap-2 cursor-pointer group"
+                      onClick={() => !gameWon && rowStatus[i] !== 'revealed' && setSelectedRow(i)}
+                    >
+                      {/* Số thứ tự hàng */}
+                      <div className={`w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full font-bold text-xs md:text-sm transition-colors
+                        ${isRevealed ? 'bg-emerald-500 text-white' : isSelected ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500 group-hover:bg-blue-100'}
+                      `}>
+                        {i + 1}
                       </div>
-                    <div class="flex flex-col items-center">
-                        <div class="text-5xl font-mono font-black text-slate-800 dark:text-white mb-4 tracking-widest tabular-nums" id="timerDisplay">25:00</div>
-                        <button id="timerBtn" onclick="app.tools.toggleTimer()" class="w-full py-2.5 rounded-xl bg-slate-900 dark:bg-white text-white dark:text-slate-900 font-bold hover:opacity-90 transition shadow-lg">Bắt đầu tập trung</button>
+
+                      {/* Các ô chữ */}
+                      <div className={`flex gap-1 md:gap-1.5 p-1 rounded-lg transition-all ${isSelected ? 'ring-2 ring-blue-400 bg-blue-50/50' : ''}`}>
+                        {Array.from({ length: maxCols }).map((_, colIndex) => {
+                          const isCell = colIndex >= offset && colIndex < offset + row.answer.length;
+                          const isKeywordCol = colIndex === maxKeywordIndex;
+                          const letterIndex = colIndex - offset;
+                          const char = isRevealed ? row.answer[letterIndex] : '';
+
+                          if (!isCell) {
+                            return <div key={colIndex} className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 opacity-0" />;
+                          }
+
+                          return (
+                            <div 
+                              key={colIndex} 
+                              className={`
+                                w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 border-2 rounded flex items-center justify-center font-bold text-lg md:text-2xl transition-all duration-500 transform
+                                ${isKeywordCol 
+                                  ? 'border-amber-400 bg-amber-50 z-10' 
+                                  : 'border-slate-300 bg-slate-50'}
+                                ${isRevealed && isKeywordCol ? 'bg-amber-400 text-white border-amber-500 shadow-md scale-105' : ''}
+                                ${isRevealed && !isKeywordCol ? 'bg-blue-500 text-white border-blue-600 shadow-sm' : ''}
+                                ${!isRevealed && isKeywordCol && isSelected ? 'bg-amber-100' : ''}
+                                ${!isRevealed && !isKeywordCol && isSelected ? 'bg-blue-100' : ''}
+                                ${gameWon && isKeywordCol ? 'animate-pulse' : ''}
+                              `}
+                            >
+                              <span className={isRevealed ? 'animate-[popIn_0.3s_ease-out]' : ''}>
+                                {char}
+                              </span>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
-                </div>
+                  );
+                })}
+              </div>
+            </div>
+          </div>
 
-                <div class="glass-card p-5 rounded-3xl flex flex-col relative group border border-yellow-200 dark:border-yellow-900/30">
-                    <div class="flex justify-between items-center mb-2">
-                        <h3 class="font-bold text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-note-sticky text-yellow-500"></i> Ghi chú Cloud</h3>
-                        <span id="saveStatus" class="text-[10px] font-bold text-green-600 opacity-0 transition"><i class="fa-solid fa-check"></i> Đã lưu</span>
+          {/* Cột phải: Bảng Điều Khiển */}
+          <div className="space-y-6">
+            
+            {/* Trạng thái / Chiến thắng */}
+            {gameWon && (
+              <div className="bg-gradient-to-br from-yellow-300 to-amber-500 rounded-2xl shadow-lg p-6 text-white text-center animate-[slideDown_0.5s_ease-out]">
+                <Trophy className="w-16 h-16 mx-auto mb-3 text-yellow-100" />
+                <h2 className="text-2xl font-bold mb-2">CHÚC MỪNG!</h2>
+                <p className="mb-4">Bạn đã giải mã thành công ô chữ bí mật:</p>
+                <div className="text-3xl font-black tracking-widest bg-black/20 py-2 rounded-lg">
+                  NGÀY CÓ HOA
+                </div>
+                <button 
+                  onClick={resetGame}
+                  className="mt-6 flex items-center justify-center gap-2 w-full bg-white text-amber-600 font-bold py-3 rounded-xl hover:bg-yellow-50 transition-colors"
+                >
+                  <RotateCcw className="w-5 h-5" />
+                  Chơi Lại
+                </button>
+              </div>
+            )}
+
+            {/* Khung nhập liệu hàng ngang */}
+            {!gameWon && (
+              <div className="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-blue-500">
+                <div className="flex items-center gap-2 mb-4 text-blue-800 font-bold">
+                  <HelpCircle className="w-6 h-6" />
+                  <h2 className="text-xl">Giải Ô Hàng Ngang</h2>
+                </div>
+                
+                {selectedRow === null ? (
+                  <div className="h-32 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 text-slate-400 p-4 text-center">
+                    Nhấp vào một hàng ngang bên trái để xem gợi ý và trả lời.
+                  </div>
+                ) : (
+                  <div className="space-y-4 animate-[fadeIn_0.3s_ease-out]">
+                    <div className="bg-blue-50 p-4 rounded-xl text-blue-900 border border-blue-100">
+                      <span className="font-bold mr-2 text-blue-600">Hàng {selectedRow + 1}:</span>
+                      {CROSSWORDS[selectedRow].clue}
+                      <div className="text-xs text-blue-500 mt-2 font-medium">
+                        ({CROSSWORDS[selectedRow].answer.length} chữ cái)
+                      </div>
                     </div>
-                    <textarea id="quickNote" oninput="app.saveNoteDebounced()" class="w-full bg-white/50 dark:bg-slate-900/50 rounded-xl p-3 ios-input text-sm leading-relaxed shadow-inner focus:ring-2 ring-yellow-400/50 h-32 resize-none" placeholder="Viết ý tưởng nhanh..."></textarea>
-                 </div>
-            </div>
-        </div>
-    </div>
+                    
+                    <form onSubmit={handleRowSubmit} className="flex gap-2">
+                      <input
+                        ref={inputRef}
+                        type="text"
+                        value={rowInput}
+                        onChange={(e) => setRowInput(e.target.value)}
+                        placeholder="Nhập câu trả lời..."
+                        className="flex-1 px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium uppercase transition-shadow"
+                      />
+                      <button 
+                        type="submit"
+                        className="px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors flex items-center justify-center shadow-md shadow-blue-200"
+                      >
+                        <Play className="w-5 h-5" />
+                      </button>
+                    </form>
+                  </div>
+                )}
+              </div>
+            )}
 
-    <div id="addDocModal" onclick="if(event.target === this) app.ui.closeModal('addDocModal')" class="fixed inset-0 z-50 hidden flex items-center justify-center bg-slate-900/60 backdrop-blur-md cursor-pointer">
-        <div class="bg-white/95 dark:bg-slate-800/95 w-[90%] md:w-[400px] p-6 rounded-3xl shadow-2xl border border-white/20 animate-float cursor-default">
-            <h3 class="text-lg font-extrabold text-slate-900 dark:text-white mb-4">Thêm Tài Liệu Mới</h3>
-            <div class="space-y-4">
-                <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Tên tài liệu</label><input id="newDocTitle" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="Nhập tên..."></div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Thư mục</label><select id="newDocFolder" class="w-full ios-input p-3 rounded-xl mt-1 font-bold text-slate-700 dark:text-slate-200 dark:bg-slate-700"></select></div>
-                <div><label class="text-xs font-bold text-slate-500 uppercase ml-1">Link Drive/Web</label><input id="newDocLink" type="text" class="w-full ios-input p-3 rounded-xl mt-1" placeholder="https://..."></div>
-                <div class="p-3 bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-xl flex items-center gap-3 opacity-50 pointer-events-none transition-all" id="publicDocWrapper">
-                    <input type="checkbox" id="isPublicDoc" class="w-5 h-5 accent-orange-600 rounded cursor-pointer">
-                    <label for="isPublicDoc" class="text-xs font-bold text-orange-700 dark:text-orange-400 cursor-pointer select-none">Lưu vào Kho dùng chung (Admin)</label>
+            {/* Khung đoán từ khóa dọc */}
+            {!gameWon && (
+              <div className="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-amber-400">
+                <div className="flex items-center gap-2 mb-4 text-amber-700 font-bold">
+                  <Trophy className="w-6 h-6" />
+                  <h2 className="text-xl">Giải Từ Khóa Dọc</h2>
                 </div>
-                <div class="flex gap-3 pt-2">
-                    <button onclick="app.ui.closeModal('addDocModal')" class="flex-1 py-3 rounded-xl bg-slate-200 dark:bg-slate-700 text-slate-600 dark:text-slate-300 font-bold hover:bg-slate-300 dark:hover:bg-slate-600 transition">Hủy</button>
-                    <button onclick="app.data.saveNewDoc()" class="flex-1 py-3 rounded-xl bg-blue-600 text-white font-bold hover:bg-blue-700 shadow-lg transition">Lưu ngay</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <div id="jsonImportModal" onclick="if(event.target === this) app.ui.closeModal('jsonImportModal')" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center z-50 backdrop-blur-md cursor-pointer">
-      <div class="bg-white dark:bg-gray-900 p-6 rounded-2xl w-full max-w-xl shadow-2xl animate-slideIn border border-white/10 cursor-default">
-        <h2 class="font-bold text-lg mb-3 text-slate-800 dark:text-white flex items-center gap-2"><i class="fa-solid fa-file-code text-blue-500"></i> Import JSON Dữ Liệu</h2>
-        <p id="jsonImportHint" class="text-xs text-slate-500 mb-2 font-mono bg-slate-100 dark:bg-slate-800 p-2 rounded">Format: ...</p>
-        <textarea id="jsonInput" class="w-full h-48 p-3 rounded-xl border dark:border-gray-700 dark:bg-black/50 dark:text-white ios-input font-mono text-xs" placeholder='[{"name": "Thuốc A", ...}]'></textarea>
-        <div class="flex gap-3 mt-4">
-            <button onclick="app.admin.execImport()" class="flex-1 bg-green-600 hover:bg-green-700 text-white p-3 rounded-xl font-bold transition shadow-lg">Xác nhận Import</button>
-            <button onclick="app.ui.closeModal('jsonImportModal')" class="flex-1 bg-gray-500 hover:bg-gray-600 text-white p-3 rounded-xl font-bold transition">Hủy bỏ</button>
+                <p className="text-sm text-slate-500 mb-4">
+                  Bạn có thể đoán từ khóa dọc (9 chữ cái) bất cứ lúc nào để giành chiến thắng ngay lập tức!
+                </p>
+                <form onSubmit={handleKeywordSubmit} className="space-y-3">
+                  <input
+                    type="text"
+                    value={keywordInput}
+                    onChange={(e) => setKeywordInput(e.target.value)}
+                    placeholder="Nhập từ khóa dọc..."
+                    className="w-full px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 font-bold text-amber-900 uppercase placeholder-amber-300 transition-shadow"
+                  />
+                  <button 
+                    type="submit"
+                    className="w-full py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-white font-bold rounded-xl shadow-lg shadow-amber-200 transition-all transform hover:-translate-y-0.5"
+                  >
+                    Giải Mã
+                  </button>
+                </form>
+              </div>
+            )}
+          </div>
         </div>
       </div>
+
+      {/* Toast Notification */}
+      {toast && (
+        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 animate-[slideUp_0.3s_ease-out]">
+          <div className={`flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl text-white font-medium
+            ${toast.type === 'success' ? 'bg-emerald-600' : 'bg-red-500'}
+          `}>
+            {toast.type === 'success' ? <CheckCircle2 className="w-6 h-6" /> : <XCircle className="w-6 h-6" />}
+            {toast.msg}
+          </div>
+        </div>
+      )}
+
+      {/* Styles for animations and scrollbar */}
+      <style dangerouslySetInnerHTML={{__html: `
+        @keyframes popIn {
+          0% { transform: scale(0.5); opacity: 0; }
+          70% { transform: scale(1.1); }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes slideUp {
+          from { transform: translate(-50%, 100%); opacity: 0; }
+          to { transform: translate(-50%, 0); opacity: 1; }
+        }
+        @keyframes slideDown {
+          from { transform: translateY(-20px); opacity: 0; }
+          to { transform: translateY(0); opacity: 1; }
+        }
+        @keyframes fadeIn {
+          from { opacity: 0; }
+          to { opacity: 1; }
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+          height: 8px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+          background: #f1f5f9;
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+          background: #cbd5e1;
+          border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+          background: #94a3b8;
+        }
+      `}} />
     </div>
-
-    <div id="notifyPanel" class="hidden fixed top-24 right-6 w-80 glass-card p-4 rounded-2xl z-50 shadow-2xl border border-white/40 backdrop-blur-xl">
-        <h3 class="font-bold mb-3 text-lg flex items-center gap-2 border-b pb-2 border-slate-200 dark:border-slate-700"><i class="fa-solid fa-clock-rotate-left text-blue-500"></i> Lịch sử hoạt động</h3>
-        <div id="notifyList" class="space-y-2 text-sm max-h-80 overflow-y-auto pr-1 custom-scrollbar"></div>
-    </div>
-
-    <div id="toast-container"></div>
-
-    <script type="module" src="script.js"></script>
-</body>
-</html>
+  );
+}
