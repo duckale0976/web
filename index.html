@@ -1,336 +1,400 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Play, CheckCircle2, XCircle, Trophy, HelpCircle, RotateCcw } from 'lucide-react';
-
-// Cấu hình dữ liệu game
-const CROSSWORDS = [
-  { answer: 'CONGNHAN', clue: 'Lực lượng lao động chính, trực tiếp hoặc gián tiếp vận hành máy móc trong các nhà máy, xí nghiệp.', keywordPos: 2 },
-  { answer: 'DANGVIEN', clue: 'Danh xưng dành cho những người đã chính thức đứng trong hàng ngũ của tổ chức Đảng.', keywordPos: 3 },
-  { answer: 'HAIBATRUNG', clue: 'Tên gọi chung của hai vị nữ anh hùng dân tộc đã phất cờ khởi nghĩa chống quân Đông Hán.', keywordPos: 1 },
-  { answer: 'YDUC', clue: 'Phẩm chất tốt đẹp, đạo đức nghề nghiệp cốt lõi của người làm công tác y tế.', keywordPos: 0 },
-  { answer: 'CACHMANG', clue: 'Cuộc biến đổi lớn lao, căn bản trên các lĩnh vực đời sống, thay thế cái cũ bằng cái mới tiến bộ hơn.', keywordPos: 0 },
-  { answer: 'SUSONG', clue: 'Trạng thái duy trì sự tồn tại và phát triển của mọi sinh vật trên Trái Đất.', keywordPos: 3 },
-  { answer: 'DANGTHUYTRAM', clue: 'Nữ bác sĩ, liệt sĩ quê ở Hà Nội, tác giả của cuốn nhật ký thời chiến làm lay động hàng triệu trái tim.', keywordPos: 5 },
-  { answer: 'COPENHAGEN', clue: 'Thủ đô và cũng là thành phố lớn nhất của vương quốc Đan Mạch.', keywordPos: 1 },
-  { answer: 'LAMSANG', clue: 'Hoạt động thăm khám, theo dõi và chữa bệnh trực tiếp trên người bệnh.', keywordPos: 1 },
-];
-
-const VERTICAL_KEYWORD = 'NGAYCOHOA';
-
-// Hàm loại bỏ dấu tiếng Việt để so sánh đáp án
-const removeVietnameseTones = (str) => {
-  let result = str;
-  result = result.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g, "a");
-  result = result.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g, "e");
-  result = result.replace(/ì|í|ị|ỉ|ĩ/g, "i");
-  result = result.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g, "o");
-  result = result.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g, "u");
-  result = result.replace(/ỳ|ý|ỵ|ỷ|ỹ/g, "y");
-  result = result.replace(/đ/g, "d");
-  result = result.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
-  result = result.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
-  result = result.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
-  result = result.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|MỠ/g, "O");
-  result = result.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
-  result = result.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
-  result = result.replace(/Đ/g, "D");
-  return result;
-};
-
-export default function App() {
-  const maxKeywordIndex = Math.max(...CROSSWORDS.map(w => w.keywordPos));
-  const maxCols = Math.max(...CROSSWORDS.map(w => (maxKeywordIndex - w.keywordPos) + w.answer.length));
-
-  const [rowStatus, setRowStatus] = useState(Array(CROSSWORDS.length).fill('hidden'));
-  const [selectedRow, setSelectedRow] = useState(null);
-  const [rowInput, setRowInput] = useState('');
-  const [keywordInput, setKeywordInput] = useState('');
-  const [gameWon, setGameWon] = useState(false);
-  const [toast, setToast] = useState(null);
-  
-  const inputRef = useRef(null);
-
-  // Hiển thị thông báo
-  const showToast = (msg, type) => {
-    setToast({ msg, type });
-    setTimeout(() => setToast(null), 3000);
-  };
-
-  // Focus input mỗi khi chọn hàng mới
-  useEffect(() => {
-    if (selectedRow !== null && inputRef.current) {
-      inputRef.current.focus();
-    }
-  }, [selectedRow]);
-
-  const handleRowSubmit = (e) => {
-    e.preventDefault();
-    if (selectedRow === null) return;
-
-    const normalizedInput = removeVietnameseTones(rowInput).replace(/\s/g, '').toUpperCase();
-    const correctAnswer = CROSSWORDS[selectedRow].answer;
-
-    if (normalizedInput === correctAnswer) {
-      const newStatus = [...rowStatus];
-      newStatus[selectedRow] = 'revealed';
-      setRowStatus(newStatus);
-      showToast('Chính xác!', 'success');
-      setRowInput('');
-      
-      // Auto chọn hàng tiếp theo chưa mở
-      const nextUnrevealed = newStatus.findIndex(status => status === 'hidden');
-      if (nextUnrevealed !== -1) {
-        setSelectedRow(nextUnrevealed);
-      } else {
-        setSelectedRow(null);
-      }
-    } else {
-      showToast('Sai rồi, hãy thử lại nhé!', 'error');
-    }
-  };
-
-  const handleKeywordSubmit = (e) => {
-    e.preventDefault();
-    const normalizedInput = removeVietnameseTones(keywordInput).replace(/\s/g, '').toUpperCase();
-    if (normalizedInput === VERTICAL_KEYWORD) {
-      setGameWon(true);
-      setRowStatus(Array(CROSSWORDS.length).fill('revealed'));
-      setSelectedRow(null);
-      showToast('Tuyệt vời! Bạn đã tìm ra từ khóa chính!', 'success');
-    } else {
-      showToast('Từ khóa chưa chính xác!', 'error');
-    }
-  };
-
-  const resetGame = () => {
-    setRowStatus(Array(CROSSWORDS.length).fill('hidden'));
-    setSelectedRow(null);
-    setRowInput('');
-    setKeywordInput('');
-    setGameWon(false);
-    setToast(null);
-  };
-
-  return (
-    <div className="min-h-screen bg-slate-100 p-4 md:p-8 font-sans text-slate-800">
-      <div className="max-w-6xl mx-auto space-y-6">
-        
-        {/* Header */}
-        <div className="text-center space-y-2">
-          <h1 className="text-3xl md:text-5xl font-extrabold text-blue-800 uppercase tracking-wider drop-shadow-sm">
-            Giải Mã Ô Chữ
-          </h1>
-          <p className="text-slate-600 font-medium text-sm md:text-base">
-            Tìm ra 9 từ hàng ngang để giải mã từ khóa dọc bí ẩn!
-          </p>
-        </div>
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          
-          {/* Cột trái: Bảng Ô Chữ */}
-          <div className="lg:col-span-2 bg-white rounded-2xl shadow-xl p-4 md:p-6 overflow-hidden">
-            <div className="overflow-x-auto pb-4 custom-scrollbar">
-              <div className="flex flex-col gap-1.5 md:gap-2 min-w-max mx-auto px-4">
-                {CROSSWORDS.map((row, i) => {
-                  const offset = maxKeywordIndex - row.keywordPos;
-                  const isSelected = selectedRow === i;
-                  const isRevealed = rowStatus[i] === 'revealed' || gameWon;
-                  
-                  return (
-                    <div 
-                      key={i} 
-                      className="flex items-center gap-1.5 md:gap-2 cursor-pointer group"
-                      onClick={() => !gameWon && rowStatus[i] !== 'revealed' && setSelectedRow(i)}
-                    >
-                      {/* Số thứ tự hàng */}
-                      <div className={`w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full font-bold text-xs md:text-sm transition-colors
-                        ${isRevealed ? 'bg-emerald-500 text-white' : isSelected ? 'bg-blue-600 text-white' : 'bg-slate-200 text-slate-500 group-hover:bg-blue-100'}
-                      `}>
-                        {i + 1}
-                      </div>
-
-                      {/* Các ô chữ */}
-                      <div className={`flex gap-1 md:gap-1.5 p-1 rounded-lg transition-all ${isSelected ? 'ring-2 ring-blue-400 bg-blue-50/50' : ''}`}>
-                        {Array.from({ length: maxCols }).map((_, colIndex) => {
-                          const isCell = colIndex >= offset && colIndex < offset + row.answer.length;
-                          const isKeywordCol = colIndex === maxKeywordIndex;
-                          const letterIndex = colIndex - offset;
-                          const char = isRevealed ? row.answer[letterIndex] : '';
-
-                          if (!isCell) {
-                            return <div key={colIndex} className="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 opacity-0" />;
-                          }
-
-                          return (
-                            <div 
-                              key={colIndex} 
-                              className={`
-                                w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 border-2 rounded flex items-center justify-center font-bold text-lg md:text-2xl transition-all duration-500 transform
-                                ${isKeywordCol 
-                                  ? 'border-amber-400 bg-amber-50 z-10' 
-                                  : 'border-slate-300 bg-slate-50'}
-                                ${isRevealed && isKeywordCol ? 'bg-amber-400 text-white border-amber-500 shadow-md scale-105' : ''}
-                                ${isRevealed && !isKeywordCol ? 'bg-blue-500 text-white border-blue-600 shadow-sm' : ''}
-                                ${!isRevealed && isKeywordCol && isSelected ? 'bg-amber-100' : ''}
-                                ${!isRevealed && !isKeywordCol && isSelected ? 'bg-blue-100' : ''}
-                                ${gameWon && isKeywordCol ? 'animate-pulse' : ''}
-                              `}
-                            >
-                              <span className={isRevealed ? 'animate-[popIn_0.3s_ease-out]' : ''}>
-                                {char}
-                              </span>
-                            </div>
-                          );
-                        })}
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-          </div>
-
-          {/* Cột phải: Bảng Điều Khiển */}
-          <div className="space-y-6">
-            
-            {/* Trạng thái / Chiến thắng */}
-            {gameWon && (
-              <div className="bg-gradient-to-br from-yellow-300 to-amber-500 rounded-2xl shadow-lg p-6 text-white text-center animate-[slideDown_0.5s_ease-out]">
-                <Trophy className="w-16 h-16 mx-auto mb-3 text-yellow-100" />
-                <h2 className="text-2xl font-bold mb-2">CHÚC MỪNG!</h2>
-                <p className="mb-4">Bạn đã giải mã thành công ô chữ bí mật:</p>
-                <div className="text-3xl font-black tracking-widest bg-black/20 py-2 rounded-lg">
-                  NGÀY CÓ HOA
-                </div>
-                <button 
-                  onClick={resetGame}
-                  className="mt-6 flex items-center justify-center gap-2 w-full bg-white text-amber-600 font-bold py-3 rounded-xl hover:bg-yellow-50 transition-colors"
-                >
-                  <RotateCcw className="w-5 h-5" />
-                  Chơi Lại
-                </button>
-              </div>
-            )}
-
-            {/* Khung nhập liệu hàng ngang */}
-            {!gameWon && (
-              <div className="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-blue-500">
-                <div className="flex items-center gap-2 mb-4 text-blue-800 font-bold">
-                  <HelpCircle className="w-6 h-6" />
-                  <h2 className="text-xl">Giải Ô Hàng Ngang</h2>
-                </div>
-                
-                {selectedRow === null ? (
-                  <div className="h-32 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 text-slate-400 p-4 text-center">
-                    Nhấp vào một hàng ngang bên trái để xem gợi ý và trả lời.
-                  </div>
-                ) : (
-                  <div className="space-y-4 animate-[fadeIn_0.3s_ease-out]">
-                    <div className="bg-blue-50 p-4 rounded-xl text-blue-900 border border-blue-100">
-                      <span className="font-bold mr-2 text-blue-600">Hàng {selectedRow + 1}:</span>
-                      {CROSSWORDS[selectedRow].clue}
-                      <div className="text-xs text-blue-500 mt-2 font-medium">
-                        ({CROSSWORDS[selectedRow].answer.length} chữ cái)
-                      </div>
-                    </div>
-                    
-                    <form onSubmit={handleRowSubmit} className="flex gap-2">
-                      <input
-                        ref={inputRef}
-                        type="text"
-                        value={rowInput}
-                        onChange={(e) => setRowInput(e.target.value)}
-                        placeholder="Nhập câu trả lời..."
-                        className="flex-1 px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium uppercase transition-shadow"
-                      />
-                      <button 
-                        type="submit"
-                        className="px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors flex items-center justify-center shadow-md shadow-blue-200"
-                      >
-                        <Play className="w-5 h-5" />
-                      </button>
-                    </form>
-                  </div>
-                )}
-              </div>
-            )}
-
-            {/* Khung đoán từ khóa dọc */}
-            {!gameWon && (
-              <div className="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-amber-400">
-                <div className="flex items-center gap-2 mb-4 text-amber-700 font-bold">
-                  <Trophy className="w-6 h-6" />
-                  <h2 className="text-xl">Giải Từ Khóa Dọc</h2>
-                </div>
-                <p className="text-sm text-slate-500 mb-4">
-                  Bạn có thể đoán từ khóa dọc (9 chữ cái) bất cứ lúc nào để giành chiến thắng ngay lập tức!
-                </p>
-                <form onSubmit={handleKeywordSubmit} className="space-y-3">
-                  <input
-                    type="text"
-                    value={keywordInput}
-                    onChange={(e) => setKeywordInput(e.target.value)}
-                    placeholder="Nhập từ khóa dọc..."
-                    className="w-full px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 font-bold text-amber-900 uppercase placeholder-amber-300 transition-shadow"
-                  />
-                  <button 
-                    type="submit"
-                    className="w-full py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-white font-bold rounded-xl shadow-lg shadow-amber-200 transition-all transform hover:-translate-y-0.5"
-                  >
-                    Giải Mã
-                  </button>
-                </form>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
-      {/* Toast Notification */}
-      {toast && (
-        <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 animate-[slideUp_0.3s_ease-out]">
-          <div className={`flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl text-white font-medium
-            ${toast.type === 'success' ? 'bg-emerald-600' : 'bg-red-500'}
-          `}>
-            {toast.type === 'success' ? <CheckCircle2 className="w-6 h-6" /> : <XCircle className="w-6 h-6" />}
-            {toast.msg}
-          </div>
-        </div>
-      )}
-
-      {/* Styles for animations and scrollbar */}
-      <style dangerouslySetInnerHTML={{__html: `
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Giải Mã Ô Chữ - Ngày Có Hoa</title>
+    
+    <!-- Tích hợp Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Tích hợp FontAwesome cho các icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
         @keyframes popIn {
-          0% { transform: scale(0.5); opacity: 0; }
-          70% { transform: scale(1.1); }
-          100% { transform: scale(1); opacity: 1; }
+            0% { transform: scale(0.5); opacity: 0; }
+            70% { transform: scale(1.1); }
+            100% { transform: scale(1); opacity: 1; }
         }
         @keyframes slideUp {
-          from { transform: translate(-50%, 100%); opacity: 0; }
-          to { transform: translate(-50%, 0); opacity: 1; }
+            from { transform: translate(-50%, 100%); opacity: 0; }
+            to { transform: translate(-50%, 0); opacity: 1; }
         }
         @keyframes slideDown {
-          from { transform: translateY(-20px); opacity: 0; }
-          to { transform: translateY(0); opacity: 1; }
+            from { transform: translateY(-20px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
         }
         @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+            from { opacity: 0; }
+            to { opacity: 1; }
         }
-        .custom-scrollbar::-webkit-scrollbar {
-          height: 8px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-track {
-          background: #f1f5f9;
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb {
-          background: #cbd5e1;
-          border-radius: 10px;
-        }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-          background: #94a3b8;
-        }
-      `}} />
+        
+        .animate-popIn { animation: popIn 0.3s ease-out forwards; }
+        .animate-slideUp { animation: slideUp 0.3s ease-out forwards; }
+        .animate-slideDown { animation: slideDown 0.5s ease-out forwards; }
+        .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+
+        .custom-scrollbar::-webkit-scrollbar { height: 8px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="bg-slate-100 font-sans text-slate-800 min-h-screen">
+
+    <div class="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
+        
+        <!-- Header -->
+        <div class="text-center space-y-2">
+            <h1 class="text-3xl md:text-5xl font-extrabold text-blue-800 uppercase tracking-wider drop-shadow-sm">
+                Giải Mã Ô Chữ
+            </h1>
+            <p class="text-slate-600 font-medium text-sm md:text-base">
+                Tìm ra 9 từ hàng ngang để giải mã từ khóa dọc bí ẩn!
+            </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- Cột trái: Bảng Ô Chữ -->
+            <div class="lg:col-span-2 bg-white rounded-2xl shadow-xl p-4 md:p-6 overflow-hidden">
+                <div class="overflow-x-auto pb-4 custom-scrollbar">
+                    <div id="crossword-board" class="flex flex-col gap-1.5 md:gap-2 min-w-max mx-auto px-4">
+                        <!-- Lưới ô chữ sẽ được render bằng JavaScript -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Cột phải: Bảng Điều Khiển -->
+            <div class="space-y-6">
+                
+                <!-- Màn hình Chiến thắng (Mặc định ẩn) -->
+                <div id="win-screen" class="hidden bg-gradient-to-br from-yellow-300 to-amber-500 rounded-2xl shadow-lg p-6 text-white text-center animate-slideDown">
+                    <i class="fa-solid fa-trophy text-6xl mx-auto mb-3 text-yellow-100"></i>
+                    <h2 class="text-2xl font-bold mb-2">CHÚC MỪNG!</h2>
+                    <p class="mb-4">Bạn đã giải mã thành công ô chữ bí mật:</p>
+                    <div class="text-3xl font-black tracking-widest bg-black/20 py-2 rounded-lg">
+                        NGÀY CÓ HOA
+                    </div>
+                    <button onclick="resetGame()" class="mt-6 flex items-center justify-center gap-2 w-full bg-white text-amber-600 font-bold py-3 rounded-xl hover:bg-yellow-50 transition-colors">
+                        <i class="fa-solid fa-rotate-left"></i> Chơi Lại
+                    </button>
+                </div>
+
+                <!-- Các nút điều khiển khi đang chơi -->
+                <div id="playing-controls" class="space-y-6">
+                    
+                    <!-- Khung nhập liệu hàng ngang -->
+                    <div class="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-blue-500">
+                        <div class="flex items-center gap-2 mb-4 text-blue-800 font-bold">
+                            <i class="fa-solid fa-circle-question text-xl"></i>
+                            <h2 class="text-xl">Giải Ô Hàng Ngang</h2>
+                        </div>
+                        
+                        <!-- Trạng thái chưa chọn hàng -->
+                        <div id="row-unselected" class="h-32 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 text-slate-400 p-4 text-center">
+                            Nhấp vào một hàng ngang bên trái để xem gợi ý và trả lời.
+                        </div>
+                        
+                        <!-- Trạng thái đã chọn hàng -->
+                        <div id="row-selected" class="hidden space-y-4 animate-fadeIn">
+                            <div class="bg-blue-50 p-4 rounded-xl text-blue-900 border border-blue-100">
+                                <span id="clue-row-num" class="font-bold mr-2 text-blue-600"></span>
+                                <span id="clue-text"></span>
+                                <div id="clue-length" class="text-xs text-blue-500 mt-2 font-medium"></div>
+                            </div>
+                            
+                            <form id="row-form" class="flex gap-2">
+                                <input
+                                    id="row-input"
+                                    type="text"
+                                    placeholder="Nhập câu trả lời..."
+                                    autocomplete="off"
+                                    class="flex-1 px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium uppercase transition-shadow"
+                                />
+                                <button type="submit" class="px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors flex items-center justify-center shadow-md shadow-blue-200">
+                                    <i class="fa-solid fa-play"></i>
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Khung đoán từ khóa dọc -->
+                    <div class="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-amber-400">
+                        <div class="flex items-center gap-2 mb-4 text-amber-700 font-bold">
+                            <i class="fa-solid fa-trophy text-xl"></i>
+                            <h2 class="text-xl">Giải Từ Khóa Dọc</h2>
+                        </div>
+                        <p class="text-sm text-slate-500 mb-4">
+                            Bạn có thể đoán từ khóa dọc (9 chữ cái) bất cứ lúc nào để giành chiến thắng ngay lập tức!
+                        </p>
+                        <form id="keyword-form" class="space-y-3">
+                            <input
+                                id="keyword-input"
+                                type="text"
+                                placeholder="Nhập từ khóa dọc..."
+                                autocomplete="off"
+                                class="w-full px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 font-bold text-amber-900 uppercase placeholder-amber-300 transition-shadow"
+                            />
+                            <button type="submit" class="w-full py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-white font-bold rounded-xl shadow-lg shadow-amber-200 transition-all transform hover:-translate-y-0.5">
+                                Giải Mã
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-  );
-}
+
+    <!-- Nơi chứa thông báo (Toast) -->
+    <div id="toast-container" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 flex flex-col gap-2"></div>
+
+    <!-- Script Game Logic -->
+    <script>
+        // Dữ liệu Game
+        const CROSSWORDS = [
+            { answer: 'CONGNHAN', clue: 'Lực lượng lao động chính, trực tiếp hoặc gián tiếp vận hành máy móc trong các nhà máy, xí nghiệp.', keywordPos: 2 },
+            { answer: 'DANGVIEN', clue: 'Danh xưng dành cho những người đã chính thức đứng trong hàng ngũ của tổ chức Đảng.', keywordPos: 3 },
+            { answer: 'HAIBATRUNG', clue: 'Tên gọi chung của hai vị nữ anh hùng dân tộc đã phất cờ khởi nghĩa chống quân Đông Hán.', keywordPos: 1 },
+            { answer: 'YDUC', clue: 'Phẩm chất tốt đẹp, đạo đức nghề nghiệp cốt lõi của người làm công tác y tế.', keywordPos: 0 },
+            { answer: 'CACHMANG', clue: 'Cuộc biến đổi lớn lao, căn bản trên các lĩnh vực đời sống, thay thế cái cũ bằng cái mới tiến bộ hơn.', keywordPos: 0 },
+            { answer: 'SUSONG', clue: 'Trạng thái duy trì sự tồn tại và phát triển của mọi sinh vật trên Trái Đất.', keywordPos: 3 },
+            { answer: 'DANGTHUYTRAM', clue: 'Nữ bác sĩ, liệt sĩ quê ở Hà Nội, tác giả của cuốn nhật ký thời chiến làm lay động hàng triệu trái tim.', keywordPos: 5 },
+            { answer: 'COPENHAGEN', clue: 'Thủ đô và cũng là thành phố lớn nhất của vương quốc Đan Mạch.', keywordPos: 1 },
+            { answer: 'LAMSANG', clue: 'Hoạt động thăm khám, theo dõi và chữa bệnh trực tiếp trên người bệnh.', keywordPos: 1 },
+        ];
+        const VERTICAL_KEYWORD = 'NGAYCOHOA';
+
+        // Tính toán kích thước lưới
+        const maxKeywordIndex = Math.max(...CROSSWORDS.map(w => w.keywordPos));
+        const maxCols = Math.max(...CROSSWORDS.map(w => (maxKeywordIndex - w.keywordPos) + w.answer.length));
+
+        // Trạng thái Game
+        let rowStatus = Array(CROSSWORDS.length).fill('hidden');
+        let selectedRow = null;
+        let gameWon = false;
+
+        // Hàm tiện ích: Loại bỏ dấu tiếng Việt
+        function removeVietnameseTones(str) {
+            str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g,"a"); 
+            str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g,"e"); 
+            str = str.replace(/ì|í|ị|ỉ|ĩ/g,"i"); 
+            str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g,"o"); 
+            str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g,"u"); 
+            str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g,"y"); 
+            str = str.replace(/đ/g,"d");
+            str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
+            str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
+            str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
+            str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|MỠ/g, "O");
+            str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
+            str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
+            str = str.replace(/Đ/g, "D");
+            return str;
+        }
+
+        // Khởi tạo Lưới Ô Chữ
+        function initBoard() {
+            const boardEl = document.getElementById('crossword-board');
+            let html = '';
+            
+            CROSSWORDS.forEach((row, i) => {
+                const offset = maxKeywordIndex - row.keywordPos;
+                html += `
+                    <div class="flex items-center gap-1.5 md:gap-2 cursor-pointer group" onclick="selectRow(${i})">
+                        <div id="row-num-${i}" class="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full font-bold text-xs md:text-sm transition-colors bg-slate-200 text-slate-500 group-hover:bg-blue-100">
+                            ${i + 1}
+                        </div>
+                        <div id="row-cells-${i}" class="flex gap-1 md:gap-1.5 p-1 rounded-lg transition-all">
+                `;
+
+                for(let c = 0; c < maxCols; c++) {
+                    const isCell = c >= offset && c < offset + row.answer.length;
+                    const isKeywordCol = c === maxKeywordIndex;
+                    
+                    if(!isCell) {
+                        html += `<div class="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 opacity-0"></div>`;
+                    } else {
+                        html += `
+                            <div id="cell-${i}-${c}" class="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 border-2 rounded flex items-center justify-center font-bold text-lg md:text-2xl transition-all duration-500 transform ${isKeywordCol ? 'border-amber-400 bg-amber-50 z-10' : 'border-slate-300 bg-slate-50'}">
+                                <span></span>
+                            </div>
+                        `;
+                    }
+                }
+                
+                html += `</div></div>`;
+            });
+            
+            boardEl.innerHTML = html;
+        }
+
+        // Cập nhật giao diện (UI) dựa trên trạng thái
+        function updateUI() {
+            // 1. Cập nhật Lưới
+            CROSSWORDS.forEach((row, i) => {
+                const offset = maxKeywordIndex - row.keywordPos;
+                const isSelected = selectedRow === i;
+                const isRevealed = rowStatus[i] === 'revealed' || gameWon;
+
+                const rowNumEl = document.getElementById(`row-num-${i}`);
+                const rowCellsEl = document.getElementById(`row-cells-${i}`);
+
+                // Màu sắc số thứ tự
+                if (isRevealed) rowNumEl.className = "w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full font-bold text-xs md:text-sm transition-colors bg-emerald-500 text-white";
+                else if (isSelected) rowNumEl.className = "w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full font-bold text-xs md:text-sm transition-colors bg-blue-600 text-white";
+                else rowNumEl.className = "w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full font-bold text-xs md:text-sm transition-colors bg-slate-200 text-slate-500 group-hover:bg-blue-100";
+
+                // Highlight khung viền hàng ngang
+                rowCellsEl.className = `flex gap-1 md:gap-1.5 p-1 rounded-lg transition-all ${isSelected && !gameWon ? 'ring-2 ring-blue-400 bg-blue-50/50' : ''}`;
+
+                // Cập nhật từng ô chữ
+                for(let c = 0; c < maxCols; c++) {
+                    const isCell = c >= offset && c < offset + row.answer.length;
+                    const isKeywordCol = c === maxKeywordIndex;
+                    
+                    if (isCell) {
+                        const cellEl = document.getElementById(`cell-${i}-${c}`);
+                        const spanEl = cellEl.querySelector('span');
+                        const char = isRevealed ? row.answer[c - offset] : '';
+
+                        spanEl.textContent = char;
+                        spanEl.className = isRevealed ? 'animate-popIn block' : '';
+
+                        let cellClass = 'w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 border-2 rounded flex items-center justify-center font-bold text-lg md:text-2xl transition-all duration-500 transform ';
+                        
+                        if (isRevealed && isKeywordCol) cellClass += 'bg-amber-400 text-white border-amber-500 shadow-md scale-105 ';
+                        else if (isRevealed && !isKeywordCol) cellClass += 'bg-blue-500 text-white border-blue-600 shadow-sm ';
+                        else if (!isRevealed && isKeywordCol && isSelected) cellClass += 'border-amber-400 bg-amber-100 z-10 ';
+                        else if (!isRevealed && isKeywordCol && !isSelected) cellClass += 'border-amber-400 bg-amber-50 z-10 ';
+                        else if (!isRevealed && !isKeywordCol && isSelected) cellClass += 'border-slate-300 bg-blue-100 ';
+                        else cellClass += 'border-slate-300 bg-slate-50 ';
+
+                        if (gameWon && isKeywordCol) cellClass += 'animate-pulse ';
+
+                        cellEl.className = cellClass;
+                    }
+                }
+            });
+
+            // 2. Cập nhật Bảng Điều Khiển
+            const winScreen = document.getElementById('win-screen');
+            const playingControls = document.getElementById('playing-controls');
+            
+            if (gameWon) {
+                winScreen.classList.remove('hidden');
+                playingControls.classList.add('hidden');
+            } else {
+                winScreen.classList.add('hidden');
+                playingControls.classList.remove('hidden');
+
+                const rowUnselected = document.getElementById('row-unselected');
+                const rowSelected = document.getElementById('row-selected');
+
+                if (selectedRow === null) {
+                    rowUnselected.classList.remove('hidden');
+                    rowSelected.classList.add('hidden');
+                } else {
+                    rowUnselected.classList.add('hidden');
+                    rowSelected.classList.remove('hidden');
+
+                    document.getElementById('clue-row-num').textContent = `Hàng ${selectedRow + 1}:`;
+                    document.getElementById('clue-text').textContent = CROSSWORDS[selectedRow].clue;
+                    document.getElementById('clue-length').textContent = `(${CROSSWORDS[selectedRow].answer.length} chữ cái)`;
+                    
+                    const inputEl = document.getElementById('row-input');
+                    inputEl.focus();
+                }
+            }
+        }
+
+        // Chọn hàng ngang
+        function selectRow(index) {
+            if (gameWon || rowStatus[index] === 'revealed') return;
+            selectedRow = index;
+            document.getElementById('row-input').value = '';
+            updateUI();
+        }
+
+        // Hiển thị thông báo (Toast)
+        function showToast(msg, type) {
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            
+            const bgColor = type === 'success' ? 'bg-emerald-600' : 'bg-red-500';
+            const icon = type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark';
+
+            toast.className = `flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl text-white font-medium animate-slideUp ${bgColor}`;
+            toast.innerHTML = `<i class="fa-solid ${icon} text-xl"></i> ${msg}`;
+            
+            container.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(100%)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // Xử lý Gửi đáp án hàng ngang
+        document.getElementById('row-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            if (selectedRow === null) return;
+
+            const inputEl = document.getElementById('row-input');
+            const rawInput = inputEl.value;
+            const normalizedInput = removeVietnameseTones(rawInput).replace(/\s/g, '').toUpperCase();
+            const correctAnswer = CROSSWORDS[selectedRow].answer;
+
+            if (normalizedInput === correctAnswer) {
+                rowStatus[selectedRow] = 'revealed';
+                showToast('Chính xác!', 'success');
+                inputEl.value = '';
+                
+                // Tự động nhảy tới hàng chưa mở tiếp theo
+                const nextHidden = rowStatus.findIndex(status => status === 'hidden');
+                selectedRow = nextHidden !== -1 ? nextHidden : null;
+                
+            } else {
+                showToast('Sai rồi, hãy thử lại nhé!', 'error');
+            }
+            updateUI();
+        });
+
+        // Xử lý Gửi đáp án từ khóa dọc
+        document.getElementById('keyword-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const inputEl = document.getElementById('keyword-input');
+            const rawInput = inputEl.value;
+            const normalizedInput = removeVietnameseTones(rawInput).replace(/\s/g, '').toUpperCase();
+
+            if (normalizedInput === VERTICAL_KEYWORD) {
+                gameWon = true;
+                rowStatus = Array(CROSSWORDS.length).fill('revealed');
+                selectedRow = null;
+                showToast('Tuyệt vời! Bạn đã tìm ra từ khóa chính!', 'success');
+            } else {
+                showToast('Từ khóa chưa chính xác!', 'error');
+            }
+            updateUI();
+        });
+
+        // Chơi lại
+        function resetGame() {
+            rowStatus = Array(CROSSWORDS.length).fill('hidden');
+            selectedRow = null;
+            gameWon = false;
+            document.getElementById('row-input').value = '';
+            document.getElementById('keyword-input').value = '';
+            updateUI();
+        }
+
+        // Chạy lần đầu khi load trang
+        initBoard();
+        updateUI();
+
+    </script>
+</body>
+</html>
