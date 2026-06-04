@@ -3,398 +3,203 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giải Mã Ô Chữ Bí Ẩn</title>
-    
-    <!-- Tích hợp Tailwind CSS -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- Tích hợp FontAwesome cho các icon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
+    <title>Web HIS - Quản Lý Phòng Khám</title>
     <style>
-        @keyframes popIn {
-            0% { transform: scale(0.5); opacity: 0; }
-            70% { transform: scale(1.1); }
-            100% { transform: scale(1); opacity: 1; }
-        }
-        @keyframes slideUp {
-            from { transform: translate(-50%, 100%); opacity: 0; }
-            to { transform: translate(-50%, 0); opacity: 1; }
-        }
-        @keyframes slideDown {
-            from { transform: translateY(-20px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 20px; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        h2 { text-align: center; color: #1a73e8; }
         
-        .animate-popIn { animation: popIn 0.3s ease-out forwards; }
-        .animate-slideUp { animation: slideUp 0.3s ease-out forwards; }
-        .animate-slideDown { animation: slideDown 0.5s ease-out forwards; }
-        .animate-fadeIn { animation: fadeIn 0.3s ease-out forwards; }
+        /* Tabs */
+        .tabs { display: flex; border-bottom: 2px solid #ddd; margin-bottom: 20px; }
+        .tab { padding: 10px 20px; cursor: pointer; font-weight: bold; color: #555; border: none; background: none; font-size: 16px; }
+        .tab.active { color: #1a73e8; border-bottom: 3px solid #1a73e8; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
-        .custom-scrollbar::-webkit-scrollbar { height: 8px; }
-        .custom-scrollbar::-webkit-scrollbar-track { background: #f1f5f9; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
-        .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+        /* Forms */
+        .form-group { margin-bottom: 15px; display: flex; align-items: center; }
+        .form-group label { width: 120px; font-weight: bold; }
+        .form-group input, .form-group select, .form-group textarea { flex: 1; padding: 8px; border: 1px solid #ccc; border-radius: 4px; }
+        button { background-color: #1a73e8; color: white; border: none; padding: 10px 15px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        button:hover { background-color: #1557b0; }
+
+        /* Table */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        table, th, td { border: 1px solid #ddd; }
+        th, td { padding: 12px; text-align: left; }
+        th { background-color: #f8f9fa; }
     </style>
 </head>
-<body class="bg-slate-100 font-sans text-slate-800 min-h-screen">
+<body>
 
-    <div class="p-4 md:p-8 max-w-6xl mx-auto space-y-6">
-        
-        <!-- Header -->
-        <div class="text-center space-y-2">
-            <h1 class="text-3xl md:text-5xl font-extrabold text-blue-800 uppercase tracking-wider drop-shadow-sm">
-                Giải Mã Ô Chữ
-            </h1>
-            <p class="text-slate-600 font-medium text-sm md:text-base">
-                Tìm ra 9 từ hàng ngang để giải mã từ khóa dọc bí ẩn!
-            </p>
-        </div>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            
-            <!-- Cột trái: Bảng Ô Chữ -->
-            <div class="lg:col-span-2 bg-white rounded-2xl shadow-xl p-4 md:p-6 overflow-hidden">
-                <div class="overflow-x-auto pb-4 custom-scrollbar">
-                    <div id="crossword-board" class="flex flex-col gap-1.5 md:gap-2 min-w-max mx-auto px-4">
-                        <!-- Lưới ô chữ sẽ được render bằng JavaScript -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Cột phải: Bảng Điều Khiển -->
-            <div class="space-y-6">
-                
-                <!-- Màn hình Chiến thắng (Mặc định ẩn) -->
-                <div id="win-screen" class="hidden bg-gradient-to-br from-yellow-300 to-amber-500 rounded-2xl shadow-lg p-6 text-white text-center animate-slideDown">
-                    <i class="fa-solid fa-trophy text-6xl mx-auto mb-3 text-yellow-100"></i>
-                    <h2 class="text-2xl font-bold mb-2">CHÚC MỪNG!</h2>
-                    <p class="mb-4">Bạn đã giải mã thành công ô chữ bí mật:</p>
-                    <div class="text-3xl font-black tracking-widest bg-black/20 py-2 rounded-lg">
-                        NGÀY CÓ HOA
-                    </div>
-                    <button onclick="resetGame()" class="mt-6 flex items-center justify-center gap-2 w-full bg-white text-amber-600 font-bold py-3 rounded-xl hover:bg-yellow-50 transition-colors">
-                        <i class="fa-solid fa-rotate-left"></i> Chơi Lại
-                    </button>
-                </div>
-
-                <!-- Các nút điều khiển khi đang chơi -->
-                <div id="playing-controls" class="space-y-6">
-                    
-                    <!-- Khung nhập liệu hàng ngang -->
-                    <div class="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-blue-500">
-                        <div class="flex items-center gap-2 mb-4 text-blue-800 font-bold">
-                            <i class="fa-solid fa-circle-question text-xl"></i>
-                            <h2 class="text-xl">Giải Ô Hàng Ngang</h2>
-                        </div>
-                        
-                        <!-- Trạng thái chưa chọn hàng -->
-                        <div id="row-unselected" class="h-32 flex items-center justify-center border-2 border-dashed border-slate-200 rounded-xl bg-slate-50 text-slate-400 p-4 text-center">
-                            Nhấp vào một hàng ngang bên trái để xem gợi ý và trả lời.
-                        </div>
-                        
-                        <!-- Trạng thái đã chọn hàng -->
-                        <div id="row-selected" class="hidden space-y-4 animate-fadeIn">
-                            <div class="bg-blue-50 p-4 rounded-xl text-blue-900 border border-blue-100">
-                                <span id="clue-row-num" class="font-bold mr-2 text-blue-600"></span>
-                                <span id="clue-text"></span>
-                                <div id="clue-length" class="text-xs text-blue-500 mt-2 font-medium"></div>
-                            </div>
-                            
-                            <form id="row-form" class="flex gap-2">
-                                <input
-                                    id="row-input"
-                                    type="text"
-                                    placeholder="Nhập câu trả lời..."
-                                    autocomplete="off"
-                                    class="flex-1 px-4 py-3 bg-slate-50 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium uppercase transition-shadow"
-                                />
-                                <button type="submit" class="px-6 bg-blue-600 hover:bg-blue-700 text-white font-bold rounded-xl transition-colors flex items-center justify-center shadow-md shadow-blue-200">
-                                    <i class="fa-solid fa-play"></i>
-                                </button>
-                            </form>
-                        </div>
-                    </div>
-
-                    <!-- Khung đoán từ khóa dọc -->
-                    <div class="bg-white rounded-2xl shadow-xl p-6 border-t-4 border-amber-400">
-                        <div class="flex items-center gap-2 mb-4 text-amber-700 font-bold">
-                            <i class="fa-solid fa-trophy text-xl"></i>
-                            <h2 class="text-xl">Giải Từ Khóa Dọc</h2>
-                        </div>
-                        <p class="text-sm text-slate-500 mb-4">
-                            Bạn có thể đoán từ khóa dọc (9 chữ cái) bất cứ lúc nào để giành chiến thắng ngay lập tức!
-                        </p>
-                        <form id="keyword-form" class="space-y-3">
-                            <input
-                                id="keyword-input"
-                                type="text"
-                                placeholder="Nhập từ khóa dọc..."
-                                autocomplete="off"
-                                class="w-full px-4 py-3 bg-amber-50 border border-amber-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 font-bold text-amber-900 uppercase placeholder-amber-300 transition-shadow"
-                            />
-                            <button type="submit" class="w-full py-3 bg-gradient-to-r from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 text-white font-bold rounded-xl shadow-lg shadow-amber-200 transition-all transform hover:-translate-y-0.5">
-                                Giải Mã
-                            </button>
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+<div class="container">
+    <h2>🏥 Hệ Thống Quản Lý Phòng Khám (Web HIS)</h2>
+    
+    <div class="tabs">
+        <button class="tab active" onclick="switchTab(event, 'reception')">Tiếp Đón Bệnh Nhân</button>
+        <button class="tab" onclick="switchTab(event, 'treatment')">Khám & Điều Trị</button>
     </div>
 
-    <!-- Nơi chứa thông báo (Toast) -->
-    <div id="toast-container" class="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 flex flex-col gap-2"></div>
+    <div id="reception" class="tab-content active">
+        <fieldset>
+            <legend><b>Thông tin đăng ký</b></legend>
+            <div class="form-group">
+                <label>Họ tên:</label> <input type="text" id="p_name" placeholder="Nhập họ tên...">
+            </div>
+            <div class="form-group">
+                <label>Tuổi:</label> <input type="number" id="p_age" placeholder="Nhập tuổi...">
+            </div>
+            <div class="form-group">
+                <label>Giới tính:</label> 
+                <select id="p_gender">
+                    <option value="Nam">Nam</option>
+                    <option value="Nữ">Nữ</option>
+                    <option value="Khác">Khác</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>Số điện thoại:</label> <input type="text" id="p_phone" placeholder="Nhập SĐT...">
+            </div>
+            <button onclick="addPatient()">Lưu Bệnh Nhân</button>
+        </fieldset>
 
-    <!-- Script Game Logic -->
-    <script>
-        // Dữ liệu Game
-        const CROSSWORDS = [
-            { answer: 'CONGNHAN', clue: 'Lực lượng lao động chính, trực tiếp hoặc gián tiếp vận hành máy móc trong các nhà máy, xí nghiệp.', keywordPos: 2 },
-            { answer: 'DANGVIEN', clue: 'Danh xưng dành cho những người đã chính thức đứng trong hàng ngũ của tổ chức Đảng.', keywordPos: 3 },
-            { answer: 'HAIBATRUNG', clue: 'Tên gọi chung của hai vị nữ anh hùng dân tộc đã phất cờ khởi nghĩa chống quân Đông Hán.', keywordPos: 1 },
-            { answer: 'YDUC', clue: 'Phẩm chất tốt đẹp, đạo đức nghề nghiệp cốt lõi của người làm công tác y tế.', keywordPos: 0 },
-            { answer: 'CACHMANG', clue: 'Cuộc biến đổi lớn lao, căn bản trên các lĩnh vực đời sống, thay thế cái cũ bằng cái mới tiến bộ hơn.', keywordPos: 0 },
-            { answer: 'SUSONG', clue: 'Trạng thái duy trì sự tồn tại và phát triển của mọi sinh vật trên Trái Đất.', keywordPos: 3 },
-            { answer: 'DANGTHUYTRAM', clue: 'Nữ bác sĩ, liệt sĩ quê ở Hà Nội, tác giả của cuốn nhật ký thời chiến làm lay động hàng triệu trái tim.', keywordPos: 5 },
-            { answer: 'COPENHAGEN', clue: 'Thủ đô và cũng là thành phố lớn nhất của vương quốc Đan Mạch.', keywordPos: 1 },
-            { answer: 'LAMSANG', clue: 'Hoạt động thăm khám, theo dõi và chữa bệnh trực tiếp trên người bệnh.', keywordPos: 1 },
-        ];
-        const VERTICAL_KEYWORD = 'NGAYCOHOA';
+        <h3 style="margin-top: 20px;">Danh sách bệnh nhân chờ</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th><th>Họ Tên</th><th>Tuổi</th><th>Giới Tính</th><th>SĐT</th>
+                </tr>
+            </thead>
+            <tbody id="patient_table_body">
+                </tbody>
+        </table>
+    </div>
 
-        // Tính toán kích thước lưới
-        const maxKeywordIndex = Math.max(...CROSSWORDS.map(w => w.keywordPos));
-        const maxCols = Math.max(...CROSSWORDS.map(w => (maxKeywordIndex - w.keywordPos) + w.answer.length));
+    <div id="treatment" class="tab-content">
+        <fieldset>
+            <legend><b>Bệnh Án Điện Tử</b></legend>
+            <div class="form-group">
+                <label>ID Bệnh Nhân:</label> <input type="number" id="t_patient_id" placeholder="Nhập ID bệnh nhân từ bảng bên kia...">
+            </div>
+            <div class="form-group">
+                <label>Triệu chứng:</label> <textarea id="t_symptoms" rows="3"></textarea>
+            </div>
+            <div class="form-group">
+                <label>Chẩn đoán:</label> <input type="text" id="t_diagnosis">
+            </div>
+            <div class="form-group">
+                <label>Kê đơn thuốc:</label> <textarea id="t_prescription" rows="3"></textarea>
+            </div>
+            <button onclick="saveTreatment()">Lưu Hồ Sơ Khám</button>
+        </fieldset>
+    </div>
+</div>
 
-        // Trạng thái Game
-        let rowStatus = Array(CROSSWORDS.length).fill('hidden');
-        let selectedRow = null;
-        let gameWon = false;
+<script>
+    // Khởi tạo dữ liệu từ LocalStorage (Nếu chưa có thì tạo mảng rỗng)
+    let patients = JSON.parse(localStorage.getItem('his_patients')) || [];
+    let treatments = JSON.parse(localStorage.getItem('his_treatments')) || [];
 
-        // Hàm tiện ích: Loại bỏ dấu tiếng Việt
-        function removeVietnameseTones(str) {
-            str = str.replace(/à|á|ạ|ả|ã|â|ầ|ấ|ậ|ẩ|ẫ|ă|ằ|ắ|ặ|ẳ|ẵ/g,"a"); 
-            str = str.replace(/è|é|ẹ|ẻ|ẽ|ê|ề|ế|ệ|ể|ễ/g,"e"); 
-            str = str.replace(/ì|í|ị|ỉ|ĩ/g,"i"); 
-            str = str.replace(/ò|ó|ọ|ỏ|õ|ô|ồ|ố|ộ|ổ|ỗ|ơ|ờ|ớ|ợ|ở|ỡ/g,"o"); 
-            str = str.replace(/ù|ú|ụ|ủ|ũ|ư|ừ|ứ|ự|ử|ữ/g,"u"); 
-            str = str.replace(/ỳ|ý|ỵ|ỷ|ỹ/g,"y"); 
-            str = str.replace(/đ/g,"d");
-            str = str.replace(/À|Á|Ạ|Ả|Ã|Â|Ầ|Ấ|Ậ|Ẩ|Ẫ|Ă|Ằ|Ắ|Ặ|Ẳ|Ẵ/g, "A");
-            str = str.replace(/È|É|Ẹ|Ẻ|Ẽ|Ê|Ề|Ế|Ệ|Ể|Ễ/g, "E");
-            str = str.replace(/Ì|Í|Ị|Ỉ|Ĩ/g, "I");
-            str = str.replace(/Ò|Ó|Ọ|Ỏ|Õ|Ô|Ồ|Ố|Ộ|Ổ|Ỗ|Ơ|Ờ|Ớ|Ợ|Ở|MỠ/g, "O");
-            str = str.replace(/Ù|Ú|Ụ|Ủ|Ũ|Ư|Ừ|Ứ|Ự|Ử|Ữ/g, "U");
-            str = str.replace(/Ỳ|Ý|Ỵ|Ỷ|Ỹ/g, "Y");
-            str = str.replace(/Đ/g, "D");
-            return str;
+    // Chuyển đổi giữa các Tabs
+    function switchTab(evt, tabName) {
+        let tabContents = document.getElementsByClassName("tab-content");
+        for (let i = 0; i < tabContents.length; i++) tabContents[i].classList.remove("active");
+        
+        let tabs = document.getElementsByClassName("tab");
+        for (let i = 0; i < tabs.length; i++) tabs[i].classList.remove("active");
+        
+        document.getElementById(tabName).classList.add("active");
+        evt.currentTarget.classList.add("active");
+    }
+
+    // Thêm bệnh nhân
+    function addPatient() {
+        let name = document.getElementById("p_name").value;
+        let age = document.getElementById("p_age").value;
+        let gender = document.getElementById("p_gender").value;
+        let phone = document.getElementById("p_phone").value;
+
+        if (!name || !age) {
+            alert("Vui lòng nhập Họ Tên và Tuổi!");
+            return;
         }
 
-        // Khởi tạo Lưới Ô Chữ
-        function initBoard() {
-            const boardEl = document.getElementById('crossword-board');
-            let html = '';
-            
-            CROSSWORDS.forEach((row, i) => {
-                const offset = maxKeywordIndex - row.keywordPos;
-                html += `
-                    <div class="flex items-center gap-1.5 md:gap-2 cursor-pointer group" onclick="selectRow(${i})">
-                        <div id="row-num-${i}" class="w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full font-bold text-xs md:text-sm transition-colors bg-slate-200 text-slate-500 group-hover:bg-blue-100">
-                            ${i + 1}
-                        </div>
-                        <div id="row-cells-${i}" class="flex gap-1 md:gap-1.5 p-1 rounded-lg transition-all">
-                `;
+        // Tự động tăng ID
+        let newId = patients.length > 0 ? Math.max(...patients.map(p => p.id)) + 1 : 1;
+        
+        let newPatient = { id: newId, name, age, gender, phone };
+        patients.push(newPatient);
+        
+        // Lưu vào LocalStorage
+        localStorage.setItem('his_patients', JSON.stringify(patients));
+        
+        alert("Đã thêm bệnh nhân thành công!");
+        
+        // Xóa form
+        document.getElementById("p_name").value = "";
+        document.getElementById("p_age").value = "";
+        document.getElementById("p_phone").value = "";
+        
+        loadPatients();
+    }
 
-                for(let c = 0; c < maxCols; c++) {
-                    const isCell = c >= offset && c < offset + row.answer.length;
-                    const isKeywordCol = c === maxKeywordIndex;
-                    
-                    if(!isCell) {
-                        html += `<div class="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 opacity-0"></div>`;
-                    } else {
-                        html += `
-                            <div id="cell-${i}-${c}" class="w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 border-2 rounded flex items-center justify-center font-bold text-lg md:text-2xl transition-all duration-500 transform ${isKeywordCol ? 'border-amber-400 bg-amber-50 z-10' : 'border-slate-300 bg-slate-50'}">
-                                <span></span>
-                            </div>
-                        `;
-                    }
-                }
-                
-                html += `</div></div>`;
-            });
-            
-            boardEl.innerHTML = html;
-        }
-
-        // Cập nhật giao diện (UI) dựa trên trạng thái
-        function updateUI() {
-            // 1. Cập nhật Lưới
-            CROSSWORDS.forEach((row, i) => {
-                const offset = maxKeywordIndex - row.keywordPos;
-                const isSelected = selectedRow === i;
-                const isRevealed = rowStatus[i] === 'revealed' || gameWon;
-
-                const rowNumEl = document.getElementById(`row-num-${i}`);
-                const rowCellsEl = document.getElementById(`row-cells-${i}`);
-
-                // Màu sắc số thứ tự
-                if (isRevealed) rowNumEl.className = "w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full font-bold text-xs md:text-sm transition-colors bg-emerald-500 text-white";
-                else if (isSelected) rowNumEl.className = "w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full font-bold text-xs md:text-sm transition-colors bg-blue-600 text-white";
-                else rowNumEl.className = "w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full font-bold text-xs md:text-sm transition-colors bg-slate-200 text-slate-500 group-hover:bg-blue-100";
-
-                // Highlight khung viền hàng ngang
-                rowCellsEl.className = `flex gap-1 md:gap-1.5 p-1 rounded-lg transition-all ${isSelected && !gameWon ? 'ring-2 ring-blue-400 bg-blue-50/50' : ''}`;
-
-                // Cập nhật từng ô chữ
-                for(let c = 0; c < maxCols; c++) {
-                    const isCell = c >= offset && c < offset + row.answer.length;
-                    const isKeywordCol = c === maxKeywordIndex;
-                    
-                    if (isCell) {
-                        const cellEl = document.getElementById(`cell-${i}-${c}`);
-                        const spanEl = cellEl.querySelector('span');
-                        const char = isRevealed ? row.answer[c - offset] : '';
-
-                        spanEl.textContent = char;
-                        spanEl.className = isRevealed ? 'animate-popIn block' : '';
-
-                        let cellClass = 'w-8 h-8 md:w-10 md:h-10 lg:w-12 lg:h-12 border-2 rounded flex items-center justify-center font-bold text-lg md:text-2xl transition-all duration-500 transform ';
-                        
-                        if (isRevealed && isKeywordCol) cellClass += 'bg-amber-400 text-white border-amber-500 shadow-md scale-105 ';
-                        else if (isRevealed && !isKeywordCol) cellClass += 'bg-blue-500 text-white border-blue-600 shadow-sm ';
-                        else if (!isRevealed && isKeywordCol && isSelected) cellClass += 'border-amber-400 bg-amber-100 z-10 ';
-                        else if (!isRevealed && isKeywordCol && !isSelected) cellClass += 'border-amber-400 bg-amber-50 z-10 ';
-                        else if (!isRevealed && !isKeywordCol && isSelected) cellClass += 'border-slate-300 bg-blue-100 ';
-                        else cellClass += 'border-slate-300 bg-slate-50 ';
-
-                        if (gameWon && isKeywordCol) cellClass += 'animate-pulse ';
-
-                        cellEl.className = cellClass;
-                    }
-                }
-            });
-
-            // 2. Cập nhật Bảng Điều Khiển
-            const winScreen = document.getElementById('win-screen');
-            const playingControls = document.getElementById('playing-controls');
-            
-            if (gameWon) {
-                winScreen.classList.remove('hidden');
-                playingControls.classList.add('hidden');
-            } else {
-                winScreen.classList.add('hidden');
-                playingControls.classList.remove('hidden');
-
-                const rowUnselected = document.getElementById('row-unselected');
-                const rowSelected = document.getElementById('row-selected');
-
-                if (selectedRow === null) {
-                    rowUnselected.classList.remove('hidden');
-                    rowSelected.classList.add('hidden');
-                } else {
-                    rowUnselected.classList.add('hidden');
-                    rowSelected.classList.remove('hidden');
-
-                    document.getElementById('clue-row-num').textContent = `Hàng ${selectedRow + 1}:`;
-                    document.getElementById('clue-text').textContent = CROSSWORDS[selectedRow].clue;
-                    document.getElementById('clue-length').textContent = `(${CROSSWORDS[selectedRow].answer.length} chữ cái)`;
-                    
-                    const inputEl = document.getElementById('row-input');
-                    inputEl.focus();
-                }
-            }
-        }
-
-        // Chọn hàng ngang
-        function selectRow(index) {
-            if (gameWon || rowStatus[index] === 'revealed') return;
-            selectedRow = index;
-            document.getElementById('row-input').value = '';
-            updateUI();
-        }
-
-        // Hiển thị thông báo (Toast)
-        function showToast(msg, type) {
-            const container = document.getElementById('toast-container');
-            const toast = document.createElement('div');
-            
-            const bgColor = type === 'success' ? 'bg-emerald-600' : 'bg-red-500';
-            const icon = type === 'success' ? 'fa-circle-check' : 'fa-circle-xmark';
-
-            toast.className = `flex items-center gap-3 px-6 py-4 rounded-2xl shadow-2xl text-white font-medium animate-slideUp ${bgColor}`;
-            toast.innerHTML = `<i class="fa-solid ${icon} text-xl"></i> ${msg}`;
-            
-            container.appendChild(toast);
-
-            setTimeout(() => {
-                toast.style.opacity = '0';
-                toast.style.transform = 'translateY(100%)';
-                toast.style.transition = 'all 0.3s ease';
-                setTimeout(() => toast.remove(), 300);
-            }, 3000);
-        }
-
-        // Xử lý Gửi đáp án hàng ngang
-        document.getElementById('row-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            if (selectedRow === null) return;
-
-            const inputEl = document.getElementById('row-input');
-            const rawInput = inputEl.value;
-            const normalizedInput = removeVietnameseTones(rawInput).replace(/\s/g, '').toUpperCase();
-            const correctAnswer = CROSSWORDS[selectedRow].answer;
-
-            if (normalizedInput === correctAnswer) {
-                rowStatus[selectedRow] = 'revealed';
-                showToast('Chính xác!', 'success');
-                inputEl.value = '';
-                
-                // Tự động nhảy tới hàng chưa mở tiếp theo
-                const nextHidden = rowStatus.findIndex(status => status === 'hidden');
-                selectedRow = nextHidden !== -1 ? nextHidden : null;
-                
-            } else {
-                showToast('Sai rồi, hãy thử lại nhé!', 'error');
-            }
-            updateUI();
+    // Hiển thị danh sách bệnh nhân
+    function loadPatients() {
+        let tbody = document.getElementById("patient_table_body");
+        tbody.innerHTML = "";
+        
+        patients.forEach(p => {
+            let row = `<tr>
+                <td><b>${p.id}</b></td>
+                <td>${p.name}</td>
+                <td>${p.age}</td>
+                <td>${p.gender}</td>
+                <td>${p.phone}</td>
+            </tr>`;
+            tbody.innerHTML += row;
         });
+    }
 
-        // Xử lý Gửi đáp án từ khóa dọc
-        document.getElementById('keyword-form').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const inputEl = document.getElementById('keyword-input');
-            const rawInput = inputEl.value;
-            const normalizedInput = removeVietnameseTones(rawInput).replace(/\s/g, '').toUpperCase();
+    // Lưu hồ sơ khám bệnh
+    function saveTreatment() {
+        let p_id = parseInt(document.getElementById("t_patient_id").value);
+        let symptoms = document.getElementById("t_symptoms").value;
+        let diagnosis = document.getElementById("t_diagnosis").value;
+        let prescription = document.getElementById("t_prescription").value;
 
-            if (normalizedInput === VERTICAL_KEYWORD) {
-                gameWon = true;
-                rowStatus = Array(CROSSWORDS.length).fill('revealed');
-                selectedRow = null;
-                showToast('Tuyệt vời! Bạn đã tìm ra từ khóa chính!', 'success');
-            } else {
-                showToast('Từ khóa chưa chính xác!', 'error');
-            }
-            updateUI();
-        });
-
-        // Chơi lại
-        function resetGame() {
-            rowStatus = Array(CROSSWORDS.length).fill('hidden');
-            selectedRow = null;
-            gameWon = false;
-            document.getElementById('row-input').value = '';
-            document.getElementById('keyword-input').value = '';
-            updateUI();
+        if (!p_id || !diagnosis) {
+            alert("Vui lòng nhập ID Bệnh Nhân và Chẩn đoán!");
+            return;
         }
 
-        // Chạy lần đầu khi load trang
-        initBoard();
-        updateUI();
+        // Kiểm tra xem ID bệnh nhân có tồn tại không
+        let patientExists = patients.find(p => p.id === p_id);
+        if (!patientExists) {
+            alert("Lỗi: Không tìm thấy bệnh nhân có ID là " + p_id);
+            return;
+        }
 
-    </script>
+        let newTreatment = { 
+            patient_id: p_id, 
+            date: new Date().toLocaleString(), 
+            symptoms, diagnosis, prescription 
+        };
+        
+        treatments.push(newTreatment);
+        localStorage.setItem('his_treatments', JSON.stringify(treatments));
+        
+        alert(`Đã lưu hồ sơ khám cho bệnh nhân: ${patientExists.name}`);
+        
+        // Xóa form
+        document.getElementById("t_patient_id").value = "";
+        document.getElementById("t_symptoms").value = "";
+        document.getElementById("t_diagnosis").value = "";
+        document.getElementById("t_prescription").value = "";
+    }
+
+    // Tải danh sách ngay khi mở trang
+    window.onload = loadPatients;
+</script>
+
 </body>
 </html>
