@@ -2,275 +2,2198 @@
 <html lang="vi">
 <head>
     <meta charset="UTF-8">
-    <!-- Thẻ meta quan trọng nhất cho iPhone: Vừa khít màn hình, chặn zoom không cần thiết -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>CV - Đào Minh Đức</title>
-    
-    <!-- Sử dụng Font Google (Inter) cho giao diện hiện đại, dễ đọc trên màn hình nhỏ -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>KỶ YẾU | Thanh Xuân Y Khoa</title>
+
+    <meta
+        name="description"
+        content="Kỷ yếu điện tử lưu giữ những khoảnh khắc thanh xuân của sinh viên Y khoa."
+    >
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Playfair+Display:wght@500;600;700&display=swap"
+        rel="stylesheet"
+    >
+
     <style>
-        /* CSS Reset & Biến màu sắc */
         :root {
-            --primary-color: #0f4c81; /* Xanh Navy chuyên nghiệp */
-            --text-main: #333333;
-            --text-light: #666666;
-            --bg-color: #f7f9fa;
-            --card-bg: #ffffff;
-            --accent: #e1ebfa;
+            --primary: #0b5e55;
+            --primary-dark: #063f3a;
+            --secondary: #d8a84e;
+            --cream: #faf8f2;
+            --white: #ffffff;
+            --text: #1d2927;
+            --muted: #71807c;
+            --border: #e8e4da;
+            --shadow: 0 20px 60px rgba(15, 45, 40, 0.10);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Inter', sans-serif;
-            -webkit-font-smoothing: antialiased;
+        }
+
+        html {
+            scroll-behavior: smooth;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.6;
-            padding: 15px; /* Margin an toàn cho viền iPhone */
+            font-family: "Be Vietnam Pro", sans-serif;
+            color: var(--text);
+            background: var(--cream);
+            line-height: 1.7;
         }
 
-        /* Container chính của CV */
-        .cv-container {
+        img {
             max-width: 100%;
-            background: var(--card-bg);
-            border-radius: 16px;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.05);
-            overflow: hidden;
-            padding-bottom: 20px;
+            display: block;
         }
 
-        /* Phần Header (Avatar & Tên) */
-        .header {
-            background-color: var(--primary-color);
+        button {
+            font-family: inherit;
+        }
+
+        /* =========================
+           NAVBAR
+        ========================= */
+
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 76px;
+            z-index: 1000;
+
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+
+            padding: 0 6%;
+
+            background: rgba(250, 248, 242, 0.86);
+            backdrop-filter: blur(18px);
+
+            border-bottom: 1px solid rgba(0,0,0,.05);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 800;
+            letter-spacing: 1px;
+        }
+
+        .logo-mark {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+
+            display: grid;
+            place-items: center;
+
             color: white;
-            padding: 30px 20px;
+            background: var(--primary);
+
+            font-size: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text);
+            font-size: 14px;
+            font-weight: 600;
+
+            transition: .25s;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .menu-btn {
+            display: none;
+            border: none;
+            background: none;
+            font-size: 25px;
+            cursor: pointer;
+        }
+
+        /* =========================
+           HERO
+        ========================= */
+
+        .hero {
+            min-height: 100vh;
+
+            position: relative;
+            overflow: hidden;
+
+            display: flex;
+            align-items: center;
+
+            padding: 120px 7% 80px;
+
+            background:
+                linear-gradient(
+                    110deg,
+                    rgba(4, 55, 49, .96),
+                    rgba(5, 75, 67, .78),
+                    rgba(4, 50, 45, .35)
+                ),
+                url("assets/01.jpg") center/cover;
+        }
+
+        .hero::after {
+            content: "";
+            position: absolute;
+            inset: 0;
+
+            background:
+                radial-gradient(
+                    circle at 80% 30%,
+                    rgba(216,168,78,.25),
+                    transparent 30%
+                );
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 850px;
+            color: white;
+        }
+
+        .hero-small {
+            display: inline-block;
+            margin-bottom: 20px;
+
+            color: #f1d99e;
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+        }
+
+        .hero h1 {
+            font-family: "Playfair Display", serif;
+
+            font-size: clamp(55px, 9vw, 115px);
+            line-height: .95;
+
+            margin-bottom: 25px;
+        }
+
+        .hero h1 span {
+            color: #e6c46e;
+        }
+
+        .hero-description {
+            max-width: 650px;
+
+            font-size: 18px;
+            line-height: 1.8;
+
+            color: rgba(255,255,255,.86);
+
+            margin-bottom: 38px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+
+            min-height: 52px;
+            padding: 0 25px;
+
+            border-radius: 50px;
+
+            text-decoration: none;
+            font-weight: 700;
+
+            transition: .3s;
+        }
+
+        .btn-primary {
+            color: var(--primary-dark);
+            background: #e8c873;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 30px rgba(0,0,0,.2);
+        }
+
+        .btn-outline {
+            color: white;
+            border: 1px solid rgba(255,255,255,.5);
+        }
+
+        .btn-outline:hover {
+            background: white;
+            color: var(--primary);
+        }
+
+        /* =========================
+           SECTION
+        ========================= */
+
+        section {
+            padding: 110px 7%;
+        }
+
+        .section-heading {
+            max-width: 750px;
+            margin: 0 auto 55px;
             text-align: center;
         }
 
-        .avatar {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            border: 3px solid white;
-            object-fit: cover;
-            margin-bottom: 12px;
-            background-color: #ccc; /* Màu nền dự phòng nếu chưa có ảnh */
-        }
-
-        .name {
-            font-size: 24px;
-            font-weight: 700;
-            margin-bottom: 4px;
-            letter-spacing: 0.5px;
-        }
-
-        .job-title {
-            font-size: 14px;
-            font-weight: 300;
-            opacity: 0.9;
-        }
-
-        /* Phần Thông tin liên hệ */
-        .contact-info {
-            background-color: var(--accent);
-            padding: 15px 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .contact-item {
-            display: flex;
-            align-items: center;
+        .section-label {
+            color: var(--primary);
             font-size: 13px;
-            color: var(--primary-color);
-            text-decoration: none;
-        }
-
-        .contact-item svg {
-            width: 16px;
-            height: 16px;
-            margin-right: 10px;
-            fill: currentColor;
-        }
-
-        /* Các section nội dung (Kinh nghiệm, Học vấn...) */
-        .section {
-            padding: 20px 20px 0;
-        }
-
-        .section-title {
-            font-size: 16px;
-            color: var(--primary-color);
-            font-weight: 700;
-            margin-bottom: 12px;
+            font-weight: 800;
+            letter-spacing: 3px;
             text-transform: uppercase;
-            border-bottom: 2px solid var(--accent);
-            padding-bottom: 5px;
         }
 
-        .item {
-            margin-bottom: 15px;
+        .section-heading h2 {
+            margin: 12px 0 15px;
+
+            font-family: "Playfair Display", serif;
+            font-size: clamp(38px, 5vw, 65px);
+            line-height: 1.1;
         }
 
-        .item-header {
+        .section-heading p {
+            color: var(--muted);
+        }
+
+        /* =========================
+           INTRO
+        ========================= */
+
+        .intro {
+            background: white;
+        }
+
+        .intro-grid {
+            max-width: 1150px;
+            margin: auto;
+
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 70px;
+
+            align-items: center;
+        }
+
+        .intro-image {
+            position: relative;
+        }
+
+        .intro-image img {
+            width: 100%;
+            height: 560px;
+            object-fit: cover;
+
+            border-radius: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .intro-card {
+            position: absolute;
+
+            right: -25px;
+            bottom: 30px;
+
+            padding: 24px 28px;
+
+            background: white;
+            border-radius: 18px;
+
+            box-shadow: var(--shadow);
+        }
+
+        .intro-card strong {
+            display: block;
+
+            color: var(--primary);
+            font-size: 32px;
+        }
+
+        .intro-text h3 {
+            font-family: "Playfair Display", serif;
+            font-size: 42px;
+
+            margin-bottom: 20px;
+        }
+
+        .intro-text p {
+            color: var(--muted);
+            margin-bottom: 18px;
+        }
+
+        .quote {
+            margin-top: 30px;
+            padding-left: 25px;
+
+            border-left: 4px solid var(--secondary);
+
+            font-family: "Playfair Display", serif;
+            font-size: 22px;
+            font-style: italic;
+        }
+
+        /* =========================
+           STATS
+        ========================= */
+
+        .stats {
+            padding-top: 70px;
+            padding-bottom: 70px;
+
+            background: var(--primary);
+            color: white;
+        }
+
+        .stats-grid {
+            max-width: 1000px;
+            margin: auto;
+
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 42px;
+            font-weight: 800;
+            color: #e8c873;
+        }
+
+        .stat-label {
+            color: rgba(255,255,255,.7);
+            font-size: 14px;
+        }
+
+        /* =========================
+           GALLERY
+        ========================= */
+
+        .gallery {
+            background: var(--cream);
+        }
+
+        .gallery-controls {
+            max-width: 1100px;
+            margin: 0 auto 35px;
+
             display: flex;
             justify-content: space-between;
-            align-items: baseline;
-            margin-bottom: 4px;
-        }
-
-        .item-title {
-            font-weight: 600;
-            font-size: 15px;
-            color: var(--text-main);
-        }
-
-        .item-date {
-            font-size: 12px;
-            color: var(--text-light);
-            font-weight: 600;
-        }
-
-        .item-subtitle {
-            font-size: 13px;
-            color: var(--primary-color);
-            font-style: italic;
-            margin-bottom: 6px;
-        }
-
-        .item-desc {
-            font-size: 13px;
-            color: var(--text-light);
-            text-align: justify;
-        }
-
-        /* Danh sách kỹ năng (Dạng Tag) */
-        .skills-container {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-        }
-
-        .skill-tag {
-            background-color: var(--accent);
-            color: var(--primary-color);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 600;
-        }
-
-        /* Nút Tải PDF lơ lửng cho Mobile */
-        .fab-button {
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background-color: var(--primary-color);
-            color: white;
-            padding: 12px 20px;
-            border-radius: 30px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 14px;
-            box-shadow: 0 4px 15px rgba(15, 76, 129, 0.4);
-            display: flex;
             align-items: center;
+            gap: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filters {
+            display: flex;
             gap: 8px;
+            flex-wrap: wrap;
+        }
+
+        .filter-btn {
+            border: 1px solid var(--border);
+
+            padding: 9px 17px;
+
+            border-radius: 50px;
+
+            background: white;
+            color: var(--text);
+
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+
+            transition: .2s;
+        }
+
+        .filter-btn.active,
+        .filter-btn:hover {
+            color: white;
+            background: var(--primary);
+            border-color: var(--primary);
+        }
+
+        .search-box {
+            width: 230px;
+
+            padding: 11px 17px;
+
+            border: 1px solid var(--border);
+            border-radius: 50px;
+
+            outline: none;
+            background: white;
+        }
+
+        .photo-grid {
+            max-width: 1200px;
+            margin: auto;
+
+            display: grid;
+
+            grid-template-columns:
+                repeat(4, 1fr);
+
+            gap: 15px;
+        }
+
+        .photo-card {
+            position: relative;
+            overflow: hidden;
+
+            min-height: 280px;
+
+            border-radius: 16px;
+
+            cursor: pointer;
+
+            background: #ddd;
+        }
+
+        .photo-card:nth-child(1),
+        .photo-card:nth-child(8),
+        .photo-card:nth-child(15) {
+            grid-column: span 2;
+            grid-row: span 2;
+        }
+
+        .photo-card img {
+            width: 100%;
+            height: 100%;
+            min-height: 280px;
+
+            object-fit: cover;
+
+            transition: transform .6s ease;
+        }
+
+        .photo-card:hover img {
+            transform: scale(1.08);
+        }
+
+        .photo-overlay {
+            position: absolute;
+            inset: 0;
+
+            display: flex;
+            align-items: flex-end;
+
+            padding: 25px;
+
+            opacity: 0;
+
+            background:
+                linear-gradient(
+                    transparent,
+                    rgba(0,0,0,.75)
+                );
+
+            transition: .3s;
+        }
+
+        .photo-card:hover .photo-overlay {
+            opacity: 1;
+        }
+
+        .photo-info {
+            color: white;
+        }
+
+        .photo-info small {
+            color: #e8c873;
+            font-weight: 700;
+        }
+
+        .photo-info h3 {
+            font-size: 18px;
+            margin-top: 4px;
+        }
+
+        /* =========================
+           TIMELINE
+        ========================= */
+
+        .timeline-section {
+            background: white;
+        }
+
+        .timeline {
+            max-width: 850px;
+            margin: auto;
+
+            position: relative;
+        }
+
+        .timeline::before {
+            content: "";
+
+            position: absolute;
+
+            top: 0;
+            bottom: 0;
+            left: 50%;
+
+            width: 2px;
+
+            background: var(--border);
+
+            transform: translateX(-50%);
+        }
+
+        .timeline-item {
+            width: 50%;
+            padding: 20px 45px;
+
+            position: relative;
+        }
+
+        .timeline-item:nth-child(even) {
+            margin-left: 50%;
+        }
+
+        .timeline-dot {
+            position: absolute;
+
+            top: 28px;
+            right: -7px;
+
+            width: 14px;
+            height: 14px;
+
+            border-radius: 50%;
+
+            background: var(--secondary);
+
+            box-shadow: 0 0 0 5px white;
+        }
+
+        .timeline-item:nth-child(even) .timeline-dot {
+            left: -7px;
+            right: auto;
+        }
+
+        .timeline-content {
+            padding: 25px;
+
+            background: var(--cream);
+            border-radius: 18px;
+        }
+
+        .timeline-year {
+            color: var(--primary);
+            font-weight: 800;
+            font-size: 13px;
+        }
+
+        .timeline-content h3 {
+            margin: 7px 0;
+        }
+
+        .timeline-content p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        /* =========================
+           MESSAGE
+        ========================= */
+
+        .message {
+            position: relative;
+            overflow: hidden;
+
+            text-align: center;
+
+            color: white;
+
+            background:
+                linear-gradient(
+                    rgba(5,61,55,.92),
+                    rgba(5,61,55,.92)
+                ),
+                url("assets/03.jpg") center/cover;
+        }
+
+        .message-inner {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .message h2 {
+            font-family: "Playfair Display", serif;
+            font-size: clamp(40px, 6vw, 70px);
+
+            margin-bottom: 25px;
+        }
+
+        .message p {
+            color: rgba(255,255,255,.82);
+            font-size: 18px;
+        }
+
+        /* =========================
+           FOOTER
+        ========================= */
+
+        footer {
+            padding: 35px 7%;
+
+            color: rgba(255,255,255,.65);
+
+            text-align: center;
+
+            background: #063f3a;
+
+            font-size: 13px;
+        }
+
+        footer strong {
+            color: #e8c873;
+        }
+
+        /* =========================
+           LIGHTBOX
+        ========================= */
+
+        .lightbox {
+            position: fixed;
+            inset: 0;
+
+            z-index: 2000;
+
+            display: none;
+            align-items: center;
+            justify-content: center;
+
+            padding: 30px;
+
+            background: rgba(0,0,0,.92);
+        }
+
+        .lightbox.active {
+            display: flex;
+        }
+
+        .lightbox img {
+            max-width: 92vw;
+            max-height: 85vh;
+
+            object-fit: contain;
+
+            border-radius: 10px;
+        }
+
+        .lightbox-close {
+            position: absolute;
+
+            top: 25px;
+            right: 30px;
+
+            border: none;
+            background: none;
+
+            color: white;
+
+            font-size: 40px;
+            cursor: pointer;
+        }
+
+        .lightbox-caption {
+            position: absolute;
+
+            bottom: 25px;
+            left: 0;
+            width: 100%;
+
+            text-align: center;
+            color: white;
+        }
+
+        /* =========================
+           BACK TO TOP
+        ========================= */
+
+        .back-top {
+            position: fixed;
+
+            right: 25px;
+            bottom: 25px;
+
+            z-index: 900;
+
+            width: 48px;
+            height: 48px;
+
+            border: none;
+            border-radius: 50%;
+
+            color: white;
+            background: var(--primary);
+
+            cursor: pointer;
+
+            opacity: 0;
+            pointer-events: none;
+
+            transition: .3s;
+        }
+
+        .back-top.show {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        /* =========================
+           MOBILE
+        ========================= */
+
+        @media (max-width: 900px) {
+
+            .nav-links {
+                position: absolute;
+
+                top: 76px;
+                left: 0;
+
+                width: 100%;
+
+                display: none;
+                flex-direction: column;
+
+                padding: 20px 7%;
+
+                background: white;
+
+                box-shadow: var(--shadow);
+            }
+
+            .nav-links.open {
+                display: flex;
+            }
+
+            .menu-btn {
+                display: block;
+            }
+
+            .intro-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .intro-card {
+                right: 15px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .photo-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .photo-card:nth-child(1),
+            .photo-card:nth-child(8),
+            .photo-card:nth-child(15) {
+                grid-column: span 2;
+                grid-row: span 1;
+            }
+
+            .timeline::before {
+                left: 10px;
+            }
+
+            .timeline-item,
+            .timeline-item:nth-child(even) {
+                width: 100%;
+                margin-left: 0;
+                padding-left: 40px;
+                padding-right: 0;
+            }
+
+            .timeline-dot,
+            .timeline-item:nth-child(even) .timeline-dot {
+                left: 3px;
+                right: auto;
+            }
+        }
+
+        @media (max-width: 600px) {
+
+            section {
+                padding: 80px 5%;
+            }
+
+            .hero {
+                padding-left: 5%;
+                padding-right: 5%;
+            }
+
+            .hero h1 {
+                font-size: 55px;
+            }
+
+            .hero-description {
+                font-size: 15px;
+            }
+
+            .intro-image img {
+                height: 420px;
+            }
+
+            .stats-grid {
+                gap: 20px;
+            }
+
+            .stat-number {
+                font-size: 32px;
+            }
+
+            .gallery-controls {
+                align-items: stretch;
+            }
+
+            .search-box {
+                width: 100%;
+            }
+
+            .photo-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .photo-card:nth-child(1),
+            .photo-card:nth-child(8),
+            .photo-card:nth-child(15) {
+                grid-column: span 1;
+            }
+
+            .photo-card {
+                min-height: 300px;
+            }
         }
     </style>
 </head>
+
 <body>
 
-    <div class="cv-container">
-        <!-- Header -->
-        <header class="header">
-            <!-- Thay đường dẫn ảnh của bạn vào src="" dưới đây -->
-            <img src="https://via.placeholder.com/150" alt="Đào Minh Đức" class="avatar">
-            <h1 class="name">ĐÀO MINH ĐỨC</h1>
-            <p class="job-title">Bác sĩ Đa khoa (Dự kiến tốt nghiệp)</p>
-        </header>
+    <!-- =========================
+         NAVIGATION
+    ========================= -->
 
-        <!-- Thông tin liên hệ -->
-        <div class="contact-info">
-            <a href="tel:+84987654321" class="contact-item">
-                <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-                0987.xxx.xxx
-            </a>
-            <a href="mailto:email@example.com" class="contact-item">
-                <svg viewBox="0 0 24 24"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/></svg>
-                email.cua.ban@gmail.com
-            </a>
-            <a href="https://minhducdao02.id.vn" class="contact-item" target="_blank">
-                <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>
-                minhducdao02.id.vn
-            </a>
-            <div class="contact-item">
-                <svg viewBox="0 0 24 24"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg>
-                Cần Thơ, Việt Nam
+    <nav class="navbar">
+
+        <a href="#home" class="logo">
+            <div class="logo-mark">✚</div>
+            <span>Y KHOA • KỶ YẾU</span>
+        </a>
+
+        <ul class="nav-links" id="navLinks">
+            <li><a href="#home">Trang chủ</a></li>
+            <li><a href="#about">Thanh xuân</a></li>
+            <li><a href="#gallery">Album</a></li>
+            <li><a href="#timeline">Hành trình</a></li>
+            <li><a href="#message">Lời nhắn</a></li>
+        </ul>
+
+        <button class="menu-btn" id="menuBtn">
+            ☰
+        </button>
+
+    </nav>
+
+
+    <!-- =========================
+         HERO
+    ========================= -->
+
+    <header class="hero" id="home">
+
+        <div class="hero-content">
+
+            <div class="hero-small">
+                Kỷ yếu điện tử • Y Khoa
             </div>
+
+            <h1>
+                Thanh xuân<br>
+                <span>của chúng ta.</span>
+            </h1>
+
+            <p class="hero-description">
+                Có những năm tháng chỉ đi qua một lần,
+                nhưng ký ức về nó có thể ở lại cả một đời.
+                Đây là nơi chúng ta lưu giữ những ngày tháng
+                đã cùng nhau học tập, trực bệnh, thi cử,
+                trưởng thành và trở thành những người bác sĩ tương lai.
+            </p>
+
+            <div class="hero-buttons">
+
+                <a href="#gallery" class="btn btn-primary">
+                    Xem album
+                </a>
+
+                <a href="#timeline" class="btn btn-outline">
+                    Hành trình của chúng ta
+                </a>
+
+            </div>
+
         </div>
 
-        <!-- Mục tiêu nghề nghiệp -->
-        <div class="section">
-            <h2 class="section-title">Mục tiêu nghề nghiệp</h2>
-            <p class="item-desc">Áp dụng kiến thức y khoa lâm sàng và tư duy công nghệ để tối ưu hóa quy trình quản lý thông tin y tế. Mục tiêu ngắn hạn là hoàn thành xuất sắc Kỳ thi Đánh giá năng lực hành nghề Quốc gia (2027) và phát triển các ứng dụng hỗ trợ tra cứu y khoa.</p>
+    </header>
+
+
+    <!-- =========================
+         INTRO
+    ========================= -->
+
+    <section class="intro" id="about">
+
+        <div class="section-heading">
+
+            <span class="section-label">
+                Những năm tháng ấy
+            </span>
+
+            <h2>
+                Chúng ta đã từng ở đây.
+            </h2>
+
+            <p>
+                Một chương thanh xuân được viết bằng những
+                buổi học, những ca trực, những kỳ thi
+                và rất nhiều khoảnh khắc không thể lặp lại.
+            </p>
+
         </div>
 
-        <!-- Học vấn -->
-        <div class="section">
-            <h2 class="section-title">Học vấn</h2>
-            <div class="item">
-                <div class="item-header">
-                    <span class="item-title">Đại học Y Dược Cần Thơ</span>
-                    <span class="item-date">2020 - 2026</span>
+
+        <div class="intro-grid">
+
+            <div class="intro-image">
+
+                <img
+                    src="assets/01.jpg"
+                    alt="Tập thể sinh viên Y khoa"
+                >
+
+                <div class="intro-card">
+                    <strong>23+</strong>
+                    <span>khoảnh khắc được lưu giữ</span>
                 </div>
-                <div class="item-subtitle">Ngành Y Đa khoa (Khóa K46)</div>
-            </div>
-        </div>
 
-        <!-- Kinh nghiệm lâm sàng / Làm việc -->
-        <div class="section">
-            <h2 class="section-title">Kinh nghiệm lâm sàng & Dự án</h2>
-            
-            <div class="item">
-                <div class="item-header">
-                    <span class="item-title">Bệnh viện Sản Nhi Kiên Giang</span>
-                    <span class="item-date">Mùa xuân 2026</span>
+            </div>
+
+
+            <div class="intro-text">
+
+                <h3>
+                    Từ giảng đường<br>
+                    đến bệnh viện.
+                </h3>
+
+                <p>
+                    Những chiếc áo blouse từng khiến chúng ta
+                    cảm thấy xa lạ, rồi dần trở thành một phần
+                    quen thuộc của tuổi trẻ.
+                </p>
+
+                <p>
+                    Có những ngày mệt mỏi vì trực đêm.
+                    Có những buổi sáng chạy vội đến bệnh viện.
+                    Có những kỳ thi tưởng như không thể vượt qua.
+                </p>
+
+                <p>
+                    Nhưng sau tất cả, điều còn lại không chỉ
+                    là kiến thức hay điểm số, mà là những
+                    người bạn đã cùng mình đi qua chặng đường ấy.
+                </p>
+
+                <div class="quote">
+                    "Một đời người có thể có rất nhiều
+                    cuộc gặp gỡ, nhưng thanh xuân chỉ có một lần."
                 </div>
-                <div class="item-subtitle">Thực tập sinh Lâm sàng</div>
-                <p class="item-desc">- Luân khoa Bệnh lý Nhiễm trùng Nhi khoa & Sơ sinh.<br>- Phân tích và theo dõi các chỉ số sinh tồn, hỗ trợ quản lý bệnh án.</p>
+
             </div>
 
-            <div class="item">
-                <div class="item-header">
-                    <span class="item-title">Phát triển Web App Y khoa</span>
-                    <span class="item-date">2025 - Hiện tại</span>
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         STATS
+    ========================= -->
+
+    <section class="stats">
+
+        <div class="stats-grid">
+
+            <div>
+                <div class="stat-number">23+</div>
+                <div class="stat-label">Khoảnh khắc</div>
+            </div>
+
+            <div>
+                <div class="stat-number">6+</div>
+                <div class="stat-label">Năm thanh xuân</div>
+            </div>
+
+            <div>
+                <div class="stat-number">01</div>
+                <div class="stat-label">Hành trình</div>
+            </div>
+
+            <div>
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Kỷ niệm</div>
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         GALLERY
+    ========================= -->
+
+    <section class="gallery" id="gallery">
+
+        <div class="section-heading">
+
+            <span class="section-label">
+                Photo Archive
+            </span>
+
+            <h2>
+                Những khoảnh khắc
+            </h2>
+
+            <p>
+                Album ảnh lưu giữ những khoảnh khắc đáng nhớ
+                trong hành trình sinh viên Y khoa.
+            </p>
+
+        </div>
+
+
+        <div class="gallery-controls">
+
+            <div class="filters">
+
+                <button
+                    class="filter-btn active"
+                    data-filter="all"
+                >
+                    Tất cả
+                </button>
+
+                <button
+                    class="filter-btn"
+                    data-filter="tap-the"
+                >
+                    Tập thể
+                </button>
+
+                <button
+                    class="filter-btn"
+                    data-filter="benh-vien"
+                >
+                    Bệnh viện
+                </button>
+
+                <button
+                    class="filter-btn"
+                    data-filter="ban-be"
+                >
+                    Bạn bè
+                </button>
+
+                <button
+                    class="filter-btn"
+                    data-filter="ky-niem"
+                >
+                    Kỷ niệm
+                </button>
+
+            </div>
+
+            <input
+                type="text"
+                id="searchInput"
+                class="search-box"
+                placeholder="Tìm kiếm ảnh..."
+            >
+
+        </div>
+
+
+        <div class="photo-grid" id="photoGrid">
+
+
+            <!-- 01 -->
+
+            <article
+                class="photo-card"
+                data-category="tap-the"
+                data-title="Tập thể trước trường"
+            >
+
+                <img
+                    src="assets/01.jpg"
+                    alt="Tập thể trước trường"
+                    loading="lazy"
+                >
+
+                <div class="photo-overlay">
+
+                    <div class="photo-info">
+
+                        <small>01 / TẬP THỂ</small>
+
+                        <h3>
+                            Một ngày cùng nhau trước giảng đường
+                        </h3>
+
+                    </div>
+
                 </div>
-                <div class="item-subtitle">Quản trị viên & Lập trình viên</div>
-                <p class="item-desc">- Xây dựng ứng dụng trắc nghiệm (Quiz App) bằng HTML, CSS, JavaScript và JSON để quản lý ngân hàng câu hỏi y khoa.<br>- Triển khai dashboard kỹ thuật số, quản lý hosting và tên miền id.vn.</p>
-            </div>
+
+            </article>
+
+
+            <!-- 02 -->
+
+            <article
+                class="photo-card"
+                data-category="ban-be"
+                data-title="Khoảnh khắc trên sân thể thao"
+            >
+
+                <img
+                    src="assets/02.jpg"
+                    alt="Khoảnh khắc trên sân thể thao"
+                    loading="lazy"
+                >
+
+                <div class="photo-overlay">
+
+                    <div class="photo-info">
+
+                        <small>02 / BẠN BÈ</small>
+
+                        <h3>
+                            Những trò đùa của tuổi trẻ
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- 03 -->
+
+            <article
+                class="photo-card"
+                data-category="tap-the"
+                data-title="Tập thể dưới bầu trời"
+            >
+
+                <img
+                    src="assets/03.jpg"
+                    alt="Tập thể dưới bầu trời"
+                    loading="lazy"
+                >
+
+                <div class="photo-overlay">
+
+                    <div class="photo-info">
+
+                        <small>03 / TẬP THỂ</small>
+
+                        <h3>
+                            Cùng nhau nhìn về một phía
+                        </h3>
+
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- 04 -->
+
+            <article
+                class="photo-card"
+                data-category="benh-vien"
+                data-title="Những ngày bệnh viện"
+            >
+
+                <img
+                    src="assets/04.jpg"
+                    alt="Những ngày bệnh viện"
+                    loading="lazy"
+                >
+
+                <div class="photo-overlay">
+
+                    <div class="photo-info">
+                        <small>04 / BỆNH VIỆN</small>
+                        <h3>Những ngày blouse trắng</h3>
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- 05 -->
+
+            <article
+                class="photo-card"
+                data-category="ky-niem"
+                data-title="Một ngày đáng nhớ"
+            >
+
+                <img
+                    src="assets/05.jpg"
+                    alt="Một ngày đáng nhớ"
+                    loading="lazy"
+                >
+
+                <div class="photo-overlay">
+
+                    <div class="photo-info">
+                        <small>05 / KỶ NIỆM</small>
+                        <h3>Một ngày đáng nhớ</h3>
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- 06 -->
+
+            <article
+                class="photo-card"
+                data-category="ban-be"
+                data-title="Bạn bè"
+            >
+
+                <img
+                    src="assets/06.jpg"
+                    alt="Bạn bè"
+                    loading="lazy"
+                >
+
+                <div class="photo-overlay">
+
+                    <div class="photo-info">
+                        <small>06 / BẠN BÈ</small>
+                        <h3>Những người đồng hành</h3>
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- 07 -->
+
+            <article
+                class="photo-card"
+                data-category="benh-vien"
+                data-title="Thực tập lâm sàng"
+            >
+
+                <img
+                    src="assets/07.jpg"
+                    alt="Thực tập lâm sàng"
+                    loading="lazy"
+                >
+
+                <div class="photo-overlay">
+
+                    <div class="photo-info">
+                        <small>07 / BỆNH VIỆN</small>
+                        <h3>Thực tập lâm sàng</h3>
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- 08 -->
+
+            <article
+                class="photo-card"
+                data-category="tap-the"
+                data-title="Tập thể"
+            >
+
+                <img
+                    src="assets/08.jpg"
+                    alt="Tập thể"
+                    loading="lazy"
+                >
+
+                <div class="photo-overlay">
+
+                    <div class="photo-info">
+                        <small>08 / TẬP THỂ</small>
+                        <h3>Chúng ta của những năm tháng ấy</h3>
+                    </div>
+
+                </div>
+
+            </article>
+
+
+            <!-- 09 -->
+
+            <article
+                class="photo-card"
+                data-category="ky-niem"
+                data-title="Kỷ niệm"
+            >
+
+                <img src="assets/09.jpg" alt="Kỷ niệm" loading="lazy">
+
+                <div class="photo-overlay">
+                    <div class="photo-info">
+                        <small>09 / KỶ NIỆM</small>
+                        <h3>Một khoảnh khắc để nhớ</h3>
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 10 -->
+
+            <article
+                class="photo-card"
+                data-category="ban-be"
+                data-title="Bạn bè"
+            >
+
+                <img src="assets/10.jpg" alt="Bạn bè" loading="lazy">
+
+                <div class="photo-overlay">
+                    <div class="photo-info">
+                        <small>10 / BẠN BÈ</small>
+                        <h3>Những người bạn</h3>
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 11 -->
+
+            <article
+                class="photo-card"
+                data-category="benh-vien"
+                data-title="Bệnh viện"
+            >
+
+                <img src="assets/11.jpg" alt="Bệnh viện" loading="lazy">
+
+                <div class="photo-overlay">
+                    <div class="photo-info">
+                        <small>11 / BỆNH VIỆN</small>
+                        <h3>Những ngày thực tập</h3>
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 12 -->
+
+            <article
+                class="photo-card"
+                data-category="tap-the"
+                data-title="Tập thể"
+            >
+
+                <img src="assets/12.jpg" alt="Tập thể" loading="lazy">
+
+                <div class="photo-overlay">
+                    <div class="photo-info">
+                        <small>12 / TẬP THỂ</small>
+                        <h3>Cùng nhau trưởng thành</h3>
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 13 -->
+
+            <article
+                class="photo-card"
+                data-category="ban-be"
+                data-title="Bạn bè"
+            >
+
+                <img src="assets/13.jpg" alt="Bạn bè" loading="lazy">
+
+                <div class="photo-overlay">
+                    <div class="photo-info">
+                        <small>13 / BẠN BÈ</small>
+                        <h3>Thanh xuân</h3>
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 14 -->
+
+            <article
+                class="photo-card"
+                data-category="ky-niem"
+                data-title="Kỷ niệm"
+            >
+
+                <img src="assets/14.jpg" alt="Kỷ niệm" loading="lazy">
+
+                <div class="photo-overlay">
+                    <div class="photo-info">
+                        <small>14 / KỶ NIỆM</small>
+                        <h3>Ngày hôm ấy</h3>
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 15 -->
+
+            <article
+                class="photo-card"
+                data-category="tap-the"
+                data-title="Tập thể"
+            >
+
+                <img src="assets/15.jpg" alt="Tập thể" loading="lazy">
+
+                <div class="photo-overlay">
+                    <div class="photo-info">
+                        <small>15 / TẬP THỂ</small>
+                        <h3>Chúng ta</h3>
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 16 -->
+
+            <article
+                class="photo-card"
+                data-category="benh-vien"
+                data-title="Bệnh viện"
+            >
+
+                <img src="assets/16.jpg" alt="Bệnh viện" loading="lazy">
+
+                <div class="photo-overlay">
+                    <div class="photo-info">
+                        <small>16 / BỆNH VIỆN</small>
+                        <h3>Hành trình blouse trắng</h3>
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 17 -->
+
+            <article
+                class="photo-card"
+                data-category="ban-be"
+                data-title="Bạn bè"
+            >
+
+                <img src="assets/17.jpg" alt="Bạn bè" loading="lazy">
+
+                <div class="photo-overlay">
+                    <div class="photo-info">
+                        <small>17 / BẠN BÈ</small>
+                        <h3>Những người đồng hành</h3>
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 18 -->
+
+            <article
+                class="photo-card"
+                data-category="ky-niem"
+                data-title="Kỷ niệm"
+            >
+
+                <img src="assets/18.jpg" alt="Kỷ niệm" loading="lazy">
+
+                <div class="photo-overlay">
+                    <div class="photo-info">
+                        <small>18 / KỶ NIỆM</small>
+                        <h3>Một phần thanh xuân</h3>
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 19 -->
+
+            <article
+                class="photo-card"
+                data-category="tap-the"
+                data-title="Tập thể"
+            >
+
+                <img src="assets/19.jpg" alt="Tập thể" loading="lazy">
+
+                <div class="photo-overlay">
+                    <div class="photo-info">
+                        <small>19 / TẬP THỂ</small>
+                        <h3>Một tập thể</h3>
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 20 -->
+
+            <article
+                class="photo-card"
+                data-category="benh-vien"
+                data-title="Bệnh viện"
+            >
+
+                <img src="assets/20.jpg" alt="Bệnh viện" loading="lazy">
+
+                <div class="photo-overlay">
+                    <div class="photo-info">
+                        <small>20 / BỆNH VIỆN</small>
+                        <h3>Những ca trực</h3>
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 21 -->
+
+            <article
+                class="photo-card"
+                data-category="ban-be"
+                data-title="Bạn bè"
+            >
+
+                <img src="assets/21.jpg" alt="Bạn bè" loading="lazy">
+
+                <div class="photo-overlay">
+                    <div class="photo-info">
+                        <small>21 / BẠN BÈ</small>
+                        <h3>Đi cùng nhau</h3>
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 22 -->
+
+            <article
+                class="photo-card"
+                data-category="ky-niem"
+                data-title="Kỷ niệm"
+            >
+
+                <img src="assets/22.jpg" alt="Kỷ niệm" loading="lazy">
+
+                <div class="photo-overlay">
+                    <div class="photo-info">
+                        <small>22 / KỶ NIỆM</small>
+                        <h3>Ngày cuối cùng</h3>
+                    </div>
+                </div>
+
+            </article>
+
+
+            <!-- 23 -->
+
+            <article
+                class="photo-card"
+                data-category="tap-the"
+                data-title="Kỷ yếu"
+            >
+
+                <img src="assets/23.jpg" alt="Kỷ yếu" loading="lazy">
+
+                <div class="photo-overlay">
+                    <div class="photo-info">
+                        <small>23 / KỶ YẾU</small>
+                        <h3>Hẹn gặp lại</h3>
+                    </div>
+                </div>
+
+            </article>
+
+
         </div>
 
-        <!-- Kỹ năng -->
-        <div class="section" style="padding-bottom: 40px;">
-            <h2 class="section-title">Kỹ năng</h2>
-            <div class="skills-container">
-                <span class="skill-tag">Khám Lâm sàng</span>
-                <span class="skill-tag">Phân tích Cận lâm sàng</span>
-                <span class="skill-tag">Quản lý Dữ liệu Y tế</span>
-                <span class="skill-tag">HTML / CSS / JavaScript</span>
-                <span class="skill-tag">Triển khai Web (GitHub)</span>
-                <span class="skill-tag">Nghiên cứu AI</span>
-            </div>
+    </section>
+
+
+    <!-- =========================
+         TIMELINE
+    ========================= -->
+
+    <section class="timeline-section" id="timeline">
+
+        <div class="section-heading">
+
+            <span class="section-label">
+                Our Journey
+            </span>
+
+            <h2>
+                Một hành trình dài.
+            </h2>
+
+            <p>
+                Những cột mốc đã tạo nên chúng ta ngày hôm nay.
+            </p>
+
         </div>
+
+
+        <div class="timeline">
+
+            <div class="timeline-item">
+
+                <div class="timeline-dot"></div>
+
+                <div class="timeline-content">
+
+                    <div class="timeline-year">
+                        NĂM 01
+                    </div>
+
+                    <h3>
+                        Ngày đầu tiên
+                    </h3>
+
+                    <p>
+                        Những gương mặt còn xa lạ,
+                        những chiếc áo blouse đầu tiên
+                        và một hành trình hoàn toàn mới.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="timeline-item">
+
+                <div class="timeline-dot"></div>
+
+                <div class="timeline-content">
+
+                    <div class="timeline-year">
+                        NĂM 02
+                    </div>
+
+                    <h3>
+                        Bắt đầu trưởng thành
+                    </h3>
+
+                    <p>
+                        Những môn học chuyên ngành,
+                        những kỳ thi và những người bạn
+                        ngày càng trở nên thân thiết.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="timeline-item">
+
+                <div class="timeline-dot"></div>
+
+                <div class="timeline-content">
+
+                    <div class="timeline-year">
+                        NĂM 03–04
+                    </div>
+
+                    <h3>
+                        Những ngày lâm sàng
+                    </h3>
+
+                    <p>
+                        Bước vào bệnh viện,
+                        tiếp xúc với người bệnh và bắt đầu
+                        hiểu thế nào là trách nhiệm của người thầy thuốc.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="timeline-item">
+
+                <div class="timeline-dot"></div>
+
+                <div class="timeline-content">
+
+                    <div class="timeline-year">
+                        NĂM 05
+                    </div>
+
+                    <h3>
+                        Những ca trực
+                    </h3>
+
+                    <p>
+                        Những đêm dài ở bệnh viện,
+                        những ca bệnh khó và những bài học
+                        không có trong giáo trình.
+                    </p>
+
+                </div>
+
+            </div>
+
+
+            <div class="timeline-item">
+
+                <div class="timeline-dot"></div>
+
+                <div class="timeline-content">
+
+                    <div class="timeline-year">
+                        NĂM 06
+                    </div>
+
+                    <h3>
+                        Ngày trưởng thành
+                    </h3>
+
+                    <p>
+                        Những ngày cuối cùng của đời sinh viên.
+                        Chúng ta chuẩn bị bước sang một chương mới.
+                    </p>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         MESSAGE
+    ========================= -->
+
+    <section class="message" id="message">
+
+        <div class="message-inner">
+
+            <h2>
+                Sau này, nếu có quên...
+            </h2>
+
+            <p>
+                Hãy mở lại nơi này.
+                Để nhớ rằng chúng ta đã từng có một thời
+                cùng nhau mặc blouse trắng,
+                cùng nhau cười,
+                cùng nhau mệt mỏi,
+                cùng nhau trưởng thành.
+            </p>
+
+            <br>
+
+            <p>
+                Và hãy nhớ rằng,
+                đã từng có một phiên bản của chúng ta
+                rất trẻ, rất nhiệt huyết
+                và rất hạnh phúc.
+            </p>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================
+         FOOTER
+    ========================= -->
+
+    <footer>
+
+        <p>
+            © 2026
+            <strong>KỶ YẾU Y KHOA</strong>
+            · Made with memories.
+        </p>
+
+        <p>
+            "Thanh xuân không quay lại,
+            nhưng ký ức thì có thể."
+        </p>
+
+    </footer>
+
+
+    <!-- =========================
+         LIGHTBOX
+    ========================= -->
+
+    <div class="lightbox" id="lightbox">
+
+        <button
+            class="lightbox-close"
+            id="lightboxClose"
+            aria-label="Đóng"
+        >
+            ×
+        </button>
+
+        <img
+            id="lightboxImage"
+            src=""
+            alt=""
+        >
+
+        <div
+            class="lightbox-caption"
+            id="lightboxCaption"
+        ></div>
+
     </div>
+
+
+    <!-- BACK TO TOP -->
+
+    <button
+        class="back-top"
+        id="backTop"
+    >
+        ↑
+    </button>
+
+
+    <!-- =========================
+         JAVASCRIPT
+    ========================= -->
+
+    <script>
+
+        /* =========================
+           MOBILE MENU
+        ========================= */
+
+        const menuBtn = document.getElementById("menuBtn");
+        const navLinks = document.getElementById("navLinks");
+
+        menuBtn.addEventListener("click", () => {
+
+            navLinks.classList.toggle("open");
+
+        });
+
+
+        document.querySelectorAll(".nav-links a").forEach(link => {
+
+            link.addEventListener("click", () => {
+
+                navLinks.classList.remove("open");
+
+            });
+
+        });
+
+
+        /* =========================
+           FILTER
+        ========================= */
+
+        const filterButtons =
+            document.querySelectorAll(".filter-btn");
+
+        const photoCards =
+            document.querySelectorAll(".photo-card");
+
+        filterButtons.forEach(button => {
+
+            button.addEventListener("click", () => {
+
+                filterButtons.forEach(btn =>
+                    btn.classList.remove("active")
+                );
+
+                button.classList.add("active");
+
+                const filter =
+                    button.dataset.filter;
+
+                photoCards.forEach(card => {
+
+                    if (
+                        filter === "all" ||
+                        card.dataset.category === filter
+                    ) {
+
+                        card.style.display = "";
+
+                    } else {
+
+                        card.style.display = "none";
+
+                    }
+
+                });
+
+            });
+
+        });
+
+
+        /* =========================
+           SEARCH
+        ========================= */
+
+        const searchInput =
+            document.getElementById("searchInput");
+
+        searchInput.addEventListener("input", () => {
+
+            const keyword =
+                searchInput.value
+                    .toLowerCase()
+                    .trim();
+
+            photoCards.forEach(card => {
+
+                const title =
+                    card.dataset.title
+                        .toLowerCase();
+
+                if (title.includes(keyword)) {
+
+                    card.style.display = "";
+
+                } else {
+
+                    card.style.display = "none";
+
+                }
+
+            });
+
+        });
+
+
+        /* =========================
+           LIGHTBOX
+        ========================= */
+
+        const lightbox =
+            document.getElementById("lightbox");
+
+        const lightboxImage =
+            document.getElementById("lightboxImage");
+
+        const lightboxCaption =
+            document.getElementById("lightboxCaption");
+
+        const lightboxClose =
+            document.getElementById("lightboxClose");
+
+
+        photoCards.forEach(card => {
+
+            card.addEventListener("click", () => {
+
+                const image =
+                    card.querySelector("img");
+
+                const title =
+                    card.dataset.title;
+
+                lightboxImage.src =
+                    image.src;
+
+                lightboxImage.alt =
+                    image.alt;
+
+                lightboxCaption.textContent =
+                    title;
+
+                lightbox.classList.add("active");
+
+                document.body.style.overflow =
+                    "hidden";
+
+            });
+
+        });
+
+
+        function closeLightbox() {
+
+            lightbox.classList.remove("active");
+
+            document.body.style.overflow =
+                "";
+
+        }
+
+
+        lightboxClose.addEventListener(
+            "click",
+            closeLightbox
+        );
+
+
+        lightbox.addEventListener("click", event => {
+
+            if (event.target === lightbox) {
+
+                closeLightbox();
+
+            }
+
+        });
+
+
+        document.addEventListener("keydown", event => {
+
+            if (event.key === "Escape") {
+
+                closeLightbox();
+
+            }
+
+        });
+
+
+        /* =========================
+           BACK TO TOP
+        ========================= */
+
+        const backTop =
+            document.getElementById("backTop");
+
+
+        window.addEventListener("scroll", () => {
+
+            if (window.scrollY > 600) {
+
+                backTop.classList.add("show");
+
+            } else {
+
+                backTop.classList.remove("show");
+
+            }
+
+        });
+
+
+        backTop.addEventListener("click", () => {
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        });
+
+
+        /* =========================
+           IMAGE ERROR HANDLING
+        ========================= */
+
+        document
+            .querySelectorAll(".photo-card img")
+            .forEach(img => {
+
+                img.addEventListener("error", () => {
+
+                    img.style.display = "none";
+
+                    const parent =
+                        img.parentElement;
+
+                    parent.style.background =
+                        "linear-gradient(135deg,#e9e6dd,#c9d5d1)";
+
+                });
+
+            });
+
+    </script>
 
 </body>
 </html>
